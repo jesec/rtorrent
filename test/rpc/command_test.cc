@@ -1,6 +1,6 @@
 #include "config.h"
 
-#include "command_test.h"
+#include "test/rpc/command_test.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CommandTest);
 

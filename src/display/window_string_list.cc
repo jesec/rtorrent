@@ -3,9 +3,10 @@
 
 #include "config.h"
 
-#include "canvas.h"
-#include "utils.h"
-#include "window_string_list.h"
+#include "display/canvas.h"
+#include "display/utils.h"
+
+#include "display/window_string_list.h"
 
 namespace display {
 

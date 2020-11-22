@@ -4,9 +4,9 @@
 #include "config.h"
 
 #include "core/download.h"
-#include "parse.h"
+#include "rpc/parse.h"
 
-#include "command.h"
+#include "rpc/command.h"
 
 #define COMMAND_BASE_TEMPLATE_DEFINE(func_name)                                \
   template const torrent::Object func_name<target_type>(                       \

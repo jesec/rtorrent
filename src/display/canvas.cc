@@ -10,7 +10,7 @@
 
 #include "rpc/parse_commands.h"
 
-#include "canvas.h"
+#include "display/canvas.h"
 
 namespace display {
 

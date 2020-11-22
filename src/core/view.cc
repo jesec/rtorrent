@@ -10,12 +10,12 @@
 #include <torrent/utils/functional.h>
 
 #include "control.h"
-#include "download.h"
-#include "download_list.h"
-#include "manager.h"
+#include "core/download.h"
+#include "core/download_list.h"
+#include "core/manager.h"
+#include "core/view.h"
 #include "rpc/object_storage.h"
 #include "rpc/parse_commands.h"
-#include "view.h"
 
 namespace core {
 

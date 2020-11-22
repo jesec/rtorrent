@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
-#include "parse_options.h"
-
 #include <algorithm>
 #include <locale>
 #include <torrent/exceptions.h>
+
+#include "rpc/parse_options.h"
 
 namespace rpc {
 

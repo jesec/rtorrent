@@ -10,8 +10,9 @@
 #include "core/curl_get.h"
 #include "core/http_queue.h"
 
-#include "canvas.h"
-#include "window_http_queue.h"
+#include "display/canvas.h"
+
+#include "display/window_http_queue.h"
 
 namespace display {
 

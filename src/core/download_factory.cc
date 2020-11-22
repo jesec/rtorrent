@@ -21,14 +21,14 @@
 #include "rpc/parse_commands.h"
 
 #include "control.h"
-#include "curl_get.h"
+#include "core/curl_get.h"
+#include "core/http_queue.h"
+#include "core/manager.h"
 #include "globals.h"
-#include "http_queue.h"
-#include "manager.h"
 
-#include "download.h"
-#include "download_factory.h"
-#include "download_store.h"
+#include "core/download.h"
+#include "core/download_factory.h"
+#include "core/download_store.h"
 
 namespace core {
 

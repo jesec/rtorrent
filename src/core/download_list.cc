@@ -21,15 +21,15 @@
 #include "rpc/parse_commands.h"
 
 #include "control.h"
+#include "core/manager.h"
+#include "core/view.h"
+#include "core/view_manager.h"
 #include "globals.h"
-#include "manager.h"
-#include "view.h"
-#include "view_manager.h"
 
-#include "dht_manager.h"
-#include "download.h"
-#include "download_list.h"
-#include "download_store.h"
+#include "core/dht_manager.h"
+#include "core/download.h"
+#include "core/download_list.h"
+#include "core/download_store.h"
 #include "ui/root.h"
 
 #define DL_TRIGGER_EVENT(download, event_name)                                 \

@@ -11,9 +11,9 @@
 #include <unistd.h>
 
 #include "control.h"
+#include "core/manager.h"
+#include "core/poll_manager.h"
 #include "globals.h"
-#include "manager.h"
-#include "poll_manager.h"
 
 namespace core {
 

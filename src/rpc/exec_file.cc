@@ -11,9 +11,10 @@
 #include <torrent/utils/path.h>
 #include <unistd.h>
 
-#include "exec_file.h"
-#include "parse.h"
 #include "thread_base.h"
+
+#include "rpc/exec_file.h"
+#include "rpc/parse.h"
 
 namespace rpc {
 

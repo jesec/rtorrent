@@ -11,28 +11,24 @@
 #include <torrent/utils/log.h>
 #include <torrent/utils/string_manip.h>
 
+#include "control.h"
 #include "core/download.h"
 #include "core/download_list.h"
 #include "core/manager.h"
 #include "core/view.h"
 #include "core/view_manager.h"
-
+#include "display/window_log.h"
+#include "display/window_title.h"
 #include "input/bindings.h"
 #include "input/manager.h"
 #include "input/path_input.h"
-
-#include "display/window_log.h"
-#include "display/window_title.h"
-
 #include "rpc/parse_commands.h"
-
-#include "control.h"
-#include "download.h"
-#include "download_list.h"
-#include "element_download_list.h"
-#include "element_log_complete.h"
-#include "element_string_list.h"
-#include "root.h"
+#include "ui/download.h"
+#include "ui/download_list.h"
+#include "ui/element_download_list.h"
+#include "ui/element_log_complete.h"
+#include "ui/element_string_list.h"
+#include "ui/root.h"
 
 namespace ui {
 

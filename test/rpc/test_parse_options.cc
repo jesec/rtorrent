@@ -1,9 +1,5 @@
 #include "config.h"
 
-#include "test_parse_options.h"
-
-#include "helpers/assert.h"
-
 #include <array>
 #include <torrent/connection_manager.h>
 #include <torrent/exceptions.h>
@@ -11,6 +7,8 @@
 #include <torrent/utils/option_strings.h>
 
 #include "rpc/parse_options.h"
+#include "test/helpers/assert.h"
+#include "test/rpc/test_parse_options.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestParseOptions);
 

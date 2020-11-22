@@ -5,7 +5,7 @@
 
 #include "display/attributes.h"
 
-#include "text_input.h"
+#include "input/text_input.h"
 
 namespace input {
 

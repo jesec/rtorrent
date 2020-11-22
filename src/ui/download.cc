@@ -14,25 +14,23 @@
 #include <torrent/utils/functional.h>
 #include <torrent/utils/string_manip.h>
 
+#include "control.h"
 #include "core/download.h"
 #include "core/manager.h"
+#include "display/text_element_string.h"
 #include "display/window_download_statusbar.h"
 #include "display/window_title.h"
 #include "input/manager.h"
-
-#include "display/text_element_string.h"
 #include "rpc/parse_commands.h"
-
-#include "control.h"
-#include "download.h"
-#include "element_chunks_seen.h"
-#include "element_file_list.h"
-#include "element_menu.h"
-#include "element_peer_list.h"
-#include "element_text.h"
-#include "element_tracker_list.h"
-#include "element_transfer_list.h"
-#include "root.h"
+#include "ui/download.h"
+#include "ui/element_chunks_seen.h"
+#include "ui/element_file_list.h"
+#include "ui/element_menu.h"
+#include "ui/element_peer_list.h"
+#include "ui/element_text.h"
+#include "ui/element_tracker_list.h"
+#include "ui/element_transfer_list.h"
+#include "ui/root.h"
 
 namespace ui {
 

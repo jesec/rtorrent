@@ -6,7 +6,8 @@
 #include <torrent/utils/string_manip.h>
 
 #include "rpc/parse_commands.h"
-#include "text_element_string.h"
+
+#include "display/text_element_string.h"
 
 namespace display {
 

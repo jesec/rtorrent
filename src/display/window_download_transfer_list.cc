@@ -11,7 +11,7 @@
 
 #include "core/download.h"
 
-#include "window_download_transfer_list.h"
+#include "display/window_download_transfer_list.h"
 
 namespace display {
 

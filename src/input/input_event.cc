@@ -3,9 +3,9 @@
 
 #include "config.h"
 
-#include "input_event.h"
-
 #include "display/attributes.h"
+
+#include "input/input_event.h"
 
 namespace input {
 

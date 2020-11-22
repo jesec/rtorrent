@@ -15,8 +15,9 @@
 #include "input/manager.h"
 
 #include "control.h"
-#include "element_file_list.h"
-#include "element_text.h"
+#include "ui/element_text.h"
+
+#include "ui/element_file_list.h"
 
 namespace ui {
 

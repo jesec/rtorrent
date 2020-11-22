@@ -14,7 +14,7 @@
 
 #include "core/download.h"
 
-#include "window_download_chunks_seen.h"
+#include "display/window_download_chunks_seen.h"
 
 namespace display {
 

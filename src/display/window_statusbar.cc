@@ -6,10 +6,11 @@
 #include <torrent/rate.h>
 #include <torrent/torrent.h>
 
-#include "canvas.h"
 #include "control.h"
-#include "utils.h"
-#include "window_statusbar.h"
+#include "display/canvas.h"
+#include "display/utils.h"
+
+#include "display/window_statusbar.h"
 
 namespace display {
 

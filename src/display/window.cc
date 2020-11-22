@@ -5,7 +5,7 @@
 
 #include <stdexcept>
 
-#include "window.h"
+#include "display/window.h"
 
 namespace display {
 

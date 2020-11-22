@@ -8,7 +8,7 @@
 #include "display/frame.h"
 #include "display/window.h"
 
-#include "element_base.h"
+#include "ui/element_base.h"
 
 namespace ui {
 

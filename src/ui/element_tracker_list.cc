@@ -7,12 +7,12 @@
 #include <torrent/tracker.h>
 #include <torrent/tracker_list.h>
 
+#include "control.h"
 #include "display/frame.h"
 #include "display/window_tracker_list.h"
 #include "input/manager.h"
 
-#include "control.h"
-#include "element_tracker_list.h"
+#include "ui/element_tracker_list.h"
 
 namespace ui {
 

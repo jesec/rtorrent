@@ -12,6 +12,8 @@
 #include <torrent/utils/log.h>
 #include <torrent/utils/string_manip.h>
 
+#include "control.h"
+#include "core/download_store.h"
 #include "core/manager.h"
 #include "display/frame.h"
 #include "display/window_http_queue.h"
@@ -21,12 +23,9 @@
 #include "input/manager.h"
 #include "input/text_input.h"
 #include "rpc/parse_commands.h"
+#include "ui/download_list.h"
 
-#include "control.h"
-#include "core/download_store.h"
-#include "download_list.h"
-
-#include "root.h"
+#include "ui/root.h"
 
 namespace ui {
 

@@ -21,14 +21,14 @@
 #include <torrent/utils/socket_address.h>
 #include <torrent/utils/timer.h>
 
+#include "control.h"
 #include "core/download.h"
 #include "core/manager.h"
+#include "globals.h"
 #include "rpc/parse_commands.h"
 #include "ui/root.h"
 
-#include "control.h"
-#include "globals.h"
-#include "utils.h"
+#include "display/utils.h"
 
 namespace display {
 

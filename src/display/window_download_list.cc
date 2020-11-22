@@ -7,12 +7,12 @@
 
 #include "core/download.h"
 #include "core/view.h"
+#include "display/canvas.h"
+#include "display/utils.h"
+#include "globals.h"
 #include "rpc/parse_commands.h"
 
-#include "canvas.h"
-#include "globals.h"
-#include "utils.h"
-#include "window_download_list.h"
+#include "display/window_download_list.h"
 
 namespace display {
 

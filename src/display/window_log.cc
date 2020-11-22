@@ -7,9 +7,10 @@
 #include <torrent/torrent.h>
 #include <torrent/utils/thread_base.h>
 
-#include "canvas.h"
-#include "utils.h"
-#include "window_log.h"
+#include "display/canvas.h"
+#include "display/utils.h"
+
+#include "display/window_log.h"
 
 namespace display {
 

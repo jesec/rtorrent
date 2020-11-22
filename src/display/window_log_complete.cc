@@ -5,9 +5,10 @@
 
 #include <ctime>
 
-#include "canvas.h"
-#include "utils.h"
-#include "window_log_complete.h"
+#include "display/canvas.h"
+#include "display/utils.h"
+
+#include "display/window_log_complete.h"
 
 namespace display {
 

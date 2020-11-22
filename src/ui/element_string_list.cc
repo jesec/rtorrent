@@ -5,11 +5,11 @@
 
 #include <torrent/exceptions.h>
 
+#include "control.h"
 #include "display/frame.h"
 #include "input/manager.h"
 
-#include "control.h"
-#include "element_string_list.h"
+#include "ui/element_string_list.h"
 
 namespace ui {
 

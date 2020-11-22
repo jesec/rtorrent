@@ -13,10 +13,11 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+
+#include <torrent/exceptions.h>
 #include <torrent/utils/socket_address.h>
 
-#include "socket_fd.h"
-#include <torrent/exceptions.h>
+#include "utils/socket_fd.h"
 
 namespace utils {
 

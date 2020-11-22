@@ -2,8 +2,7 @@
 
 #include "command_helpers.h"
 #include "rpc/command_map.h"
-
-#include "command_map_test.h"
+#include "test/rpc/command_map_test.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CommandMapTest);
 

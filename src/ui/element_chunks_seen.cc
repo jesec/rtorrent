@@ -5,12 +5,12 @@
 
 #include <torrent/exceptions.h>
 
+#include "control.h"
 #include "display/frame.h"
 #include "display/window_download_chunks_seen.h"
 #include "input/manager.h"
 
-#include "control.h"
-#include "element_chunks_seen.h"
+#include "ui/element_chunks_seen.h"
 
 namespace ui {
 

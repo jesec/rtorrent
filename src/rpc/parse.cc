@@ -9,7 +9,7 @@
 #include <torrent/exceptions.h>
 #include <torrent/utils/path.h>
 
-#include "parse.h"
+#include "rpc/parse.h"
 
 namespace rpc {
 

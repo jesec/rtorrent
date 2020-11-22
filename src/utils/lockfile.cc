@@ -15,7 +15,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "lockfile.h"
+#include "utils/lockfile.h"
 
 namespace utils {
 

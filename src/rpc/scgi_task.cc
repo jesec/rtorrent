@@ -12,11 +12,11 @@
 #include <torrent/utils/error_number.h>
 #include <torrent/utils/log.h>
 
-#include "utils/socket_fd.h"
-
 #include "control.h"
 #include "globals.h"
-#include "scgi.h"
+#include "utils/socket_fd.h"
+
+#include "rpc/scgi.h"
 
 // Test:
 // #include "core/manager.h"

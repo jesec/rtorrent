@@ -9,8 +9,8 @@
 #include <torrent/exceptions.h>
 #include <torrent/utils/algorithm.h>
 
-#include "frame.h"
-#include "window.h"
+#include "display/frame.h"
+#include "display/window.h"
 
 namespace display {
 

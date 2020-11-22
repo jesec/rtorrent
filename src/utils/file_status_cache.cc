@@ -7,7 +7,7 @@
 #include <torrent/utils/file_stat.h>
 #include <torrent/utils/path.h>
 
-#include "file_status_cache.h"
+#include "utils/file_status_cache.h"
 
 namespace utils {
 

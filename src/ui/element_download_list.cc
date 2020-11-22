@@ -7,6 +7,7 @@
 #include <torrent/object.h>
 #include <torrent/utils/log.h>
 
+#include "control.h"
 #include "core/download.h"
 #include "core/manager.h"
 #include "core/view.h"
@@ -16,8 +17,7 @@
 #include "input/manager.h"
 #include "rpc/parse_commands.h"
 
-#include "control.h"
-#include "element_download_list.h"
+#include "ui/element_download_list.h"
 
 namespace ui {
 

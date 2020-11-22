@@ -9,16 +9,16 @@
 #include <torrent/peer/peer_info.h>
 #include <torrent/rate.h>
 
+#include "control.h"
 #include "display/frame.h"
 #include "display/manager.h"
 #include "display/text_element_string.h"
 #include "display/utils.h"
 #include "display/window_peer_list.h"
 #include "input/manager.h"
+#include "ui/element_text.h"
 
-#include "control.h"
-#include "element_peer_list.h"
-#include "element_text.h"
+#include "ui/element_peer_list.h"
 
 namespace ui {
 

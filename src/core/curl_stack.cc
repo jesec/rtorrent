@@ -9,9 +9,9 @@
 #include <torrent/exceptions.h>
 #include <torrent/utils/functional.h>
 
-#include "curl_get.h"
-#include "curl_socket.h"
-#include "curl_stack.h"
+#include "core/curl_get.h"
+#include "core/curl_socket.h"
+#include "core/curl_stack.h"
 
 namespace core {
 

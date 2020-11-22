@@ -7,10 +7,11 @@
 #include <stdexcept>
 #include <torrent/utils/functional.h>
 
-#include "canvas.h"
+#include "display/canvas.h"
+#include "display/window.h"
 #include "globals.h"
-#include "manager.h"
-#include "window.h"
+
+#include "display/manager.h"
 
 namespace display {
 

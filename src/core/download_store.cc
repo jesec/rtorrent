@@ -20,8 +20,8 @@
 
 #include "utils/directory.h"
 
-#include "download.h"
-#include "download_store.h"
+#include "core/download.h"
+#include "core/download_store.h"
 
 namespace core {
 

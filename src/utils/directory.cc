@@ -4,14 +4,14 @@
 #include "config.h"
 
 #include <algorithm>
-#include <functional>
-
 #include <dirent.h>
+#include <functional>
 #include <sys/stat.h>
+
 #include <torrent/exceptions.h>
 #include <torrent/utils/path.h>
 
-#include "directory.h"
+#include "utils/directory.h"
 
 namespace utils {
 

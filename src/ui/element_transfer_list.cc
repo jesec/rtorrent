@@ -5,12 +5,12 @@
 
 #include <torrent/exceptions.h>
 
+#include "control.h"
 #include "display/frame.h"
 #include "display/window_download_transfer_list.h"
 #include "input/manager.h"
 
-#include "control.h"
-#include "element_transfer_list.h"
+#include "ui/element_transfer_list.h"
 
 namespace ui {
 

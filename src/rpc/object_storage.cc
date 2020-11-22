@@ -5,10 +5,10 @@
 
 #include <torrent/utils/functional.h>
 
-#include "object_storage.h"
+#include "rpc/parse.h"
+#include "rpc/parse_commands.h"
 
-#include "parse.h"
-#include "parse_commands.h"
+#include "rpc/object_storage.h"
 
 namespace rpc {
 

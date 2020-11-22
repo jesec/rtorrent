@@ -1,10 +1,10 @@
 #include "config.h"
 
-#include "rpc/command_map.h"
 #include <sstream>
 #include <torrent/object.h>
 
-#include "command_slot_test.h"
+#include "rpc/command_map.h"
+#include "test/rpc/command_slot_test.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CommandSlotTest);
 

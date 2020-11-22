@@ -6,9 +6,10 @@
 #include <algorithm>
 #include <torrent/utils/functional.h>
 
-#include "canvas.h"
-#include "utils.h"
-#include "window_text.h"
+#include "display/canvas.h"
+#include "display/utils.h"
+
+#include "display/window_text.h"
 
 namespace display {
 

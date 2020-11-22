@@ -12,7 +12,7 @@
 
 #include "core/download.h"
 
-#include "window_tracker_list.h"
+#include "display/window_tracker_list.h"
 
 namespace display {
 

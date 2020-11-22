@@ -8,8 +8,8 @@
 #include <iostream>
 #include <torrent/exceptions.h>
 
-#include "curl_get.h"
-#include "curl_stack.h"
+#include "core/curl_get.h"
+#include "core/curl_stack.h"
 #include "globals.h"
 
 namespace core {

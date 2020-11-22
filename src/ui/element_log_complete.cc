@@ -7,13 +7,13 @@
 #include <torrent/torrent.h>
 #include <torrent/utils/thread_base.h>
 
+#include "control.h"
 #include "display/frame.h"
 #include "display/manager.h"
 #include "display/window_log_complete.h"
 #include "input/manager.h"
 
-#include "control.h"
-#include "element_log_complete.h"
+#include "ui/element_log_complete.h"
 
 namespace ui {
 

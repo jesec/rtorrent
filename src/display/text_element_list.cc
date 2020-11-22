@@ -7,7 +7,7 @@
 #include <torrent/exceptions.h>
 #include <torrent/utils/functional.h>
 
-#include "text_element_list.h"
+#include "display/text_element_list.h"
 
 namespace display {
 

@@ -5,7 +5,7 @@
 
 #include <torrent/exceptions.h>
 
-#include "command_scheduler_item.h"
+#include "rpc/command_scheduler_item.h"
 
 namespace rpc {
 

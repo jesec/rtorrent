@@ -10,8 +10,8 @@
 #include <torrent/utils/functional.h>
 #include <torrent/utils/path.h>
 
-#include "parse.h"
-#include "parse_commands.h"
+#include "rpc/parse.h"
+#include "rpc/parse_commands.h"
 
 namespace rpc {
 

@@ -7,9 +7,10 @@
 #include <functional>
 #include <torrent/exceptions.h>
 
-#include "bindings.h"
-#include "manager.h"
-#include "text_input.h"
+#include "input/bindings.h"
+#include "input/text_input.h"
+
+#include "input/manager.h"
 
 namespace input {
 

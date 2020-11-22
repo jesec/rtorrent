@@ -13,7 +13,7 @@
 #include "core/download.h"
 #include "ui/element_file_list.h"
 
-#include "window_file_list.h"
+#include "display/window_file_list.h"
 
 namespace display {
 

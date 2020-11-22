@@ -10,9 +10,9 @@
 #include <torrent/utils/functional.h>
 #include <torrent/utils/string_manip.h>
 
-#include "command_scheduler.h"
-#include "command_scheduler_item.h"
-#include "parse_commands.h"
+#include "rpc/command_scheduler.h"
+#include "rpc/command_scheduler_item.h"
+#include "rpc/parse_commands.h"
 
 namespace rpc {
 

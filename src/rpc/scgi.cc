@@ -11,13 +11,13 @@
 #include <torrent/utils/error_number.h>
 #include <torrent/utils/socket_address.h>
 
+#include "control.h"
+#include "globals.h"
+#include "rpc/parse_commands.h"
 #include "utils/functional_fun.h"
 #include "utils/socket_fd.h"
 
-#include "control.h"
-#include "globals.h"
-#include "parse_commands.h"
-#include "scgi.h"
+#include "rpc/scgi.h"
 
 namespace rpc {
 

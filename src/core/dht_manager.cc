@@ -16,10 +16,10 @@
 #include "globals.h"
 
 #include "control.h"
-#include "dht_manager.h"
-#include "download.h"
-#include "download_store.h"
-#include "manager.h"
+#include "core/dht_manager.h"
+#include "core/download.h"
+#include "core/download_store.h"
+#include "core/manager.h"
 
 #define LT_LOG_THIS(log_fmt, ...)                                              \
   lt_log_print_subsystem(                                                      \

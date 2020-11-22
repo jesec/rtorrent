@@ -2,13 +2,11 @@
 
 #include <iostream>
 
-#include "command_dynamic_test.h"
-
-#include "helpers/assert.h"
-
 #include "control.h"
 #include "globals.h"
 #include "rpc/parse_commands.h"
+#include "test/helpers/assert.h"
+#include "test/src/command_dynamic_test.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CommandDynamicTest);
 

@@ -3,8 +3,9 @@
 
 #include "config.h"
 
-#include "canvas.h"
-#include "window_title.h"
+#include "display/canvas.h"
+
+#include "display/window_title.h"
 
 namespace display {
 

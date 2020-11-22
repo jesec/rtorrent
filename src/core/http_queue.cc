@@ -9,8 +9,8 @@
 #include <torrent/http.h>
 #include <torrent/utils/functional.h>
 
-#include "curl_get.h"
-#include "http_queue.h"
+#include "core/curl_get.h"
+#include "core/http_queue.h"
 
 namespace core {
 

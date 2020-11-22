@@ -6,7 +6,8 @@
 #include <ctime>
 
 #include "globals.h"
-#include "text_element_value.h"
+
+#include "display/text_element_value.h"
 
 namespace display {
 

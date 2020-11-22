@@ -14,9 +14,10 @@
 
 #include "core/download.h"
 
-#include "canvas.h"
-#include "utils.h"
-#include "window_peer_list.h"
+#include "display/canvas.h"
+#include "display/utils.h"
+
+#include "display/window_peer_list.h"
 
 namespace display {
 

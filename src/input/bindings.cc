@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-#include "bindings.h"
+#include "input/bindings.h"
 
 namespace input {
 

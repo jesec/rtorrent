@@ -13,7 +13,7 @@
 #include <sys/types.h>
 #include <torrent/utils/log.h>
 
-#include "path_input.h"
+#include "input/path_input.h"
 
 namespace input {
 

@@ -10,12 +10,12 @@
 #include <torrent/tracker_controller.h>
 #include <torrent/tracker_list.h>
 
-#include "canvas.h"
-#include "globals.h"
-#include "utils.h"
-#include "window_download_statusbar.h"
-
 #include "core/download.h"
+#include "display/canvas.h"
+#include "display/utils.h"
+#include "globals.h"
+
+#include "display/window_download_statusbar.h"
 
 namespace display {
 

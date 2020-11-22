@@ -12,11 +12,11 @@
 #include "globals.h"
 #include "rpc/parse_commands.h"
 
-#include "download.h"
-#include "download_list.h"
-#include "manager.h"
-#include "view.h"
-#include "view_manager.h"
+#include "core/download.h"
+#include "core/download_list.h"
+#include "core/manager.h"
+#include "core/view.h"
+#include "core/view_manager.h"
 
 namespace core {
 

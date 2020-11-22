@@ -17,8 +17,8 @@
 #include "rpc/parse_commands.h"
 
 #include "control.h"
-#include "download.h"
-#include "manager.h"
+#include "core/download.h"
+#include "core/manager.h"
 
 namespace core {
 

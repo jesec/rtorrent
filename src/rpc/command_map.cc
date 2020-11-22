@@ -13,12 +13,12 @@
 #include "core/manager.h"
 #include "globals.h"
 
-#include "command.h"
-#include "command_map.h"
+#include "rpc/command.h"
+#include "rpc/command_map.h"
 
 // For XMLRPC stuff, clean up.
-#include "parse_commands.h"
-#include "xmlrpc.h"
+#include "rpc/parse_commands.h"
+#include "rpc/xmlrpc.h"
 
 namespace rpc {
 

@@ -3,10 +3,10 @@
 
 #include "config.h"
 
-#include "canvas.h"
-#include "window_input.h"
-
+#include "display/canvas.h"
 #include "input/text_input.h"
+
+#include "display/window_input.h"
 
 namespace display {
 

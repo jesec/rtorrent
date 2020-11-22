@@ -13,8 +13,9 @@
 #include <torrent/object.h>
 #include <torrent/utils/string_manip.h>
 
-#include "parse_commands.h"
-#include "xmlrpc.h"
+#include "rpc/parse_commands.h"
+
+#include "rpc/xmlrpc.h"
 
 namespace rpc {
 
