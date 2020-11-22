@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
-#include "config.h"
+#include "buildinfo.h"
 
 #include <sys/stat.h>
 #include <torrent/connection_manager.h>
@@ -83,7 +83,7 @@ Control::initialize() {
   display::Window::slot_adjust(
     torrent::utils::make_mem_fun(m_display, &display::Manager::adjust_layout));
 
-  m_core->http_stack()->set_user_agent(USER_AGENT);
+  m_core->http_stack()->set_user_agent(RT_USER_AGENT);
 
   m_core->initialize_second();
   m_core->listen_open();

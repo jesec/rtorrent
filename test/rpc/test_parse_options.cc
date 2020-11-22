@@ -1,5 +1,3 @@
-#include "config.h"
-
 #include <array>
 #include <torrent/connection_manager.h>
 #include <torrent/exceptions.h>

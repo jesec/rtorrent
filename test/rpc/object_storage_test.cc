@@ -1,7 +1,5 @@
-#include "config.h"
-
-#include "test/helpers/assert.h"
 #include "test/rpc/object_storage_test.h"
+#include "test/helpers/assert.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ObjectStorageTest);
 

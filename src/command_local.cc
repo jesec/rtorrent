@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
-#include "config.h"
+#include "buildinfo.h"
 
 #include <fcntl.h>
 #include <functional>
@@ -252,8 +252,8 @@ initialize_command_local() {
   CMD2_ANY("system.hostname", std::bind(&system_hostname));
   CMD2_ANY("system.pid", std::bind(&getpid));
 
-  CMD2_VAR_C_STRING("system.api_version", (int64_t)API_VERSION);
-  CMD2_VAR_C_STRING("system.client_version", VERSION);
+  CMD2_VAR_C_STRING("system.api_version", (int64_t)RT_API_VERSION);
+  CMD2_VAR_C_STRING("system.client_version", RT_VERSION);
   CMD2_VAR_C_STRING("system.library_version", torrent::version());
   CMD2_VAR_VALUE("system.file.allocate", 0);
   CMD2_VAR_VALUE("system.file.max_size", (int64_t)512 << 30);

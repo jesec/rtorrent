@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
-#include "config.h"
+#include "buildinfo.h"
 
 #include <sstream>
 
@@ -195,7 +195,7 @@ DownloadList::activate_display(Display displayType) {
   switch (displayType) {
     case DISPLAY_DOWNLOAD_LIST:
       control->ui()->window_title()->set_title(
-        "rTorrent " VERSION "/" + std::string(torrent::version()) + " - " +
+        "rTorrent " RT_VERSION "/" + std::string(torrent::version()) + " - " +
         rpc::call_command_string("session.name"));
       break;
     case DISPLAY_LOG:

@@ -1,7 +1,7 @@
 #ifndef RTORRENT_DISPLAY_ATTRIBUTES_H
 #define RTORRENT_DISPLAY_ATTRIBUTES_H
 
-#include "config.h"
+#include "buildinfo.h"
 
 #include <string>
 #include <vector>

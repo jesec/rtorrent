@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
-#include "config.h"
-
 #include <sys/un.h>
 #include <torrent/connection_manager.h>
 #include <torrent/exceptions.h>

@@ -1,5 +1,3 @@
-#include "config.h"
-
 #include <sstream>
 #include <torrent/object.h>
 

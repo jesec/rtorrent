@@ -1,5 +1,6 @@
 # Compiled source #
 ###################
+/install
 *.o
 *.lo
 *.a
@@ -39,6 +40,7 @@ scripts/lt*.m4
 
 # Editor poo #
 ##############
+.vscode
 .#*
 \#*#
 *~
@@ -70,3 +72,26 @@ src/rtorrent
 test/rtorrentTest
 test-driver
 test/rtorrentTest.trs
+
+# Bazel files #
+###############
+/bazel-*
+
+# CMake generated files #
+#########################
+/build
+*.ninja
+.ninja_deps
+.ninja_log
+buildinfo.h
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps

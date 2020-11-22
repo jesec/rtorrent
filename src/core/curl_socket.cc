@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2008, Jari Sundell <jaris@ifi.uio.no>
 
-#include "config.h"
-
 #include <curl/curl.h>
 #include <curl/multi.h>
 

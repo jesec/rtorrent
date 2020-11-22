@@ -1,0 +1,4 @@
+build rtorrent
+build:clang --action_env=CC=clang --action_env=CXX=clang++ rtorrent
+build:gcc --action_env=CC=gcc --action_env=CXX=g++ rtorrent
+test rtorrent_test

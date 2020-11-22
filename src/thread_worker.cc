@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
-#include "config.h"
-
+#include "thread_worker.h"
 #include "control.h"
 #include "globals.h"
-#include "thread_worker.h"
 
 #include <cassert>
 #include <fcntl.h>

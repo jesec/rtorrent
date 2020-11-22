@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
-#include "config.h"
-
 #define __STDC_FORMAT_MACROS
+
+#include "buildinfo.h"
 
 #include <cstdlib>
 #include <inttypes.h>
@@ -21,7 +21,7 @@
 #include <torrent/utils/log.h>
 #include <unistd.h>
 
-#ifdef USE_EXECINFO
+#ifdef LT_HAVE_BACKTRACE
 #include <execinfo.h>
 #endif
 
@@ -590,7 +590,7 @@ handle_sigbus(int signum, siginfo_t* sa, void*) {
   std::stringstream output;
   output << "Caught SIGBUS, dumping stack:" << std::endl;
 
-#ifdef USE_EXECINFO
+#ifdef LT_HAVE_BACKTRACE
   void* stackPtrs[20];
 
   // Print the stack and exit.
@@ -677,7 +677,7 @@ do_panic(int signum) {
   output << "Caught " << SignalHandler::as_string(signum)
          << ", dumping stack:" << std::endl;
 
-#ifdef USE_EXECINFO
+#ifdef LT_HAVE_BACKTRACE
   void* stackPtrs[20];
 
   // Print the stack and exit.
@@ -712,7 +712,8 @@ do_panic(int signum) {
 
 void
 print_help() {
-  std::cout << "Rakshasa's BitTorrent client version " VERSION "." << std::endl;
+  std::cout << "Rakshasa's BitTorrent client version " RT_VERSION "."
+            << std::endl;
   std::cout << std::endl;
   std::cout
     << "All value pairs (f.ex rate and queue size) will be in the UP/DOWN"
