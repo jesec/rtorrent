@@ -44,7 +44,8 @@
 #include <iostream>
 #include <signal.h>
 #include <unistd.h>
-#include <rak/error_number.h>
+#include <torrent/buildinfo.h>
+#include <torrent/utils/error_number.h>
 #include <torrent/exceptions.h>
 #include <torrent/torrent.h>
 #include <torrent/utils/log.h>
@@ -52,10 +53,6 @@
 #include "globals.h"
 #include "control.h"
 #include "core/manager.h"
-
-// Temporarly injected into config.h.
-/* temp hack */
-//#define lt_cacheline_aligned __attribute__((__aligned__(128)))
 
 class lt_cacheline_aligned thread_queue_hack {
 public:
@@ -114,7 +111,7 @@ ThreadBase::ThreadBase() {
   m_threadQueue = new thread_queue_hack;
 }
 
-ThreadBase::~ThreadBase() {
+ThreadBase::~ThreadBase() noexcept(true) {
   delete m_threadQueue;
 }
 
@@ -128,7 +125,7 @@ ThreadBase::stop_thread(ThreadBase* thread) {
 int64_t
 ThreadBase::next_timeout_usec() {
   if (m_taskScheduler.empty())
-    return rak::timer::from_seconds(600).usec();
+    return torrent::utils::timer::from_seconds(600).usec();
   else if (m_taskScheduler.top()->time() <= cachedTime)
     return 0;
   else
@@ -151,7 +148,7 @@ ThreadBase::call_events() {
   if (!m_threadQueue->empty())
     call_queued_items();
 
-  rak::priority_queue_perform(&m_taskScheduler, cachedTime);
+  torrent::utils::priority_queue_perform(&m_taskScheduler, cachedTime);
 }
 
 void

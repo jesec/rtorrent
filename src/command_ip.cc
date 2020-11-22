@@ -37,7 +37,7 @@
 #include "config.h"
 
 #include <fstream>
-#include <rak/path.h>
+#include <torrent/utils/path.h>
 #include <torrent/peer/peer_list.h>
 #include <torrent/utils/log.h>
 #include <torrent/utils/option_strings.h>
@@ -328,7 +328,7 @@ apply_ipv4_filter_load(const torrent::Object::list_type& args) {
   std::string value_name = args.back().as_string();
   int value = torrent::option_find_string(torrent::OPTION_IP_FILTER, value_name.c_str());
 
-  std::fstream file(rak::path_expand(filename).c_str(), std::ios::in);
+  std::fstream file(torrent::utils::path_expand(filename).c_str(), std::ios::in);
   
   if (!file.is_open())
     throw torrent::input_error("Could not open ip filter file: " + filename);

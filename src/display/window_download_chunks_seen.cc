@@ -38,8 +38,8 @@
 
 #include <cmath>
 #include <stdexcept>
-#include <rak/functional.h>
-#include <rak/string_manip.h>
+#include <torrent/utils/functional.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/bitfield.h>
 #include <torrent/data/block.h>
 #include <torrent/data/block_list.h>
@@ -60,7 +60,7 @@ WindowDownloadChunksSeen::WindowDownloadChunksSeen(core::Download* d, unsigned i
 void
 WindowDownloadChunksSeen::redraw() {
   // TODO: Make this depend on tracker signal.
-  m_slotSchedule(this, (cachedTime + rak::timer::from_seconds(10)).round_seconds());
+  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(10)).round_seconds());
   m_canvas->erase();
 
   if (m_canvas->height() < 3 || m_canvas->width() < 18)
@@ -95,7 +95,7 @@ WindowDownloadChunksSeen::redraw() {
   std::vector<torrent::BlockList*> transferChunks(transfers->size(), 0);
 
   std::copy(transfers->begin(), transfers->end(), transferChunks.begin());
-  std::sort(transferChunks.begin(), transferChunks.end(), rak::less2(std::mem_fun(&torrent::BlockList::index), std::mem_fun(&torrent::BlockList::index)));
+  std::sort(transferChunks.begin(), transferChunks.end(), torrent::utils::less2(std::mem_fun(&torrent::BlockList::index), std::mem_fun(&torrent::BlockList::index)));
 
   std::vector<torrent::BlockList*>::const_iterator itrTransfer = transferChunks.begin();
 
@@ -120,7 +120,7 @@ WindowDownloadChunksSeen::redraw() {
         attr = A_BOLD;
       }
 
-      m_canvas->print_char(attr | rak::value_to_hexchar<0>(std::min<uint8_t>(*chunk, 0xF)));
+      m_canvas->print_char(attr | torrent::utils::value_to_hexchar<0>(std::min<uint8_t>(*chunk, 0xF)));
       chunk++;
 
       if ((chunk - seen) % 10 == 0) {

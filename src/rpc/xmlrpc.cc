@@ -42,7 +42,7 @@
 #endif
 
 #include <cctype>
-#include <rak/string_manip.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/object.h>
 #include <torrent/exceptions.h>
 
@@ -612,10 +612,10 @@ XmlRpc::set_size_limit(uint64_t size) {
 void XmlRpc::initialize() { throw torrent::resource_error("XMLRPC not supported."); }
 void XmlRpc::cleanup() {}
 
-void XmlRpc::insert_command(__UNUSED const char* name, __UNUSED const char* parm, __UNUSED const char* doc) {}
-void XmlRpc::set_dialect(__UNUSED int dialect) {}
+void XmlRpc::insert_command(const char* name, const char* parm, const char* doc) {}
+void XmlRpc::set_dialect(int dialect) {}
 
-bool XmlRpc::process(__UNUSED const char* inBuffer, __UNUSED uint32_t length, __UNUSED slot_write slotWrite) { return false; }
+bool XmlRpc::process(const char* inBuffer, uint32_t length, slot_write slotWrite) { return false; }
 
 int64_t XmlRpc::size_limit() { return 0; }
 void    XmlRpc::set_size_limit(uint64_t size) {}

@@ -203,17 +203,9 @@ protected:
   // For use by functions that need to use placeholders to arguments
   // within commands. E.d. callable command strings where one of the
   // arguments within the command needs to be supplied by the caller.
-
-#ifdef HAVE_CXX11
-  union {
-    base_function t_pod;
-    // char t_pod[sizeof(base_function)];
-  };
-#else
   union {
     char t_pod[sizeof(base_function)];
   };
-#endif
 };
 
 template <typename T1 = void, typename T2 = void>

@@ -39,8 +39,8 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <rak/functional.h>
-#include <rak/string_manip.h>
+#include <torrent/utils/functional.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/data/file.h>
 #include <torrent/utils/resume.h>
 #include <torrent/exceptions.h>
@@ -81,7 +81,7 @@ DownloadList::check_contains(Download* d) {
 void
 DownloadList::clear() {
   std::for_each(begin(), end(), std::bind1st(std::mem_fun(&DownloadList::close), this));
-  std::for_each(begin(), end(), rak::call_delete<Download>());
+  std::for_each(begin(), end(), torrent::utils::call_delete<Download>());
 
   base_type::clear();
 }
@@ -99,7 +99,7 @@ DownloadList::session_save() {
 
 DownloadList::iterator
 DownloadList::find(const torrent::HashString& hash) {
-  return std::find_if(begin(), end(), rak::equal(hash, rak::on(std::mem_fun(&Download::info), std::mem_fun(&torrent::DownloadInfo::hash))));
+  return std::find_if(begin(), end(), torrent::utils::equal(hash, torrent::utils::on(std::mem_fun(&Download::info), std::mem_fun(&torrent::DownloadInfo::hash))));
 }
 
 DownloadList::iterator
@@ -107,9 +107,9 @@ DownloadList::find_hex(const char* hash) {
   torrent::HashString key;
 
   for (torrent::HashString::iterator itr = key.begin(), last = key.end(); itr != last; itr++, hash += 2)
-    *itr = (rak::hexchar_to_value(*hash) << 4) + rak::hexchar_to_value(*(hash + 1));
+    *itr = (torrent::utils::hexchar_to_value(*hash) << 4) + torrent::utils::hexchar_to_value(*(hash + 1));
 
-  return std::find_if(begin(), end(), rak::equal(key, rak::on(std::mem_fun(&Download::info), std::mem_fun(&torrent::DownloadInfo::hash))));
+  return std::find_if(begin(), end(), torrent::utils::equal(key, torrent::utils::on(std::mem_fun(&Download::info), std::mem_fun(&torrent::DownloadInfo::hash))));
 }
 
 Download*

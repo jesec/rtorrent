@@ -116,7 +116,7 @@ wstring_width(const std::string& i_str, int width) {
 
 void
 WindowFileList::redraw() {
-  m_slotSchedule(this, (cachedTime + rak::timer::from_seconds(10)).round_seconds());
+  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(10)).round_seconds());
   m_canvas->erase();
 
   torrent::FileList* fl = m_element->download()->download()->file_list();

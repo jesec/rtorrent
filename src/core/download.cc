@@ -37,9 +37,9 @@
 #include "config.h"
 
 #include <list>
-#include <rak/file_stat.h>
-#include <rak/functional.h>
-#include <rak/path.h>
+#include <torrent/utils/file_stat.h>
+#include <torrent/utils/functional.h>
+#include <torrent/utils/path.h>
 #include <torrent/exceptions.h>
 #include <torrent/rate.h>
 #include <torrent/torrent.h>
@@ -160,7 +160,7 @@ Download::set_root_directory(const std::string& path) {
   // directory 'after' moving files. In cases where the user wants to
   // override this behavior the download must first be closed or
   // 'd.directory_base.set' may be used.
-  rak::file_stat file_stat;
+  torrent::utils::file_stat file_stat;
   torrent::FileList* file_list = m_download.file_list();
 
   if (is_hash_checked() && file_list->completed_chunks() != 0 &&
@@ -177,7 +177,7 @@ Download::set_root_directory(const std::string& path) {
   }
 
   control->core()->download_list()->close_directly(this);
-  file_list->set_root_dir(rak::path_expand(path));
+  file_list->set_root_dir(torrent::utils::path_expand(path));
 
   bencode()->get_key("rtorrent").insert_key("directory", path);
 }

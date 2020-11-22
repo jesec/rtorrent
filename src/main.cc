@@ -44,14 +44,15 @@
 #include <string>
 #include <inttypes.h>
 #include <unistd.h>
+#include <torrent/buildinfo.h>
 #include <torrent/http.h>
 #include <torrent/torrent.h>
 #include <torrent/exceptions.h>
 #include <torrent/poll.h>
 #include <torrent/data/chunk_utils.h>
 #include <torrent/utils/log.h>
-#include <rak/functional.h>
-#include <rak/error_number.h>
+#include <torrent/utils/functional.h>
+#include <torrent/utils/error_number.h>
 
 #ifdef USE_EXECINFO
 #include <execinfo.h>
@@ -135,7 +136,7 @@ load_session_torrents() {
 
     // Replace with session torrent flag.
     f->set_session(true);
-    f->slot_finished(std::bind(&rak::call_delete_func<core::DownloadFactory>, f));
+    f->slot_finished(std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
     f->load(entries.path() + first->d_name);
     f->commit();
   }
@@ -149,7 +150,7 @@ load_arg_torrents(char** first, char** last) {
 
     // Replace with session torrent flag.
     f->set_start(true);
-    f->slot_finished(std::bind(&rak::call_delete_func<core::DownloadFactory>, f));
+    f->slot_finished(std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
     f->load(*first);
     f->commit();
   }
@@ -158,7 +159,7 @@ load_arg_torrents(char** first, char** last) {
 static uint64_t
 client_next_timeout() {
   if (taskScheduler.empty())
-    return (control->is_shutdown_started() ? rak::timer::from_milliseconds(100) : rak::timer::from_seconds(60)).usec();
+    return (control->is_shutdown_started() ? torrent::utils::timer::from_milliseconds(100) : torrent::utils::timer::from_seconds(60)).usec();
   else if (taskScheduler.top()->time() <= cachedTime)
     return 0;
   else
@@ -176,8 +177,8 @@ client_perform() {
 
   control->inc_tick();
 
-  cachedTime = rak::timer::current();
-  rak::priority_queue_perform(&taskScheduler, cachedTime);
+  cachedTime = torrent::utils::timer::current();
+  torrent::utils::priority_queue_perform(&taskScheduler, cachedTime);
 }
 
 int
@@ -187,7 +188,7 @@ main(int argc, char** argv) {
     // Temporary.
     setlocale(LC_ALL, "");
 
-    cachedTime = rak::timer::current();
+    cachedTime = torrent::utils::timer::current();
 
     // Initialize logging:
     torrent::log_initialize();
@@ -478,7 +479,7 @@ main(int argc, char** argv) {
     // session torrents are loaded before arg torrents.
     control->dht_manager()->load_dht_cache();
     load_session_torrents();
-    rak::priority_queue_perform(&taskScheduler, cachedTime);
+    torrent::utils::priority_queue_perform(&taskScheduler, cachedTime);
 
     load_arg_torrents(argv + firstArg, argv + argc);
 
@@ -523,7 +524,7 @@ main(int argc, char** argv) {
 }
 
 void
-handle_sigbus(int signum, siginfo_t* sa, void* ptr) {
+handle_sigbus(int signum, siginfo_t* sa, void*) {
   if (signum != SIGBUS)
     do_panic(signum);
 
@@ -546,7 +547,7 @@ handle_sigbus(int signum, siginfo_t* sa, void* ptr) {
 #else
   output << "Stack dump not enabled." << std::endl;
 #endif
-  output << std::endl << "Error: " << rak::error_number(sa->si_errno).c_str() << std::endl;
+  output << std::endl << "Error: " << torrent::utils::error_number(sa->si_errno).c_str() << std::endl;
 
   const char* signal_reason;
 

@@ -41,7 +41,7 @@
 
 #include <dirent.h>
 #include <sys/stat.h>
-#include <rak/path.h>
+#include <torrent/utils/path.h>
 #include <torrent/exceptions.h>
 
 #include "directory.h"
@@ -54,7 +54,7 @@ Directory::is_valid() const {
   if (m_path.empty())
     return false;
 
-  DIR* d = opendir(rak::path_expand(m_path).c_str());
+  DIR* d = opendir(torrent::utils::path_expand(m_path).c_str());
   closedir(d);
 
   return d;
@@ -65,7 +65,7 @@ Directory::update(int flags) {
   if (m_path.empty())
     throw torrent::input_error("Directory::update() tried to open an empty path.");
 
-  DIR* d = opendir(rak::path_expand(m_path).c_str());
+  DIR* d = opendir(torrent::utils::path_expand(m_path).c_str());
 
   if (d == NULL)
     return false;

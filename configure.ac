@@ -14,9 +14,6 @@ RAK_CHECK_CXXFLAGS
 RAK_ENABLE_DEBUG
 RAK_ENABLE_EXTRA_DEBUG
 RAK_ENABLE_WERROR
-RAK_CHECK_CXX11
-
-TORRENT_DISABLE_IPV6
 
 AC_SYS_LARGEFILE
 
@@ -24,10 +21,6 @@ TORRENT_CHECK_EXECINFO
 
 TORRENT_ENABLE_ARCH
 TORRENT_WITH_SYSROOT
-
-TORRENT_WITHOUT_VARIABLE_FDSET
-TORRENT_WITHOUT_STATVFS
-TORRENT_WITHOUT_STATFS
 
 AX_PTHREAD([], AC_MSG_ERROR([requires pthread]))
 AX_WITH_CURSES
@@ -44,17 +37,9 @@ AC_LANG_PUSH(C++)
 TORRENT_WITH_XMLRPC_C
 AC_LANG_POP(C++)
 
-AC_DEFINE(HAVE_CONFIG_H, 1, true if config.h was included)
 AC_DEFINE(USER_AGENT, [std::string(PACKAGE "/" VERSION "/") + torrent::version()], Http user agent)
 
 AC_CHECK_FUNCS(posix_memalign)
-TORRENT_CHECK_CACHELINE()
-TORRENT_CHECK_POPCOUNT()
-
-CC_ATTRIBUTE_UNUSED(
-	AC_DEFINE([__UNUSED], [__attribute__((unused))], [Wrapper around unused attribute]),
-	AC_DEFINE([__UNUSED], [], [Null-wrapper if unused attribute is unsupported])
-)
 
 dnl Only update global build variables immediately before generating the output,
 dnl to avoid affecting the global build environment for other autoconf checks.

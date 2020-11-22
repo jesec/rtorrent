@@ -36,7 +36,7 @@
 
 #include "config.h"
 
-#include <rak/algorithm.h>
+#include <torrent/utils/algorithm.h>
 
 #include "core/download.h"
 #include "core/view.h"
@@ -74,7 +74,7 @@ WindowDownloadList::set_view(core::View* l) {
 
 void
 WindowDownloadList::redraw() {
-  m_slotSchedule(this, (cachedTime + rak::timer::from_seconds(1)).round_seconds());
+  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
 
   m_canvas->erase();
 
@@ -109,7 +109,7 @@ WindowDownloadList::redraw() {
 
   typedef std::pair<core::View::iterator, core::View::iterator> Range;
 
-  Range range = rak::advance_bidirectional(m_view->begin_visible(),
+  Range range = torrent::utils::advance_bidirectional(m_view->begin_visible(),
                                            m_view->focus() != m_view->end_visible() ? m_view->focus() : m_view->begin_visible(),
                                            m_view->end_visible(),
                                            m_canvas->height() / layout_height);

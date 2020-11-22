@@ -41,9 +41,8 @@
 #include <ctime>
 #include <regex>
 
-#include <rak/algorithm.h>
-#include <rak/functional.h>
-#include <rak/functional_fun.h>
+#include <torrent/utils/algorithm.h>
+#include <torrent/utils/functional.h>
 #include <torrent/utils/log.h>
 
 #include "core/manager.h"
@@ -642,7 +641,7 @@ apply_elapsed_less(const torrent::Object::list_type& args) {
 
   int64_t start_time = rpc::convert_to_value(args.front());
 
-  return (int64_t)(start_time != 0 && rak::timer::current_seconds() - start_time < rpc::convert_to_value(args.back()));
+  return (int64_t)(start_time != 0 && torrent::utils::timer::current_seconds() - start_time < rpc::convert_to_value(args.back()));
 }
 
 torrent::Object
@@ -652,7 +651,7 @@ apply_elapsed_greater(const torrent::Object::list_type& args) {
 
   int64_t start_time = rpc::convert_to_value(args.front());
 
-  return (int64_t)(start_time != 0 && rak::timer::current_seconds() - start_time > rpc::convert_to_value(args.back()));
+  return (int64_t)(start_time != 0 && torrent::utils::timer::current_seconds() - start_time > rpc::convert_to_value(args.back()));
 }
 
 inline std::vector<int64_t>
@@ -771,7 +770,7 @@ apply_arith_other(const char* op, const torrent::Object::list_type& args) {
     return (int64_t)(apply_math_basic(op, std::plus<int64_t>(), args) / apply_arith_count(args));
   } else if (strcmp(op, "median") == 0) {
     std::vector<int64_t> result = as_vector(args);
-    return (int64_t)rak::median(result.begin(), result.end());
+    return (int64_t)torrent::utils::median(result.begin(), result.end());
   } else {
     throw torrent::input_error("Wrong operation supplied to apply_arith_other.");
   }

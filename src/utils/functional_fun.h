@@ -37,7 +37,7 @@
 // This file contains functors that wrap function pointers and member
 // function pointers.
 //
-// 'fn' functors are polymorphic and derives from 'rak::function' and
+// 'fn' functors are polymorphic and derives from 'torrent::utils::function' and
 // thus is less strict about types, this adds the cost of calling a
 // virtual function.
 //
@@ -48,14 +48,14 @@
 // available. At the moment it behaves like std::auto_ptr, so be
 // careful when copying.
 
-#ifndef RAK_FUNCTIONAL_FUN_H
-#define RAK_FUNCTIONAL_FUN_H
+#ifndef RTORRENT_UTILS_FUNCTIONAL_FUN_H
+#define RTORRENT_UTILS_FUNCTIONAL_FUN_H
 
 #include <memory>
 #include <functional>
 #include <memory>
 
-namespace rak {
+namespace utils {
 
 template <typename Result>
 class function_base0 {

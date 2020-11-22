@@ -40,7 +40,8 @@
 #include <cstdint>
 #include <vector>
 #include <string>
-#include <rak/functional_fun.h>
+
+#include "utils/functional_fun.h"
 
 namespace torrent {
 class Object;
@@ -52,7 +53,7 @@ class CommandSchedulerItem;
 
 class CommandScheduler : public std::vector<CommandSchedulerItem*> {
 public:
-  typedef rak::function1<void, const std::string&> SlotString;
+  typedef utils::function1<void, const std::string&> SlotString;
   typedef std::pair<int, int>                      Time;
   typedef std::vector<CommandSchedulerItem*>       base_type;
 

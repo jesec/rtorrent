@@ -43,9 +43,10 @@
 
 #include <cstring>
 #include <unordered_map>
-#include <torrent/object.h>
 
-#include "rak/unordered_vector.h"
+#include <torrent/object.h>
+#include <torrent/utils/unordered_vector.h>
+
 #include "command.h"
 #include "fixed_key.h"
 
@@ -62,7 +63,7 @@ class object_storage : private object_storage_base_type {
 public:
   // Should really change rlookup_type into a set with pair values.
   typedef object_storage_base_type                                              base_type;
-  typedef std::map<std::string, rak::unordered_vector<base_type::value_type*> > rlookup_type;
+  typedef std::map<std::string, torrent::utils::unordered_vector<base_type::value_type*> > rlookup_type;
 
   using base_type::key_type;
   using base_type::value_type;

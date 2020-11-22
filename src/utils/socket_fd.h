@@ -39,9 +39,7 @@
 
 #include <unistd.h>
 
-namespace rak {
-  class socket_address;
-}
+#include <torrent/utils/socket_address.h>
 
 namespace utils {
 
@@ -77,13 +75,13 @@ public:
 
   void                clear()                                 { m_fd = -1; }
 
-  bool                bind(const rak::socket_address& sa);
-  bool                bind(const rak::socket_address& sa, unsigned int length);
-  bool                connect(const rak::socket_address& sa);
-  bool                getsockname(rak::socket_address* sa);
+  bool                bind(const torrent::utils::socket_address& sa);
+  bool                bind(const torrent::utils::socket_address& sa, unsigned int length);
+  bool                connect(const torrent::utils::socket_address& sa);
+  bool                getsockname(torrent::utils::socket_address* sa);
 
   bool                listen(int size);
-  SocketFd            accept(rak::socket_address* sa);
+  SocketFd            accept(torrent::utils::socket_address* sa);
 
 //   unsigned int        get_read_queue_size() const;
 //   unsigned int        get_write_queue_size() const;

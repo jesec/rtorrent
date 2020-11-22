@@ -37,8 +37,8 @@
 #ifndef TORRENT_GLOBALS_H
 #define TORRENT_GLOBALS_H
 
-#include <rak/timer.h>
-#include <rak/priority_queue_default.h>
+#include <torrent/utils/timer.h>
+#include <torrent/utils/priority_queue_default.h>
 
 #include "thread_base.h"
 #include "thread_worker.h"
@@ -51,8 +51,8 @@ class Control;
 // be reviewed and fixed in order to avoid any potential problems, and
 // then made updates properly sync'ed with memory barriers.
 
-extern rak::priority_queue_default taskScheduler;
-extern rak::timer                  cachedTime;
+extern torrent::utils::priority_queue_default taskScheduler;
+extern torrent::utils::timer                  cachedTime;
 extern rpc::ip_table_list          ip_tables;
 
 extern Control*      control;

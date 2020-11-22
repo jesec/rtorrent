@@ -37,15 +37,15 @@
 #include "config.h"
 
 #include <stdexcept>
-#include <rak/socket_address.h>
 #include <torrent/rate.h>
 #include <torrent/data/block_transfer.h>
 #include <torrent/data/piece.h>
 #include <torrent/peer/client_list.h>
 #include <torrent/peer/peer_info.h>
+#include <torrent/utils/algorithm.h>
+#include <torrent/utils/socket_address.h>
 
 #include "core/download.h"
-#include "rak/algorithm.h"
 
 #include "canvas.h"
 #include "utils.h"
@@ -62,7 +62,7 @@ WindowPeerList::WindowPeerList(core::Download* d, PList* l, PList::iterator* f) 
 
 void
 WindowPeerList::redraw() {
-  m_slotSchedule(this, (cachedTime + rak::timer::from_seconds(1)).round_seconds());
+  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
   m_canvas->erase();
 
   int x = 2;
@@ -86,7 +86,7 @@ WindowPeerList::redraw() {
 
   typedef std::pair<PList::iterator, PList::iterator> Range;
 
-  Range range = rak::advance_bidirectional(m_list->begin(),
+  Range range = torrent::utils::advance_bidirectional(m_list->begin(),
                                            *m_focus != m_list->end() ? *m_focus : m_list->begin(),
                                            m_list->end(),
                                            m_canvas->height() - y);
@@ -99,7 +99,7 @@ WindowPeerList::redraw() {
 
     x = 0;
 
-    std::string ip_address = rak::socket_address::cast_from(p->address())->address_str();
+    std::string ip_address = torrent::utils::socket_address::cast_from(p->address())->address_str();
 
     if (ip_address.size() >= 24) {
       ip_address.replace(ip_address.begin() + 21, ip_address.end(), "...");

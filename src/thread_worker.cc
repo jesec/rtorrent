@@ -43,7 +43,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <cassert>
-#include <rak/path.h>
+#include <torrent/utils/path.h>
 #include <torrent/exceptions.h>
 
 #include "core/manager.h"
@@ -73,7 +73,7 @@ ThreadWorker::set_scgi(rpc::SCgi* scgi) {
   change_xmlrpc_log();
 
   // The xmlrpc process call requires a global lock.
-//   m_safe.scgi->set_slot_process(rak::mem_fn(&rpc::xmlrpc, &rpc::XmlRpc::process));
+//   m_safe.scgi->set_slot_process(utils::mem_fn(&rpc::xmlrpc, &rpc::XmlRpc::process));
 
   // Synchronize in order to ensure the worker thread sees the updated
   // SCgi object.
@@ -122,7 +122,7 @@ ThreadWorker::change_xmlrpc_log() {
   if (m_xmlrpcLog.empty())
     return;
 
-  scgi()->set_log_fd(open(rak::path_expand(m_xmlrpcLog).c_str(), O_WRONLY | O_APPEND | O_CREAT, 0644));
+  scgi()->set_log_fd(open(torrent::utils::path_expand(m_xmlrpcLog).c_str(), O_WRONLY | O_APPEND | O_CREAT, 0644));
 
   if (scgi()->log_fd() == -1) {
     control->core()->push_log_std("Could not open XMLRPC log file '" + m_xmlrpcLog + "'.");

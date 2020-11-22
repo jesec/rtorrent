@@ -62,10 +62,10 @@ public:
   static void         resize_term(int x, int y)                               { if (!m_isDaemon) { resizeterm(y, x); } }
   static void         resize_term(std::pair<int, int> dim)                    { if (!m_isDaemon) { resizeterm(dim.second, dim.first); } }
 
-  unsigned int        get_x()                                                 { int x, __UNUSED y; if (!m_isDaemon) { getyx(m_window, y, x); } else { x=1; } return x; }
+  unsigned int        get_x()                                                 { int x, y; if (!m_isDaemon) { getyx(m_window, y, x); } else { x=1; } return x; }
   unsigned int        get_y()                                                 { int x, y; if (!m_isDaemon) { getyx(m_window, y, x); } else { y=1; } return y; }
 
-  unsigned int        width()                                                 { int x, __UNUSED y; if (!m_isDaemon) { getmaxyx(m_window, y, x); } else { x=80; } return x; }
+  unsigned int        width()                                                 { int x, y; if (!m_isDaemon) { getmaxyx(m_window, y, x); } else { x=80; } return x; }
   unsigned int        height()                                                { int x, y; if (!m_isDaemon) { getmaxyx(m_window, y, x); } else { y=24; } return y; }
 
   void                move(unsigned int x, unsigned int y)                    { if (!m_isDaemon) { wmove(m_window, y, x); } }
@@ -101,7 +101,7 @@ public:
   static void         initialize();
   static void         cleanup();
 
-  static int          get_screen_width()                                      { int x, __UNUSED y; if (!m_isDaemon) { getmaxyx(stdscr, y, x); } else { x=80; } return x; }
+  static int          get_screen_width()                                      { int x, y; if (!m_isDaemon) { getmaxyx(stdscr, y, x); } else { x=80; } return x; }
   static int          get_screen_height()                                     { int x, y; if (!m_isDaemon) { getmaxyx(stdscr, y, x); } else { y=24;} return y; }
 
   static std::pair<int, int> term_size();

@@ -41,9 +41,9 @@
 #include <fstream>
 #include <stdio.h>
 #include <unistd.h>
-#include <rak/error_number.h>
-#include <rak/path.h>
-#include <rak/string_manip.h>
+#include <torrent/utils/error_number.h>
+#include <torrent/utils/path.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/utils/resume.h>
 #include <torrent/object.h>
 #include <torrent/exceptions.h>
@@ -72,8 +72,8 @@ DownloadStore::enable(bool lock) {
     m_lockfile.set_path(std::string());
 
   if (!m_lockfile.try_lock()) {
-    if (rak::error_number::current().is_bad_path())
-      throw torrent::input_error("Could not lock session directory: \"" + m_path + "\", " + rak::error_number::current().c_str());
+    if (torrent::utils::error_number::current().is_bad_path())
+      throw torrent::input_error("Could not lock session directory: \"" + m_path + "\", " + torrent::utils::error_number::current().c_str());
     else
       throw torrent::input_error("Could not lock session directory: \"" + m_path + "\", held by \"" + m_lockfile.locked_by_as_string() + "\".");
   }
@@ -93,9 +93,9 @@ DownloadStore::set_path(const std::string& path) {
     throw torrent::input_error("Tried to change session directory while it is enabled.");
 
   if (!path.empty() && *path.rbegin() != '/')
-    m_path = rak::path_expand(path + '/');
+    m_path = torrent::utils::path_expand(path + '/');
   else
-    m_path = rak::path_expand(path);
+    m_path = torrent::utils::path_expand(path);
 }
 
 bool
@@ -216,7 +216,7 @@ DownloadStore::is_correct_format(const std::string& f) {
 
 std::string
 DownloadStore::create_filename(Download* d) {
-  return m_path + rak::transform_hex(d->info()->hash().begin(), d->info()->hash().end()) + ".torrent";
+  return m_path + torrent::utils::transform_hex(d->info()->hash().begin(), d->info()->hash().end()) + ".torrent";
 }
 
 }

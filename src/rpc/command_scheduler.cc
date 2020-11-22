@@ -39,8 +39,8 @@
 #include <algorithm>
 #include <cstdlib>
 #include <time.h>
-#include <rak/functional.h>
-#include <rak/string_manip.h>
+#include <torrent/utils/functional.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/exceptions.h>
 
 #include "command_scheduler.h"
@@ -50,12 +50,12 @@
 namespace rpc {
 
 CommandScheduler::~CommandScheduler() {
-  std::for_each(begin(), end(), rak::call_delete<CommandSchedulerItem>());
+  std::for_each(begin(), end(), torrent::utils::call_delete<CommandSchedulerItem>());
 }
 
 CommandScheduler::iterator
 CommandScheduler::find(const std::string& key) {
-  return std::find_if(begin(), end(), rak::equal(key, std::mem_fun(&CommandSchedulerItem::key)));
+  return std::find_if(begin(), end(), torrent::utils::equal(key, std::mem_fun(&CommandSchedulerItem::key)));
 }
 
 CommandScheduler::iterator
@@ -105,9 +105,9 @@ CommandScheduler::call_item(value_type item) {
   }
 
   // Still schedule if we caught a torrrent::input_error?
-  rak::timer next = item->next_time_scheduled();
+  torrent::utils::timer next = item->next_time_scheduled();
 
-  if (next == rak::timer()) {
+  if (next == torrent::utils::timer()) {
     // Remove from scheduler?
     return;
   }
@@ -134,7 +134,7 @@ CommandScheduler::parse(const std::string& key,
   item->command() = command;
   item->set_interval(interval);
 
-  item->enable((cachedTime + rak::timer::from_seconds(absolute)).round_seconds());
+  item->enable((cachedTime + torrent::utils::timer::from_seconds(absolute)).round_seconds());
 }
 
 uint32_t

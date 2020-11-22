@@ -57,6 +57,7 @@
 #include "rpc/scgi.h"
 #include "rpc/object_storage.h"
 #include "ui/root.h"
+#include "utils/functional_fun.h"
 
 #include "control.h"
 
@@ -82,7 +83,7 @@ Control::Control() :
 
   m_taskShutdown.slot() = std::bind(&Control::handle_shutdown, this);
 
-  m_commandScheduler->set_slot_error_message(rak::mem_fn(m_core, &core::Manager::push_log_std));
+  m_commandScheduler->set_slot_error_message(utils::mem_fn(m_core, &core::Manager::push_log_std));
 }
 
 Control::~Control() {
@@ -104,9 +105,9 @@ Control::~Control() {
 void
 Control::initialize() {
   display::Canvas::initialize();
-  display::Window::slot_schedule(rak::make_mem_fun(m_display, &display::Manager::schedule));
-  display::Window::slot_unschedule(rak::make_mem_fun(m_display, &display::Manager::unschedule));
-  display::Window::slot_adjust(rak::make_mem_fun(m_display, &display::Manager::adjust_layout));
+  display::Window::slot_schedule(torrent::utils::make_mem_fun(m_display, &display::Manager::schedule));
+  display::Window::slot_unschedule(torrent::utils::make_mem_fun(m_display, &display::Manager::unschedule));
+  display::Window::slot_adjust(torrent::utils::make_mem_fun(m_display, &display::Manager::adjust_layout));
 
   m_core->http_stack()->set_user_agent(USER_AGENT);
 
@@ -180,7 +181,7 @@ Control::handle_shutdown() {
     m_core->shutdown(false);
 
     if (!m_taskShutdown.is_queued())
-      priority_queue_insert(&taskScheduler, &m_taskShutdown, cachedTime + rak::timer::from_seconds(5));
+      priority_queue_insert(&taskScheduler, &m_taskShutdown, cachedTime + torrent::utils::timer::from_seconds(5));
 
   } else {
     // Temporary hack:

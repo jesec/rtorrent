@@ -53,7 +53,7 @@
 #include <string>
 #include <vector>
 
-#include <rak/timer.h>
+#include <torrent/utils/timer.h>
 #include <torrent/object.h>
 
 #include "globals.h"
@@ -141,10 +141,10 @@ public:
   // user-dependent. Used by f.ex. ViewManager to decide if it should
   // sort and/or filter a view.
   //
-  // Currently initialized to rak::timer(), though perhaps we should
+  // Currently initialized to torrent::utils::timer(), though perhaps we should
   // use cachedTimer.
-  rak::timer          last_changed() const                                 { return m_lastChanged; }
-  void                set_last_changed(const rak::timer& t = ::cachedTime) { m_lastChanged = t; }
+  torrent::utils::timer          last_changed() const                                 { return m_lastChanged; }
+  void                set_last_changed(const torrent::utils::timer& t = ::cachedTime) { m_lastChanged = t; }
 
   // Don't connect any slots until after initialize else it get's
   // triggered when adding the Download's in DownloadList.
@@ -181,10 +181,10 @@ private:
   torrent::Object     m_event_added;
   torrent::Object     m_event_removed;
 
-  rak::timer          m_lastChanged;
+  torrent::utils::timer          m_lastChanged;
 
   signal_void         m_signal_changed;
-  rak::priority_item  m_delayChanged;
+  torrent::utils::priority_item  m_delayChanged;
 };
 
 }

@@ -38,11 +38,12 @@
 
 #include <stdexcept>
 
+#include <torrent/utils/functional.h>
+
 #include "core/curl_get.h"
 #include "core/http_queue.h"
 
 #include "canvas.h"
-#include "rak/functional.h"
 #include "window_http_queue.h"
 
 namespace display {
@@ -64,7 +65,7 @@ WindowHttpQueue::WindowHttpQueue(core::HttpQueue* q) :
 
 void
 WindowHttpQueue::redraw() {
-  m_slotSchedule(this, (cachedTime + rak::timer::from_seconds(1)).round_seconds());
+  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
 
   cleanup_list();
 
@@ -145,13 +146,13 @@ WindowHttpQueue::receive_insert(core::CurlGet* h) {
 
 void
 WindowHttpQueue::receive_erase(core::CurlGet* h) {
-  Container::iterator itr = std::find_if(m_container.begin(), m_container.end(), rak::equal(h, std::mem_fun_ref(&Node::get_http)));
+  Container::iterator itr = std::find_if(m_container.begin(), m_container.end(), torrent::utils::equal(h, std::mem_fun_ref(&Node::get_http)));
 
   if (itr == m_container.end())
     throw std::logic_error("WindowHttpQueue::receive_erase(...) tried to remove an object we don't have");
 
   itr->m_http = NULL;
-  itr->m_timer = cachedTime + rak::timer::from_seconds(1);
+  itr->m_timer = cachedTime + torrent::utils::timer::from_seconds(1);
 
   mark_dirty();
 }

@@ -40,7 +40,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "rak/error_number.h"
+#include <torrent/utils/error_number.h>
+
 #include "signal_handler.h"
 
 #ifdef __sun__
@@ -82,7 +83,7 @@ SignalHandler::set_handler(unsigned int signum, slot_void slot) {
   sa.sa_handler = &SignalHandler::caught;
 
   if (sigaction(signum, &sa, NULL) == -1)
-    throw std::logic_error("Could not set sigaction: " + std::string(rak::error_number::current().c_str()));
+    throw std::logic_error("Could not set sigaction: " + std::string(torrent::utils::error_number::current().c_str()));
   else
     m_handlers[signum] = slot;
 }
@@ -99,7 +100,7 @@ SignalHandler::set_sigaction_handler(unsigned int signum, handler_slot slot) {
   sigemptyset(&sa.sa_mask);
 
   if (sigaction(signum, &sa, NULL) == -1)
-    throw std::logic_error("Could not set sigaction: " + std::string(rak::error_number::current().c_str()));
+    throw std::logic_error("Could not set sigaction: " + std::string(torrent::utils::error_number::current().c_str()));
 }
 
 void

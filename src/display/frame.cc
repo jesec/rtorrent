@@ -39,7 +39,7 @@
 #include <algorithm>
 #include <functional>
 
-#include <rak/algorithm.h>
+#include <torrent/utils/algorithm.h>
 #include <torrent/exceptions.h>
 
 #include "frame.h"

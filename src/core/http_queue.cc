@@ -38,9 +38,10 @@
 
 #include <memory>
 #include <sstream>
-#include <torrent/http.h>
 
-#include "rak/functional.h"
+#include <torrent/http.h>
+#include <torrent/utils/functional.h>
+
 #include "http_queue.h"
 #include "curl_get.h"
 

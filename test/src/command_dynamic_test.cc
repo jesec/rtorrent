@@ -19,7 +19,7 @@ void
 CommandDynamicTest::setUp() {
   if (rpc::commands.empty()) {
     setlocale(LC_ALL, "");
-    cachedTime = rak::timer::current();
+    cachedTime = torrent::utils::timer::current();
     control = new Control;
 
     initialize_command_dynamic();

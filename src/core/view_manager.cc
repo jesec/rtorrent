@@ -37,7 +37,7 @@
 #include "config.h"
 
 #include <algorithm>
-#include <rak/functional.h>
+#include <torrent/utils/functional.h>
 #include <torrent/exceptions.h>
 #include <torrent/object.h>
 
@@ -55,7 +55,7 @@ namespace core {
 
 void
 ViewManager::clear() {
-  std::for_each(begin(), end(), rak::call_delete<View>());
+  std::for_each(begin(), end(), torrent::utils::call_delete<View>());
 
   base_type::clear();
 }
@@ -76,12 +76,12 @@ ViewManager::insert(const std::string& name) {
 
 ViewManager::iterator
 ViewManager::find(const std::string& name) {
-  return std::find_if(begin(), end(), rak::equal(name, std::mem_fun(&View::name)));
+  return std::find_if(begin(), end(), torrent::utils::equal(name, std::mem_fun(&View::name)));
 }
 
 ViewManager::iterator
 ViewManager::find_throw(const std::string& name) {
-  iterator itr = std::find_if(begin(), end(), rak::equal(name, std::mem_fun(&View::name)));
+  iterator itr = std::find_if(begin(), end(), torrent::utils::equal(name, std::mem_fun(&View::name)));
 
   if (itr == end())
     throw torrent::input_error("Could not find view: " + name);
@@ -93,7 +93,7 @@ void
 ViewManager::sort(const std::string& name, uint32_t timeout) {
   iterator viewItr = find_throw(name);
 
-  if ((*viewItr)->last_changed() + rak::timer::from_seconds(timeout) > cachedTime)
+  if ((*viewItr)->last_changed() + torrent::utils::timer::from_seconds(timeout) > cachedTime)
     return;
 
   // Should we rename sort, or add a seperate function?

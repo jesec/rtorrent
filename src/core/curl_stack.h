@@ -40,7 +40,7 @@
 #include <deque>
 #include <string>
 
-#include "rak/priority_queue_default.h"
+#include <torrent/utils/priority_queue_default.h>
 
 namespace core {
 
@@ -134,7 +134,7 @@ class CurlStack : std::deque<CurlGet*> {
   unsigned int        m_active;
   unsigned int        m_maxActive;
 
-  rak::priority_item  m_taskTimeout;
+  torrent::utils::priority_item  m_taskTimeout;
 
   std::string         m_userAgent;
   std::string         m_httpProxy;

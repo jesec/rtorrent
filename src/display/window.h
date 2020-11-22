@@ -37,8 +37,8 @@
 #ifndef RTORRENT_WINDOW_BASE_H
 #define RTORRENT_WINDOW_BASE_H
 
-#include <rak/timer.h>
-#include <rak/functional.h>
+#include <torrent/utils/timer.h>
+#include <torrent/utils/functional.h>
 
 #include "canvas.h"
 #include "globals.h"
@@ -52,9 +52,9 @@ class Window {
 public:
   typedef uint32_t extent_type;
 
-  typedef rak::mem_fun0<Manager, void>                      Slot;
-  typedef rak::mem_fun1<Manager, void, Window*>             SlotWindow;
-  typedef rak::mem_fun2<Manager, void, Window*, rak::timer> SlotTimer;
+  typedef torrent::utils::mem_fun0<Manager, void>                      Slot;
+  typedef torrent::utils::mem_fun1<Manager, void, Window*>             SlotWindow;
+  typedef torrent::utils::mem_fun2<Manager, void, Window*, torrent::utils::timer> SlotTimer;
 
   static const int flag_active    = (1 << 0);
   static const int flag_offscreen = (1 << 1);
@@ -108,7 +108,7 @@ public:
 
   virtual void        redraw() = 0;
 
-  rak::priority_item* task_update()                        { return &m_taskUpdate; }
+  torrent::utils::priority_item* task_update()                        { return &m_taskUpdate; }
 
   // Slot for adjust and refresh.
   static void         slot_schedule(SlotTimer s)           { m_slotSchedule = s; }
@@ -133,7 +133,7 @@ protected:
   extent_type         m_maxWidth;
   extent_type         m_maxHeight;
 
-  rak::priority_item  m_taskUpdate;
+  torrent::utils::priority_item  m_taskUpdate;
 };
 
 }

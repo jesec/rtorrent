@@ -36,8 +36,8 @@
 
 #include "config.h"
 
-#include <rak/error_number.h>
-#include <rak/path.h>
+#include <torrent/utils/error_number.h>
+#include <torrent/utils/path.h>
 #include <torrent/data/file.h>
 #include <torrent/data/file_list.h>
 #include <torrent/data/file_list_iterator.h>

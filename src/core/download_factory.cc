@@ -42,7 +42,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <rak/path.h>
+#include <torrent/utils/path.h>
 #include <torrent/utils/log.h>
 #include <torrent/utils/resume.h>
 #include <torrent/object.h>
@@ -173,7 +173,7 @@ DownloadFactory::receive_load() {
     receive_loaded();
 
   } else {
-    std::fstream stream(rak::path_expand(m_uri).c_str(), std::ios::in | std::ios::binary);
+    std::fstream stream(torrent::utils::path_expand(m_uri).c_str(), std::ios::in | std::ios::binary);
 
     if (!stream.is_open())
       return receive_failed("Could not open file");
@@ -235,8 +235,8 @@ DownloadFactory::receive_success() {
   }
 
   if (m_session) {
-    download_factory_add_stream(root, "rtorrent", (rak::path_expand(m_uri) + ".rtorrent").c_str());
-    download_factory_add_stream(root, "libtorrent_resume", (rak::path_expand(m_uri) + ".libtorrent_resume").c_str());
+    download_factory_add_stream(root, "rtorrent", (torrent::utils::path_expand(m_uri) + ".rtorrent").c_str());
+    download_factory_add_stream(root, "libtorrent_resume", (torrent::utils::path_expand(m_uri) + ".libtorrent_resume").c_str());
     
   } else {
     // We only allow session torrents to keep their
@@ -317,7 +317,7 @@ DownloadFactory::receive_success() {
       log_created(download, rtorrent);
 
     std::for_each(m_commands.begin(), m_commands.end(),
-                  rak::bind2nd(std::ptr_fun(&rpc::parse_command_multiple_std), rpc::make_target(download)));
+                  torrent::utils::bind2nd(std::ptr_fun(&rpc::parse_command_multiple_std), rpc::make_target(download)));
 
     if (m_manager->download_list()->find(infohash) == m_manager->download_list()->end())
       throw torrent::input_error("The newly created download was removed.");

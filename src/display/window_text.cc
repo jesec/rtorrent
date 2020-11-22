@@ -37,7 +37,7 @@
 #include "config.h"
 
 #include <algorithm>
-#include <rak/functional.h>
+#include <torrent/utils/functional.h>
 
 #include "canvas.h"
 #include "utils.h"
@@ -55,7 +55,7 @@ WindowText::WindowText(rpc::target_type target, extent_type margin) :
 
 void
 WindowText::clear() {
-  std::for_each(begin(), end(), rak::call_delete<TextElement>());
+  std::for_each(begin(), end(), torrent::utils::call_delete<TextElement>());
   base_type::clear();
 
   delete m_errorHandler;
@@ -84,7 +84,7 @@ WindowText::push_back(TextElement* element) {
 void
 WindowText::redraw() {
   if (m_interval != 0)
-    m_slotSchedule(this, (cachedTime + rak::timer::from_seconds(m_interval)).round_seconds());
+    m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(m_interval)).round_seconds());
 
   m_canvas->erase();
 

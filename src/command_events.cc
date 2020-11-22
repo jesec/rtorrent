@@ -38,10 +38,10 @@
 
 #include <functional>
 #include <cstdio>
-#include <rak/error_number.h>
-#include <rak/file_stat.h>
-#include <rak/path.h>
-#include <rak/string_manip.h>
+#include <torrent/utils/error_number.h>
+#include <torrent/utils/file_stat.h>
+#include <torrent/utils/path.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/rate.h>
 #include <torrent/hash_string.h>
 #include <torrent/utils/log.h>
@@ -119,10 +119,10 @@ apply_start_tied() {
     if (rpc::call_command_value("d.state", rpc::make_target(*itr)) == 1)
       continue;
 
-    rak::file_stat fs;
+    torrent::utils::file_stat fs;
     const std::string& tiedToFile = rpc::call_command_string("d.tied_to_file", rpc::make_target(*itr));
 
-    if (!tiedToFile.empty() && fs.update(rak::path_expand(tiedToFile)))
+    if (!tiedToFile.empty() && fs.update(torrent::utils::path_expand(tiedToFile)))
       rpc::parse_command_single(rpc::make_target(*itr), "d.try_start=");
   }
 
@@ -135,10 +135,10 @@ apply_stop_untied() {
     if (rpc::call_command_value("d.state", rpc::make_target(*itr)) == 0)
       continue;
 
-    rak::file_stat fs;
+    torrent::utils::file_stat fs;
     const std::string& tiedToFile = rpc::call_command_string("d.tied_to_file", rpc::make_target(*itr));
 
-    if (!tiedToFile.empty() && !fs.update(rak::path_expand(tiedToFile)))
+    if (!tiedToFile.empty() && !fs.update(torrent::utils::path_expand(tiedToFile)))
       rpc::parse_command_single(rpc::make_target(*itr), "d.try_stop=");
   }
 
@@ -148,10 +148,10 @@ apply_stop_untied() {
 torrent::Object
 apply_close_untied() {
   for (core::DownloadList::iterator itr = control->core()->download_list()->begin(); itr != control->core()->download_list()->end(); ++itr) {
-    rak::file_stat fs;
+    torrent::utils::file_stat fs;
     const std::string& tiedToFile = rpc::call_command_string("d.tied_to_file", rpc::make_target(*itr));
 
-    if (rpc::call_command_value("d.ignore_commands", rpc::make_target(*itr)) == 0 && !tiedToFile.empty() && !fs.update(rak::path_expand(tiedToFile)))
+    if (rpc::call_command_value("d.ignore_commands", rpc::make_target(*itr)) == 0 && !tiedToFile.empty() && !fs.update(torrent::utils::path_expand(tiedToFile)))
       rpc::parse_command_single(rpc::make_target(*itr), "d.try_close=");
   }
 
@@ -161,10 +161,10 @@ apply_close_untied() {
 torrent::Object
 apply_remove_untied() {
   for (core::DownloadList::iterator itr = control->core()->download_list()->begin(); itr != control->core()->download_list()->end(); ) {
-    rak::file_stat fs;
+    torrent::utils::file_stat fs;
     const std::string& tiedToFile = rpc::call_command_string("d.tied_to_file", rpc::make_target(*itr));
 
-    if (!tiedToFile.empty() && !fs.update(rak::path_expand(tiedToFile))) {
+    if (!tiedToFile.empty() && !fs.update(torrent::utils::path_expand(tiedToFile))) {
       // Need to clear tied_to_file so it doesn't try to delete it.
       rpc::call_command("d.tied_to_file.set", std::string(), rpc::make_target(*itr));
 
@@ -263,7 +263,7 @@ apply_download_list(const torrent::Object::list_type& args) {
   for (core::View::const_iterator itr = (*viewItr)->begin_visible(), last = (*viewItr)->end_visible(); itr != last; itr++) {
     const torrent::HashString* hashString = &(*itr)->info()->hash();
 
-    resultList.push_back(rak::transform_hex(hashString->begin(), hashString->end()));
+    resultList.push_back(torrent::utils::transform_hex(hashString->begin(), hashString->end()));
   }
 
   return result;
@@ -357,7 +357,7 @@ directory_watch_added(const torrent::Object::list_type& args) {
   const std::string& command = args.back().as_string();
 
   if (!control->directory_events()->open())
-    throw torrent::input_error("Could not open inotify:" + std::string(rak::error_number::current().c_str()));
+    throw torrent::input_error("Could not open inotify:" + std::string(torrent::utils::error_number::current().c_str()));
 
   control->directory_events()->notify_on(path.c_str(),
                                          torrent::directory_events::flag_on_added | torrent::directory_events::flag_on_updated,

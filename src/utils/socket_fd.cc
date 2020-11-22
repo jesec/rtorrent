@@ -46,7 +46,7 @@
 #include <netinet/in.h>
 #include <netinet/in_systm.h>
 #include <netinet/ip.h>
-#include <rak/socket_address.h>
+#include <torrent/utils/socket_address.h>
 
 #include <torrent/exceptions.h>
 #include "socket_fd.h"
@@ -133,11 +133,11 @@ SocketFd::get_error() const {
 
 bool
 SocketFd::open_stream() {
-  m_fd = socket(rak::socket_address::pf_inet6, SOCK_STREAM, IPPROTO_TCP);
+  m_fd = socket(torrent::utils::socket_address::pf_inet6, SOCK_STREAM, IPPROTO_TCP);
 
   if (m_fd == -1) {
     m_ipv6_socket = false;
-    return (m_fd = socket(rak::socket_address::pf_inet, SOCK_STREAM, IPPROTO_TCP)) != -1;
+    return (m_fd = socket(torrent::utils::socket_address::pf_inet, SOCK_STREAM, IPPROTO_TCP)) != -1;
   }
 
   m_ipv6_socket = true;
@@ -148,10 +148,10 @@ SocketFd::open_stream() {
 
 bool
 SocketFd::open_datagram() {
-  m_fd = socket(rak::socket_address::pf_inet6, SOCK_DGRAM, 0);
+  m_fd = socket(torrent::utils::socket_address::pf_inet6, SOCK_DGRAM, 0);
   if (m_fd == -1) {
     m_ipv6_socket = false;
-    return (m_fd = socket(rak::socket_address::pf_inet, SOCK_DGRAM, 0)) != -1;
+    return (m_fd = socket(torrent::utils::socket_address::pf_inet, SOCK_DGRAM, 0)) != -1;
   }
   m_ipv6_socket = true;
 
@@ -161,7 +161,7 @@ SocketFd::open_datagram() {
 
 bool
 SocketFd::open_local() {
-  return (m_fd = socket(rak::socket_address::pf_local, SOCK_STREAM, 0)) != -1;
+  return (m_fd = socket(torrent::utils::socket_address::pf_local, SOCK_STREAM, 0)) != -1;
 }
 
 void
@@ -171,11 +171,11 @@ SocketFd::close() {
 }
 
 bool
-SocketFd::bind(const rak::socket_address& sa) {
+SocketFd::bind(const torrent::utils::socket_address& sa) {
   check_valid();
 
-  if (m_ipv6_socket && sa.family() == rak::socket_address::pf_inet) {
-    rak::socket_address_inet6 sa_mapped = sa.sa_inet()->to_mapped_address();
+  if (m_ipv6_socket && sa.family() == torrent::utils::socket_address::pf_inet) {
+    torrent::utils::socket_address_inet6 sa_mapped = sa.sa_inet()->to_mapped_address();
     return !::bind(m_fd, sa_mapped.c_sockaddr(), sizeof(sa_mapped));
   }
 
@@ -183,11 +183,11 @@ SocketFd::bind(const rak::socket_address& sa) {
 }
 
 bool
-SocketFd::bind(const rak::socket_address& sa, unsigned int length) {
+SocketFd::bind(const torrent::utils::socket_address& sa, unsigned int length) {
   check_valid();
 
-  if (m_ipv6_socket && sa.family() == rak::socket_address::pf_inet) {
-    rak::socket_address_inet6 sa_mapped = sa.sa_inet()->to_mapped_address();
+  if (m_ipv6_socket && sa.family() == torrent::utils::socket_address::pf_inet) {
+    torrent::utils::socket_address_inet6 sa_mapped = sa.sa_inet()->to_mapped_address();
     return !::bind(m_fd, sa_mapped.c_sockaddr(), sizeof(sa_mapped));
   }
 
@@ -195,11 +195,11 @@ SocketFd::bind(const rak::socket_address& sa, unsigned int length) {
 }
 
 bool
-SocketFd::connect(const rak::socket_address& sa) {
+SocketFd::connect(const torrent::utils::socket_address& sa) {
   check_valid();
 
-  if (m_ipv6_socket && sa.family() == rak::socket_address::pf_inet) {
-    rak::socket_address_inet6 sa_mapped = sa.sa_inet()->to_mapped_address();
+  if (m_ipv6_socket && sa.family() == torrent::utils::socket_address::pf_inet) {
+    torrent::utils::socket_address_inet6 sa_mapped = sa.sa_inet()->to_mapped_address();
     return !::connect(m_fd, sa_mapped.c_sockaddr(), sizeof(sa_mapped)) || errno == EINPROGRESS;
   }
 
@@ -207,15 +207,15 @@ SocketFd::connect(const rak::socket_address& sa) {
 }
 
 bool
-SocketFd::getsockname(rak::socket_address *sa) {
+SocketFd::getsockname(torrent::utils::socket_address *sa) {
   check_valid();
 
-  socklen_t len = sizeof(rak::socket_address);
+  socklen_t len = sizeof(torrent::utils::socket_address);
   if (::getsockname(m_fd, sa->c_sockaddr(), &len)) {
     return false;
   }
 
-  if (m_ipv6_socket && sa->family() == rak::socket_address::af_inet6) {
+  if (m_ipv6_socket && sa->family() == torrent::utils::socket_address::af_inet6) {
     *sa = sa->sa_inet6()->normalize_address();
   }
 
@@ -230,15 +230,15 @@ SocketFd::listen(int size) {
 }
 
 SocketFd
-SocketFd::accept(rak::socket_address* sa) {
+SocketFd::accept(torrent::utils::socket_address* sa) {
   check_valid();
-  socklen_t len = sizeof(rak::socket_address);
+  socklen_t len = sizeof(torrent::utils::socket_address);
 
   if (sa == NULL) {
     return SocketFd(::accept(m_fd, NULL, &len));
   }
   int fd = ::accept(m_fd, sa->c_sockaddr(), &len);
-  if (fd != -1 && m_ipv6_socket && sa->family() == rak::socket_address::af_inet6) {
+  if (fd != -1 && m_ipv6_socket && sa->family() == torrent::utils::socket_address::af_inet6) {
     *sa = sa->sa_inet6()->normalize_address();
   }
   return SocketFd(fd);

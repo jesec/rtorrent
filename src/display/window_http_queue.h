@@ -65,7 +65,7 @@ private:
 
     core::CurlGet* m_http;
     std::string    m_name;
-    rak::timer     m_timer;
+    torrent::utils::timer     m_timer;
   };
 
   typedef std::list<Node> Container;

@@ -36,8 +36,8 @@
 
 #include "config.h"
 
-#include <rak/allocators.h>
-#include <rak/error_number.h>
+#include <torrent/utils/allocators.h>
+#include <torrent/utils/error_number.h>
 #include <cstdio>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -53,16 +53,16 @@
 
 // Test:
 // #include "core/manager.h"
-// #include <rak/timer.h>
+// #include <torrent/utils/timer.h>
 
-// static rak::timer scgiTimer;
+// static torrent::utils::timer scgiTimer;
 
 namespace rpc {
 
 // If bufferSize is zero then memcpy won't do anything.
 inline void
 SCgiTask::realloc_buffer(uint32_t size, const char* buffer, uint32_t bufferSize) {
-  char* tmp = rak::cacheline_allocator<char>::alloc_size(size);
+  char* tmp = torrent::utils::cacheline_allocator<char>::alloc_size(size);
 
   std::memcpy(tmp, buffer, bufferSize);
   ::free(m_buffer);
@@ -73,7 +73,7 @@ void
 SCgiTask::open(SCgi* parent, int fd) {
   m_parent   = parent;
   m_fileDesc = fd;
-  m_buffer   = rak::cacheline_allocator<char>::alloc_size((m_bufferSize = default_buffer_size) + 1);
+  m_buffer   = torrent::utils::cacheline_allocator<char>::alloc_size((m_bufferSize = default_buffer_size) + 1);
   m_position = m_buffer;
   m_body     = NULL;
 
@@ -81,7 +81,7 @@ SCgiTask::open(SCgi* parent, int fd) {
   worker_thread->poll()->insert_read(this);
   worker_thread->poll()->insert_error(this);
 
-//   scgiTimer = rak::timer::current();
+//   scgiTimer = torrent::utils::timer::current();
 }
 
 void
@@ -102,7 +102,7 @@ SCgiTask::close() {
 
   // Test
 //   char buffer[512];
-//   sprintf(buffer, "SCgi system call processed: %i", (int)(rak::timer::current() - scgiTimer).usec());
+//   sprintf(buffer, "SCgi system call processed: %i", (int)(torrent::utils::timer::current() - scgiTimer).usec());
 //   control->core()->push_log(std::string(buffer));
 }
 
@@ -111,7 +111,7 @@ SCgiTask::event_read() {
   int bytes = ::recv(m_fileDesc, m_position, m_bufferSize - (m_position - m_buffer), 0);
 
   if (bytes <= 0) {
-    if (bytes == 0 || !rak::error_number::current().is_blocked_momentary())
+    if (bytes == 0 || !torrent::utils::error_number::current().is_blocked_momentary())
       close();
 
     return;
@@ -177,12 +177,10 @@ SCgiTask::event_read() {
   worker_thread->poll()->insert_write(this);
 
   if (m_parent->log_fd() >= 0) {
-    int __UNUSED result;
-
     // Clean up logging, this is just plain ugly...
     //    write(m_logFd, "\n---\n", sizeof("\n---\n"));
-    result = write(m_parent->log_fd(), m_buffer, m_bufferSize);
-    result = write(m_parent->log_fd(), "\n---\n", sizeof("\n---\n"));
+    write(m_parent->log_fd(), m_buffer, m_bufferSize);
+    write(m_parent->log_fd(), "\n---\n", sizeof("\n---\n"));
   }
 
   lt_log_print_dump(torrent::LOG_RPC_DUMP, m_body, m_bufferSize - std::distance(m_buffer, m_body), "scgi", "RPC read.", 0);
@@ -203,7 +201,7 @@ SCgiTask::event_write() {
   int bytes = ::send(m_fileDesc, m_position, m_bufferSize, 0);
 
   if (bytes == -1) {
-    if (!rak::error_number::current().is_blocked_momentary())
+    if (!torrent::utils::error_number::current().is_blocked_momentary())
       close();
 
     return;
@@ -239,7 +237,7 @@ SCgiTask::receive_write(const char* buffer, uint32_t length) {
   std::memcpy(m_buffer + headerSize, buffer, length);
 
   if (m_parent->log_fd() >= 0) {
-    int __UNUSED result;
+    int result;
     // Clean up logging, this is just plain ugly...
     //    write(m_logFd, "\n---\n", sizeof("\n---\n"));
     result = write(m_parent->log_fd(), m_buffer, m_bufferSize);

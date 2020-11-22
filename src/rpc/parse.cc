@@ -39,7 +39,7 @@
 #include <cstring>
 #include <cstdio>
 #include <locale>
-#include <rak/path.h>
+#include <torrent/utils/path.h>
 #include <torrent/exceptions.h>
 
 #include "parse.h"
@@ -433,7 +433,7 @@ print_object(char* first, char* last, const torrent::Object* src, int flags) {
     const std::string& str = src->as_string();
 
     if ((flags & print_expand_tilde) && *str.c_str() == '~') {
-      return rak::path_expand(str.c_str(), first, last);
+      return torrent::utils::path_expand(str.c_str(), first, last);
 
     } else {
       if (first == last)
@@ -482,7 +482,7 @@ print_object_std(std::string* dest, const torrent::Object* src, int flags) {
     const std::string& str = src->as_string();
 
     if ((flags & print_expand_tilde) && *str.c_str() == '~')
-      *dest += rak::path_expand(str);
+      *dest += torrent::utils::path_expand(str);
     else
       *dest += str;
 

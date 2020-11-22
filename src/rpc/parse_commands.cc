@@ -39,8 +39,8 @@
 #include <algorithm>
 #include <fstream>
 #include <string>
-#include <rak/functional.h>
-#include <rak/path.h>
+#include <torrent/utils/functional.h>
+#include <torrent/utils/path.h>
 #include <torrent/exceptions.h>
 
 #include "parse.h"
@@ -183,7 +183,7 @@ parse_command_multiple(target_type target, const char* first, const char* last) 
 
 bool
 parse_command_file(const std::string& path) {
-  std::fstream file(rak::path_expand(path).c_str(), std::ios::in);
+  std::fstream file(torrent::utils::path_expand(path).c_str(), std::ios::in);
 
   if (!file.is_open())
     return false;

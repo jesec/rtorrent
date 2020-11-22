@@ -13,10 +13,10 @@ CPPUNIT_TEST_SUITE_REGISTRATION(CommandMapTest);
   m_map.insert_slot<rpc::command_base_is_type<rpc::function>::type>(key, slot, &rpc::function,   \
                     rpc::CommandMap::flag_dont_delete | rpc::CommandMap::flag_public_xmlrpc, NULL, NULL);
 
-torrent::Object cmd_test_map_a(rpc::target_type t, const torrent::Object& obj) { return obj; }
-torrent::Object cmd_test_map_b(rpc::target_type t, const torrent::Object& obj, uint64_t c) { return torrent::Object(c); }
+torrent::Object cmd_test_map_a(rpc::target_type, const torrent::Object& obj) { return obj; }
+torrent::Object cmd_test_map_b(rpc::target_type, const torrent::Object&, uint64_t c) { return torrent::Object(c); }
 
-torrent::Object cmd_test_any_string(__UNUSED rpc::target_type target, const std::string& rawArgs) { return (int64_t)3; }
+torrent::Object cmd_test_any_string(rpc::target_type, const std::string&) { return (int64_t)3; }
 
 void
 CommandMapTest::test_basics() {

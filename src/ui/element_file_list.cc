@@ -36,7 +36,7 @@
 
 #include "config.h"
 
-#include <rak/algorithm.h>
+#include <torrent/utils/algorithm.h>
 #include <torrent/exceptions.h>
 #include <torrent/data/file.h>
 #include <torrent/data/file_list.h>
@@ -220,7 +220,7 @@ ElementFileList::receive_pagenext() {
     m_selected = iterator(fl->begin());
 
   } else {
-    m_selected = rak::advance_forward(m_selected, iterator(fl->end()), (m_window->height() - 1) / 2);
+    m_selected = torrent::utils::advance_forward(m_selected, iterator(fl->end()), (m_window->height() - 1) / 2);
 
     if (m_selected == iterator(fl->end()))
       m_selected = --iterator(fl->end());
@@ -239,7 +239,7 @@ ElementFileList::receive_pageprev() {
   if (m_selected == iterator(fl->begin()))
     m_selected = --iterator(fl->end());
   else
-    m_selected = rak::advance_backward(m_selected, iterator(fl->begin()), (m_window->height() - 1) / 2);
+    m_selected = torrent::utils::advance_backward(m_selected, iterator(fl->begin()), (m_window->height() - 1) / 2);
 
   update_itr();
 }

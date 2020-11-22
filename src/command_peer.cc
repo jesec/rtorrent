@@ -36,10 +36,10 @@
 
 #include "config.h"
 
-#include <rak/error_number.h>
-#include <rak/path.h>
-#include <rak/socket_address.h>
-#include <rak/string_manip.h>
+#include <torrent/utils/error_number.h>
+#include <torrent/utils/path.h>
+#include <torrent/utils/socket_address.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/bitfield.h>
 #include <torrent/rate.h>
 #include <torrent/peer/connection_list.h>
@@ -57,21 +57,21 @@ torrent::Object
 retrieve_p_id(torrent::Peer* peer) {
   const torrent::HashString* hashString = &peer->id();
 
-  return rak::transform_hex(hashString->begin(), hashString->end());
+  return torrent::utils::transform_hex(hashString->begin(), hashString->end());
 }
 
 torrent::Object
 retrieve_p_id_html(torrent::Peer* peer) {
   const torrent::HashString* hashString = &peer->id();
 
-  return rak::copy_escape_html(hashString->begin(), hashString->end());
+  return torrent::utils::copy_escape_html(hashString->begin(), hashString->end());
 }
 
 torrent::Object
 retrieve_p_address(torrent::Peer* peer) {
-  const rak::socket_address *addr = rak::socket_address::cast_from(peer->peer_info()->socket_address());
+  const torrent::utils::socket_address *addr = torrent::utils::socket_address::cast_from(peer->peer_info()->socket_address());
 
-  if (addr->family() == rak::socket_address::af_inet6)
+  if (addr->family() == torrent::utils::socket_address::af_inet6)
     return "[" + addr->address_str() + "]";
   else
     return addr->address_str();
@@ -79,7 +79,7 @@ retrieve_p_address(torrent::Peer* peer) {
 
 torrent::Object
 retrieve_p_port(torrent::Peer* peer) {
-  return rak::socket_address::cast_from(peer->peer_info()->socket_address())->port();
+  return torrent::utils::socket_address::cast_from(peer->peer_info()->socket_address())->port();
 }
 
 torrent::Object
@@ -92,7 +92,7 @@ retrieve_p_client_version(torrent::Peer* peer) {
 
 torrent::Object
 retrieve_p_options_str(torrent::Peer* peer) {
-  return rak::transform_hex(peer->peer_info()->options(), peer->peer_info()->options() + 8);
+  return torrent::utils::transform_hex(peer->peer_info()->options(), peer->peer_info()->options() + 8);
 }
 
 torrent::Object

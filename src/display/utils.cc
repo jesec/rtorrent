@@ -40,8 +40,8 @@
 #include <cstdio>
 #include <sstream>
 #include <iomanip>
-#include <rak/socket_address.h>
-#include <rak/timer.h>
+#include <torrent/utils/socket_address.h>
+#include <torrent/utils/timer.h>
 #include <torrent/exceptions.h>
 #include <torrent/connection_manager.h>
 #include <torrent/rate.h>
@@ -116,7 +116,7 @@ print_ddmmyyyy(char* first, char* last, time_t t) {
 }
 
 char*
-print_address(char* first, char* last, const rak::socket_address* sa) {
+print_address(char* first, char* last, const torrent::utils::socket_address* sa) {
   if (!sa->address_c_str(first, last - first))
     return first;
 
@@ -125,7 +125,7 @@ print_address(char* first, char* last, const rak::socket_address* sa) {
 
 inline char*
 print_address(char* first, char* last, const sockaddr* sa) {
-  return print_address(first, last, rak::socket_address::cast_from(sa));
+  return print_address(first, last, torrent::utils::socket_address::cast_from(sa));
 }
 
 char*
@@ -418,7 +418,7 @@ print_status_info(char* first, char* last) {
 
   first = print_buffer(first, last, " [Port: %i]", (unsigned int)torrent::connection_manager()->listen_port());
 
-  if (!rak::socket_address::cast_from(torrent::connection_manager()->local_address())->is_address_any()) {
+  if (!torrent::utils::socket_address::cast_from(torrent::connection_manager()->local_address())->is_address_any()) {
     first = print_buffer(first, last, " [Local ");
     first = print_address(first, last, torrent::connection_manager()->local_address());
     first = print_buffer(first, last, "]");
@@ -427,7 +427,7 @@ print_status_info(char* first, char* last) {
   if (first > last)
     throw torrent::internal_error("print_status_info(...) wrote past end of the buffer.");
 
-  if (!rak::socket_address::cast_from(torrent::connection_manager()->bind_address())->is_address_any()) {
+  if (!torrent::utils::socket_address::cast_from(torrent::connection_manager()->bind_address())->is_address_any()) {
     first = print_buffer(first, last, " [Bind ");
     first = print_address(first, last, torrent::connection_manager()->bind_address());
     first = print_buffer(first, last, "]");

@@ -54,7 +54,7 @@ public:
 
   bool                is_queued() const           { return m_task.is_queued(); }
 
-  void                enable(rak::timer t);
+  void                enable(torrent::utils::timer t);
   void                disable();
 
   const std::string&  key() const                 { return m_key; }
@@ -64,8 +64,8 @@ public:
   uint32_t            interval() const            { return m_interval; }
   void                set_interval(uint32_t v)    { m_interval = v; }
 
-  rak::timer          time_scheduled() const      { return m_timeScheduled; }
-  rak::timer          next_time_scheduled() const;
+  torrent::utils::timer          time_scheduled() const      { return m_timeScheduled; }
+  torrent::utils::timer          next_time_scheduled() const;
 
   slot_void&          slot()                      { return m_task.slot(); }
 
@@ -77,9 +77,9 @@ private:
   torrent::Object     m_command;
   
   uint32_t            m_interval;
-  rak::timer          m_timeScheduled;
+  torrent::utils::timer          m_timeScheduled;
 
-  rak::priority_item  m_task;
+  torrent::utils::priority_item  m_task;
 
   // Flags for various things.
 };

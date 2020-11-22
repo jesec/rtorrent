@@ -39,12 +39,11 @@
 #include <functional>
 #include <unistd.h>
 #include <cstdio>
-#include <rak/file_stat.h>
-#include <rak/error_number.h>
-#include <rak/path.h>
-#include <rak/socket_address.h>
-#include <rak/string_manip.h>
-#include <rak/regex.h>
+#include <torrent/utils/file_stat.h>
+#include <torrent/utils/error_number.h>
+#include <torrent/utils/path.h>
+#include <torrent/utils/socket_address.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/rate.h>
 #include <torrent/throttle.h>
 #include <torrent/tracker.h>
@@ -64,6 +63,7 @@
 #include "core/download_store.h"
 #include "core/manager.h"
 #include "rpc/parse.h"
+#include "utils/regex.h"
 
 #include "globals.h"
 #include "control.h"
@@ -113,23 +113,23 @@ apply_d_change_link(core::Download* download, const torrent::Object::list_type& 
 
   if (type == "base_path") {
     target = rpc::call_command_string("d.base_path", rpc::make_target(download));
-    link = rak::path_expand(prefix + rpc::call_command_string("d.base_path", rpc::make_target(download)) + postfix);
+    link = torrent::utils::path_expand(prefix + rpc::call_command_string("d.base_path", rpc::make_target(download)) + postfix);
 
   } else if (type == "base_filename") {
     target = rpc::call_command_string("d.base_path", rpc::make_target(download));
-    link = rak::path_expand(prefix + rpc::call_command_string("d.base_filename", rpc::make_target(download)) + postfix);
+    link = torrent::utils::path_expand(prefix + rpc::call_command_string("d.base_filename", rpc::make_target(download)) + postfix);
 
 //   } else if (type == "directory_path") {
 //     target = rpc::call_command_string("d.directory", rpc::make_target(download));
-//     link = rak::path_expand(prefix + rpc::call_command_string("d.base_path", rpc::make_target(download)) + postfix);
+//     link = torrent::utils::path_expand(prefix + rpc::call_command_string("d.base_path", rpc::make_target(download)) + postfix);
 
   } else if (type == "tied") {
-    link = rak::path_expand(rpc::call_command_string("d.tied_to_file", rpc::make_target(download)));
+    link = torrent::utils::path_expand(rpc::call_command_string("d.tied_to_file", rpc::make_target(download)));
 
     if (link.empty())
       return torrent::Object();
 
-    link = rak::path_expand(prefix + link + postfix);
+    link = torrent::utils::path_expand(prefix + link + postfix);
     target = rpc::call_command_string("d.base_path", rpc::make_target(download));
 
   } else {
@@ -140,19 +140,19 @@ apply_d_change_link(core::Download* download, const torrent::Object::list_type& 
   case 0:
     if (symlink(target.c_str(), link.c_str()) == -1){
       lt_log_print(torrent::LOG_TORRENT_WARN, "create_link failed: %s",
-                   rak::error_number::current().c_str());
+                   torrent::utils::error_number::current().c_str());
     }
     break;
 
   case 1:
   {
-    rak::file_stat fileStat;
-    rak::error_number::clear_global();
+    torrent::utils::file_stat fileStat;
+    torrent::utils::error_number::clear_global();
 
     if (!fileStat.update_link(link) || !fileStat.is_link() ||
         unlink(link.c_str()) == -1){
       lt_log_print(torrent::LOG_TORRENT_WARN, "delete_link failed: %s",
-          rak::error_number::current().c_str());
+          torrent::utils::error_number::current().c_str());
     }
     break;
   }
@@ -170,8 +170,8 @@ apply_d_delete_tied(core::Download* download) {
   if (tie.empty())
     return torrent::Object();
 
-  if (::unlink(rak::path_expand(tie).c_str()) == -1)
-    control->core()->push_log_std("Could not unlink tied file: " + std::string(rak::error_number::current().c_str()));
+  if (::unlink(torrent::utils::path_expand(tie).c_str()) == -1)
+    control->core()->push_log_std("Could not unlink tied file: " + std::string(torrent::utils::error_number::current().c_str()));
 
   rpc::call_command("d.tied_to_file.set", std::string(), rpc::make_target(download));
   return torrent::Object();
@@ -316,7 +316,7 @@ retrieve_d_bitfield(core::Download* download) {
   if (bitField->empty())
     return torrent::Object("");
 
-  return torrent::Object(rak::transform_hex(bitField->begin(), bitField->end()));
+  return torrent::Object(torrent::utils::transform_hex(bitField->begin(), bitField->end()));
 }
 
 struct call_add_d_peer_t {
@@ -356,7 +356,7 @@ apply_d_add_peer(core::Download* download, const std::string& arg) {
   if (port < 1 || port > 65535)
     throw torrent::input_error("Invalid port number.");
 
-  torrent::connection_manager()->resolver()(host, (int)rak::socket_address::pf_unspec, SOCK_STREAM, call_add_d_peer_t(download, port));
+  torrent::connection_manager()->resolver()(host, (int)torrent::utils::socket_address::pf_unspec, SOCK_STREAM, call_add_d_peer_t(download, port));
 }
 
 torrent::Object
@@ -371,7 +371,7 @@ d_chunks_seen(core::Download* download) {
   std::string result;
   result.resize(size * 2);
 
-  rak::transform_hex((const char*)seen, (const char*)seen + size, result.begin());
+  torrent::utils::transform_hex((const char*)seen, (const char*)seen + size, result.begin());
   return result;
 }
 
@@ -387,7 +387,7 @@ f_multicall(core::Download* download, const torrent::Object::list_type& args) {
   // parsing and searching command map for every single call.
   torrent::Object             resultRaw = torrent::Object::create_list();
   torrent::Object::list_type& result = resultRaw.as_list();
-  std::vector<rak::regex>     regex_list;
+  std::vector<utils::regex>     regex_list;
 
   bool use_regex = true;
 
@@ -403,7 +403,7 @@ f_multicall(core::Download* download, const torrent::Object::list_type& args) {
   for (torrent::FileList::const_iterator itr = download->file_list()->begin(), last = download->file_list()->end(); itr != last; itr++) {
     if (use_regex &&
         std::find_if(regex_list.begin(), regex_list.end(),
-                     std::bind(&rak::regex::operator(), std::placeholders::_1, (*itr)->path()->as_string())) == regex_list.end())
+                     std::bind(&utils::regex::operator(), std::placeholders::_1, (*itr)->path()->as_string())) == regex_list.end())
       continue;
 
     torrent::Object::list_type& row = result.insert(result.end(), torrent::Object::create_list())->as_list();
@@ -594,7 +594,7 @@ d_list_push_back_unique(core::Download* download, const torrent::Object& rawArgs
   torrent::Object::list_type& list = download_get_variable(download, first_key, second_key).as_list();
 
   if (std::find_if(list.begin(), list.end(),
-                   rak::bind1st(std::ptr_fun(&torrent::object_equal), args)) == list.end())
+                   torrent::utils::bind1st(std::ptr_fun(&torrent::object_equal), args)) == list.end())
     list.push_back(rawArgs);
 
   return torrent::Object();
@@ -606,7 +606,7 @@ d_list_has(core::Download* download, const torrent::Object& rawArgs, const char*
   torrent::Object::list_type& list = download_get_variable(download, first_key, second_key).as_list();
 
   return (int64_t)(std::find_if(list.begin(), list.end(),
-                                rak::bind1st(std::ptr_fun(&torrent::object_equal), args)) != list.end());
+                                torrent::utils::bind1st(std::ptr_fun(&torrent::object_equal), args)) != list.end());
 }
 
 torrent::Object
@@ -614,7 +614,7 @@ d_list_remove(core::Download* download, const torrent::Object& rawArgs, const ch
   const torrent::Object& args = (rawArgs.is_list() && !rawArgs.as_list().empty()) ? rawArgs.as_list().front() : rawArgs;
   torrent::Object::list_type& list = download_get_variable(download, first_key, second_key).as_list();
 
-  list.erase(std::remove_if(list.begin(), list.end(), rak::bind1st(std::ptr_fun(&torrent::object_equal), args)), list.end());
+  list.erase(std::remove_if(list.begin(), list.end(), torrent::utils::bind1st(std::ptr_fun(&torrent::object_equal), args)), list.end());
 
   return torrent::Object();
 }
@@ -673,9 +673,9 @@ void               cg_d_group_set(core::Download* download, const torrent::Objec
 
 void
 initialize_command_download() {
-  CMD2_DL("d.hash",          std::bind(&rak::transform_hex_str<torrent::HashString>, CMD2_ON_INFO(hash)));
-  CMD2_DL("d.local_id",      std::bind(&rak::transform_hex_str<torrent::HashString>, CMD2_ON_INFO(local_id)));
-  CMD2_DL("d.local_id_html", std::bind(&rak::copy_escape_html_str<torrent::HashString>, CMD2_ON_INFO(local_id)));
+  CMD2_DL("d.hash",          std::bind(&torrent::utils::transform_hex_str<torrent::HashString>, CMD2_ON_INFO(hash)));
+  CMD2_DL("d.local_id",      std::bind(&torrent::utils::transform_hex_str<torrent::HashString>, CMD2_ON_INFO(local_id)));
+  CMD2_DL("d.local_id_html", std::bind(&torrent::utils::copy_escape_html_str<torrent::HashString>, CMD2_ON_INFO(local_id)));
   CMD2_DL("d.bitfield",      std::bind(&retrieve_d_bitfield, std::placeholders::_1));
   CMD2_DL("d.base_path",     std::bind(&retrieve_d_base_path, std::placeholders::_1));
   CMD2_DL("d.base_filename", std::bind(&retrieve_d_base_filename, std::placeholders::_1));

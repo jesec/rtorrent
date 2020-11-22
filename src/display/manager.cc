@@ -38,7 +38,7 @@
 
 #include <stdexcept>
 #include <algorithm>
-#include <rak/functional.h>
+#include <torrent/utils/functional.h>
 
 #include "canvas.h"
 #include "globals.h"
@@ -63,15 +63,15 @@ Manager::force_redraw() {
 }
 
 void
-Manager::schedule(Window* w, rak::timer t) {
-  rak::priority_queue_erase(&m_scheduler, w->task_update());
-  rak::priority_queue_insert(&m_scheduler, w->task_update(), t);
+Manager::schedule(Window* w, torrent::utils::timer t) {
+  torrent::utils::priority_queue_erase(&m_scheduler, w->task_update());
+  torrent::utils::priority_queue_insert(&m_scheduler, w->task_update(), t);
   schedule_update(50000);
 }
 
 void
 Manager::unschedule(Window* w) {
-  rak::priority_queue_erase(&m_scheduler, w->task_update());
+  torrent::utils::priority_queue_erase(&m_scheduler, w->task_update());
   schedule_update(50000);
 }
 
@@ -97,7 +97,7 @@ Manager::receive_update() {
 
   Canvas::refresh_std();
 
-  rak::priority_queue_perform(&m_scheduler, cachedTime);
+  torrent::utils::priority_queue_perform(&m_scheduler, cachedTime);
   m_rootFrame.refresh();
 
   Canvas::do_update();
@@ -109,13 +109,13 @@ Manager::receive_update() {
 void
 Manager::schedule_update(uint32_t minInterval) {
   if (m_scheduler.empty()) {
-    rak::priority_queue_erase(&taskScheduler, &m_taskUpdate);
+    torrent::utils::priority_queue_erase(&taskScheduler, &m_taskUpdate);
     return;
   }
 
   if (!m_taskUpdate.is_queued() || m_taskUpdate.time() > m_scheduler.top()->time()) {
-    rak::priority_queue_erase(&taskScheduler, &m_taskUpdate);
-    rak::priority_queue_insert(&taskScheduler, &m_taskUpdate, std::max(m_scheduler.top()->time(), m_timeLastUpdate + minInterval));
+    torrent::utils::priority_queue_erase(&taskScheduler, &m_taskUpdate);
+    torrent::utils::priority_queue_insert(&taskScheduler, &m_taskUpdate, std::max(m_scheduler.top()->time(), m_timeLastUpdate + minInterval));
   }
 }
 

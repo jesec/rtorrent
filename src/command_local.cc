@@ -40,8 +40,8 @@
 #include <functional>
 #include <stdio.h>
 #include <unistd.h>
-#include <rak/path.h>
-#include <rak/error_number.h>
+#include <torrent/utils/path.h>
+#include <torrent/utils/error_number.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <torrent/torrent.h>
@@ -49,12 +49,12 @@
 #include <torrent/data/file_manager.h>
 #include <torrent/data/chunk_utils.h>
 #include <torrent/utils/option_strings.h>
+#include <torrent/utils/string_manip.h>
 
 #include "core/download.h"
 #include "core/download_list.h"
 #include "core/download_store.h"
 #include "core/manager.h"
-#include "rak/string_manip.h"
 #include "rpc/parse_commands.h"
 #include "rpc/scgi.h"
 #include "utils/file_status_cache.h"
@@ -131,7 +131,7 @@ post_increment(torrent::Object::list_const_iterator& itr, const torrent::Object:
 
 inline const std::string&
 check_name(const std::string& str) {
-  if (!rak::is_all_name(str))
+  if (!torrent::utils::is_all_name(str))
     throw torrent::input_error("Non-alphanumeric characters found.");
 
   return str;
@@ -219,7 +219,7 @@ cmd_file_append(const torrent::Object::list_type& args) {
   FILE* output = fopen(args.front().as_string().c_str(), "a");
 
   if (output == NULL)
-    throw torrent::input_error("Could not append to file '" + args.front().as_string() + "': " + rak::error_number::current().c_str());
+    throw torrent::input_error("Could not append to file '" + args.front().as_string() + "': " + torrent::utils::error_number::current().c_str());
 
   file_print_list(++args.begin(), args.end(), output, file_print_delim_space);
 
@@ -239,7 +239,7 @@ initialize_command_local() {
   CMD2_ANY         ("system.pid",      std::bind(&getpid));
 
   CMD2_VAR_C_STRING("system.api_version",           (int64_t)API_VERSION);
-  CMD2_VAR_C_STRING("system.client_version",        PACKAGE_VERSION);
+  CMD2_VAR_C_STRING("system.client_version",        VERSION);
   CMD2_VAR_C_STRING("system.library_version",       torrent::version());
   CMD2_VAR_VALUE   ("system.file.allocate",         0);
   CMD2_VAR_VALUE   ("system.file.max_size",         (int64_t)512 << 30);
@@ -260,9 +260,9 @@ initialize_command_local() {
 
   CMD2_ANY_STRING  ("system.env",                      std::bind(&system_env, std::placeholders::_2));
 
-  CMD2_ANY         ("system.time",                     std::bind(&rak::timer::seconds, &cachedTime));
-  CMD2_ANY         ("system.time_seconds",             std::bind(&rak::timer::current_seconds));
-  CMD2_ANY         ("system.time_usec",                std::bind(&rak::timer::current_usec));
+  CMD2_ANY         ("system.time",                     std::bind(&torrent::utils::timer::seconds, &cachedTime));
+  CMD2_ANY         ("system.time_seconds",             std::bind(&torrent::utils::timer::current_seconds));
+  CMD2_ANY         ("system.time_usec",                std::bind(&torrent::utils::timer::current_usec));
 
   CMD2_ANY_VALUE_V ("system.umask.set",                std::bind(&umask, std::placeholders::_2));
 

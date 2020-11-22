@@ -44,7 +44,7 @@
 #include <functional>
 #include <iosfwd>
 
-#include <rak/priority_queue_default.h>
+#include <torrent/utils/priority_queue_default.h>
 #include <torrent/object.h>
 
 #include "http_queue.h"
@@ -111,8 +111,8 @@ private:
   torrent::Object::map_type m_variables;
 
   slot_void           m_slot_finished;
-  rak::priority_item  m_taskLoad;
-  rak::priority_item  m_taskCommit;
+  torrent::utils::priority_item  m_taskLoad;
+  torrent::utils::priority_item  m_taskCommit;
 };
 
 bool is_network_uri(const std::string& uri);

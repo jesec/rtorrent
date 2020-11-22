@@ -48,7 +48,7 @@ namespace display {
 
 void
 WindowStatusbar::redraw() {
-  m_slotSchedule(this, (cachedTime + rak::timer::from_seconds(1)).round_seconds());
+  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
 
   m_canvas->erase();
 

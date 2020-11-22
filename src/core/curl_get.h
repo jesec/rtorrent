@@ -39,10 +39,10 @@
 
 #include <iosfwd>
 #include <string>
+
 #include <curl/curl.h>
 #include <torrent/http.h>
-
-#include "rak/priority_queue_default.h"
+#include <torrent/utils/priority_queue_default.h>
 
 namespace core {
 
@@ -53,7 +53,7 @@ public:
   friend class CurlStack;
 
   CurlGet(CurlStack* s) : m_active(false), m_handle(NULL), m_stack(s) {}
-  virtual ~CurlGet();
+  virtual ~CurlGet() noexcept(true);
 
   void               start();
   void               close();
@@ -80,7 +80,7 @@ private:
   bool               m_active;
   bool               m_ipv6;
 
-  rak::priority_item m_taskTimeout;
+  torrent::utils::priority_item m_taskTimeout;
   
   CURL*              m_handle;
   CurlStack*         m_stack;

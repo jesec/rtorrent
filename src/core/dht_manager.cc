@@ -131,7 +131,7 @@ DhtManager::start_dht() {
   torrent::dht_manager()->reset_statistics();
 
   m_updateTimeout.slot() = std::bind(&DhtManager::update, this);
-  priority_queue_insert(&taskScheduler, &m_updateTimeout, (cachedTime + rak::timer::from_seconds(60)).round_seconds());
+  priority_queue_insert(&taskScheduler, &m_updateTimeout, (cachedTime + torrent::utils::timer::from_seconds(60)).round_seconds());
 
   m_dhtPrevCycle = 0;
   m_dhtPrevQueriesSent = 0;
@@ -210,15 +210,15 @@ DhtManager::update() {
       
     if (itr == end) {
       m_stopTimeout.slot() = std::bind(&DhtManager::stop_dht, this);
-      priority_queue_insert(&taskScheduler, &m_stopTimeout, (cachedTime + rak::timer::from_seconds(15 * 60)).round_seconds());
+      priority_queue_insert(&taskScheduler, &m_stopTimeout, (cachedTime + torrent::utils::timer::from_seconds(15 * 60)).round_seconds());
     }
   }
 
   // While bootstrapping (log_statistics returns true), check every minute if it completed, otherwise update every 15 minutes.
   if (log_statistics(false))
-    priority_queue_insert(&taskScheduler, &m_updateTimeout, (cachedTime + rak::timer::from_seconds(60)).round_seconds());
+    priority_queue_insert(&taskScheduler, &m_updateTimeout, (cachedTime + torrent::utils::timer::from_seconds(60)).round_seconds());
   else
-    priority_queue_insert(&taskScheduler, &m_updateTimeout, (cachedTime + rak::timer::from_seconds(15 * 60)).round_seconds());
+    priority_queue_insert(&taskScheduler, &m_updateTimeout, (cachedTime + torrent::utils::timer::from_seconds(15 * 60)).round_seconds());
 }
 
 bool

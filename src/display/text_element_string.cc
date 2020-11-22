@@ -36,7 +36,7 @@
 
 #include "config.h"
 
-#include <rak/string_manip.h>
+#include <torrent/utils/string_manip.h>
 
 #include "rpc/parse_commands.h"
 #include "text_element_string.h"
@@ -55,13 +55,13 @@ TextElementStringBase::print(char* first, char* last, Canvas::attributes_list* a
     char buffer[last - first];
     char* bufferLast = copy_string(buffer, buffer + (last - first), target);
 
-    first = rak::transform_hex(buffer, bufferLast, first, last);
+    first = torrent::utils::transform_hex(buffer, bufferLast, first, last);
 
   } else if (m_flags & flag_escape_html) {
     char buffer[last - first];
     char* bufferLast = copy_string(buffer, buffer + (last - first), target);
 
-    first = rak::copy_escape_html(buffer, bufferLast, first, last);
+    first = torrent::utils::copy_escape_html(buffer, bufferLast, first, last);
 
   } else {
     first = copy_string(first, last, target);
@@ -106,10 +106,10 @@ TextElementCommand::print(char* first, char* last, Canvas::attributes_list* attr
     const std::string& str = result.as_string();
 
     if (m_flags & flag_escape_hex) {
-      first = rak::transform_hex(str.c_str(), str.c_str() + str.size(), first, last);
+      first = torrent::utils::transform_hex(str.c_str(), str.c_str() + str.size(), first, last);
 
     } else if (m_flags & flag_escape_html) {
-      first = rak::copy_escape_html(str.c_str(), str.c_str() + str.size(), first, last);
+      first = torrent::utils::copy_escape_html(str.c_str(), str.c_str() + str.size(), first, last);
 
     } else {
       size_t length = std::min<size_t>(str.size(), std::distance(first, last));

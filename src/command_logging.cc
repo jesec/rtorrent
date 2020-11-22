@@ -7,11 +7,11 @@
 #include <torrent/object.h>
 #include <torrent/utils/log.h>
 #include <torrent/utils/option_strings.h>
+#include <torrent/utils/path.h>
 
 #include "core/download.h"
 #include "core/download_list.h"
 #include "core/manager.h"
-#include "rak/path.h"
 #include "rpc/parse_commands.h"
 
 #include "globals.h"
@@ -36,7 +36,7 @@ apply_log_open(int output_flags, const torrent::Object::list_type& args) {
   torrent::Object::list_const_iterator itr = args.begin();
 
   std::string output_id = (itr++)->as_string();
-  std::string file_name = rak::path_expand((itr++)->as_string());
+  std::string file_name = torrent::utils::path_expand((itr++)->as_string());
 
   if ((output_flags & log_flag_append_pid)) {
     char buffer[32];
@@ -86,7 +86,7 @@ apply_log(const torrent::Object::string_type& arg, int logType) {
   }
 
   if (!arg.empty()) {
-    int logFd = open(rak::path_expand(arg).c_str(), O_WRONLY | O_APPEND | O_CREAT, 0644);
+    int logFd = open(torrent::utils::path_expand(arg).c_str(), O_WRONLY | O_APPEND | O_CREAT, 0644);
 
     if (logFd < 0)
       throw torrent::input_error("Could not open execute log file.");

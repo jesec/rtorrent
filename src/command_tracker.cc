@@ -37,8 +37,8 @@
 #include "config.h"
 
 #include <cstdio>
-#include <rak/address_info.h>
-#include <rak/error_number.h>
+#include <torrent/utils/address_info.h>
+#include <torrent/utils/error_number.h>
 #include <torrent/dht_manager.h>
 #include <torrent/tracker.h>
 #include <torrent/utils/log.h>
@@ -92,7 +92,7 @@ apply_dht_add_node(const std::string& arg) {
   if (port < 1 || port > 65535)
     throw torrent::input_error("Invalid port number.");
 
-  torrent::connection_manager()->resolver()(host, (int)rak::socket_address::pf_inet, SOCK_DGRAM, call_add_node_t(port));
+  torrent::connection_manager()->resolver()(host, (int)torrent::utils::socket_address::pf_inet, SOCK_DGRAM, call_add_node_t(port));
   return torrent::Object();
 }
 

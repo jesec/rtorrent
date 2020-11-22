@@ -37,7 +37,7 @@
 #include "config.h"
 
 #include <cstdio>
-#include <rak/address_info.h>
+#include <torrent/utils/address_info.h>
 #include <torrent/throttle.h>
 #include <torrent/rate.h>
 #include <torrent/download/resource_manager.h>
@@ -56,17 +56,17 @@ parse_address_range(const torrent::Object::list_type& args, torrent::Object::lis
   unsigned int prefixWidth, ret;
   char dummy;
   char host[1024];
-  rak::address_info* ai;
+  torrent::utils::address_info* ai;
 
   ret = std::sscanf(itr->as_string().c_str(), "%1023[^/]/%d%c", host, &prefixWidth, &dummy);
-  if (ret < 1 || rak::address_info::get_address_info(host, PF_INET, SOCK_STREAM, &ai) != 0)
+  if (ret < 1 || torrent::utils::address_info::get_address_info(host, PF_INET, SOCK_STREAM, &ai) != 0)
     throw torrent::input_error("Could not resolve host.");
 
   uint32_t begin, end;
-  rak::socket_address sa;
+  torrent::utils::socket_address sa;
   sa.copy(*ai->address(), ai->length());
   begin = end = sa.sa_inet()->address_h();
-  rak::address_info::free_address_info(ai);
+  torrent::utils::address_info::free_address_info(ai);
 
   if (ret == 2) {
     if (++itr != args.end())
@@ -79,11 +79,11 @@ parse_address_range(const torrent::Object::list_type& args, torrent::Object::lis
     end = sa.sa_inet()->address_h() | ~netmask;
 
   } else if (++itr != args.end()) {
-    if (rak::address_info::get_address_info(itr->as_string().c_str(), PF_INET, SOCK_STREAM, &ai) != 0)
+    if (torrent::utils::address_info::get_address_info(itr->as_string().c_str(), PF_INET, SOCK_STREAM, &ai) != 0)
       throw torrent::input_error("Could not resolve host.");
 
     sa.copy(*ai->address(), ai->length());
-    rak::address_info::free_address_info(ai);
+    torrent::utils::address_info::free_address_info(ai);
     end = sa.sa_inet()->address_h();
   }
 

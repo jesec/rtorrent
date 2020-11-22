@@ -39,8 +39,9 @@
 
 #include <cinttypes>
 #include <sys/types.h>
-#include <rak/timer.h>
-#include <rak/priority_queue_default.h>
+#include <torrent/buildinfo.h>
+#include <torrent/utils/timer.h>
+#include <torrent/utils/priority_queue_default.h>
 #include <torrent/torrent.h>
 
 namespace ui {
@@ -132,7 +133,7 @@ private:
   mode_t              m_umask;
   std::string         m_workingDirectory;
 
-  rak::priority_item  m_taskShutdown;
+  torrent::utils::priority_item  m_taskShutdown;
 
   bool                m_shutdownReceived lt_cacheline_aligned;
   bool                m_shutdownQuick lt_cacheline_aligned;

@@ -47,9 +47,9 @@ CommandSchedulerItem::~CommandSchedulerItem() {
 }
 
 void
-CommandSchedulerItem::enable(rak::timer t) {
-  if (t == rak::timer())
-    throw torrent::internal_error("CommandSchedulerItem::enable() t == rak::timer().");
+CommandSchedulerItem::enable(torrent::utils::timer t) {
+  if (t == torrent::utils::timer())
+    throw torrent::internal_error("CommandSchedulerItem::enable() t == torrent::utils::timer().");
 
   if (is_queued())
     disable();
@@ -63,23 +63,23 @@ CommandSchedulerItem::enable(rak::timer t) {
 
 void
 CommandSchedulerItem::disable() {
-  m_timeScheduled = rak::timer();
+  m_timeScheduled = torrent::utils::timer();
   priority_queue_erase(&taskScheduler, &m_task);
 }
 
-rak::timer
+torrent::utils::timer
 CommandSchedulerItem::next_time_scheduled() const {
   if (m_interval == 0)
-    return rak::timer();
+    return torrent::utils::timer();
 
-  if (m_timeScheduled == rak::timer())
-    throw torrent::internal_error("CommandSchedulerItem::next_time_scheduled() m_timeScheduled == rak::timer().");
+  if (m_timeScheduled == torrent::utils::timer())
+    throw torrent::internal_error("CommandSchedulerItem::next_time_scheduled() m_timeScheduled == torrent::utils::timer().");
 
-  rak::timer next = m_timeScheduled;
+  torrent::utils::timer next = m_timeScheduled;
 
   // This should be done in a non-looping manner.
   do {
-    next += rak::timer::from_seconds(m_interval);
+    next += torrent::utils::timer::from_seconds(m_interval);
   } while (next <= cachedTime.round_seconds());
 
   return next;

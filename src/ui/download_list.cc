@@ -38,8 +38,8 @@
 
 #include <sstream>
 
-#include <rak/functional.h>
-#include <rak/string_manip.h>
+#include <torrent/utils/functional.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/exceptions.h>
 #include <torrent/torrent.h>
 #include <torrent/utils/log.h>
@@ -86,7 +86,7 @@ DownloadList::~DownloadList() {
   if (is_active())
     throw std::logic_error("ui::DownloadList::~DownloadList() called on an active object");
 
-  std::for_each(m_uiArray, m_uiArray + DISPLAY_MAX_SIZE, rak::call_delete<ElementBase>());
+  std::for_each(m_uiArray, m_uiArray + DISPLAY_MAX_SIZE, torrent::utils::call_delete<ElementBase>());
 
   delete m_windowLog;
 }
@@ -270,7 +270,7 @@ DownloadList::receive_view_input(Input type) {
 
       while(ss.good()) {
           std::getline(ss, view_name_var, ',');
-          if (current_view()->name() == rak::trim(view_name_var)) {
+          if (current_view()->name() == torrent::utils::trim(view_name_var)) {
               control->core()->push_log_std("View '" + current_view()->name() + "' can't be filtered.");
               return;
           }
@@ -343,7 +343,7 @@ DownloadList::receive_exit_input(Input type) {
       if ((*current_view()->focus())->is_open())
         throw torrent::input_error("Cannot change root directory on an open download.");
 
-      rpc::call_command("d.directory.set", rak::trim(input->str()), rpc::make_target(*current_view()->focus()));
+      rpc::call_command("d.directory.set", torrent::utils::trim(input->str()), rpc::make_target(*current_view()->focus()));
       control->core()->push_log_std("New root directory \"" + rpc::call_command_string("d.directory", rpc::make_target(*current_view()->focus())) + "\" for torrent.");
       break;
 

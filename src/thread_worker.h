@@ -39,7 +39,8 @@
 
 #include "thread_base.h"
 
-#include <rak/priority_queue_default.h>
+#include <torrent/buildinfo.h>
+#include <torrent/utils/priority_queue_default.h>
 
 namespace rpc {
 class SCgi;

@@ -36,8 +36,8 @@
 
 #include "config.h"
 
-#include <rak/algorithm.h>
-#include <rak/string_manip.h>
+#include <torrent/utils/algorithm.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/exceptions.h>
 #include <torrent/tracker.h>
 #include <torrent/tracker_list.h>
@@ -58,7 +58,7 @@ WindowTrackerList::WindowTrackerList(core::Download* d, unsigned int* focus) :
 void
 WindowTrackerList::redraw() {
   // TODO: Make this depend on tracker signal.
-  m_slotSchedule(this, (cachedTime + rak::timer::from_seconds(10)).round_seconds());
+  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(10)).round_seconds());
   m_canvas->erase();
 
   unsigned int pos = 0;
@@ -77,7 +77,7 @@ WindowTrackerList::redraw() {
 
   typedef std::pair<unsigned int, unsigned int> Range;
 
-  Range range = rak::advance_bidirectional<unsigned int>(0, *m_focus, tl->size(), (m_canvas->height() - 1) / 2);
+  Range range = torrent::utils::advance_bidirectional<unsigned int>(0, *m_focus, tl->size(), (m_canvas->height() - 1) / 2);
   unsigned int group = tl->at(range.first)->group();
 
   while (range.first != range.second) {
@@ -101,7 +101,7 @@ WindowTrackerList::redraw() {
 
       m_canvas->print(0, pos++, "%s Id: %s Counters: %uf / %us (%u) %s S/L/D: %u/%u/%u (%u/%u)",
                       state,
-                      rak::copy_escape_html(tracker->tracker_id()).c_str(),
+                      torrent::utils::copy_escape_html(tracker->tracker_id()).c_str(),
                       tracker->failed_counter(),
                       tracker->success_counter(),
                       tracker->scrape_counter(),

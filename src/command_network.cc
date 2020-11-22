@@ -39,8 +39,8 @@
 #include <functional>
 #include <cstdio>
 #include <unistd.h>
-#include <rak/address_info.h>
-#include <rak/path.h>
+#include <torrent/utils/address_info.h>
+#include <torrent/utils/path.h>
 #include <torrent/connection_manager.h>
 #include <torrent/tracker.h>
 #include <torrent/tracker_list.h>
@@ -151,9 +151,9 @@ apply_scgi(const std::string& arg, int type) {
 
   rpc::SCgi* scgi = new rpc::SCgi;
 
-  rak::address_info* ai = NULL;
-  rak::socket_address sa;
-  rak::socket_address* saPtr;
+  torrent::utils::address_info* ai = NULL;
+  torrent::utils::socket_address sa;
+  torrent::utils::socket_address* saPtr;
 
   try {
     int port, err;
@@ -171,8 +171,8 @@ apply_scgi(const std::string& arg, int type) {
 
       } else if (std::sscanf(arg.c_str(), "%1023[^:]:%i%c", address, &port, &dummy) == 2 ||
                  std::sscanf(arg.c_str(), "[%64[^]]]:%i%c", address, &port, &dummy) == 2) { // [xx::xx]:port format
-        if ((err = rak::address_info::get_address_info(address,PF_UNSPEC, SOCK_STREAM, &ai)) != 0)
-          throw torrent::input_error("Could not bind address: " + std::string(rak::address_info::strerror(err)) + ".");
+        if ((err = torrent::utils::address_info::get_address_info(address,PF_UNSPEC, SOCK_STREAM, &ai)) != 0)
+          throw torrent::input_error("Could not bind address: " + std::string(torrent::utils::address_info::strerror(err)) + ".");
 
         saPtr = ai->address();
 
@@ -192,17 +192,17 @@ apply_scgi(const std::string& arg, int type) {
 
     case 2:
     default:
-      path = rak::path_expand(arg);
+      path = torrent::utils::path_expand(arg);
 
       unlink(path.c_str());
       scgi->open_named(path);
       break;
     }
 
-    if (ai != NULL) rak::address_info::free_address_info(ai);
+    if (ai != NULL) torrent::utils::address_info::free_address_info(ai);
 
   } catch (torrent::local_error& e) {
-    if (ai != NULL) rak::address_info::free_address_info(ai);
+    if (ai != NULL) torrent::utils::address_info::free_address_info(ai);
 
     delete scgi;
     throw torrent::input_error(e.what());

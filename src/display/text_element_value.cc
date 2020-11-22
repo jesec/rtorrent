@@ -74,7 +74,7 @@ TextElementValueBase::print(char* first, char* last, Canvas::attributes_list* at
     val = val - cachedTime.seconds();
 
   if (m_flags & flag_usec)
-    val = rak::timer(val).seconds();
+    val = torrent::utils::timer(val).seconds();
 
   // Print the value.
   if (first == last) {

@@ -38,7 +38,7 @@
 
 #include <cmath>
 #include <stdexcept>
-#include <rak/string_manip.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/data/block_list.h>
 #include <torrent/data/transfer_list.h>
 
@@ -56,7 +56,7 @@ WindowDownloadTransferList::WindowDownloadTransferList(core::Download* d, unsign
 void
 WindowDownloadTransferList::redraw() {
   // TODO: Make this depend on tracker signal.
-  m_slotSchedule(this, (cachedTime + rak::timer::from_seconds(1)).round_seconds());
+  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
   m_canvas->erase();
 
   if (m_canvas->height() < 3 || m_canvas->width() < 18)

@@ -39,9 +39,10 @@
 
 #include <pthread.h>
 #include <sys/types.h>
+
+#include <torrent/utils/priority_queue_default.h>
 #include <torrent/utils/thread_base.h>
 
-#include "rak/priority_queue_default.h"
 #include "core/poll_manager.h"
 
 // Move this class to libtorrent.
@@ -50,11 +51,11 @@ class thread_queue_hack;
 
 class ThreadBase : public torrent::thread_base {
 public:
-  typedef rak::priority_queue_default priority_queue;
+  typedef torrent::utils::priority_queue_default priority_queue;
   typedef void (*thread_base_func)(ThreadBase*);
 
   ThreadBase();
-  virtual ~ThreadBase();
+  virtual ~ThreadBase() noexcept(true);
 
   priority_queue&     task_scheduler() { return m_taskScheduler; }
 
@@ -76,9 +77,9 @@ protected:
 
   // The timer needs to be sync'ed when updated...
 
-  rak::priority_queue_default m_taskScheduler;
+  torrent::utils::priority_queue_default m_taskScheduler;
 
-  rak::priority_item  m_taskShutdown;
+  torrent::utils::priority_item  m_taskShutdown;
 
   // Temporary hack to pass messages to a thread. This really needs to
   // be cleaned up and/or integrated into the priority queue itself.

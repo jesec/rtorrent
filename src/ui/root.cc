@@ -39,7 +39,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <string.h>
-#include <rak/string_manip.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/throttle.h>
 #include <torrent/torrent.h>
 #include <torrent/download/resource_manager.h>
@@ -300,7 +300,7 @@ Root::add_to_input_history(ui::DownloadList::Input type, std::string item) {
 
   // Don't store item if it's empty or the same as the last one in the category.
   if (!item.empty() && item != itr->second.at(prev_item_pointer)) {
-      itr->second.at(pitr->second) = rak::trim(item);
+      itr->second.at(pitr->second) = torrent::utils::trim(item);
       m_input_history_pointers[type] = (pitr->second + 1) % m_input_history_length;
   }
 }
@@ -418,7 +418,7 @@ Root::load_input_history() {
           InputHistory::iterator itr = input_history_tmp.find(type);
 
           if (itr != input_history_tmp.end()) {
-            std::string input_str = rak::trim(line.substr(delim_pos + 1));
+            std::string input_str = torrent::utils::trim(line.substr(delim_pos + 1));
 
             if (!input_str.empty())
               itr->second.push_back(input_str);

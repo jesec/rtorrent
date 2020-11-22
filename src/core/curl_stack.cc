@@ -37,10 +37,11 @@
 #include "config.h"
 
 #include <algorithm>
+
 #include <curl/multi.h>
 #include <torrent/exceptions.h>
+#include <torrent/utils/functional.h>
 
-#include "rak/functional.h"
 #include "curl_get.h"
 #include "curl_socket.h"
 #include "curl_stack.h"
@@ -133,7 +134,7 @@ CurlStack::process_done_handle() {
     throw torrent::internal_error("CurlStack::receive_action() msg->msg != CURLMSG_DONE.");
 
   if (msg->data.result == CURLE_COULDNT_RESOLVE_HOST) {
-    iterator itr = std::find_if(begin(), end(), rak::equal(msg->easy_handle, std::mem_fun(&CurlGet::handle)));
+    iterator itr = std::find_if(begin(), end(), torrent::utils::equal(msg->easy_handle, std::mem_fun(&CurlGet::handle)));
  
     if (itr == end())
       throw torrent::internal_error("Could not find CurlGet when calling CurlStack::receive_action.");
@@ -155,7 +156,7 @@ CurlStack::process_done_handle() {
 
 void
 CurlStack::transfer_done(void* handle, const char* msg) {
-  iterator itr = std::find_if(begin(), end(), rak::equal(handle, std::mem_fun(&CurlGet::handle)));
+  iterator itr = std::find_if(begin(), end(), torrent::utils::equal(handle, std::mem_fun(&CurlGet::handle)));
 
   if (itr == end())
     throw torrent::internal_error("Could not find CurlGet with the right easy_handle.");
@@ -175,7 +176,7 @@ CurlStack::receive_timeout() {
     long timeout;
     curl_multi_timeout((CURLM*)m_handle, &timeout);
     priority_queue_insert(&taskScheduler, &m_taskTimeout, 
-                          cachedTime + rak::timer::from_milliseconds(std::max<unsigned long>(timeout, 10000)));
+                          cachedTime + torrent::utils::timer::from_milliseconds(std::max<unsigned long>(timeout, 10000)));
   }
 }
 
@@ -263,7 +264,7 @@ CurlStack::set_timeout(void* handle, long timeout_ms, void* userp) {
   CurlStack* stack = (CurlStack*)userp;
 
   priority_queue_erase(&taskScheduler, &stack->m_taskTimeout);
-  priority_queue_insert(&taskScheduler, &stack->m_taskTimeout, cachedTime + rak::timer::from_milliseconds(timeout_ms));
+  priority_queue_insert(&taskScheduler, &stack->m_taskTimeout, cachedTime + torrent::utils::timer::from_milliseconds(timeout_ms));
 
   return 0;
 }

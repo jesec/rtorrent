@@ -39,8 +39,8 @@
 #include <fcntl.h>
 #include <string>
 #include <unistd.h>
-#include <rak/error_number.h>
-#include <rak/path.h>
+#include <torrent/utils/error_number.h>
+#include <torrent/utils/path.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -63,19 +63,17 @@ const int ExecFile::flag_background;
 int
 ExecFile::execute(const char* file, char* const* argv, int flags) {
   // Write the execued command and its parameters to the log fd.
-  int __UNUSED result;
-
   if (m_logFd != -1) {
     for (char* const* itr = argv; *itr != NULL; itr++) {
       if (itr == argv)
-        result = write(m_logFd, "\n---\n", sizeof("\n---\n"));
+        write(m_logFd, "\n---\n", sizeof("\n---\n"));
       else
-        result = write(m_logFd, " ", 1);
+        write(m_logFd, " ", 1);
 
-      result = write(m_logFd, *itr, std::strlen(*itr));
+      write(m_logFd, *itr, std::strlen(*itr));
     }
 
-    result = write(m_logFd, "\n---\n", sizeof("\n---\n"));
+    write(m_logFd, "\n---\n", sizeof("\n---\n"));
   }
 
   int pipeFd[2];
@@ -97,8 +95,8 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
 
       if (detached_pid != 0) {
         if (m_logFd != -1)
-          result = write(m_logFd, "\n--- Background task ---\n", sizeof("\n--- Background task ---\n"));
-        
+          write(m_logFd, "\n--- Background task ---\n", sizeof("\n--- Background task ---\n"));
+
         _exit(0);
       }
 
@@ -158,8 +156,8 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
     ::close(pipeFd[0]);
 
     if (m_logFd != -1) {
-      result = write(m_logFd, "Captured output:\n", sizeof("Captured output:\n"));
-      result = write(m_logFd, m_capture.data(), m_capture.length());
+      write(m_logFd, "Captured output:\n", sizeof("Captured output:\n"));
+      write(m_logFd, m_capture.data(), m_capture.length());
     }
   }
 
@@ -168,7 +166,7 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
 
   do {
     wpid = waitpid(childPid, &status, 0);
-  } while (wpid == -1 && rak::error_number::current().value() == rak::error_number::e_intr);
+  } while (wpid == -1 && torrent::utils::error_number::current().value() == torrent::utils::error_number::e_intr);
 
   ThreadBase::acquire_global_lock();
 
@@ -178,9 +176,9 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
   // Check return value?
   if (m_logFd != -1) {
     if (status == 0)
-      result = write(m_logFd, "\n--- Success ---\n", sizeof("\n--- Success ---\n"));
+      write(m_logFd, "\n--- Success ---\n", sizeof("\n--- Success ---\n"));
     else
-      result = write(m_logFd, "\n--- Error ---\n", sizeof("\n--- Error ---\n"));
+      write(m_logFd, "\n--- Error ---\n", sizeof("\n--- Error ---\n"));
   }
 
   return status;

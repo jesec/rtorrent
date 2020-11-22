@@ -42,11 +42,10 @@
 #include <sstream>
 #include <unistd.h>
 #include <sys/select.h>
-#include <rak/address_info.h>
-#include <rak/error_number.h>
-#include <rak/regex.h>
-#include <rak/path.h>
-#include <rak/string_manip.h>
+#include <torrent/utils/address_info.h>
+#include <torrent/utils/error_number.h>
+#include <torrent/utils/path.h>
+#include <torrent/utils/string_manip.h>
 #include <torrent/utils/resume.h>
 #include <torrent/object.h>
 #include <torrent/connection_manager.h>
@@ -60,6 +59,7 @@
 #include "rpc/parse_commands.h"
 #include "utils/directory.h"
 #include "utils/file_status_cache.h"
+#include "utils/regex.h"
 
 #include "globals.h"
 #include "curl_get.h"
@@ -143,7 +143,7 @@ Manager::set_address_throttle(uint32_t begin, uint32_t end, torrent::ThrottlePai
 
 torrent::ThrottlePair
 Manager::get_address_throttle(const sockaddr* addr) {
-  return m_addressThrottles.get(rak::socket_address::cast_from(addr)->sa_inet()->address_h(), torrent::ThrottlePair(NULL, NULL));
+  return m_addressThrottles.get(torrent::utils::socket_address::cast_from(addr)->sa_inet()->address_h(), torrent::ThrottlePair(NULL, NULL));
 }
 
 int64_t
@@ -244,22 +244,22 @@ Manager::listen_open() {
       return;
   }
 
-  throw torrent::input_error("Could not open/bind port for listening: " + std::string(rak::error_number::current().c_str()));
+  throw torrent::input_error("Could not open/bind port for listening: " + std::string(torrent::utils::error_number::current().c_str()));
 }
 
 std::string
 Manager::bind_address() const {
-  return rak::socket_address::cast_from(torrent::connection_manager()->bind_address())->address_str();
+  return torrent::utils::socket_address::cast_from(torrent::connection_manager()->bind_address())->address_str();
 }
 
 void
 Manager::set_bind_address(const std::string& addr) {
   int err;
-  rak::address_info* ai;
+  torrent::utils::address_info* ai;
 
-  if ((err = rak::address_info::get_address_info(addr.c_str(), PF_INET, SOCK_STREAM, &ai)) != 0 &&
-      (err = rak::address_info::get_address_info(addr.c_str(), PF_INET6, SOCK_STREAM, &ai)) != 0)
-    throw torrent::input_error("Could not set bind address: " + std::string(rak::address_info::strerror(err)) + ".");
+  if ((err = torrent::utils::address_info::get_address_info(addr.c_str(), PF_INET, SOCK_STREAM, &ai)) != 0 &&
+      (err = torrent::utils::address_info::get_address_info(addr.c_str(), PF_INET6, SOCK_STREAM, &ai)) != 0)
+    throw torrent::input_error("Could not set bind address: " + std::string(torrent::utils::address_info::strerror(err)) + ".");
   
   try {
 
@@ -274,48 +274,48 @@ Manager::set_bind_address(const std::string& addr) {
 
     m_httpStack->set_bind_address(!ai->address()->is_address_any() ? ai->address()->address_str() : std::string());
 
-    rak::address_info::free_address_info(ai);
+    torrent::utils::address_info::free_address_info(ai);
 
   } catch (torrent::input_error& e) {
-    rak::address_info::free_address_info(ai);
+    torrent::utils::address_info::free_address_info(ai);
     throw e;
   }
 }
 
 std::string
 Manager::local_address() const {
-  return rak::socket_address::cast_from(torrent::connection_manager()->local_address())->address_str();
+  return torrent::utils::socket_address::cast_from(torrent::connection_manager()->local_address())->address_str();
 }
 
 void
 Manager::set_local_address(const std::string& addr) {
   int err;
-  rak::address_info* ai;
+  torrent::utils::address_info* ai;
 
-  if ((err = rak::address_info::get_address_info(addr.c_str(), PF_INET, SOCK_STREAM, &ai)) != 0 &&
-      (err = rak::address_info::get_address_info(addr.c_str(), PF_INET6, SOCK_STREAM, &ai)) != 0)
-    throw torrent::input_error("Could not set local address: " + std::string(rak::address_info::strerror(err)) + ".");
+  if ((err = torrent::utils::address_info::get_address_info(addr.c_str(), PF_INET, SOCK_STREAM, &ai)) != 0 &&
+      (err = torrent::utils::address_info::get_address_info(addr.c_str(), PF_INET6, SOCK_STREAM, &ai)) != 0)
+    throw torrent::input_error("Could not set local address: " + std::string(torrent::utils::address_info::strerror(err)) + ".");
   
   try {
 
     torrent::connection_manager()->set_local_address(ai->address()->c_sockaddr());
-    rak::address_info::free_address_info(ai);
+    torrent::utils::address_info::free_address_info(ai);
 
   } catch (torrent::input_error& e) {
-    rak::address_info::free_address_info(ai);
+    torrent::utils::address_info::free_address_info(ai);
     throw e;
   }
 }
 
 std::string
 Manager::proxy_address() const {
-  return rak::socket_address::cast_from(torrent::connection_manager()->proxy_address())->address_str();
+  return torrent::utils::socket_address::cast_from(torrent::connection_manager()->proxy_address())->address_str();
 }
 
 void
 Manager::set_proxy_address(const std::string& addr) {
   int port;
-  rak::address_info* ai;
+  torrent::utils::address_info* ai;
 
   char buf[addr.length() + 1];
 
@@ -327,18 +327,18 @@ Manager::set_proxy_address(const std::string& addr) {
   if (err == 1)
     port = 80;
 
-  if ((err = rak::address_info::get_address_info(buf, PF_INET, SOCK_STREAM, &ai)) != 0)
-    throw torrent::input_error("Could not set proxy address: " + std::string(rak::address_info::strerror(err)) + ".");
+  if ((err = torrent::utils::address_info::get_address_info(buf, PF_INET, SOCK_STREAM, &ai)) != 0)
+    throw torrent::input_error("Could not set proxy address: " + std::string(torrent::utils::address_info::strerror(err)) + ".");
   
   try {
 
     ai->address()->set_port(port);
     torrent::connection_manager()->set_proxy_address(ai->address()->c_sockaddr());
     
-    rak::address_info::free_address_info(ai);
+    torrent::utils::address_info::free_address_info(ai);
 
   } catch (torrent::input_error& e) {
-    rak::address_info::free_address_info(ai);
+    torrent::utils::address_info::free_address_info(ai);
     throw e;
   }
 }
@@ -366,7 +366,7 @@ Manager::try_create_download(const std::string& uri, int flags, const command_li
 
   f->set_start(flags & create_start);
   f->set_print_log(!(flags & create_quiet));
-  f->slot_finished(std::bind(&rak::call_delete_func<core::DownloadFactory>, f));
+  f->slot_finished(std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
 
   if (flags & create_raw_data)
     f->load_raw_data(uri);
@@ -390,7 +390,7 @@ Manager::try_create_download_from_meta_download(torrent::Object* bencode, const 
 
   f->set_start(meta.get_key_value("start"));
   f->set_print_log(meta.get_key_value("print_log"));
-  f->slot_finished(std::bind(&rak::call_delete_func<core::DownloadFactory>, f));
+  f->slot_finished(std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
 
   // Bit of a waste to create the bencode repesentation here
   // only to have the DownloadFactory decode it.
@@ -412,8 +412,8 @@ path_expand(std::vector<std::string>* paths, const std::string& pattern) {
   std::vector<utils::Directory> currentCache;
   std::vector<utils::Directory> nextCache;
 
-  rak::split_iterator_t<std::string> first = rak::split_iterator(pattern, '/');
-  rak::split_iterator_t<std::string> last  = rak::split_iterator(pattern);
+  torrent::utils::split_iterator_t<std::string> first = torrent::utils::split_iterator(pattern, '/');
+  torrent::utils::split_iterator_t<std::string> last  = torrent::utils::split_iterator(pattern);
     
   if (first == last)
     return;
@@ -422,7 +422,7 @@ path_expand(std::vector<std::string>* paths, const std::string& pattern) {
   if ((*first).empty()) {
     currentCache.push_back(utils::Directory("/"));
     ++first;
-  } else if (rak::trim(*first) == "~") {
+  } else if (torrent::utils::trim(*first) == "~") {
     currentCache.push_back(utils::Directory("~"));
     ++first;
   } else {
@@ -432,7 +432,7 @@ path_expand(std::vector<std::string>* paths, const std::string& pattern) {
   // Might be an idea to use depth-first search instead.
 
   for (; first != last; ++first) {
-    rak::regex r(*first);
+    utils::regex r(*first);
 
     if (r.pattern().empty())
       continue;
@@ -443,9 +443,9 @@ path_expand(std::vector<std::string>* paths, const std::string& pattern) {
       // Only include filenames starting with '.' if the pattern
       // starts with the same.
       itr->update((r.pattern()[0] != '.') ? utils::Directory::update_hide_dot : 0);
-      itr->erase(std::remove_if(itr->begin(), itr->end(), rak::on(rak::mem_ref(&utils::directory_entry::d_name), std::not1(r))), itr->end());
+      itr->erase(std::remove_if(itr->begin(), itr->end(), torrent::utils::on(torrent::utils::mem_ref(&utils::directory_entry::d_name), std::not1(r))), itr->end());
 
-      std::transform(itr->begin(), itr->end(), std::back_inserter(nextCache), rak::bind1st(std::ptr_fun(&path_expand_transform), itr->path() + (itr->path() == "/" ? "" : "/")));
+      std::transform(itr->begin(), itr->end(), std::back_inserter(nextCache), torrent::utils::bind1st(std::ptr_fun(&path_expand_transform), itr->path() + (itr->path() == "/" ? "" : "/")));
     }
 
     currentCache.clear();

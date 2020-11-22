@@ -38,15 +38,15 @@
 #define RTORRENT_CORE_VIEW_MANAGER_H
 
 #include <string>
-#include <rak/unordered_vector.h>
+#include <torrent/utils/unordered_vector.h>
 
 #include "view.h"
 
 namespace core {
 
-class ViewManager : public rak::unordered_vector<View*> {
+class ViewManager : public torrent::utils::unordered_vector<View*> {
 public:
-  typedef rak::unordered_vector<View*> base_type;
+  typedef torrent::utils::unordered_vector<View*> base_type;
   typedef std::list<std::string>       filter_args;
   
   using base_type::iterator;

@@ -58,7 +58,7 @@ private:
   inline iterator     find_older();
 
   torrent::log_buffer* m_log;
-  rak::priority_item   m_taskUpdate;
+  torrent::utils::priority_item   m_taskUpdate;
 };
 
 }

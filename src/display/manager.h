@@ -38,7 +38,7 @@
 #define RTORRENT_DISPLAY_MANAGER_H
 
 #include <list>
-#include <rak/priority_queue_default.h>
+#include <torrent/utils/priority_queue_default.h>
 
 #include "frame.h"
 
@@ -53,7 +53,7 @@ public:
 
   void                force_redraw();
 
-  void                schedule(Window* w, rak::timer t);
+  void                schedule(Window* w, torrent::utils::timer t);
   void                unschedule(Window* w);
 
   void                adjust_layout();
@@ -66,10 +66,10 @@ private:
   void                schedule_update(uint32_t minInterval);
 
   bool                m_forceRedraw;
-  rak::timer          m_timeLastUpdate;
+  torrent::utils::timer          m_timeLastUpdate;
 
-  rak::priority_queue_default m_scheduler;
-  rak::priority_item          m_taskUpdate;
+  torrent::utils::priority_queue_default m_scheduler;
+  torrent::utils::priority_item          m_taskUpdate;
 
   // New interface.
   Frame               m_rootFrame;
