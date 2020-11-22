@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -37,11 +37,11 @@
 #include "config.h"
 
 #include <stdexcept>
-#include <torrent/rate.h>
 #include <torrent/data/block_transfer.h>
 #include <torrent/data/piece.h>
 #include <torrent/peer/client_list.h>
 #include <torrent/peer/peer_info.h>
+#include <torrent/rate.h>
 #include <torrent/utils/algorithm.h>
 #include <torrent/utils/socket_address.h>
 
@@ -53,30 +53,40 @@
 
 namespace display {
 
-WindowPeerList::WindowPeerList(core::Download* d, PList* l, PList::iterator* f) :
-  Window(new Canvas, 0, 0, 0, extent_full, extent_full),
-  m_download(d),
-  m_list(l),
-  m_focus(f) {
-}
+WindowPeerList::WindowPeerList(core::Download* d, PList* l, PList::iterator* f)
+  : Window(new Canvas, 0, 0, 0, extent_full, extent_full)
+  , m_download(d)
+  , m_list(l)
+  , m_focus(f) {}
 
 void
 WindowPeerList::redraw() {
-  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
+  m_slotSchedule(
+    this,
+    (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
   m_canvas->erase();
 
   int x = 2;
   int y = 0;
 
-  m_canvas->print(x, y, "IP");      x += 25;
-  m_canvas->print(x, y, "UP");      x += 7;
-  m_canvas->print(x, y, "DOWN");    x += 7;
-  m_canvas->print(x, y, "PEER");    x += 7;
-  m_canvas->print(x, y, "CT/RE/LO"); x += 10;
-  m_canvas->print(x, y, "QS");      x += 6;
-  m_canvas->print(x, y, "DONE");    x += 6;
-  m_canvas->print(x, y, "REQ");     x += 6;
-  m_canvas->print(x, y, "SNUB");    x += 6;
+  m_canvas->print(x, y, "IP");
+  x += 25;
+  m_canvas->print(x, y, "UP");
+  x += 7;
+  m_canvas->print(x, y, "DOWN");
+  x += 7;
+  m_canvas->print(x, y, "PEER");
+  x += 7;
+  m_canvas->print(x, y, "CT/RE/LO");
+  x += 10;
+  m_canvas->print(x, y, "QS");
+  x += 6;
+  m_canvas->print(x, y, "DONE");
+  x += 6;
+  m_canvas->print(x, y, "REQ");
+  x += 6;
+  m_canvas->print(x, y, "SNUB");
+  x += 6;
   m_canvas->print(x, y, "FAILED");
 
   ++y;
@@ -86,33 +96,38 @@ WindowPeerList::redraw() {
 
   typedef std::pair<PList::iterator, PList::iterator> Range;
 
-  Range range = torrent::utils::advance_bidirectional(m_list->begin(),
-                                           *m_focus != m_list->end() ? *m_focus : m_list->begin(),
-                                           m_list->end(),
-                                           m_canvas->height() - y);
+  Range range = torrent::utils::advance_bidirectional(
+    m_list->begin(),
+    *m_focus != m_list->end() ? *m_focus : m_list->begin(),
+    m_list->end(),
+    m_canvas->height() - y);
 
   if (m_download->download()->file_list()->size_chunks() <= 0)
-    throw std::logic_error("WindowPeerList::redraw() m_slotChunksTotal() returned invalid value");
+    throw std::logic_error(
+      "WindowPeerList::redraw() m_slotChunksTotal() returned invalid value");
 
   while (range.first != range.second) {
     torrent::Peer* p = *range.first;
 
     x = 0;
 
-    std::string ip_address = torrent::utils::socket_address::cast_from(p->address())->address_str();
+    std::string ip_address =
+      torrent::utils::socket_address::cast_from(p->address())->address_str();
 
     if (ip_address.size() >= 24) {
       ip_address.replace(ip_address.begin() + 21, ip_address.end(), "...");
     }
 
-    m_canvas->print(x, y, "%c %s",
-                    range.first == *m_focus ? '*' : ' ',
-                    ip_address.c_str());
+    m_canvas->print(
+      x, y, "%c %s", range.first == *m_focus ? '*' : ' ', ip_address.c_str());
     x += 27;
 
-    m_canvas->print(x, y, "%.1f", (double)p->up_rate()->rate() / 1024); x += 7;
-    m_canvas->print(x, y, "%.1f", (double)p->down_rate()->rate() / 1024); x += 7;
-    m_canvas->print(x, y, "%.1f", (double)p->peer_rate()->rate() / 1024); x += 7;
+    m_canvas->print(x, y, "%.1f", (double)p->up_rate()->rate() / 1024);
+    x += 7;
+    m_canvas->print(x, y, "%.1f", (double)p->down_rate()->rate() / 1024);
+    x += 7;
+    m_canvas->print(x, y, "%.1f", (double)p->peer_rate()->rate() / 1024);
+    x += 7;
 
     char remoteChoked;
     char peerType;
@@ -128,20 +143,25 @@ WindowPeerList::redraw() {
       peerType = 'u';
     else if (p->peer_info()->is_preferred())
       peerType = 'p';
-    else 
+    else
       peerType = ' ';
 
-    m_canvas->print(x, y, "%c%c/%c%c/%c%c",
-                    p->is_encrypted() ? (p->is_incoming() ? 'R' : 'L') : (p->is_incoming() ? 'r' : 'l'),
+    m_canvas->print(x,
+                    y,
+                    "%c%c/%c%c/%c%c",
+                    p->is_encrypted() ? (p->is_incoming() ? 'R' : 'L')
+                                      : (p->is_incoming() ? 'r' : 'l'),
                     peerType,
-                    p->is_down_choked() ? std::tolower(remoteChoked) : remoteChoked,
+                    p->is_down_choked() ? std::tolower(remoteChoked)
+                                        : remoteChoked,
 
                     p->is_down_interested() ? 'i' : 'n',
                     p->is_up_choked() ? 'c' : 'u',
                     p->is_up_interested() ? 'i' : 'n');
     x += 10;
 
-    m_canvas->print(x, y, "%i/%i", p->outgoing_queue_size(), p->incoming_queue_size());
+    m_canvas->print(
+      x, y, "%i/%i", p->outgoing_queue_size(), p->incoming_queue_size());
     x += 6;
 
     m_canvas->print(x, y, "%3i", done_percentage(*range.first));

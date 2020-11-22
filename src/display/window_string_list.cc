@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -42,19 +42,17 @@
 
 namespace display {
 
-WindowStringList::WindowStringList() :
-  Window(new Canvas, 0, 0, 0, extent_full, extent_full) {
-}
+WindowStringList::WindowStringList()
+  : Window(new Canvas, 0, 0, 0, extent_full, extent_full) {}
 
-WindowStringList::~WindowStringList() {
-}
+WindowStringList::~WindowStringList() {}
 
 void
 WindowStringList::redraw() {
   m_canvas->erase();
 
-  size_t ypos = 0;
-  size_t xpos = 1;
+  size_t ypos  = 0;
+  size_t xpos  = 1;
   size_t width = 0;
 
   iterator itr = m_first;
@@ -64,7 +62,7 @@ WindowStringList::redraw() {
     if (ypos == (size_t)m_canvas->height()) {
       ypos = 0;
       xpos += width + 2;
-      
+
       if (xpos + 20 >= (size_t)m_canvas->width())
         break;
 
@@ -76,7 +74,8 @@ WindowStringList::redraw() {
     if (xpos + itr->size() <= (size_t)m_canvas->width())
       m_canvas->print(xpos, ypos++, "%s", itr->c_str());
     else
-      m_canvas->print(xpos, ypos++, "%s", itr->substr(0, m_canvas->width() - xpos).c_str());
+      m_canvas->print(
+        xpos, ypos++, "%s", itr->substr(0, m_canvas->width() - xpos).c_str());
 
     ++itr;
   }

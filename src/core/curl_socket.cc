@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -39,8 +39,8 @@
 #include <curl/curl.h>
 #include <curl/multi.h>
 
-#include <torrent/poll.h>
 #include <torrent/exceptions.h>
+#include <torrent/poll.h>
 #include <torrent/utils/thread_base.h>
 
 #include "control.h"
@@ -51,8 +51,12 @@
 namespace core {
 
 int
-CurlSocket::receive_socket(void* easy_handle, curl_socket_t fd, int what, void* userp, void* socketp) {
-  CurlStack* stack = (CurlStack*)userp;
+CurlSocket::receive_socket(void*         easy_handle,
+                           curl_socket_t fd,
+                           int           what,
+                           void*         userp,
+                           void*         socketp) {
+  CurlStack*  stack  = (CurlStack*)userp;
   CurlSocket* socket = (CurlSocket*)socketp;
 
   if (what == CURL_POLL_REMOVE) {
@@ -75,7 +79,7 @@ CurlSocket::receive_socket(void* easy_handle, curl_socket_t fd, int what, void* 
     // No interface for libcurl to signal when it's interested in error events.
     // Assume that hence it must always be interested in them.
     torrent::main_thread()->poll()->insert_error(socket);
-  } 
+  }
 
   if (what == CURL_POLL_NONE || what == CURL_POLL_OUT)
     torrent::main_thread()->poll()->remove_read(socket);
@@ -92,7 +96,8 @@ CurlSocket::receive_socket(void* easy_handle, curl_socket_t fd, int what, void* 
 
 CurlSocket::~CurlSocket() {
   if (m_fileDesc != -1)
-    throw torrent::internal_error("CurlSocket::~CurlSocket() m_fileDesc != -1.");
+    throw torrent::internal_error(
+      "CurlSocket::~CurlSocket() m_fileDesc != -1.");
 }
 
 void

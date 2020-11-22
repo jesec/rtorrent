@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -36,8 +36,8 @@
 
 #include "config.h"
 
-#include <stdexcept>
 #include <algorithm>
+#include <stdexcept>
 #include <torrent/utils/functional.h>
 
 #include "canvas.h"
@@ -47,8 +47,8 @@
 
 namespace display {
 
-Manager::Manager() :
-  m_forceRedraw(false) {
+Manager::Manager()
+  : m_forceRedraw(false) {
 
   m_taskUpdate.slot() = std::bind(&Manager::receive_update, this);
 }
@@ -78,7 +78,8 @@ Manager::unschedule(Window* w) {
 void
 Manager::adjust_layout() {
   Canvas::redraw_std();
-  m_rootFrame.balance(0, 0, Canvas::get_screen_width(), Canvas::get_screen_height());
+  m_rootFrame.balance(
+    0, 0, Canvas::get_screen_width(), Canvas::get_screen_height());
 
   schedule_update(0);
 }
@@ -113,9 +114,13 @@ Manager::schedule_update(uint32_t minInterval) {
     return;
   }
 
-  if (!m_taskUpdate.is_queued() || m_taskUpdate.time() > m_scheduler.top()->time()) {
+  if (!m_taskUpdate.is_queued() ||
+      m_taskUpdate.time() > m_scheduler.top()->time()) {
     torrent::utils::priority_queue_erase(&taskScheduler, &m_taskUpdate);
-    torrent::utils::priority_queue_insert(&taskScheduler, &m_taskUpdate, std::max(m_scheduler.top()->time(), m_timeLastUpdate + minInterval));
+    torrent::utils::priority_queue_insert(
+      &taskScheduler,
+      &m_taskUpdate,
+      std::max(m_scheduler.top()->time(), m_timeLastUpdate + minInterval));
   }
 }
 

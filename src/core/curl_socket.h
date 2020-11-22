@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -47,24 +47,33 @@ class CurlStack;
 
 class CurlSocket : public torrent::Event {
 public:
-  CurlSocket(int fd, CurlStack* stack) : m_stack(stack) { m_fileDesc = fd; }
+  CurlSocket(int fd, CurlStack* stack)
+    : m_stack(stack) {
+    m_fileDesc = fd;
+  }
   ~CurlSocket();
 
-  const char*        type_name() const { return "curl"; }
+  const char* type_name() const {
+    return "curl";
+  }
 
-  void               close();
+  void close();
 
-  static int         receive_socket(void* easy_handle, curl_socket_t fd, int what, void* userp, void* socketp);
+  static int receive_socket(void*         easy_handle,
+                            curl_socket_t fd,
+                            int           what,
+                            void*         userp,
+                            void*         socketp);
 
 private:
   CurlSocket(const CurlSocket&);
-  void operator = (const CurlSocket&);
+  void operator=(const CurlSocket&);
 
-  virtual void       event_read();
-  virtual void       event_write();
-  virtual void       event_error();
+  virtual void event_read();
+  virtual void event_write();
+  virtual void event_error();
 
-  CurlStack*         m_stack;
+  CurlStack* m_stack;
 };
 
 }

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -39,8 +39,8 @@
 #include <torrent/exceptions.h>
 
 #include "display/frame.h"
-#include "display/window_text.h"
 #include "display/text_element_list.h"
+#include "display/window_text.h"
 #include "input/manager.h"
 
 #include "control.h"
@@ -48,17 +48,19 @@
 
 namespace ui {
 
-ElementText::ElementText(rpc::target_type target) :
-  m_window(new WindowText(target)),
-  m_column(0),
-  m_columnWidth(0) {
+ElementText::ElementText(rpc::target_type target)
+  : m_window(new WindowText(target))
+  , m_column(0)
+  , m_columnWidth(0) {
 
   // Move bindings into a function that defines default bindings.
-  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] = std::bind(&slot_type::operator(), &m_slot_exit);
+  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
+    std::bind(&slot_type::operator(), &m_slot_exit);
 
-//   m_bindings[KEY_UP]    = std::bind(this, &ElementText::entry_prev);
-//   m_bindings[KEY_DOWN]  = std::bind(this, &ElementText::entry_next);
-//   m_bindings[KEY_RIGHT] = m_bindings['F' - '@'] = std::bind(this, &ElementText::entry_select);
+  //   m_bindings[KEY_UP]    = std::bind(this, &ElementText::entry_prev);
+  //   m_bindings[KEY_DOWN]  = std::bind(this, &ElementText::entry_next);
+  //   m_bindings[KEY_RIGHT] = m_bindings['F' - '@'] = std::bind(this,
+  //   &ElementText::entry_select);
 }
 
 ElementText::~ElementText() {
@@ -68,7 +70,8 @@ ElementText::~ElementText() {
 void
 ElementText::activate(display::Frame* frame, bool focus) {
   if (is_active())
-    throw torrent::internal_error("ui::ElementText::activate(...) is_active().");
+    throw torrent::internal_error(
+      "ui::ElementText::activate(...) is_active().");
 
   if (focus)
     control->input()->push_back(&m_bindings);
@@ -84,7 +87,8 @@ ElementText::activate(display::Frame* frame, bool focus) {
 void
 ElementText::disable() {
   if (!is_active())
-    throw torrent::internal_error("ui::ElementText::disable(...) !is_active().");
+    throw torrent::internal_error(
+      "ui::ElementText::disable(...) !is_active().");
 
   control->input()->erase(&m_bindings);
 
@@ -104,7 +108,8 @@ ElementText::push_back(text_element_wrapper entry) {
 }
 
 void
-ElementText::push_column(text_element_wrapper entry1, text_element_wrapper entry2) {
+ElementText::push_column(text_element_wrapper entry1,
+                         text_element_wrapper entry2) {
   m_columnWidth = std::max(entry1.m_element->max_length(), m_columnWidth);
 
   display::TextElementList* list = new display::TextElementList;
@@ -118,7 +123,8 @@ ElementText::push_column(text_element_wrapper entry1, text_element_wrapper entry
 }
 
 void
-ElementText::push_column(text_element_wrapper entry1, text_element_wrapper entry2,
+ElementText::push_column(text_element_wrapper entry1,
+                         text_element_wrapper entry2,
                          text_element_wrapper entry3) {
   m_columnWidth = std::max(entry1.m_element->max_length(), m_columnWidth);
 
@@ -134,8 +140,10 @@ ElementText::push_column(text_element_wrapper entry1, text_element_wrapper entry
 }
 
 void
-ElementText::push_column(text_element_wrapper entry1, text_element_wrapper entry2,
-                         text_element_wrapper entry3, text_element_wrapper entry4) {
+ElementText::push_column(text_element_wrapper entry1,
+                         text_element_wrapper entry2,
+                         text_element_wrapper entry3,
+                         text_element_wrapper entry4) {
   m_columnWidth = std::max(entry1.m_element->max_length(), m_columnWidth);
 
   display::TextElementList* list = new display::TextElementList;
@@ -151,8 +159,10 @@ ElementText::push_column(text_element_wrapper entry1, text_element_wrapper entry
 }
 
 void
-ElementText::push_column(text_element_wrapper entry1, text_element_wrapper entry2,
-                         text_element_wrapper entry3, text_element_wrapper entry4,
+ElementText::push_column(text_element_wrapper entry1,
+                         text_element_wrapper entry2,
+                         text_element_wrapper entry3,
+                         text_element_wrapper entry4,
                          text_element_wrapper entry5) {
   m_columnWidth = std::max(entry1.m_element->max_length(), m_columnWidth);
 
@@ -170,9 +180,12 @@ ElementText::push_column(text_element_wrapper entry1, text_element_wrapper entry
 }
 
 void
-ElementText::push_column(text_element_wrapper entry1, text_element_wrapper entry2,
-                         text_element_wrapper entry3, text_element_wrapper entry4,
-                         text_element_wrapper entry5, text_element_wrapper entry6) {
+ElementText::push_column(text_element_wrapper entry1,
+                         text_element_wrapper entry2,
+                         text_element_wrapper entry3,
+                         text_element_wrapper entry4,
+                         text_element_wrapper entry5,
+                         text_element_wrapper entry6) {
   m_columnWidth = std::max(entry1.m_element->max_length(), m_columnWidth);
 
   display::TextElementList* list = new display::TextElementList;

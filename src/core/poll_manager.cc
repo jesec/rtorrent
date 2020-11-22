@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -37,14 +37,14 @@
 #include "config.h"
 
 #include <stdexcept>
-#include <unistd.h>
 #include <torrent/exceptions.h>
 #include <torrent/poll_epoll.h>
 #include <torrent/poll_kqueue.h>
 #include <torrent/poll_select.h>
+#include <unistd.h>
 
-#include "globals.h"
 #include "control.h"
+#include "globals.h"
 #include "manager.h"
 #include "poll_manager.h"
 
@@ -67,11 +67,13 @@ create_poll() {
       poll = torrent::PollSelect::create(maxOpen);
 
     if (poll == NULL)
-      control->core()->push_log_std(std::string("Cannot enable '") + poll_name + "' based polling.");
+      control->core()->push_log_std(std::string("Cannot enable '") + poll_name +
+                                    "' based polling.");
   }
 
   if (poll != NULL)
-    control->core()->push_log_std(std::string("Using '") + poll_name + "' based polling.");
+    control->core()->push_log_std(std::string("Using '") + poll_name +
+                                  "' based polling.");
 
   else if ((poll = torrent::PollEPoll::create(maxOpen)) != NULL)
     control->core()->push_log_std("Using 'epoll' based polling.");

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -40,36 +40,44 @@
 #include "input/bindings.h"
 
 namespace display {
-  class Frame;
-  class Window;
+class Frame;
+class Window;
 }
 
 namespace ui {
 
 class ElementBase {
 public:
-  typedef std::function<void ()> slot_type;
+  typedef std::function<void()> slot_type;
 
-  ElementBase() : m_frame(NULL), m_focus(false) {}
+  ElementBase()
+    : m_frame(NULL)
+    , m_focus(false) {}
   virtual ~ElementBase() {}
 
-  bool                is_active() const { return m_frame != NULL; }
+  bool is_active() const {
+    return m_frame != NULL;
+  }
 
-  input::Bindings&    bindings()        { return m_bindings; }
+  input::Bindings& bindings() {
+    return m_bindings;
+  }
 
-  virtual void        activate(display::Frame* frame, bool focus = true) = 0;
-  virtual void        disable() = 0;
+  virtual void activate(display::Frame* frame, bool focus = true) = 0;
+  virtual void disable()                                          = 0;
 
-  void                slot_exit(const slot_type& s) { m_slot_exit = s; }
+  void slot_exit(const slot_type& s) {
+    m_slot_exit = s;
+  }
 
-  void                mark_dirty();
+  void mark_dirty();
 
 protected:
-  display::Frame*     m_frame;
-  bool                m_focus;
+  display::Frame* m_frame;
+  bool            m_focus;
 
-  input::Bindings     m_bindings;
-  slot_type           m_slot_exit;
+  input::Bindings m_bindings;
+  slot_type       m_slot_exit;
 };
 
 }

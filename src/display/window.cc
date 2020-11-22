@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -49,15 +49,22 @@ Window::Slot       Window::m_slotAdjust;
 // When constructing the window we set flag_offscreen so that redraw
 // doesn't get triggered until after a successful Frame::balance call.
 
-Window::Window(Canvas* canvas, int flags, extent_type minWidth, extent_type minHeight, extent_type maxWidth, extent_type maxHeight) :
-  m_canvas(canvas),
-  m_flags(flags | flag_offscreen),
+Window::Window(Canvas*     canvas,
+               int         flags,
+               extent_type minWidth,
+               extent_type minHeight,
+               extent_type maxWidth,
+               extent_type maxHeight)
+  : m_canvas(canvas)
+  , m_flags(flags | flag_offscreen)
+  ,
 
-  m_minWidth(minWidth),
-  m_minHeight(minHeight),
+  m_minWidth(minWidth)
+  , m_minHeight(minHeight)
+  ,
 
-  m_maxWidth(maxWidth),
-  m_maxHeight(maxHeight) {
+  m_maxWidth(maxWidth)
+  , m_maxHeight(maxHeight) {
 
   m_taskUpdate.slot() = std::bind(&Window::redraw, this);
 }

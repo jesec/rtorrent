@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -45,7 +45,7 @@
 #include "element_base.h"
 
 namespace display {
-  class WindowFileList;
+class WindowFileList;
 }
 
 namespace ui {
@@ -57,48 +57,52 @@ public:
   typedef display::WindowFileList   WFileList;
   typedef torrent::FileListIterator iterator;
 
-  typedef enum {
-    DISPLAY_LIST,
-    DISPLAY_INFO,
-    DISPLAY_MAX_SIZE
-  } Display;
+  typedef enum { DISPLAY_LIST, DISPLAY_INFO, DISPLAY_MAX_SIZE } Display;
 
   ElementFileList(core::Download* d);
 
-  void                activate(display::Frame* frame, bool focus = true);
-  void                disable();
+  void activate(display::Frame* frame, bool focus = true);
+  void disable();
 
-  void                activate_display(Display display);
+  void activate_display(Display display);
 
-  bool                is_collapsed() const  { return m_collapsed; }
-  void                set_collapsed(bool s) { m_collapsed = s; }
+  bool is_collapsed() const {
+    return m_collapsed;
+  }
+  void set_collapsed(bool s) {
+    m_collapsed = s;
+  }
 
-  iterator            selected() const      { return m_selected; }
-  core::Download*     download() const      { return m_download; }
+  iterator selected() const {
+    return m_selected;
+  }
+  core::Download* download() const {
+    return m_download;
+  }
 
 private:
-  void                receive_next();
-  void                receive_prev();
-  void                receive_pagenext();
-  void                receive_pageprev();
+  void receive_next();
+  void receive_prev();
+  void receive_pagenext();
+  void receive_pageprev();
 
-  void                receive_select();
+  void receive_select();
 
-  void                receive_priority();
-  void                receive_change_all();
-  void                receive_collapse();
+  void receive_priority();
+  void receive_change_all();
+  void receive_collapse();
 
-  void                update_itr();
+  void update_itr();
 
-  core::Download*     m_download;
+  core::Download* m_download;
 
-  Display             m_state;
-  WFileList*          m_window;
-  ElementText*        m_elementInfo;
-  
+  Display      m_state;
+  WFileList*   m_window;
+  ElementText* m_elementInfo;
+
   // Change to unsigned, please.
-  iterator            m_selected;
-  bool                m_collapsed;
+  iterator m_selected;
+  bool     m_collapsed;
 };
 
 }

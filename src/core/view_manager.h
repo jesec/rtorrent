@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -47,13 +47,13 @@ namespace core {
 class ViewManager : public torrent::utils::unordered_vector<View*> {
 public:
   typedef torrent::utils::unordered_vector<View*> base_type;
-  typedef std::list<std::string>       filter_args;
-  
-  using base_type::iterator;
+  typedef std::list<std::string>                  filter_args;
+
   using base_type::const_iterator;
-  using base_type::reverse_iterator;
   using base_type::const_reverse_iterator;
-  
+  using base_type::iterator;
+  using base_type::reverse_iterator;
+
   using base_type::size_type;
 
   using base_type::begin;
@@ -65,39 +65,53 @@ public:
   using base_type::size;
 
   ViewManager() {}
-  ~ViewManager() { clear(); }
+  ~ViewManager() {
+    clear();
+  }
 
   // Ffff... Just throwing together an interface, need to think some
   // more on this.
 
-  void                clear();
+  void clear();
 
-  iterator            insert(const std::string& name);
-  void                insert_throw(const std::string& name) { insert(name); }
+  iterator insert(const std::string& name);
+  void     insert_throw(const std::string& name) {
+    insert(name);
+  }
 
   // When erasing, just 'disable' the view so that the users won't
   // suddenly find their pointer dangling?
 
-  iterator            find(const std::string& name);
-  iterator            find_throw(const std::string& name);
-  View*               find_ptr_throw(const std::string& name) { return *find_throw(name); }
+  iterator find(const std::string& name);
+  iterator find_throw(const std::string& name);
+  View*    find_ptr_throw(const std::string& name) {
+    return *find_throw(name);
+  }
 
   // If View::last_changed() is less than 'timeout' seconds ago, don't
   // sort.
   //
   // Find a better name for 'timeout'.
-  void                sort(const std::string& name, uint32_t timeout = 0);
+  void sort(const std::string& name, uint32_t timeout = 0);
 
   // These could be moved to where the command is implemented.
-  void                set_sort_new(const std::string& name, const torrent::Object& cmd)     { (*find_throw(name))->set_sort_new(cmd); }
-  void                set_sort_current(const std::string& name, const torrent::Object& cmd) { (*find_throw(name))->set_sort_current(cmd); }
+  void set_sort_new(const std::string& name, const torrent::Object& cmd) {
+    (*find_throw(name))->set_sort_new(cmd);
+  }
+  void set_sort_current(const std::string& name, const torrent::Object& cmd) {
+    (*find_throw(name))->set_sort_current(cmd);
+  }
 
-  void                set_filter(const std::string& name, const torrent::Object& cmd);
-  void                set_filter_temp(const std::string& name, const torrent::Object& cmd);
-  void                set_filter_on(const std::string& name, const filter_args& args);
+  void set_filter(const std::string& name, const torrent::Object& cmd);
+  void set_filter_temp(const std::string& name, const torrent::Object& cmd);
+  void set_filter_on(const std::string& name, const filter_args& args);
 
-  void                set_event_added(const std::string& name, const torrent::Object& cmd)   { (*find_throw(name))->set_event_added(cmd); }
-  void                set_event_removed(const std::string& name, const torrent::Object& cmd) { (*find_throw(name))->set_event_removed(cmd); }
+  void set_event_added(const std::string& name, const torrent::Object& cmd) {
+    (*find_throw(name))->set_event_added(cmd);
+  }
+  void set_event_removed(const std::string& name, const torrent::Object& cmd) {
+    (*find_throw(name))->set_event_removed(cmd);
+  }
 };
 
 }

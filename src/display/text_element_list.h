@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -41,9 +41,11 @@
 
 namespace display {
 
-class TextElementList : public TextElement, public std::vector<TextElement*> {
+class TextElementList
+  : public TextElement
+  , public std::vector<TextElement*> {
 public:
-  typedef std::vector<TextElement*>   base_type;
+  typedef std::vector<TextElement*> base_type;
 
   typedef base_type::value_type       value_type;
   typedef base_type::reference        reference;
@@ -61,21 +63,32 @@ public:
 
   using base_type::push_back;
 
-  TextElementList() : m_column(0), m_columnWidth(0) {}
-  virtual ~TextElementList() { clear(); }
+  TextElementList()
+    : m_column(0)
+    , m_columnWidth(0) {}
+  virtual ~TextElementList() {
+    clear();
+  }
 
-  void                clear();
+  void clear();
 
-  void                set_column(unsigned int column)      { m_column = column; }
-  void                set_column_width(extent_type* width) { m_columnWidth = width; }
+  void set_column(unsigned int column) {
+    m_column = column;
+  }
+  void set_column_width(extent_type* width) {
+    m_columnWidth = width;
+  }
 
-  virtual char*       print(char* first, char* last, Canvas::attributes_list* attributes, rpc::target_type target);
+  virtual char* print(char*                    first,
+                      char*                    last,
+                      Canvas::attributes_list* attributes,
+                      rpc::target_type         target);
 
   virtual extent_type max_length();
 
 private:
-  unsigned int        m_column;
-  extent_type*        m_columnWidth;
+  unsigned int m_column;
+  extent_type* m_columnWidth;
 };
 
 }

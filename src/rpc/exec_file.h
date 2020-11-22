@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -45,24 +45,29 @@ class ExecFile {
 public:
   static const unsigned int max_args    = 128;
   static const unsigned int buffer_size = 4096;
-    
+
   static const int flag_expand_tilde = 0x1;
   static const int flag_throw        = 0x2;
   static const int flag_capture      = 0x4;
   static const int flag_background   = 0x8;
 
-  ExecFile() : m_logFd(-1) {}
+  ExecFile()
+    : m_logFd(-1) {}
 
-  int                 log_fd() const     { return m_logFd; }
-  void                set_log_fd(int fd) { m_logFd = fd; }
+  int log_fd() const {
+    return m_logFd;
+  }
+  void set_log_fd(int fd) {
+    m_logFd = fd;
+  }
 
-  int                 execute(const char* file, char* const* argv, int flags);
+  int execute(const char* file, char* const* argv, int flags);
 
-  torrent::Object     execute_object(const torrent::Object& rawArgs, int flags);
-  
+  torrent::Object execute_object(const torrent::Object& rawArgs, int flags);
+
 private:
-  int                 m_logFd;
-  std::string         m_capture;
+  int         m_logFd;
+  std::string m_capture;
 };
 
 }

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -37,12 +37,12 @@
 #include "config.h"
 
 #include <algorithm>
-#include <torrent/utils/functional.h>
 #include <torrent/exceptions.h>
 #include <torrent/object.h>
+#include <torrent/utils/functional.h>
 
-#include "globals.h"
 #include "control.h"
+#include "globals.h"
 #include "rpc/parse_commands.h"
 
 #include "download.h"
@@ -76,12 +76,14 @@ ViewManager::insert(const std::string& name) {
 
 ViewManager::iterator
 ViewManager::find(const std::string& name) {
-  return std::find_if(begin(), end(), torrent::utils::equal(name, std::mem_fun(&View::name)));
+  return std::find_if(
+    begin(), end(), torrent::utils::equal(name, std::mem_fun(&View::name)));
 }
 
 ViewManager::iterator
 ViewManager::find_throw(const std::string& name) {
-  iterator itr = std::find_if(begin(), end(), torrent::utils::equal(name, std::mem_fun(&View::name)));
+  iterator itr = std::find_if(
+    begin(), end(), torrent::utils::equal(name, std::mem_fun(&View::name)));
 
   if (itr == end())
     throw torrent::input_error("Could not find view: " + name);
@@ -93,7 +95,9 @@ void
 ViewManager::sort(const std::string& name, uint32_t timeout) {
   iterator viewItr = find_throw(name);
 
-  if ((*viewItr)->last_changed() + torrent::utils::timer::from_seconds(timeout) > cachedTime)
+  if ((*viewItr)->last_changed() +
+        torrent::utils::timer::from_seconds(timeout) >
+      cachedTime)
     return;
 
   // Should we rename sort, or add a seperate function?
@@ -110,7 +114,8 @@ ViewManager::set_filter(const std::string& name, const torrent::Object& cmd) {
 }
 
 void
-ViewManager::set_filter_temp(const std::string& name, const torrent::Object& cmd) {
+ViewManager::set_filter_temp(const std::string&     name,
+                             const torrent::Object& cmd) {
   iterator viewItr = find_throw(name);
 
   (*viewItr)->set_filter_temp(cmd);

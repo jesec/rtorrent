@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -37,8 +37,8 @@
 #ifndef RTORRENT_DISPLAY_WINDOW_STRING_LIST_H
 #define RTORRENT_DISPLAY_WINDOW_STRING_LIST_H
 
-#include <string>
 #include <list>
+#include <string>
 
 #include "window.h"
 
@@ -51,17 +51,22 @@ public:
   WindowStringList();
   ~WindowStringList();
 
-  iterator         get_draw_end()                           { return m_drawEnd; }
+  iterator get_draw_end() {
+    return m_drawEnd;
+  }
 
-  void             set_range(iterator first, iterator last) { m_first = m_drawEnd = first; m_last = last; }
+  void set_range(iterator first, iterator last) {
+    m_first = m_drawEnd = first;
+    m_last              = last;
+  }
 
-  virtual void     redraw();
+  virtual void redraw();
 
 private:
-  iterator         m_first;
-  iterator         m_last;
-  
-  iterator         m_drawEnd;
+  iterator m_first;
+  iterator m_last;
+
+  iterator m_drawEnd;
 };
 
 }

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -38,8 +38,8 @@
 
 #include <fstream>
 #include <sstream>
-#include <torrent/object.h>
 #include <torrent/dht_manager.h>
+#include <torrent/object.h>
 #include <torrent/object_stream.h>
 #include <torrent/rate.h>
 #include <torrent/utils/log.h>
@@ -54,12 +54,16 @@
 #include "download_store.h"
 #include "manager.h"
 
-#define LT_LOG_THIS(log_fmt, ...)                                       \
-  lt_log_print_subsystem(torrent::LOG_DHT_MANAGER, "dht_manager", log_fmt, __VA_ARGS__);
+#define LT_LOG_THIS(log_fmt, ...)                                              \
+  lt_log_print_subsystem(                                                      \
+    torrent::LOG_DHT_MANAGER, "dht_manager", log_fmt, __VA_ARGS__);
 
 namespace core {
 
-const char* DhtManager::dht_settings[dht_settings_num] = { "disable", "off", "auto", "on" };
+const char* DhtManager::dht_settings[dht_settings_num] = { "disable",
+                                                           "off",
+                                                           "auto",
+                                                           "on" };
 
 DhtManager::~DhtManager() {
   priority_queue_erase(&taskScheduler, &m_updateTimeout);
@@ -68,13 +72,16 @@ DhtManager::~DhtManager() {
 
 void
 DhtManager::load_dht_cache() {
-  if (m_start == dht_disable || !control->core()->download_store()->is_enabled()) {
+  if (m_start == dht_disable ||
+      !control->core()->download_store()->is_enabled()) {
     LT_LOG_THIS("ignoring cache file", 0);
     return;
   }
 
-  std::string cache_filename = control->core()->download_store()->path() + "rtorrent.dht_cache";
-  std::fstream cache_stream(cache_filename.c_str(), std::ios::in | std::ios::binary);
+  std::string cache_filename =
+    control->core()->download_store()->path() + "rtorrent.dht_cache";
+  std::fstream cache_stream(cache_filename.c_str(),
+                            std::ios::in | std::ios::binary);
 
   torrent::Object cache = torrent::Object::create_map();
 
@@ -84,7 +91,8 @@ DhtManager::load_dht_cache() {
     // If the cache file is corrupted we will just discard it with an
     // error message.
     if (cache_stream.fail()) {
-      LT_LOG_THIS("cache file corrupted, discarding (path:%s)", cache_filename.c_str());
+      LT_LOG_THIS("cache file corrupted, discarding (path:%s)",
+                  cache_filename.c_str());
       cache = torrent::Object::create_map();
     } else {
       LT_LOG_THIS("cache file read (path:%s)", cache_filename.c_str());
@@ -114,7 +122,8 @@ DhtManager::start_dht() {
     return;
   }
 
-  torrent::ThrottlePair throttles = control->core()->get_throttle(m_throttleName);
+  torrent::ThrottlePair throttles =
+    control->core()->get_throttle(m_throttleName);
   torrent::dht_manager()->set_upload_throttle(throttles.first);
   torrent::dht_manager()->set_download_throttle(throttles.second);
 
@@ -131,14 +140,17 @@ DhtManager::start_dht() {
   torrent::dht_manager()->reset_statistics();
 
   m_updateTimeout.slot() = std::bind(&DhtManager::update, this);
-  priority_queue_insert(&taskScheduler, &m_updateTimeout, (cachedTime + torrent::utils::timer::from_seconds(60)).round_seconds());
+  priority_queue_insert(
+    &taskScheduler,
+    &m_updateTimeout,
+    (cachedTime + torrent::utils::timer::from_seconds(60)).round_seconds());
 
-  m_dhtPrevCycle = 0;
-  m_dhtPrevQueriesSent = 0;
+  m_dhtPrevCycle           = 0;
+  m_dhtPrevQueriesSent     = 0;
   m_dhtPrevRepliesReceived = 0;
   m_dhtPrevQueriesReceived = 0;
-  m_dhtPrevBytesUp = 0;
-  m_dhtPrevBytesDown = 0;
+  m_dhtPrevBytesUp         = 0;
+  m_dhtPrevBytesDown       = 0;
 }
 
 void
@@ -156,12 +168,15 @@ DhtManager::stop_dht() {
 
 void
 DhtManager::save_dht_cache() {
-  if (!control->core()->download_store()->is_enabled() || !torrent::dht_manager()->is_valid())
+  if (!control->core()->download_store()->is_enabled() ||
+      !torrent::dht_manager()->is_valid())
     return;
 
-  std::string filename = control->core()->download_store()->path() + "rtorrent.dht_cache";
-  std::string filename_tmp = filename + ".new";
-  std::fstream cache_file(filename_tmp.c_str(), std::ios::out | std::ios::trunc);
+  std::string filename =
+    control->core()->download_store()->path() + "rtorrent.dht_cache";
+  std::string  filename_tmp = filename + ".new";
+  std::fstream cache_file(filename_tmp.c_str(),
+                          std::ios::out | std::ios::trunc);
 
   if (!cache_file.is_open())
     return;
@@ -199,47 +214,70 @@ DhtManager::set_mode(const std::string& arg) {
 void
 DhtManager::update() {
   if (!torrent::dht_manager()->is_active())
-    throw torrent::internal_error("DhtManager::update called with DHT inactive.");
+    throw torrent::internal_error(
+      "DhtManager::update called with DHT inactive.");
 
   if (m_start == dht_auto && !m_stopTimeout.is_queued()) {
     DownloadList::const_iterator itr, end;
 
-    for (itr = control->core()->download_list()->begin(), end = control->core()->download_list()->end(); itr != end; ++itr)
-      if ((*itr)->download()->info()->is_active() && !(*itr)->download()->info()->is_private())
+    for (itr = control->core()->download_list()->begin(),
+        end  = control->core()->download_list()->end();
+         itr != end;
+         ++itr)
+      if ((*itr)->download()->info()->is_active() &&
+          !(*itr)->download()->info()->is_private())
         break;
-      
+
     if (itr == end) {
       m_stopTimeout.slot() = std::bind(&DhtManager::stop_dht, this);
-      priority_queue_insert(&taskScheduler, &m_stopTimeout, (cachedTime + torrent::utils::timer::from_seconds(15 * 60)).round_seconds());
+      priority_queue_insert(
+        &taskScheduler,
+        &m_stopTimeout,
+        (cachedTime + torrent::utils::timer::from_seconds(15 * 60))
+          .round_seconds());
     }
   }
 
-  // While bootstrapping (log_statistics returns true), check every minute if it completed, otherwise update every 15 minutes.
+  // While bootstrapping (log_statistics returns true), check every minute if it
+  // completed, otherwise update every 15 minutes.
   if (log_statistics(false))
-    priority_queue_insert(&taskScheduler, &m_updateTimeout, (cachedTime + torrent::utils::timer::from_seconds(60)).round_seconds());
+    priority_queue_insert(
+      &taskScheduler,
+      &m_updateTimeout,
+      (cachedTime + torrent::utils::timer::from_seconds(60)).round_seconds());
   else
-    priority_queue_insert(&taskScheduler, &m_updateTimeout, (cachedTime + torrent::utils::timer::from_seconds(15 * 60)).round_seconds());
+    priority_queue_insert(
+      &taskScheduler,
+      &m_updateTimeout,
+      (cachedTime + torrent::utils::timer::from_seconds(15 * 60))
+        .round_seconds());
 }
 
 bool
 DhtManager::log_statistics(bool force) {
-  torrent::DhtManager::statistics_type stats = torrent::dht_manager()->get_statistics();
+  torrent::DhtManager::statistics_type stats =
+    torrent::dht_manager()->get_statistics();
 
   // Check for firewall problems.
 
-  if (stats.cycle > 2 && stats.queries_sent - m_dhtPrevQueriesSent > 100 && stats.queries_received == m_dhtPrevQueriesReceived) {
+  if (stats.cycle > 2 && stats.queries_sent - m_dhtPrevQueriesSent > 100 &&
+      stats.queries_received == m_dhtPrevQueriesReceived) {
     // We should have had clients ping us at least but have received
     // nothing, that means the UDP port is probably unreachable.
     if (torrent::dht_manager()->can_receive_queries())
-      LT_LOG_THIS("listening port appears to be unreachable, no queries received", 0);
+      LT_LOG_THIS(
+        "listening port appears to be unreachable, no queries received", 0);
 
     torrent::dht_manager()->set_can_receive(false);
   }
 
-  if (stats.queries_sent - m_dhtPrevQueriesSent > stats.num_nodes * 2 + 20 && stats.replies_received == m_dhtPrevRepliesReceived) {
-    // No replies to over 20 queries plus two per node we have. Probably firewalled.
+  if (stats.queries_sent - m_dhtPrevQueriesSent > stats.num_nodes * 2 + 20 &&
+      stats.replies_received == m_dhtPrevRepliesReceived) {
+    // No replies to over 20 queries plus two per node we have. Probably
+    // firewalled.
     if (!m_warned)
-      LT_LOG_THIS("listening port appears to be firewalled, no replies received", 0);
+      LT_LOG_THIS(
+        "listening port appears to be firewalled, no replies received", 0);
 
     m_warned = true;
     return false;
@@ -259,7 +297,11 @@ DhtManager::log_statistics(bool force) {
   // If bootstrap completed between now and the previous check, notify user.
   if (m_dhtPrevCycle == 1) {
     char buffer[128];
-    snprintf(buffer, sizeof(buffer), "DHT bootstrap complete, have %d nodes in %d buckets.", stats.num_nodes, stats.num_buckets);
+    snprintf(buffer,
+             sizeof(buffer),
+             "DHT bootstrap complete, have %d nodes in %d buckets.",
+             stats.num_nodes,
+             stats.num_buckets);
     control->core()->push_log_complete(buffer);
     m_dhtPrevCycle = stats.cycle;
     return false;
@@ -267,59 +309,65 @@ DhtManager::log_statistics(bool force) {
 
   // Standard DHT statistics on first real cycle, and every 8th cycle
   // afterwards (i.e. every 2 hours), or when forced.
-  if ((force && stats.cycle != m_dhtPrevCycle) || stats.cycle == 3 || stats.cycle > m_dhtPrevCycle + 7) {
+  if ((force && stats.cycle != m_dhtPrevCycle) || stats.cycle == 3 ||
+      stats.cycle > m_dhtPrevCycle + 7) {
     char buffer[256];
-    snprintf(buffer, sizeof(buffer), 
-             "DHT statistics: %d queries in, %d queries out, %d replies received, %lld bytes read, %lld bytes sent, "
-             "%d known nodes in %d buckets, %d peers (highest: %d) tracked in %d torrents.",
-             stats.queries_received - m_dhtPrevQueriesReceived,
-             stats.queries_sent - m_dhtPrevQueriesSent,
-             stats.replies_received - m_dhtPrevRepliesReceived,
-             (long long unsigned int)(stats.down_rate.total() - m_dhtPrevBytesDown),
-             (long long unsigned int)(stats.up_rate.total() - m_dhtPrevBytesUp),
-             stats.num_nodes,
-             stats.num_buckets,
-             stats.num_peers,
-             stats.max_peers,
-             stats.num_trackers);
+    snprintf(
+      buffer,
+      sizeof(buffer),
+      "DHT statistics: %d queries in, %d queries out, %d replies received, "
+      "%lld bytes read, %lld bytes sent, "
+      "%d known nodes in %d buckets, %d peers (highest: %d) tracked in %d "
+      "torrents.",
+      stats.queries_received - m_dhtPrevQueriesReceived,
+      stats.queries_sent - m_dhtPrevQueriesSent,
+      stats.replies_received - m_dhtPrevRepliesReceived,
+      (long long unsigned int)(stats.down_rate.total() - m_dhtPrevBytesDown),
+      (long long unsigned int)(stats.up_rate.total() - m_dhtPrevBytesUp),
+      stats.num_nodes,
+      stats.num_buckets,
+      stats.num_peers,
+      stats.max_peers,
+      stats.num_trackers);
 
     control->core()->push_log_complete(buffer);
 
-    m_dhtPrevCycle = stats.cycle;
-    m_dhtPrevQueriesSent = stats.queries_sent;
+    m_dhtPrevCycle           = stats.cycle;
+    m_dhtPrevQueriesSent     = stats.queries_sent;
     m_dhtPrevRepliesReceived = stats.replies_received;
     m_dhtPrevQueriesReceived = stats.queries_received;
-    m_dhtPrevBytesUp = stats.up_rate.total();
-    m_dhtPrevBytesDown = stats.down_rate.total();
+    m_dhtPrevBytesUp         = stats.up_rate.total();
+    m_dhtPrevBytesDown       = stats.down_rate.total();
   }
 
- return false;
+  return false;
 }
 
 torrent::Object
 DhtManager::dht_statistics() {
   torrent::Object dhtStats = torrent::Object::create_map();
 
-  dhtStats.insert_key("dht",              dht_settings[m_start]);
-  dhtStats.insert_key("active",           torrent::dht_manager()->is_active());
-  dhtStats.insert_key("throttle",         m_throttleName);
+  dhtStats.insert_key("dht", dht_settings[m_start]);
+  dhtStats.insert_key("active", torrent::dht_manager()->is_active());
+  dhtStats.insert_key("throttle", m_throttleName);
 
   if (torrent::dht_manager()->is_active()) {
-    torrent::DhtManager::statistics_type stats = torrent::dht_manager()->get_statistics();
+    torrent::DhtManager::statistics_type stats =
+      torrent::dht_manager()->get_statistics();
 
-    dhtStats.insert_key("cycle",            stats.cycle);
+    dhtStats.insert_key("cycle", stats.cycle);
     dhtStats.insert_key("queries_received", stats.queries_received);
-    dhtStats.insert_key("queries_sent",     stats.queries_sent);
+    dhtStats.insert_key("queries_sent", stats.queries_sent);
     dhtStats.insert_key("replies_received", stats.replies_received);
-    dhtStats.insert_key("errors_received",  stats.errors_received);
-    dhtStats.insert_key("errors_caught",    stats.errors_caught);
-    dhtStats.insert_key("bytes_read",       stats.down_rate.total());
-    dhtStats.insert_key("bytes_written",    stats.up_rate.total());
-    dhtStats.insert_key("nodes",            stats.num_nodes);
-    dhtStats.insert_key("buckets",          stats.num_buckets);
-    dhtStats.insert_key("peers",            stats.num_peers);
-    dhtStats.insert_key("peers_max",        stats.max_peers);
-    dhtStats.insert_key("torrents",         stats.num_trackers);
+    dhtStats.insert_key("errors_received", stats.errors_received);
+    dhtStats.insert_key("errors_caught", stats.errors_caught);
+    dhtStats.insert_key("bytes_read", stats.down_rate.total());
+    dhtStats.insert_key("bytes_written", stats.up_rate.total());
+    dhtStats.insert_key("nodes", stats.num_nodes);
+    dhtStats.insert_key("buckets", stats.num_buckets);
+    dhtStats.insert_key("peers", stats.num_peers);
+    dhtStats.insert_key("peers_max", stats.max_peers);
+    dhtStats.insert_key("torrents", stats.num_trackers);
   }
 
   return dhtStats;

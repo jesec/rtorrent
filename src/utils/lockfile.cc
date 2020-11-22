@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -39,27 +39,27 @@
 #include <algorithm>
 #include <cctype>
 #include <cerrno>
-#include <cstring>
 #include <cstdio>
-#include <sstream>
+#include <cstring>
 #include <fcntl.h>
 #include <signal.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include <sstream>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "lockfile.h"
 
 namespace utils {
 
 struct lockfile_valid_char {
-  bool operator () (char c) {
+  bool operator()(char c) {
     return !std::isgraph(c);
   }
 };
 
 struct lockfile_valid_hostname {
-  bool operator () (char c) {
+  bool operator()(char c) {
     return !std::isgraph(c) || c == ':';
   }
 };
@@ -69,11 +69,11 @@ Lockfile::is_stale() {
   process_type process = locked_by();
 
   char buf[256];
-  
-  if (process.second <= 0 ||
-      ::gethostname(buf, 255) != 0 || buf != process.first)
+
+  if (process.second <= 0 || ::gethostname(buf, 255) != 0 ||
+      buf != process.first)
     return false;
-      
+
   return ::kill(process.second, 0) != 0 && errno != EPERM;
 }
 
@@ -95,7 +95,7 @@ Lockfile::try_lock() {
     return false;
 
   char buf[256];
-  int pos = ::gethostname(buf, 255);
+  int  pos = ::gethostname(buf, 255);
 
   if (pos == 0) {
     ::snprintf(buf + std::strlen(buf), 255, ":+%i\n", ::getpid());
@@ -121,29 +121,26 @@ Lockfile::unlock() {
 Lockfile::process_type
 Lockfile::locked_by() const {
   int fd = ::open(m_path.c_str(), O_RDONLY);
-  
+
   if (fd < 0)
     return process_type(std::string(), 0);
 
-  char first[256];
+  char  first[256];
   char* last = first + std::max<ssize_t>(read(fd, first, 255), 0);
 
   *last = '\0';
   ::close(fd);
 
   char* endHostname = std::find_if(first, last, lockfile_valid_hostname());
-  char* beginPid = endHostname;
+  char* beginPid    = endHostname;
   char* endPid;
 
   long long int pid;
 
-  if (beginPid + 2 >= last ||
-      *(beginPid++) != ':' ||
-      *(beginPid++) != '+' ||
-      (pid = strtoll(beginPid, &endPid, 10)) == 0 ||
-      endPid == NULL)
+  if (beginPid + 2 >= last || *(beginPid++) != ':' || *(beginPid++) != '+' ||
+      (pid = strtoll(beginPid, &endPid, 10)) == 0 || endPid == NULL)
     return process_type(std::string(), 0);
-    
+
   return process_type(std::string(first, endHostname), pid);
 }
 

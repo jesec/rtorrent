@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -46,11 +46,11 @@
 #include "element_base.h"
 
 namespace display {
-  class WindowDownloadStatusbar;
+class WindowDownloadStatusbar;
 }
 
 namespace core {
-  class Download;
+class Download;
 }
 
 namespace ui {
@@ -59,7 +59,7 @@ class Download : public ElementBase {
 public:
   typedef display::WindowDownloadStatusbar WDownloadStatus;
 
-  typedef std::list<torrent::Peer>         PList;
+  typedef std::list<torrent::Peer> PList;
 
   typedef enum {
     DISPLAY_MENU,
@@ -75,47 +75,55 @@ public:
   Download(core::Download* d);
   ~Download();
 
-  void                activate(display::Frame* frame, bool focus = true);
-  void                disable();
+  void activate(display::Frame* frame, bool focus = true);
+  void disable();
 
-  void                activate_display(Display d, bool focusDisplay);
+  void activate_display(Display d, bool focusDisplay);
 
-  void                activate_display_focus(Display d) { activate_display(d, true); }
-  void                activate_display_menu(Display d)  { activate_display(d, false); }
+  void activate_display_focus(Display d) {
+    activate_display(d, true);
+  }
+  void activate_display_menu(Display d) {
+    activate_display(d, false);
+  }
 
-  void                receive_next_priority();
-  void                receive_prev_priority();
+  void receive_next_priority();
+  void receive_prev_priority();
 
-  void                adjust_up_throttle(int throttle);
-  void                adjust_down_throttle(int throttle);
+  void adjust_up_throttle(int throttle);
+  void adjust_down_throttle(int throttle);
 
-  display::Window*    window()   { return NULL; }
-  core::Download*     download() { return m_download; };
+  display::Window* window() {
+    return NULL;
+  }
+  core::Download* download() {
+    return m_download;
+  };
 
 private:
   Download(const Download&);
-  void operator = (const Download&);
+  void operator=(const Download&);
 
   inline ElementBase* create_menu();
   inline ElementBase* create_info();
 
-  void                receive_min_uploads(int t);
-  void                receive_max_uploads(int t);
-  void                receive_min_downloads(int t);
-  void                receive_max_downloads(int t);
-  void                receive_min_peers(int t);
-  void                receive_max_peers(int t);
+  void receive_min_uploads(int t);
+  void receive_max_uploads(int t);
+  void receive_min_downloads(int t);
+  void receive_max_downloads(int t);
+  void receive_min_peers(int t);
+  void receive_max_peers(int t);
 
-  void                bind_keys();
+  void bind_keys();
 
-  core::Download*     m_download;
+  core::Download* m_download;
 
-  Display             m_state;
-  ElementBase*        m_uiArray[DISPLAY_MAX_SIZE];
+  Display      m_state;
+  ElementBase* m_uiArray[DISPLAY_MAX_SIZE];
 
-  bool                m_focusDisplay;
+  bool m_focusDisplay;
 
-  WDownloadStatus*    m_windowDownloadStatus;
+  WDownloadStatus* m_windowDownloadStatus;
 };
 
 }

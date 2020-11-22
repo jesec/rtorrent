@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -41,8 +41,8 @@
 
 #include <dirent.h>
 #include <sys/stat.h>
-#include <torrent/utils/path.h>
 #include <torrent/exceptions.h>
+#include <torrent/utils/path.h>
 
 #include "directory.h"
 
@@ -63,7 +63,8 @@ Directory::is_valid() const {
 bool
 Directory::update(int flags) {
   if (m_path.empty())
-    throw torrent::input_error("Directory::update() tried to open an empty path.");
+    throw torrent::input_error(
+      "Directory::update() tried to open an empty path.");
 
   DIR* d = opendir(torrent::utils::path_expand(m_path).c_str());
 
@@ -85,7 +86,7 @@ Directory::update(int flags) {
     stat(entry->d_name, &s);
     itr->d_fileno = entry->d_ino;
     itr->d_reclen = 0;
-    itr->d_type = s.st_mode;
+    itr->d_type   = s.st_mode;
 #else
     itr->d_fileno = entry->d_fileno;
     itr->d_reclen = entry->d_reclen;
@@ -93,7 +94,7 @@ Directory::update(int flags) {
 #endif
 
 #ifdef DIRENT_NAMLEN_EXISTS_FOOBAR
-    itr->d_name   = std::string(entry->d_name, entry->d_name + entry->d_namlen);
+    itr->d_name = std::string(entry->d_name, entry->d_name + entry->d_namlen);
 #else
     itr->d_name   = std::string(entry->d_name);
 #endif

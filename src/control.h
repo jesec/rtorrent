@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -40,103 +40,140 @@
 #include <cinttypes>
 #include <sys/types.h>
 #include <torrent/buildinfo.h>
-#include <torrent/utils/timer.h>
-#include <torrent/utils/priority_queue_default.h>
 #include <torrent/torrent.h>
+#include <torrent/utils/priority_queue_default.h>
+#include <torrent/utils/timer.h>
 
 namespace ui {
-  class Root;
+class Root;
 }
 
 namespace core {
-  class Manager;
-  class ViewManager;
-  class DhtManager;
+class Manager;
+class ViewManager;
+class DhtManager;
 }
 
 namespace display {
-  class Manager;
+class Manager;
 }
 
 namespace input {
-  class InputEvent;
-  class Manager;
-}  
+class InputEvent;
+class Manager;
+}
 
 namespace rpc {
-  class CommandScheduler;
-  class XmlRpc;
-  class object_storage;
+class CommandScheduler;
+class XmlRpc;
+class object_storage;
 }
 
 namespace torrent {
-  class directory_events;
+class directory_events;
 }
 
 class Control {
 public:
   Control();
   ~Control();
-  
-  bool                is_shutdown_completed();
-  bool                is_shutdown_received()        { return m_shutdownReceived; }
-  bool                is_shutdown_started()         { return m_shutdownQuick; }
 
-  void                initialize();
-  void                cleanup();
-  void                cleanup_exception();
+  bool is_shutdown_completed();
+  bool is_shutdown_received() {
+    return m_shutdownReceived;
+  }
+  bool is_shutdown_started() {
+    return m_shutdownQuick;
+  }
 
-  void                handle_shutdown();
+  void initialize();
+  void cleanup();
+  void cleanup_exception();
 
-  void                receive_normal_shutdown()     { m_shutdownReceived = true; __sync_synchronize(); }
-  void                receive_quick_shutdown()      { m_shutdownReceived = true; m_shutdownQuick = true; __sync_synchronize(); }
+  void handle_shutdown();
 
-  core::Manager*      core()                        { return m_core; }
-  core::ViewManager*  view_manager()                { return m_viewManager; }
-  core::DhtManager*   dht_manager()                 { return m_dhtManager; }
+  void receive_normal_shutdown() {
+    m_shutdownReceived = true;
+    __sync_synchronize();
+  }
+  void receive_quick_shutdown() {
+    m_shutdownReceived = true;
+    m_shutdownQuick    = true;
+    __sync_synchronize();
+  }
 
-  ui::Root*           ui()                          { return m_ui; }
-  display::Manager*   display()                     { return m_display; }
-  input::Manager*     input()                       { return m_input; }
-  input::InputEvent*  input_stdin()                 { return m_inputStdin; }
+  core::Manager* core() {
+    return m_core;
+  }
+  core::ViewManager* view_manager() {
+    return m_viewManager;
+  }
+  core::DhtManager* dht_manager() {
+    return m_dhtManager;
+  }
 
-  rpc::CommandScheduler* command_scheduler()        { return m_commandScheduler; }
-  rpc::object_storage*   object_storage()           { return m_objectStorage; }
+  ui::Root* ui() {
+    return m_ui;
+  }
+  display::Manager* display() {
+    return m_display;
+  }
+  input::Manager* input() {
+    return m_input;
+  }
+  input::InputEvent* input_stdin() {
+    return m_inputStdin;
+  }
 
-  torrent::directory_events* directory_events()     { return m_directory_events; }
+  rpc::CommandScheduler* command_scheduler() {
+    return m_commandScheduler;
+  }
+  rpc::object_storage* object_storage() {
+    return m_objectStorage;
+  }
 
-  uint64_t            tick() const                  { return m_tick; }
-  void                inc_tick()                    { m_tick++; }
+  torrent::directory_events* directory_events() {
+    return m_directory_events;
+  }
 
-  const std::string&  working_directory() const     { return m_workingDirectory; }
-  void                set_working_directory(const std::string& dir);
+  uint64_t tick() const {
+    return m_tick;
+  }
+  void inc_tick() {
+    m_tick++;
+  }
+
+  const std::string& working_directory() const {
+    return m_workingDirectory;
+  }
+  void set_working_directory(const std::string& dir);
 
 private:
   Control(const Control&);
-  void operator = (const Control&);
+  void operator=(const Control&);
 
-  core::Manager*      m_core;
-  core::ViewManager*  m_viewManager;
-  core::DhtManager*   m_dhtManager;
+  core::Manager*     m_core;
+  core::ViewManager* m_viewManager;
+  core::DhtManager*  m_dhtManager;
 
-  ui::Root*           m_ui;
-  display::Manager*   m_display;
-  input::Manager*     m_input;
-  input::InputEvent*  m_inputStdin;
+  ui::Root*          m_ui;
+  display::Manager*  m_display;
+  input::Manager*    m_input;
+  input::InputEvent* m_inputStdin;
 
   rpc::CommandScheduler*     m_commandScheduler;
   rpc::object_storage*       m_objectStorage;
   torrent::directory_events* m_directory_events;
 
-  uint64_t            m_tick;
+  uint64_t m_tick;
 
-  mode_t              m_umask;
-  std::string         m_workingDirectory;
+  mode_t      m_umask;
+  std::string m_workingDirectory;
 
-  torrent::utils::priority_item  m_taskShutdown;
+  torrent::utils::priority_item m_taskShutdown;
 
-  bool                m_shutdownReceived lt_cacheline_aligned;
-  bool                m_shutdownQuick lt_cacheline_aligned;
+  bool m_shutdownReceived lt_cacheline_aligned;
+  bool m_shutdownQuick    lt_cacheline_aligned;
 };
 
 #endif

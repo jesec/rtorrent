@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -46,21 +46,25 @@ namespace input {
 
 class InputEvent : public torrent::Event {
 public:
-  typedef std::function<void (int)> slot_int;
+  typedef std::function<void(int)> slot_int;
 
-  InputEvent(int fd) { m_fileDesc = fd; }
+  InputEvent(int fd) {
+    m_fileDesc = fd;
+  }
 
-  void                insert(torrent::Poll* p);
-  void                remove(torrent::Poll* p);
+  void insert(torrent::Poll* p);
+  void remove(torrent::Poll* p);
 
-  void                event_read();
-  void                event_write();
-  void                event_error();
+  void event_read();
+  void event_write();
+  void event_error();
 
-  void                slot_pressed(slot_int s) { m_slotPressed = s; }
+  void slot_pressed(slot_int s) {
+    m_slotPressed = s;
+  }
 
 private:
-  slot_int            m_slotPressed;
+  slot_int m_slotPressed;
 };
 
 }

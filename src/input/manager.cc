@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -40,8 +40,8 @@
 #include <functional>
 #include <torrent/exceptions.h>
 
-#include "manager.h"
 #include "bindings.h"
+#include "manager.h"
 #include "text_input.h"
 
 namespace input {
@@ -56,7 +56,8 @@ Manager::erase(Bindings* b) {
   Base::erase(itr);
 
   if (std::find(begin(), end(), b) != end())
-    throw torrent::internal_error("Manager::erase(...) found duplicate bindings.");
+    throw torrent::internal_error(
+      "Manager::erase(...) found duplicate bindings.");
 }
 
 void
@@ -64,7 +65,8 @@ Manager::pressed(int key) {
   if (m_textInput != NULL)
     m_textInput->pressed(key);
   else
-    std::find_if(rbegin(), rend(), std::bind2nd(std::mem_fun(&Bindings::pressed), key));
+    std::find_if(
+      rbegin(), rend(), std::bind2nd(std::mem_fun(&Bindings::pressed), key));
 }
 
 }

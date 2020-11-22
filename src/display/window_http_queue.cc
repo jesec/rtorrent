@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -48,24 +48,24 @@
 
 namespace display {
 
-WindowHttpQueue::WindowHttpQueue(core::HttpQueue* q) :
-  Window(new Canvas, 0, 0, 1, extent_full, 1),
-  m_queue(q) {
-  
+WindowHttpQueue::WindowHttpQueue(core::HttpQueue* q)
+  : Window(new Canvas, 0, 0, 1, extent_full, 1)
+  , m_queue(q) {
+
   set_active(false);
-  m_connInsert = m_queue->signal_insert().insert(m_queue->signal_insert().end(),
-                                                 std::bind(&WindowHttpQueue::receive_insert,
-                                                                this,
-                                                                std::placeholders::_1));
-  m_connErase  = m_queue->signal_erase().insert(m_queue->signal_insert().end(),
-                                                std::bind(&WindowHttpQueue::receive_erase,
-                                                               this,
-                                                               std::placeholders::_1));
+  m_connInsert = m_queue->signal_insert().insert(
+    m_queue->signal_insert().end(),
+    std::bind(&WindowHttpQueue::receive_insert, this, std::placeholders::_1));
+  m_connErase = m_queue->signal_erase().insert(
+    m_queue->signal_insert().end(),
+    std::bind(&WindowHttpQueue::receive_erase, this, std::placeholders::_1));
 }
 
 void
 WindowHttpQueue::redraw() {
-  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
+  m_slotSchedule(
+    this,
+    (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
 
   cleanup_list();
 
@@ -74,12 +74,12 @@ WindowHttpQueue::redraw() {
     m_slotAdjust();
 
     return;
-  } 
+  }
 
   m_canvas->erase();
   m_canvas->print(0, 0, "Http [%i]", m_queue->size());
 
-  unsigned int pos = 10;
+  unsigned int        pos = 10;
   Container::iterator itr = m_container.begin();
 
   while (itr != m_container.end() && pos + 20 < m_canvas->width()) {
@@ -90,7 +90,12 @@ WindowHttpQueue::redraw() {
       m_canvas->print(pos, 0, "%s ---%%", itr->m_name.c_str());
 
     else
-      m_canvas->print(pos, 0, "%s %3i%%", itr->m_name.c_str(), (int)(100.0 * itr->m_http->size_done() / itr->m_http->size_total()));
+      m_canvas->print(
+        pos,
+        0,
+        "%s %3i%%",
+        itr->m_name.c_str(),
+        (int)(100.0 * itr->m_http->size_done() / itr->m_http->size_total()));
 
     pos += itr->m_name.size() + 6;
     ++itr;
@@ -111,19 +116,20 @@ WindowHttpQueue::cleanup_list() {
 
 std::string
 WindowHttpQueue::create_name(core::CurlGet* h) {
-  size_t p = h->url().rfind('/', h->url().size() - std::min<int>(10, h->url().size()));
+  size_t p =
+    h->url().rfind('/', h->url().size() - std::min<int>(10, h->url().size()));
 
   std::string n = p != std::string::npos ? h->url().substr(p) : h->url();
 
   if (n.empty())
-    throw std::logic_error("WindowHttpQueue::create_name(...) made a bad string");
+    throw std::logic_error(
+      "WindowHttpQueue::create_name(...) made a bad string");
 
   if (n.size() > 2 && n[0] == '/')
     n = n.substr(1);
 
-  if (n.size() > 9 &&
-      (n.substr(n.size() - 8) == ".torrent" ||
-       n.substr(n.size() - 8) == ".TORRENT"))
+  if (n.size() > 9 && (n.substr(n.size() - 8) == ".torrent" ||
+                       n.substr(n.size() - 8) == ".TORRENT"))
     n = n.substr(0, n.size() - 8);
 
   if (n.size() > 30)
@@ -140,18 +146,22 @@ WindowHttpQueue::receive_insert(core::CurlGet* h) {
     set_active(true);
     m_slotAdjust();
   }
-  
+
   mark_dirty();
 }
 
 void
 WindowHttpQueue::receive_erase(core::CurlGet* h) {
-  Container::iterator itr = std::find_if(m_container.begin(), m_container.end(), torrent::utils::equal(h, std::mem_fun_ref(&Node::get_http)));
+  Container::iterator itr =
+    std::find_if(m_container.begin(),
+                 m_container.end(),
+                 torrent::utils::equal(h, std::mem_fun_ref(&Node::get_http)));
 
   if (itr == m_container.end())
-    throw std::logic_error("WindowHttpQueue::receive_erase(...) tried to remove an object we don't have");
+    throw std::logic_error("WindowHttpQueue::receive_erase(...) tried to "
+                           "remove an object we don't have");
 
-  itr->m_http = NULL;
+  itr->m_http  = NULL;
   itr->m_timer = cachedTime + torrent::utils::timer::from_seconds(1);
 
   mark_dirty();

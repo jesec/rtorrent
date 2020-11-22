@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -52,38 +52,51 @@ class CurlGet : public torrent::Http {
 public:
   friend class CurlStack;
 
-  CurlGet(CurlStack* s) : m_active(false), m_handle(NULL), m_stack(s) {}
+  CurlGet(CurlStack* s)
+    : m_active(false)
+    , m_handle(NULL)
+    , m_stack(s) {}
   virtual ~CurlGet() noexcept(true);
 
-  void               start();
-  void               close();
+  void start();
+  void close();
 
-  bool               is_using_ipv6()    { return m_ipv6; }
-  void               retry_ipv6();
+  bool is_using_ipv6() {
+    return m_ipv6;
+  }
+  void retry_ipv6();
 
-  bool               is_busy() const    { return m_handle; }
-  bool               is_active() const  { return m_active; }
+  bool is_busy() const {
+    return m_handle;
+  }
+  bool is_active() const {
+    return m_active;
+  }
 
-  void               set_active(bool a) { m_active = a; }
+  void set_active(bool a) {
+    m_active = a;
+  }
 
-  double             size_done();
-  double             size_total();
+  double size_done();
+  double size_total();
 
-  CURL*              handle()           { return m_handle; }
+  CURL* handle() {
+    return m_handle;
+  }
 
 private:
   CurlGet(const CurlGet&);
-  void operator = (const CurlGet&);
+  void operator=(const CurlGet&);
 
-  void               receive_timeout();
+  void receive_timeout();
 
-  bool               m_active;
-  bool               m_ipv6;
+  bool m_active;
+  bool m_ipv6;
 
   torrent::utils::priority_item m_taskTimeout;
-  
-  CURL*              m_handle;
-  CurlStack*         m_stack;
+
+  CURL*      m_handle;
+  CurlStack* m_stack;
 };
 
 }

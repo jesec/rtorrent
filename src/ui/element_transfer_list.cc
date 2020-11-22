@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -47,23 +47,27 @@
 
 namespace ui {
 
-ElementTransferList::ElementTransferList(core::Download* d) :
-  m_download(d),
-  m_window(NULL),
-  m_focus(0) {
+ElementTransferList::ElementTransferList(core::Download* d)
+  : m_download(d)
+  , m_window(NULL)
+  , m_focus(0) {
 
-  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] = std::bind(&slot_type::operator(), &m_slot_exit);
+  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
+    std::bind(&slot_type::operator(), &m_slot_exit);
 
-  m_bindings[KEY_DOWN]  = std::bind(&ElementTransferList::receive_next, this);
-  m_bindings[KEY_UP]    = std::bind(&ElementTransferList::receive_prev, this);
-  m_bindings[KEY_NPAGE] = std::bind(&ElementTransferList::receive_pagenext, this);
-  m_bindings[KEY_PPAGE] = std::bind(&ElementTransferList::receive_pageprev, this);
+  m_bindings[KEY_DOWN] = std::bind(&ElementTransferList::receive_next, this);
+  m_bindings[KEY_UP]   = std::bind(&ElementTransferList::receive_prev, this);
+  m_bindings[KEY_NPAGE] =
+    std::bind(&ElementTransferList::receive_pagenext, this);
+  m_bindings[KEY_PPAGE] =
+    std::bind(&ElementTransferList::receive_pageprev, this);
 }
 
 void
 ElementTransferList::activate(display::Frame* frame, bool focus) {
   if (is_active())
-    throw torrent::internal_error("ui::ElementTransferList::activate(...) is_active().");
+    throw torrent::internal_error(
+      "ui::ElementTransferList::activate(...) is_active().");
 
   if (focus)
     control->input()->push_back(&m_bindings);
@@ -78,7 +82,8 @@ ElementTransferList::activate(display::Frame* frame, bool focus) {
 void
 ElementTransferList::disable() {
   if (!is_active())
-    throw torrent::internal_error("ui::ElementTransferList::disable(...) !is_active().");
+    throw torrent::internal_error(
+      "ui::ElementTransferList::disable(...) !is_active().");
 
   control->input()->erase(&m_bindings);
 
@@ -97,7 +102,8 @@ ElementTransferList::window() {
 // void
 // ElementTransferList::receive_disable() {
 //   if (m_window == NULL)
-//     throw std::logic_error("ui::ElementTransferList::receive_disable(...) called on a disabled object");
+//     throw std::logic_error("ui::ElementTransferList::receive_disable(...)
+//     called on a disabled object");
 
 //   if (m_download->download()->tracker(m_focus).is_enabled())
 //     m_download->download()->tracker(m_focus).disable();
@@ -110,51 +116,55 @@ ElementTransferList::window() {
 void
 ElementTransferList::receive_next() {
   if (m_window == NULL)
-    throw torrent::internal_error("ui::ElementTransferList::receive_next(...) called on a disabled object");
+    throw torrent::internal_error(
+      "ui::ElementTransferList::receive_next(...) called on a disabled object");
 
   if (++m_focus > m_window->max_focus())
     m_focus = 0;
 
-//   m_window->mark_dirty();
+  //   m_window->mark_dirty();
 }
 
 void
 ElementTransferList::receive_prev() {
   if (m_window == NULL)
-    throw torrent::internal_error("ui::ElementTransferList::receive_prev(...) called on a disabled object");
+    throw torrent::internal_error(
+      "ui::ElementTransferList::receive_prev(...) called on a disabled object");
 
   if (m_focus > 0)
     --m_focus;
   else
     m_focus = m_window->max_focus();
 
-//   m_window->mark_dirty();
+  //   m_window->mark_dirty();
 }
 
 void
 ElementTransferList::receive_pagenext() {
   if (m_window == NULL)
-    throw torrent::internal_error("ui::ElementTransferList::receive_pagenext(...) called on a disabled object");
+    throw torrent::internal_error("ui::ElementTransferList::receive_pagenext(.."
+                                  ".) called on a disabled object");
 
-  unsigned int visible = m_window->height() - 1;
+  unsigned int visible    = m_window->height() - 1;
   unsigned int scrollable = std::max<int>(m_window->rows() - visible, 0);
 
   if (scrollable == 0 || m_focus == scrollable)
     m_focus = 0;
   else if (m_focus + visible / 2 < scrollable)
     m_focus += visible / 2;
-  else 
+  else
     m_focus = scrollable;
 
-//   m_window->mark_dirty();
+  //   m_window->mark_dirty();
 }
 
 void
 ElementTransferList::receive_pageprev() {
   if (m_window == NULL)
-    throw torrent::internal_error("ui::ElementTransferList::receive_pageprev(...) called on a disabled object");
+    throw torrent::internal_error("ui::ElementTransferList::receive_pageprev(.."
+                                  ".) called on a disabled object");
 
-  unsigned int visible = m_window->height() - 1;
+  unsigned int visible    = m_window->height() - 1;
   unsigned int scrollable = std::max<int>(m_window->rows() - visible, 0);
 
   if (m_focus > visible / 2)
@@ -164,7 +174,7 @@ ElementTransferList::receive_pageprev() {
   else
     m_focus = 0;
 
-//   m_window->mark_dirty();
+  //   m_window->mark_dirty();
 }
 
 }

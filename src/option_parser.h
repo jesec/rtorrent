@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -45,36 +45,37 @@
 
 class OptionParser {
 public:
-  typedef std::function<void (const std::string&)>                     slot_string;
-  typedef std::function<void (const std::string&, const std::string&)> slot_string_pair;
-  typedef std::function<void (int, int)>                               slot_int_pair;
+  typedef std::function<void(const std::string&)> slot_string;
+  typedef std::function<void(const std::string&, const std::string&)>
+                                        slot_string_pair;
+  typedef std::function<void(int, int)> slot_int_pair;
 
-  void                insert_flag(char c, slot_string s);
-  void                insert_option(char c, slot_string s);
-  void                insert_option_list(char c, slot_string_pair s);
-  void                insert_int_pair(char c, slot_int_pair s);
+  void insert_flag(char c, slot_string s);
+  void insert_option(char c, slot_string s);
+  void insert_option_list(char c, slot_string_pair s);
+  void insert_int_pair(char c, slot_int_pair s);
 
   // Returns the index of the first non-option argument.
-  int                 process(int argc, char** argv);
+  int process(int argc, char** argv);
 
-  static bool         has_flag(char flag, int argc, char** argv);
+  static bool has_flag(char flag, int argc, char** argv);
 
 private:
-  std::string         create_optstring();
+  std::string create_optstring();
 
-  void                call(char c, const std::string& arg);
-  static void         call_option_list(slot_string_pair slot, const std::string& arg);
-  static void         call_int_pair(slot_int_pair slot, const std::string& arg);
+  void        call(char c, const std::string& arg);
+  static void call_option_list(slot_string_pair slot, const std::string& arg);
+  static void call_int_pair(slot_int_pair slot, const std::string& arg);
 
   // Use pair instead?
   struct Node {
-    slot_string         m_slot;
-    bool                m_useOption;
+    slot_string m_slot;
+    bool        m_useOption;
   };
 
   typedef std::map<char, Node> Container;
 
-  Container           m_container;
+  Container m_container;
 };
 
 #endif

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -39,9 +39,9 @@
 #include <algorithm>
 #include <cstdlib>
 #include <time.h>
+#include <torrent/exceptions.h>
 #include <torrent/utils/functional.h>
 #include <torrent/utils/string_manip.h>
-#include <torrent/exceptions.h>
 
 #include "command_scheduler.h"
 #include "command_scheduler_item.h"
@@ -50,12 +50,16 @@
 namespace rpc {
 
 CommandScheduler::~CommandScheduler() {
-  std::for_each(begin(), end(), torrent::utils::call_delete<CommandSchedulerItem>());
+  std::for_each(
+    begin(), end(), torrent::utils::call_delete<CommandSchedulerItem>());
 }
 
 CommandScheduler::iterator
 CommandScheduler::find(const std::string& key) {
-  return std::find_if(begin(), end(), torrent::utils::equal(key, std::mem_fun(&CommandSchedulerItem::key)));
+  return std::find_if(
+    begin(),
+    end(),
+    torrent::utils::equal(key, std::mem_fun(&CommandSchedulerItem::key)));
 }
 
 CommandScheduler::iterator
@@ -70,7 +74,7 @@ CommandScheduler::insert(const std::string& key) {
   else
     delete *itr;
 
-  *itr = new CommandSchedulerItem(key);
+  *itr           = new CommandSchedulerItem(key);
   (*itr)->slot() = std::bind(&CommandScheduler::call_item, this, *itr);
 
   return itr;
@@ -88,10 +92,12 @@ CommandScheduler::erase(iterator itr) {
 void
 CommandScheduler::call_item(value_type item) {
   if (item->is_queued())
-    throw torrent::internal_error("CommandScheduler::call_item(...) called but item is still queued.");
+    throw torrent::internal_error(
+      "CommandScheduler::call_item(...) called but item is still queued.");
 
   if (std::find(begin(), end(), item) == end())
-    throw torrent::internal_error("CommandScheduler::call_item(...) called but the item isn't in the scheduler.");
+    throw torrent::internal_error("CommandScheduler::call_item(...) called but "
+                                  "the item isn't in the scheduler.");
 
   // Remove the item before calling the command if it should be
   // removed.
@@ -101,7 +107,8 @@ CommandScheduler::call_item(value_type item) {
 
   } catch (torrent::input_error& e) {
     if (m_slotErrorMessage.is_valid())
-      m_slotErrorMessage("Scheduled command failed: " + item->key() + ": " + e.what());
+      m_slotErrorMessage("Scheduled command failed: " + item->key() + ": " +
+                         e.what());
   }
 
   // Still schedule if we caught a torrrent::input_error?
@@ -113,15 +120,16 @@ CommandScheduler::call_item(value_type item) {
   }
 
   if (next <= cachedTime)
-    throw torrent::internal_error("CommandScheduler::call_item(...) tried to schedule a zero interval item.");
+    throw torrent::internal_error("CommandScheduler::call_item(...) tried to "
+                                  "schedule a zero interval item.");
 
   item->enable(next);
 }
 
 void
-CommandScheduler::parse(const std::string& key,
-                        const std::string& bufAbsolute,
-                        const std::string& bufInterval,
+CommandScheduler::parse(const std::string&     key,
+                        const std::string&     bufAbsolute,
+                        const std::string&     bufInterval,
                         const torrent::Object& command) {
   if (!command.is_string() && !command.is_dict_key())
     throw torrent::bencode_error("Invalid type passed to command scheduler.");
@@ -134,40 +142,45 @@ CommandScheduler::parse(const std::string& key,
   item->command() = command;
   item->set_interval(interval);
 
-  item->enable((cachedTime + torrent::utils::timer::from_seconds(absolute)).round_seconds());
+  item->enable((cachedTime + torrent::utils::timer::from_seconds(absolute))
+                 .round_seconds());
 }
 
 uint32_t
 CommandScheduler::parse_absolute(const char* str) {
-  Time result = parse_time(str);
+  Time   result = parse_time(str);
   time_t t;
 
   // Do the local time thing.
   struct tm local;
 
   switch (result.first) {
-  case 1:
-    return result.second;
+    case 1:
+      return result.second;
 
-  case 2:
-    t = cachedTime.tval().tv_sec;
+    case 2:
+      t = cachedTime.tval().tv_sec;
 
-    if (localtime_r(&t, &local) == NULL)
-      throw torrent::input_error("Could not convert unix time to local time.");
+      if (localtime_r(&t, &local) == NULL)
+        throw torrent::input_error(
+          "Could not convert unix time to local time.");
 
-    return (result.second + 3600 - 60 * local.tm_min - local.tm_sec) % 3600;
+      return (result.second + 3600 - 60 * local.tm_min - local.tm_sec) % 3600;
 
-  case 3:
-    t = cachedTime.tval().tv_sec;
+    case 3:
+      t = cachedTime.tval().tv_sec;
 
-    if (localtime_r(&t, &local) == NULL)
-      throw torrent::input_error("Could not convert unix time to local time.");
+      if (localtime_r(&t, &local) == NULL)
+        throw torrent::input_error(
+          "Could not convert unix time to local time.");
 
-    return (result.second + 24 * 3600 - 3600 * local.tm_hour - 60 * local.tm_min - local.tm_sec) % (24 * 3600);
+      return (result.second + 24 * 3600 - 3600 * local.tm_hour -
+              60 * local.tm_min - local.tm_sec) %
+             (24 * 3600);
 
-  case 0:
-  default:
-    throw torrent::input_error("Could not parse interval.");
+    case 0:
+    default:
+      throw torrent::input_error("Could not parse interval.");
   }
 }
 
@@ -177,7 +190,7 @@ CommandScheduler::parse_interval(const char* str) {
 
   if (result.first == 0)
     throw torrent::input_error("Could not parse interval.");
-  
+
   return result.second;
 }
 

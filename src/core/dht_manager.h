@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -45,47 +45,54 @@ namespace core {
 
 class DhtManager {
 public:
-  DhtManager() : m_warned(false), m_start(dht_off) { }
+  DhtManager()
+    : m_warned(false)
+    , m_start(dht_off) {}
   ~DhtManager();
 
-  void                load_dht_cache();
-  void                save_dht_cache();
-  torrent::Object     dht_statistics();
+  void            load_dht_cache();
+  void            save_dht_cache();
+  torrent::Object dht_statistics();
 
-  void                start_dht();
-  void                stop_dht();
-  void                auto_start()                 { if (m_start == dht_auto) start_dht(); }
+  void start_dht();
+  void stop_dht();
+  void auto_start() {
+    if (m_start == dht_auto)
+      start_dht();
+  }
 
-  void                set_mode(const std::string& arg);
+  void set_mode(const std::string& arg);
 
-  void                set_throttle_name(const std::string& throttleName);
-  const std::string&  throttle_name() const        { return m_throttleName; }
+  void               set_throttle_name(const std::string& throttleName);
+  const std::string& throttle_name() const {
+    return m_throttleName;
+  }
 
 private:
-  static const int    dht_disable = 0;
-  static const int    dht_off     = 1;
-  static const int    dht_auto    = 2;
-  static const int    dht_on      = 3;
+  static const int dht_disable = 0;
+  static const int dht_off     = 1;
+  static const int dht_auto    = 2;
+  static const int dht_on      = 3;
 
-  static const int    dht_settings_num = 4;
-  static const char*  dht_settings[dht_settings_num];
+  static const int   dht_settings_num = 4;
+  static const char* dht_settings[dht_settings_num];
 
-  void                update();
-  bool                log_statistics(bool force);
+  void update();
+  bool log_statistics(bool force);
 
-  unsigned int        m_dhtPrevCycle;
-  unsigned int        m_dhtPrevQueriesSent;
-  unsigned int        m_dhtPrevRepliesReceived;
-  unsigned int        m_dhtPrevQueriesReceived;
-  uint64_t            m_dhtPrevBytesUp;
-  uint64_t            m_dhtPrevBytesDown;
+  unsigned int m_dhtPrevCycle;
+  unsigned int m_dhtPrevQueriesSent;
+  unsigned int m_dhtPrevRepliesReceived;
+  unsigned int m_dhtPrevQueriesReceived;
+  uint64_t     m_dhtPrevBytesUp;
+  uint64_t     m_dhtPrevBytesDown;
 
-  torrent::utils::priority_item  m_updateTimeout;
-  torrent::utils::priority_item  m_stopTimeout;
-  bool                m_warned;
+  torrent::utils::priority_item m_updateTimeout;
+  torrent::utils::priority_item m_stopTimeout;
+  bool                          m_warned;
 
-  int                 m_start;
-  std::string         m_throttleName;
+  int         m_start;
+  std::string m_throttleName;
 };
 
 }

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -47,16 +47,25 @@ namespace rpc {
 // If a flag returned by the functor is negative it is treated as a
 // negation of the flag.
 
-typedef std::function<int (const std::string&)>   parse_option_flag_type;
-typedef std::function<const char* (unsigned int)> parse_option_rflag_type;
+typedef std::function<int(const std::string&)>   parse_option_flag_type;
+typedef std::function<const char*(unsigned int)> parse_option_rflag_type;
 
-int parse_option_flag(const std::string& option, parse_option_flag_type ftor);
-int parse_option_flags(const std::string& option, parse_option_flag_type ftor, int flags = int());
+int
+parse_option_flag(const std::string& option, parse_option_flag_type ftor);
+int
+parse_option_flags(const std::string&     option,
+                   parse_option_flag_type ftor,
+                   int                    flags = int());
 
-void parse_option_for_each(const std::string& option, parse_option_flag_type ftor);
+void
+parse_option_for_each(const std::string& option, parse_option_flag_type ftor);
 
-std::string parse_option_print_vector(int flags, const std::vector<std::pair<const char*, int>>& flag_list);
-std::string parse_option_print_flags(unsigned int flags, parse_option_rflag_type ftor);
+std::string
+parse_option_print_vector(
+  int                                             flags,
+  const std::vector<std::pair<const char*, int>>& flag_list);
+std::string
+parse_option_print_flags(unsigned int flags, parse_option_rflag_type ftor);
 
 }
 

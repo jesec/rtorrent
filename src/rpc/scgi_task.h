@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -40,7 +40,7 @@
 #include <torrent/event.h>
 
 namespace utils {
-  class SocketFd;
+class SocketFd;
 }
 
 namespace rpc {
@@ -50,35 +50,45 @@ class SCgi;
 class SCgiTask : public torrent::Event {
 public:
   static const unsigned int default_buffer_size = 2047;
-  static const          int max_header_size     = 2000;
-  static const          int max_content_size    = (2 << 23);
+  static const int          max_header_size     = 2000;
+  static const int          max_content_size    = (2 << 23);
 
-  SCgiTask() { m_fileDesc = -1; }
+  SCgiTask() {
+    m_fileDesc = -1;
+  }
 
-  bool                is_open() const      { return m_fileDesc != -1; }
-  bool                is_available() const { return m_fileDesc == -1; }
+  bool is_open() const {
+    return m_fileDesc != -1;
+  }
+  bool is_available() const {
+    return m_fileDesc == -1;
+  }
 
-  void                open(SCgi* parent, int fd);
-  void                close();
+  void open(SCgi* parent, int fd);
+  void close();
 
-  virtual void        event_read();
-  virtual void        event_write();
-  virtual void        event_error();
+  virtual void event_read();
+  virtual void event_write();
+  virtual void event_error();
 
-  bool                receive_write(const char* buffer, uint32_t length);
+  bool receive_write(const char* buffer, uint32_t length);
 
-  utils::SocketFd&    get_fd()            { return *reinterpret_cast<utils::SocketFd*>(&m_fileDesc); }
+  utils::SocketFd& get_fd() {
+    return *reinterpret_cast<utils::SocketFd*>(&m_fileDesc);
+  }
 
 private:
-  inline void         realloc_buffer(uint32_t size, const char* buffer, uint32_t bufferSize);
+  inline void realloc_buffer(uint32_t    size,
+                             const char* buffer,
+                             uint32_t    bufferSize);
 
-  SCgi*               m_parent;
+  SCgi* m_parent;
 
-  char*               m_buffer;
-  char*               m_position;
-  char*               m_body;
+  char* m_buffer;
+  char* m_position;
+  char* m_body;
 
-  unsigned int        m_bufferSize;
+  unsigned int m_bufferSize;
 };
 
 }

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -42,34 +42,48 @@
 #include "window.h"
 
 namespace input {
-  class TextInput;
+class TextInput;
 }
 
 namespace display {
 
 class WindowInput : public Window {
 public:
-  WindowInput() :
-    Window(new Canvas, 0, 0, 1, extent_full, 1),
-    m_input(NULL),
-    m_focus(false) {}
+  WindowInput()
+    : Window(new Canvas, 0, 0, 1, extent_full, 1)
+    , m_input(NULL)
+    , m_focus(false) {}
 
-  input::TextInput*   input()                            { return m_input; }
-  void                set_input(input::TextInput* input) { m_input = input; }
+  input::TextInput* input() {
+    return m_input;
+  }
+  void set_input(input::TextInput* input) {
+    m_input = input;
+  }
 
-  const std::string&  title() const                      { return m_title; }
-  void                set_title(const std::string& str)  { m_title = str; }
+  const std::string& title() const {
+    return m_title;
+  }
+  void set_title(const std::string& str) {
+    m_title = str;
+  }
 
-  bool                focus() const                      { return m_focus; }
-  void                set_focus(bool f)                  { m_focus = f; if (is_active()) mark_dirty(); }
+  bool focus() const {
+    return m_focus;
+  }
+  void set_focus(bool f) {
+    m_focus = f;
+    if (is_active())
+      mark_dirty();
+  }
 
-  virtual void        redraw();
+  virtual void redraw();
 
 private:
-  input::TextInput*   m_input;
-  std::string         m_title;
+  input::TextInput* m_input;
+  std::string       m_title;
 
-  bool                m_focus;
+  bool m_focus;
 };
 
 }

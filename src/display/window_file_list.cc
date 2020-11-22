@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -38,10 +38,10 @@
 
 #include <locale>
 #include <stdio.h>
-#include <torrent/path.h>
 #include <torrent/data/file.h>
 #include <torrent/data/file_list.h>
 #include <torrent/data/file_list_iterator.h>
+#include <torrent/path.h>
 
 #include "core/download.h"
 #include "ui/element_file_list.h"
@@ -53,29 +53,31 @@ namespace display {
 // Don't really like the direction of the element dependency, but
 // don't really feel like making a seperate class for containing the
 // necessary information.
-WindowFileList::WindowFileList(const ui::ElementFileList* element) :
-  Window(new Canvas, 0, 0, 0, extent_full, extent_full),
-  m_element(element) {
-}
+WindowFileList::WindowFileList(const ui::ElementFileList* element)
+  : Window(new Canvas, 0, 0, 0, extent_full, extent_full)
+  , m_element(element) {}
 
 // Convert std::string to std::wstring of given width (in screen positions),
-// taking into account that some characters may be occupying two screen positions.
+// taking into account that some characters may be occupying two screen
+// positions.
 std::wstring
 wstring_width(const std::string& i_str, int width) {
   wchar_t result[width + 1];
-  size_t length = std::mbstowcs(result, i_str.c_str(), width);
+  size_t  length = std::mbstowcs(result, i_str.c_str(), width);
 
   // If not valid UTF-8 encoding, at least copy the printable characters.
   if (length == (size_t)-1) {
     wchar_t* out = result;
 
-    for (std::string::const_iterator itr = i_str.begin(); out != result + width && itr != i_str.end(); ++itr)
+    for (std::string::const_iterator itr = i_str.begin();
+         out != result + width && itr != i_str.end();
+         ++itr)
       if (!std::isprint(*itr, std::locale::classic()))
         *out++ = '?';
       else
         *out++ = *itr;
 
-     *out = 0;
+    *out = 0;
   }
 
   int swidth = wcswidth(result, width);
@@ -83,14 +85,14 @@ wstring_width(const std::string& i_str, int width) {
   // Limit to width if it's too wide already.
   if (swidth == -1 || swidth > width) {
     length = swidth = 0;
-    
+
     while (result[length]) {
       int next = ::wcwidth(result[length]);
 
       // Unprintable character?
       if (next == -1) {
         result[length] = '?';
-        next = 1;
+        next           = 1;
       }
 
       if (swidth + next > width) {
@@ -116,7 +118,9 @@ wstring_width(const std::string& i_str, int width) {
 
 void
 WindowFileList::redraw() {
-  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(10)).round_seconds());
+  m_slotSchedule(
+    this,
+    (cachedTime + torrent::utils::timer::from_seconds(10)).round_seconds());
   m_canvas->erase();
 
   torrent::FileList* fl = m_element->download()->download()->file_list();
@@ -128,7 +132,7 @@ WindowFileList::redraw() {
 
   unsigned int last = 0;
 
-  for (iterator itr = m_element->selected(); last != m_canvas->height() - 1; ) {
+  for (iterator itr = m_element->selected(); last != m_canvas->height() - 1;) {
     if (m_element->is_collapsed())
       itr.forward_current_depth();
     else
@@ -142,7 +146,8 @@ WindowFileList::redraw() {
 
   unsigned int first = m_canvas->height() - 1;
 
-  for (iterator itr = m_element->selected(); first >= last || first > (m_canvas->height() - 1) / 2; ) {
+  for (iterator itr = m_element->selected();
+       first >= last || first > (m_canvas->height() - 1) / 2;) {
     entries[--first] = itr;
 
     if (itr == iterator(fl->begin()))
@@ -154,8 +159,8 @@ WindowFileList::redraw() {
       --itr;
   }
 
-  unsigned int pos = 0;
-  int filenameWidth = m_canvas->width() - 16;
+  unsigned int pos           = 0;
+  int          filenameWidth = m_canvas->width() - 16;
 
   m_canvas->print(0, pos++, "Cmp Pri  Size   Filename");
 
@@ -165,17 +170,33 @@ WindowFileList::redraw() {
     if (itr == iterator(fl->end()))
       break;
 
-    m_canvas->set_default_attributes(itr == m_element->selected() ? is_focused() ? A_REVERSE : A_BOLD : A_NORMAL);
+    m_canvas->set_default_attributes(itr == m_element->selected()
+                                       ? is_focused() ? A_REVERSE : A_BOLD
+                                       : A_NORMAL);
 
     if (itr.is_empty()) {
       m_canvas->print(0, pos, "%*c%-*s", 16, ' ', filenameWidth, "EMPTY");
 
     } else if (itr.is_entering()) {
-      m_canvas->print(0, pos, "%*c %ls", 16 + itr.depth(), '\\',
-                      itr.depth() < (*itr)->path()->size() ? wstring_width((*itr)->path()->at(itr.depth()), filenameWidth - itr.depth() - 1).c_str() : L"UNKNOWN");
+      m_canvas->print(0,
+                      pos,
+                      "%*c %ls",
+                      16 + itr.depth(),
+                      '\\',
+                      itr.depth() < (*itr)->path()->size()
+                        ? wstring_width((*itr)->path()->at(itr.depth()),
+                                        filenameWidth - itr.depth() - 1)
+                            .c_str()
+                        : L"UNKNOWN");
 
     } else if (itr.is_leaving()) {
-      m_canvas->print(0, pos, "%*c %-*s", 16 + (itr.depth() - 1), '/', filenameWidth - (itr.depth() - 1), "");
+      m_canvas->print(0,
+                      pos,
+                      "%*c %-*s",
+                      16 + (itr.depth() - 1),
+                      '/',
+                      filenameWidth - (itr.depth() - 1),
+                      "");
 
     } else if (itr.is_file()) {
       torrent::File* e = *itr;
@@ -183,10 +204,18 @@ WindowFileList::redraw() {
       const char* priority;
 
       switch (e->priority()) {
-      case torrent::PRIORITY_OFF:    priority = "off"; break;
-      case torrent::PRIORITY_NORMAL: priority = "   "; break;
-      case torrent::PRIORITY_HIGH:   priority = "hig"; break;
-      default: priority = "BUG"; break;
+        case torrent::PRIORITY_OFF:
+          priority = "off";
+          break;
+        case torrent::PRIORITY_NORMAL:
+          priority = "   ";
+          break;
+        case torrent::PRIORITY_HIGH:
+          priority = "hig";
+          break;
+        default:
+          priority = "BUG";
+          break;
       };
 
       m_canvas->print(0, pos, "%3d %s ", done_percentage(e), priority);
@@ -202,8 +231,16 @@ WindowFileList::redraw() {
       else
         m_canvas->print(8, pos, "%5.1f T", (double)val / (int64_t(1) << 40));
 
-      m_canvas->print(15, pos, "%*c %ls", 1 + itr.depth(), '|',
-                      itr.depth() < (*itr)->path()->size() ? wstring_width((*itr)->path()->at(itr.depth()), filenameWidth - itr.depth() - 1).c_str() : L"UNKNOWN");
+      m_canvas->print(15,
+                      pos,
+                      "%*c %ls",
+                      1 + itr.depth(),
+                      '|',
+                      itr.depth() < (*itr)->path()->size()
+                        ? wstring_width((*itr)->path()->at(itr.depth()),
+                                        filenameWidth - itr.depth() - 1)
+                            .c_str()
+                        : L"UNKNOWN");
 
     } else {
       m_canvas->print(0, pos, "BORK BORK");

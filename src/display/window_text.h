@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -44,9 +44,11 @@
 
 namespace display {
 
-class WindowText : public Window, public std::vector<TextElement*> {
+class WindowText
+  : public Window
+  , public std::vector<TextElement*> {
 public:
-  typedef std::vector<TextElement*>   base_type;
+  typedef std::vector<TextElement*> base_type;
 
   typedef base_type::value_type       value_type;
   typedef base_type::reference        reference;
@@ -62,31 +64,44 @@ public:
   using base_type::rbegin;
   using base_type::rend;
 
-  WindowText(rpc::target_type target = rpc::make_target(), extent_type margin = 0);
-  ~WindowText() { clear(); }
+  WindowText(rpc::target_type target = rpc::make_target(),
+             extent_type      margin = 0);
+  ~WindowText() {
+    clear();
+  }
 
-  void                clear();
+  void clear();
 
-  rpc::target_type    target() const                      { return m_target; }
-  void                set_target(rpc::target_type target) { m_target = target; }
+  rpc::target_type target() const {
+    return m_target;
+  }
+  void set_target(rpc::target_type target) {
+    m_target = target;
+  }
 
-  uint32_t            interval() const         { return m_interval; }
-  void                set_interval(uint32_t i) { m_interval = i; }
+  uint32_t interval() const {
+    return m_interval;
+  }
+  void set_interval(uint32_t i) {
+    m_interval = i;
+  }
 
-  void                push_back(TextElement* element);
+  void push_back(TextElement* element);
 
   // Set an error handler if targets pointing to NULL elements should
   // be handled separately to avoid throwing errors.
-  void                set_error_handler(TextElement* element) { m_errorHandler = element; }
+  void set_error_handler(TextElement* element) {
+    m_errorHandler = element;
+  }
 
-  virtual void        redraw();
+  virtual void redraw();
 
 private:
-  rpc::target_type    m_target;
-  TextElement*        m_errorHandler;
+  rpc::target_type m_target;
+  TextElement*     m_errorHandler;
 
-  extent_type         m_margin;
-  uint32_t            m_interval;
+  extent_type m_margin;
+  uint32_t    m_interval;
 };
 
 }

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -45,24 +45,26 @@ namespace utils {
 
 struct directory_entry {
   // Fix.
-  bool is_file() const { return true; }
+  bool is_file() const {
+    return true;
+  }
 
   // The name and types should match POSIX.
-  uint32_t            d_fileno;
-  uint32_t            d_reclen; //Not used. Messes with Solaris.
-  uint8_t             d_type;
+  uint32_t d_fileno;
+  uint32_t d_reclen; // Not used. Messes with Solaris.
+  uint8_t  d_type;
 
-  std::string         d_name;
+  std::string d_name;
 };
 
 class Directory : private std::vector<directory_entry> {
 public:
   typedef std::vector<directory_entry> base_type;
 
-  using base_type::iterator;
   using base_type::const_iterator;
-  using base_type::reverse_iterator;
   using base_type::const_reverse_iterator;
+  using base_type::iterator;
+  using base_type::reverse_iterator;
   using base_type::value_type;
 
   using base_type::begin;
@@ -81,25 +83,48 @@ public:
   static const int update_hide_dot = 0x2;
 
   Directory() {}
-  Directory(const std::string& path) : m_path(path) {}
+  Directory(const std::string& path)
+    : m_path(path) {}
 
-  bool                is_valid() const;
+  bool is_valid() const;
 
-  const std::string&  path()                            { return m_path; }
-  void                set_path(const std::string& path) { m_path = path; }
+  const std::string& path() {
+    return m_path;
+  }
+  void set_path(const std::string& path) {
+    m_path = path;
+  }
 
-  bool                update(int flags);
+  bool update(int flags);
 
 private:
-  std::string         m_path;
+  std::string m_path;
 };
 
-inline bool operator == (const directory_entry& left, const directory_entry& right) { return left.d_name == right.d_name; }
-inline bool operator != (const directory_entry& left, const directory_entry& right) { return left.d_name != right.d_name; }
-inline bool operator <  (const directory_entry& left, const directory_entry& right) { return left.d_name <  right.d_name; }
-inline bool operator >  (const directory_entry& left, const directory_entry& right) { return left.d_name >  right.d_name; }
-inline bool operator <= (const directory_entry& left, const directory_entry& right) { return left.d_name <= right.d_name; }
-inline bool operator >= (const directory_entry& left, const directory_entry& right) { return left.d_name >= right.d_name; }
+inline bool
+operator==(const directory_entry& left, const directory_entry& right) {
+  return left.d_name == right.d_name;
+}
+inline bool
+operator!=(const directory_entry& left, const directory_entry& right) {
+  return left.d_name != right.d_name;
+}
+inline bool
+operator<(const directory_entry& left, const directory_entry& right) {
+  return left.d_name < right.d_name;
+}
+inline bool
+operator>(const directory_entry& left, const directory_entry& right) {
+  return left.d_name > right.d_name;
+}
+inline bool
+operator<=(const directory_entry& left, const directory_entry& right) {
+  return left.d_name <= right.d_name;
+}
+inline bool
+operator>=(const directory_entry& left, const directory_entry& right) {
+  return left.d_name >= right.d_name;
+}
 
 }
 

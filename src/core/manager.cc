@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -40,33 +40,33 @@
 #include <cstring>
 #include <fstream>
 #include <sstream>
-#include <unistd.h>
 #include <sys/select.h>
-#include <torrent/utils/address_info.h>
-#include <torrent/utils/error_number.h>
-#include <torrent/utils/path.h>
-#include <torrent/utils/string_manip.h>
-#include <torrent/utils/resume.h>
-#include <torrent/object.h>
 #include <torrent/connection_manager.h>
 #include <torrent/error.h>
 #include <torrent/exceptions.h>
+#include <torrent/object.h>
 #include <torrent/object_stream.h>
-#include <torrent/tracker_list.h>
 #include <torrent/throttle.h>
+#include <torrent/tracker_list.h>
+#include <torrent/utils/address_info.h>
+#include <torrent/utils/error_number.h>
 #include <torrent/utils/log.h>
+#include <torrent/utils/path.h>
+#include <torrent/utils/resume.h>
+#include <torrent/utils/string_manip.h>
+#include <unistd.h>
 
 #include "rpc/parse_commands.h"
 #include "utils/directory.h"
 #include "utils/file_status_cache.h"
 #include "utils/regex.h"
 
-#include "globals.h"
-#include "curl_get.h"
 #include "control.h"
+#include "curl_get.h"
 #include "download.h"
 #include "download_factory.h"
 #include "download_store.h"
+#include "globals.h"
 #include "http_queue.h"
 #include "manager.h"
 #include "poll_manager.h"
@@ -85,11 +85,10 @@ Manager::push_log(const char* msg) {
   m_log_complete->lock_and_push_log(msg, strlen(msg), 0);
 }
 
-Manager::Manager() :
-  m_hashingView(NULL),
-  m_log_important(torrent::log_open_log_buffer("important")),
-  m_log_complete(torrent::log_open_log_buffer("complete"))
-{
+Manager::Manager()
+  : m_hashingView(NULL)
+  , m_log_important(torrent::log_open_log_buffer("important"))
+  , m_log_complete(torrent::log_open_log_buffer("complete")) {
   m_downloadStore   = new DownloadStore();
   m_downloadList    = new DownloadList();
   m_fileStatusCache = new FileStatusCache();
@@ -115,16 +114,20 @@ Manager::~Manager() {
 void
 Manager::set_hashing_view(View* v) {
   if (v == NULL || m_hashingView != NULL)
-    throw torrent::internal_error("Manager::set_hashing_view(...) received NULL or is already set.");
+    throw torrent::internal_error(
+      "Manager::set_hashing_view(...) received NULL or is already set.");
 
   m_hashingView = v;
-  m_hashingView->signal_changed().push_back(std::bind(&Manager::receive_hashing_changed, this));
+  m_hashingView->signal_changed().push_back(
+    std::bind(&Manager::receive_hashing_changed, this));
 }
 
 torrent::ThrottlePair
 Manager::get_throttle(const std::string& name) {
   ThrottleMap::const_iterator itr = m_throttles.find(name);
-  torrent::ThrottlePair throttles = (itr == m_throttles.end() ? torrent::ThrottlePair(NULL, NULL) : itr->second);
+  torrent::ThrottlePair       throttles =
+    (itr == m_throttles.end() ? torrent::ThrottlePair(NULL, NULL)
+                              : itr->second);
 
   if (throttles.first == NULL)
     throttles.first = torrent::up_throttle_global();
@@ -136,18 +139,27 @@ Manager::get_throttle(const std::string& name) {
 }
 
 void
-Manager::set_address_throttle(uint32_t begin, uint32_t end, torrent::ThrottlePair throttles) {
+Manager::set_address_throttle(uint32_t              begin,
+                              uint32_t              end,
+                              torrent::ThrottlePair throttles) {
   m_addressThrottles.set_merge(begin, end, throttles);
-  torrent::connection_manager()->address_throttle() = std::bind(&core::Manager::get_address_throttle, control->core(), std::placeholders::_1);
+  torrent::connection_manager()->address_throttle() =
+    std::bind(&core::Manager::get_address_throttle,
+              control->core(),
+              std::placeholders::_1);
 }
 
 torrent::ThrottlePair
 Manager::get_address_throttle(const sockaddr* addr) {
-  return m_addressThrottles.get(torrent::utils::socket_address::cast_from(addr)->sa_inet()->address_h(), torrent::ThrottlePair(NULL, NULL));
+  return m_addressThrottles.get(
+    torrent::utils::socket_address::cast_from(addr)->sa_inet()->address_h(),
+    torrent::ThrottlePair(NULL, NULL));
 }
 
 int64_t
-Manager::retrieve_throttle_value(const torrent::Object::string_type& name, bool rate, bool up) {
+Manager::retrieve_throttle_value(const torrent::Object::string_type& name,
+                                 bool                                rate,
+                                 bool                                up) {
   ThrottleMap::iterator itr = throttles().find(name);
 
   if (itr == throttles().end()) {
@@ -155,7 +167,8 @@ Manager::retrieve_throttle_value(const torrent::Object::string_type& name, bool 
   } else {
     torrent::Throttle* throttle = up ? itr->second.first : itr->second.second;
 
-    // check whether the actual up/down throttle exist (one of the pair can be missing)
+    // check whether the actual up/down throttle exist (one of the pair can be
+    // missing)
     if (throttle == NULL)
       return (int64_t)-1;
 
@@ -171,14 +184,14 @@ Manager::retrieve_throttle_value(const torrent::Object::string_type& name, bool 
     } else {
       return throttle_max;
     }
-
   }
 }
 
 // Most of this should be possible to move out.
 void
 Manager::initialize_second() {
-  torrent::Http::slot_factory() = std::bind(&CurlStack::new_object, m_httpStack);
+  torrent::Http::slot_factory() =
+    std::bind(&CurlStack::new_object, m_httpStack);
   m_httpQueue->set_slot_factory(std::bind(&CurlStack::new_object, m_httpStack));
 
   CurlStack::global_init();
@@ -198,15 +211,20 @@ Manager::cleanup() {
 
   delete m_httpStack;
   CurlStack::global_cleanup();
-
 }
 
 void
 Manager::shutdown(bool force) {
   if (!force)
-    std::for_each(m_downloadList->begin(), m_downloadList->end(), std::bind1st(std::mem_fun(&DownloadList::pause_default), m_downloadList));
+    std::for_each(
+      m_downloadList->begin(),
+      m_downloadList->end(),
+      std::bind1st(std::mem_fun(&DownloadList::pause_default), m_downloadList));
   else
-    std::for_each(m_downloadList->begin(), m_downloadList->end(), std::bind1st(std::mem_fun(&DownloadList::close_quick), m_downloadList));
+    std::for_each(
+      m_downloadList->begin(),
+      m_downloadList->end(),
+      std::bind1st(std::mem_fun(&DownloadList::close_quick), m_downloadList));
 }
 
 void
@@ -216,14 +234,15 @@ Manager::listen_open() {
   if (!rpc::call_command_value("network.port_open"))
     return;
 
-  int portFirst, portLast;
+  int             portFirst, portLast;
   torrent::Object portRange = rpc::call_command("network.port_range");
 
   if (portRange.is_string()) {
-    if (std::sscanf(portRange.as_string().c_str(), "%i-%i", &portFirst, &portLast) != 2)
+    if (std::sscanf(
+          portRange.as_string().c_str(), "%i-%i", &portFirst, &portLast) != 2)
       throw torrent::input_error("Invalid port_range argument.");
-    
-//   } else if (portRange.is_list()) {
+
+    //   } else if (portRange.is_list()) {
 
   } else {
     throw torrent::input_error("Invalid port_range argument.");
@@ -244,35 +263,47 @@ Manager::listen_open() {
       return;
   }
 
-  throw torrent::input_error("Could not open/bind port for listening: " + std::string(torrent::utils::error_number::current().c_str()));
+  throw torrent::input_error(
+    "Could not open/bind port for listening: " +
+    std::string(torrent::utils::error_number::current().c_str()));
 }
 
 std::string
 Manager::bind_address() const {
-  return torrent::utils::socket_address::cast_from(torrent::connection_manager()->bind_address())->address_str();
+  return torrent::utils::socket_address::cast_from(
+           torrent::connection_manager()->bind_address())
+    ->address_str();
 }
 
 void
 Manager::set_bind_address(const std::string& addr) {
-  int err;
+  int                           err;
   torrent::utils::address_info* ai;
 
-  if ((err = torrent::utils::address_info::get_address_info(addr.c_str(), PF_INET, SOCK_STREAM, &ai)) != 0 &&
-      (err = torrent::utils::address_info::get_address_info(addr.c_str(), PF_INET6, SOCK_STREAM, &ai)) != 0)
-    throw torrent::input_error("Could not set bind address: " + std::string(torrent::utils::address_info::strerror(err)) + ".");
-  
+  if ((err = torrent::utils::address_info::get_address_info(
+         addr.c_str(), PF_INET, SOCK_STREAM, &ai)) != 0 &&
+      (err = torrent::utils::address_info::get_address_info(
+         addr.c_str(), PF_INET6, SOCK_STREAM, &ai)) != 0)
+    throw torrent::input_error(
+      "Could not set bind address: " +
+      std::string(torrent::utils::address_info::strerror(err)) + ".");
+
   try {
 
     if (torrent::connection_manager()->listen_port() != 0) {
       torrent::connection_manager()->listen_close();
-      torrent::connection_manager()->set_bind_address(ai->address()->c_sockaddr());
+      torrent::connection_manager()->set_bind_address(
+        ai->address()->c_sockaddr());
       listen_open();
 
     } else {
-      torrent::connection_manager()->set_bind_address(ai->address()->c_sockaddr());
+      torrent::connection_manager()->set_bind_address(
+        ai->address()->c_sockaddr());
     }
 
-    m_httpStack->set_bind_address(!ai->address()->is_address_any() ? ai->address()->address_str() : std::string());
+    m_httpStack->set_bind_address(!ai->address()->is_address_any()
+                                    ? ai->address()->address_str()
+                                    : std::string());
 
     torrent::utils::address_info::free_address_info(ai);
 
@@ -284,21 +315,28 @@ Manager::set_bind_address(const std::string& addr) {
 
 std::string
 Manager::local_address() const {
-  return torrent::utils::socket_address::cast_from(torrent::connection_manager()->local_address())->address_str();
+  return torrent::utils::socket_address::cast_from(
+           torrent::connection_manager()->local_address())
+    ->address_str();
 }
 
 void
 Manager::set_local_address(const std::string& addr) {
-  int err;
+  int                           err;
   torrent::utils::address_info* ai;
 
-  if ((err = torrent::utils::address_info::get_address_info(addr.c_str(), PF_INET, SOCK_STREAM, &ai)) != 0 &&
-      (err = torrent::utils::address_info::get_address_info(addr.c_str(), PF_INET6, SOCK_STREAM, &ai)) != 0)
-    throw torrent::input_error("Could not set local address: " + std::string(torrent::utils::address_info::strerror(err)) + ".");
-  
+  if ((err = torrent::utils::address_info::get_address_info(
+         addr.c_str(), PF_INET, SOCK_STREAM, &ai)) != 0 &&
+      (err = torrent::utils::address_info::get_address_info(
+         addr.c_str(), PF_INET6, SOCK_STREAM, &ai)) != 0)
+    throw torrent::input_error(
+      "Could not set local address: " +
+      std::string(torrent::utils::address_info::strerror(err)) + ".");
+
   try {
 
-    torrent::connection_manager()->set_local_address(ai->address()->c_sockaddr());
+    torrent::connection_manager()->set_local_address(
+      ai->address()->c_sockaddr());
     torrent::utils::address_info::free_address_info(ai);
 
   } catch (torrent::input_error& e) {
@@ -309,12 +347,14 @@ Manager::set_local_address(const std::string& addr) {
 
 std::string
 Manager::proxy_address() const {
-  return torrent::utils::socket_address::cast_from(torrent::connection_manager()->proxy_address())->address_str();
+  return torrent::utils::socket_address::cast_from(
+           torrent::connection_manager()->proxy_address())
+    ->address_str();
 }
 
 void
 Manager::set_proxy_address(const std::string& addr) {
-  int port;
+  int                           port;
   torrent::utils::address_info* ai;
 
   char buf[addr.length() + 1];
@@ -327,14 +367,18 @@ Manager::set_proxy_address(const std::string& addr) {
   if (err == 1)
     port = 80;
 
-  if ((err = torrent::utils::address_info::get_address_info(buf, PF_INET, SOCK_STREAM, &ai)) != 0)
-    throw torrent::input_error("Could not set proxy address: " + std::string(torrent::utils::address_info::strerror(err)) + ".");
-  
+  if ((err = torrent::utils::address_info::get_address_info(
+         buf, PF_INET, SOCK_STREAM, &ai)) != 0)
+    throw torrent::input_error(
+      "Could not set proxy address: " +
+      std::string(torrent::utils::address_info::strerror(err)) + ".");
+
   try {
 
     ai->address()->set_port(port);
-    torrent::connection_manager()->set_proxy_address(ai->address()->c_sockaddr());
-    
+    torrent::connection_manager()->set_proxy_address(
+      ai->address()->c_sockaddr());
+
     torrent::utils::address_info::free_address_info(ai);
 
   } catch (torrent::input_error& e) {
@@ -349,12 +393,12 @@ Manager::receive_http_failed(std::string msg) {
 }
 
 void
-Manager::try_create_download(const std::string& uri, int flags, const command_list_type& commands) {
+Manager::try_create_download(const std::string&       uri,
+                             int                      flags,
+                             const command_list_type& commands) {
   // If the path was attempted loaded before, skip it.
-  if ((flags & create_tied) &&
-      !(flags & create_raw_data) &&
-      !is_network_uri(uri) &&
-      !is_magnet_uri(uri) &&
+  if ((flags & create_tied) && !(flags & create_raw_data) &&
+      !is_network_uri(uri) && !is_magnet_uri(uri) &&
       !file_status_cache()->insert(uri, 0))
     return;
 
@@ -366,7 +410,8 @@ Manager::try_create_download(const std::string& uri, int flags, const command_li
 
   f->set_start(flags & create_start);
   f->set_print_log(!(flags & create_quiet));
-  f->slot_finished(std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
+  f->slot_finished(
+    std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
 
   if (flags & create_raw_data)
     f->load_raw_data(uri);
@@ -377,20 +422,24 @@ Manager::try_create_download(const std::string& uri, int flags, const command_li
 }
 
 void
-Manager::try_create_download_from_meta_download(torrent::Object* bencode, const std::string& metafile) {
+Manager::try_create_download_from_meta_download(torrent::Object*   bencode,
+                                                const std::string& metafile) {
   DownloadFactory* f = new DownloadFactory(this);
 
-  f->variables()["tied_to_file"] = (int64_t)true;
-  f->variables()["tied_file"] = metafile;
+  f->variables()["tied_to_file"] = (int64_t) true;
+  f->variables()["tied_file"]    = metafile;
 
-  torrent::Object& meta = bencode->get_key("rtorrent_meta_download");
+  torrent::Object&            meta = bencode->get_key("rtorrent_meta_download");
   torrent::Object::list_type& commands = meta.get_key_list("commands");
-  for (torrent::Object::list_type::const_iterator itr = commands.begin(); itr != commands.end(); ++itr)
+  for (torrent::Object::list_type::const_iterator itr = commands.begin();
+       itr != commands.end();
+       ++itr)
     f->commands().insert(f->commands().end(), itr->as_string());
 
   f->set_start(meta.get_key_value("start"));
   f->set_print_log(meta.get_key_value("print_log"));
-  f->slot_finished(std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
+  f->slot_finished(
+    std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
 
   // Bit of a waste to create the bencode repesentation here
   // only to have the DownloadFactory decode it.
@@ -412,9 +461,11 @@ path_expand(std::vector<std::string>* paths, const std::string& pattern) {
   std::vector<utils::Directory> currentCache;
   std::vector<utils::Directory> nextCache;
 
-  torrent::utils::split_iterator_t<std::string> first = torrent::utils::split_iterator(pattern, '/');
-  torrent::utils::split_iterator_t<std::string> last  = torrent::utils::split_iterator(pattern);
-    
+  torrent::utils::split_iterator_t<std::string> first =
+    torrent::utils::split_iterator(pattern, '/');
+  torrent::utils::split_iterator_t<std::string> last =
+    torrent::utils::split_iterator(pattern);
+
   if (first == last)
     return;
 
@@ -439,29 +490,49 @@ path_expand(std::vector<std::string>* paths, const std::string& pattern) {
 
     // Special case for ".."?
 
-    for (std::vector<utils::Directory>::iterator itr = currentCache.begin(); itr != currentCache.end(); ++itr) {
+    for (std::vector<utils::Directory>::iterator itr = currentCache.begin();
+         itr != currentCache.end();
+         ++itr) {
       // Only include filenames starting with '.' if the pattern
       // starts with the same.
-      itr->update((r.pattern()[0] != '.') ? utils::Directory::update_hide_dot : 0);
-      itr->erase(std::remove_if(itr->begin(), itr->end(), torrent::utils::on(torrent::utils::mem_ref(&utils::directory_entry::d_name), std::not1(r))), itr->end());
+      itr->update((r.pattern()[0] != '.') ? utils::Directory::update_hide_dot
+                                          : 0);
+      itr->erase(
+        std::remove_if(itr->begin(),
+                       itr->end(),
+                       torrent::utils::on(torrent::utils::mem_ref(
+                                            &utils::directory_entry::d_name),
+                                          std::not1(r))),
+        itr->end());
 
-      std::transform(itr->begin(), itr->end(), std::back_inserter(nextCache), torrent::utils::bind1st(std::ptr_fun(&path_expand_transform), itr->path() + (itr->path() == "/" ? "" : "/")));
+      std::transform(
+        itr->begin(),
+        itr->end(),
+        std::back_inserter(nextCache),
+        torrent::utils::bind1st(std::ptr_fun(&path_expand_transform),
+                                itr->path() + (itr->path() == "/" ? "" : "/")));
     }
 
     currentCache.clear();
     currentCache.swap(nextCache);
   }
 
-  std::transform(currentCache.begin(), currentCache.end(), std::back_inserter(*paths), std::mem_fun_ref(&utils::Directory::path));
+  std::transform(currentCache.begin(),
+                 currentCache.end(),
+                 std::back_inserter(*paths),
+                 std::mem_fun_ref(&utils::Directory::path));
 }
 
 bool
 manager_equal_tied(const std::string& path, Download* download) {
-  return path == rpc::call_command_string("d.tied_to_file", rpc::make_target(download));
+  return path ==
+         rpc::call_command_string("d.tied_to_file", rpc::make_target(download));
 }
 
 void
-Manager::try_create_download_expand(const std::string& uri, int flags, command_list_type commands) {
+Manager::try_create_download_expand(const std::string& uri,
+                                    int                flags,
+                                    command_list_type  commands) {
   if (flags & create_raw_data) {
     try_create_download(uri, flags, commands);
     return;
@@ -473,7 +544,9 @@ Manager::try_create_download_expand(const std::string& uri, int flags, command_l
   path_expand(&paths, uri);
 
   if (!paths.empty())
-    for (std::vector<std::string>::iterator itr = paths.begin(); itr != paths.end(); ++itr)
+    for (std::vector<std::string>::iterator itr = paths.begin();
+         itr != paths.end();
+         ++itr)
       try_create_download(*itr, flags, commands);
 
   else
@@ -485,20 +558,27 @@ Manager::try_create_download_expand(const std::string& uri, int flags, command_l
 // hashing view and starts hashing if nessesary.
 void
 Manager::receive_hashing_changed() {
-  bool foundHashing = std::find_if(m_hashingView->begin_visible(), m_hashingView->end_visible(),
-                                   std::mem_fun(&Download::is_hash_checking)) != m_hashingView->end_visible();
-  
+  bool foundHashing = std::find_if(m_hashingView->begin_visible(),
+                                   m_hashingView->end_visible(),
+                                   std::mem_fun(&Download::is_hash_checking)) !=
+                      m_hashingView->end_visible();
+
   // Try quick hashing all those with hashing == initial, set them to
   // something else when failed.
-  for (View::iterator itr = m_hashingView->begin_visible(), last = m_hashingView->end_visible(); itr != last; ++itr) {
+  for (View::iterator itr  = m_hashingView->begin_visible(),
+                      last = m_hashingView->end_visible();
+       itr != last;
+       ++itr) {
     if ((*itr)->is_hash_checked())
-      throw torrent::internal_error("core::Manager::receive_hashing_changed() (*itr)->is_hash_checked().");
-  
+      throw torrent::internal_error(
+        "core::Manager::receive_hashing_changed() (*itr)->is_hash_checked().");
+
     if ((*itr)->is_hash_checking() || (*itr)->is_hash_failed())
       continue;
 
     bool tryQuick =
-      rpc::call_command_value("d.hashing", rpc::make_target(*itr)) == Download::variable_hashing_initial &&
+      rpc::call_command_value("d.hashing", rpc::make_target(*itr)) ==
+        Download::variable_hashing_initial &&
       (*itr)->download()->file_list()->bitfield()->empty();
 
     if (!tryQuick && foundHashing)
@@ -512,7 +592,9 @@ Manager::receive_hashing_changed() {
       // not empty then we have already loaded any existing resume
       // data.
       if ((*itr)->download()->file_list()->bitfield()->empty())
-        torrent::resume_load_progress(*(*itr)->download(), (*itr)->download()->bencode()->get_key("libtorrent_resume"));
+        torrent::resume_load_progress(
+          *(*itr)->download(),
+          (*itr)->download()->bencode()->get_key("libtorrent_resume"));
 
       if (tryQuick) {
         if ((*itr)->download()->hash_check(true))
@@ -521,7 +603,9 @@ Manager::receive_hashing_changed() {
         (*itr)->download()->hash_stop();
 
         if (foundHashing) {
-          rpc::call_command_set_value("d.hashing.set", Download::variable_hashing_rehash, rpc::make_target(*itr));
+          rpc::call_command_set_value("d.hashing.set",
+                                      Download::variable_hashing_rehash,
+                                      rpc::make_target(*itr));
           continue;
         }
       }
@@ -532,11 +616,14 @@ Manager::receive_hashing_changed() {
     } catch (torrent::local_error& e) {
       if (tryQuick) {
         // Make sure we don't repeat the quick hashing.
-        rpc::call_command_set_value("d.hashing.set", Download::variable_hashing_rehash, rpc::make_target(*itr));
+        rpc::call_command_set_value("d.hashing.set",
+                                    Download::variable_hashing_rehash,
+                                    rpc::make_target(*itr));
 
       } else {
         (*itr)->set_hash_failed(true);
-        lt_log_print(torrent::LOG_TORRENT_ERROR, "Hashing failed: %s", e.what());
+        lt_log_print(
+          torrent::LOG_TORRENT_ERROR, "Hashing failed: %s", e.what());
       }
     }
   }

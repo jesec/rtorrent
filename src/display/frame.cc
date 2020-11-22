@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -39,36 +39,38 @@
 #include <algorithm>
 #include <functional>
 
-#include <torrent/utils/algorithm.h>
 #include <torrent/exceptions.h>
+#include <torrent/utils/algorithm.h>
 
 #include "frame.h"
 #include "window.h"
 
 namespace display {
 
-Frame::Frame() :
-  m_type(TYPE_NONE),
+Frame::Frame()
+  : m_type(TYPE_NONE)
+  ,
 
-  m_positionX(0),
-  m_positionY(0),
-  m_width(0),
-  m_height(0) {
-}
+  m_positionX(0)
+  , m_positionY(0)
+  , m_width(0)
+  , m_height(0) {}
 
 bool
 Frame::is_width_dynamic() const {
   switch (m_type) {
-  case TYPE_NONE:   return false;
-  case TYPE_WINDOW: return m_window->is_active() && m_window->is_width_dynamic();
+    case TYPE_NONE:
+      return false;
+    case TYPE_WINDOW:
+      return m_window->is_active() && m_window->is_width_dynamic();
 
-  case TYPE_ROW:
-  case TYPE_COLUMN:
-    for (size_type i = 0; i < m_containerSize; ++i)
-      if (m_container[i]->is_width_dynamic())
-        return true;
+    case TYPE_ROW:
+    case TYPE_COLUMN:
+      for (size_type i = 0; i < m_containerSize; ++i)
+        if (m_container[i]->is_width_dynamic())
+          return true;
 
-    return false;
+      return false;
   }
 
   return false;
@@ -77,16 +79,18 @@ Frame::is_width_dynamic() const {
 bool
 Frame::is_height_dynamic() const {
   switch (m_type) {
-  case TYPE_NONE:   return false;
-  case TYPE_WINDOW: return m_window->is_active() && m_window->is_height_dynamic();
+    case TYPE_NONE:
+      return false;
+    case TYPE_WINDOW:
+      return m_window->is_active() && m_window->is_height_dynamic();
 
-  case TYPE_ROW:
-  case TYPE_COLUMN:
-    for (size_type i = 0; i < m_containerSize; ++i)
-      if (m_container[i]->is_height_dynamic())
-        return true;
+    case TYPE_ROW:
+    case TYPE_COLUMN:
+      for (size_type i = 0; i < m_containerSize; ++i)
+        if (m_container[i]->is_height_dynamic())
+          return true;
 
-    return false;
+      return false;
   }
 
   return false;
@@ -95,16 +99,18 @@ Frame::is_height_dynamic() const {
 bool
 Frame::has_left_frame() const {
   switch (m_type) {
-  case TYPE_NONE:
-  case TYPE_ROW:    return false;
-  case TYPE_WINDOW: return m_window->is_active() && m_window->is_left();
+    case TYPE_NONE:
+    case TYPE_ROW:
+      return false;
+    case TYPE_WINDOW:
+      return m_window->is_active() && m_window->is_left();
 
-  case TYPE_COLUMN:
-    for (size_type i = 0; i < m_containerSize; ++i)
-      if (m_container[i]->has_left_frame())
-        return true;
+    case TYPE_COLUMN:
+      for (size_type i = 0; i < m_containerSize; ++i)
+        if (m_container[i]->has_left_frame())
+          return true;
 
-    return false;
+      return false;
   }
 
   return false;
@@ -113,16 +119,18 @@ Frame::has_left_frame() const {
 bool
 Frame::has_bottom_frame() const {
   switch (m_type) {
-  case TYPE_NONE:
-  case TYPE_COLUMN: return false;
-  case TYPE_WINDOW: return m_window->is_active() && m_window->is_bottom();
+    case TYPE_NONE:
+    case TYPE_COLUMN:
+      return false;
+    case TYPE_WINDOW:
+      return m_window->is_active() && m_window->is_bottom();
 
-  case TYPE_ROW:
-    for (size_type i = 0; i < m_containerSize; ++i)
-      if (m_container[i]->has_bottom_frame())
-        return true;
+    case TYPE_ROW:
+      for (size_type i = 0; i < m_containerSize; ++i)
+        if (m_container[i]->has_bottom_frame())
+          return true;
 
-    return false;
+      return false;
   }
 
   return false;
@@ -131,33 +139,36 @@ Frame::has_bottom_frame() const {
 Frame::bounds_type
 Frame::preferred_size() const {
   switch (m_type) {
-  case TYPE_NONE:
-    return bounds_type(0, 0, 0, 0);
-
-  case TYPE_WINDOW:
-    if (m_window->is_active())
-      return bounds_type(m_window->min_width(), m_window->min_height(),
-                         m_window->max_width(), m_window->max_height());
-    else
+    case TYPE_NONE:
       return bounds_type(0, 0, 0, 0);
 
-  case TYPE_ROW:
-  case TYPE_COLUMN:
-    {
+    case TYPE_WINDOW:
+      if (m_window->is_active())
+        return bounds_type(m_window->min_width(),
+                           m_window->min_height(),
+                           m_window->max_width(),
+                           m_window->max_height());
+      else
+        return bounds_type(0, 0, 0, 0);
+
+    case TYPE_ROW:
+    case TYPE_COLUMN: {
       bounds_type accum(0, 0, 0, 0);
 
       for (size_type i = 0; i < m_containerSize; ++i) {
         bounds_type p = m_container[i]->preferred_size();
- 
+
         accum.minWidth += p.minWidth;
         accum.minHeight += p.minHeight;
 
-        if (p.maxWidth == Window::extent_full || accum.maxWidth == Window::extent_full)
+        if (p.maxWidth == Window::extent_full ||
+            accum.maxWidth == Window::extent_full)
           accum.maxWidth = Window::extent_full;
         else
           accum.maxWidth += p.maxWidth;
 
-        if (p.maxHeight == Window::extent_full || accum.maxHeight == Window::extent_full)
+        if (p.maxHeight == Window::extent_full ||
+            accum.maxHeight == Window::extent_full)
           accum.maxHeight = Window::extent_full;
         else
           accum.maxHeight += p.maxHeight;
@@ -188,21 +199,24 @@ Frame::set_container_size(size_type size) {
 void
 Frame::initialize_window(Window* window) {
   if (m_type != TYPE_NONE)
-    throw torrent::internal_error("Frame::initialize_window(...) m_type != TYPE_NONE.");
+    throw torrent::internal_error(
+      "Frame::initialize_window(...) m_type != TYPE_NONE.");
 
-  m_type = TYPE_WINDOW;
+  m_type   = TYPE_WINDOW;
   m_window = window;
 }
 
 void
 Frame::initialize_row(size_type size) {
   if (m_type != TYPE_NONE)
-    throw torrent::internal_error("Frame::initialize_container(...) Invalid state.");
+    throw torrent::internal_error(
+      "Frame::initialize_container(...) Invalid state.");
 
   if (size > max_size)
-    throw torrent::internal_error("Frame::initialize_container(...) size >= max_size.");
+    throw torrent::internal_error(
+      "Frame::initialize_container(...) size >= max_size.");
 
-  m_type = TYPE_ROW;
+  m_type          = TYPE_ROW;
   m_containerSize = size;
 
   for (size_type i = 0; i < m_containerSize; ++i)
@@ -212,12 +226,14 @@ Frame::initialize_row(size_type size) {
 void
 Frame::initialize_column(size_type size) {
   if (m_type != TYPE_NONE)
-    throw torrent::internal_error("Frame::initialize_container(...) Invalid state.");
+    throw torrent::internal_error(
+      "Frame::initialize_container(...) Invalid state.");
 
   if (size > max_size)
-    throw torrent::internal_error("Frame::initialize_container(...) size >= max_size.");
+    throw torrent::internal_error(
+      "Frame::initialize_container(...) size >= max_size.");
 
-  m_type = TYPE_COLUMN;
+  m_type          = TYPE_COLUMN;
   m_containerSize = size;
 
   for (size_type i = 0; i < m_containerSize; ++i)
@@ -227,22 +243,22 @@ Frame::initialize_column(size_type size) {
 void
 Frame::clear() {
   switch (m_type) {
-  case TYPE_WINDOW:
-    if (m_window != NULL)
-      m_window->set_offscreen(true);
+    case TYPE_WINDOW:
+      if (m_window != NULL)
+        m_window->set_offscreen(true);
 
-    break;
-    
-  case TYPE_ROW:
-  case TYPE_COLUMN:
-    for (size_type i = 0; i < m_containerSize; ++i) {
-      m_container[i]->clear();
-      delete m_container[i];
-    }
-    break;
+      break;
 
-  default:
-    break;
+    case TYPE_ROW:
+    case TYPE_COLUMN:
+      for (size_type i = 0; i < m_containerSize; ++i) {
+        m_container[i]->clear();
+        delete m_container[i];
+      }
+      break;
+
+    default:
+      break;
   }
 
   m_type = TYPE_NONE;
@@ -251,42 +267,46 @@ Frame::clear() {
 void
 Frame::refresh() {
   switch (m_type) {
-  case TYPE_NONE:
-    break;
+    case TYPE_NONE:
+      break;
 
-  case TYPE_WINDOW:
-    if (m_window->is_active() && !m_window->is_offscreen())
-      m_window->refresh();
+    case TYPE_WINDOW:
+      if (m_window->is_active() && !m_window->is_offscreen())
+        m_window->refresh();
 
-    break;
+      break;
 
-  case TYPE_ROW:
-  case TYPE_COLUMN:
-    for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr)
-      (*itr)->refresh();
+    case TYPE_ROW:
+    case TYPE_COLUMN:
+      for (Frame **itr = m_container, **last = m_container + m_containerSize;
+           itr != last;
+           ++itr)
+        (*itr)->refresh();
 
-    break;
+      break;
   }
 }
 
 void
 Frame::redraw() {
   switch (m_type) {
-  case TYPE_NONE:
-    break;
+    case TYPE_NONE:
+      break;
 
-  case TYPE_WINDOW:
-    if (m_window->is_active() && !m_window->is_offscreen())
-      m_window->redraw();
+    case TYPE_WINDOW:
+      if (m_window->is_active() && !m_window->is_offscreen())
+        m_window->redraw();
 
-    break;
+      break;
 
-  case TYPE_ROW:
-  case TYPE_COLUMN:
-    for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr)
-      (*itr)->redraw();
+    case TYPE_ROW:
+    case TYPE_COLUMN:
+      for (Frame **itr = m_container, **last = m_container + m_containerSize;
+           itr != last;
+           ++itr)
+        (*itr)->redraw();
 
-    break;
+      break;
   }
 }
 
@@ -294,14 +314,21 @@ void
 Frame::balance(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
   m_positionX = x;
   m_positionY = y;
-  m_width = width;
-  m_height = height;
+  m_width     = width;
+  m_height    = height;
 
   switch (m_type) {
-  case TYPE_NONE:   break;
-  case TYPE_WINDOW: balance_window(x, y, width, height); break;
-  case TYPE_ROW:    balance_row(x, y, width, height); break;
-  case TYPE_COLUMN: balance_column(x, y, width, height); break;
+    case TYPE_NONE:
+      break;
+    case TYPE_WINDOW:
+      balance_window(x, y, width, height);
+      break;
+    case TYPE_ROW:
+      balance_row(x, y, width, height);
+      break;
+    case TYPE_COLUMN:
+      balance_column(x, y, width, height);
+      break;
   }
 }
 
@@ -333,8 +360,14 @@ Frame::balance_window(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
   m_window->mark_dirty();
 }
 
-inline Frame::extent_type dynamic_min_height(const Frame::dynamic_type& value) { return value.second.min_height(); }
-inline Frame::extent_type dynamic_min_width(const Frame::dynamic_type& value) { return value.second.min_width(); }
+inline Frame::extent_type
+dynamic_min_height(const Frame::dynamic_type& value) {
+  return value.second.min_height();
+}
+inline Frame::extent_type
+dynamic_min_width(const Frame::dynamic_type& value) {
+  return value.second.min_width();
+}
 
 inline void
 Frame::balance_row(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
@@ -346,12 +379,14 @@ Frame::balance_row(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
   dynamic_type dynamicFrames[max_size];
 
   int remaining = height;
-  
-  for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr) {
+
+  for (Frame **itr = m_container, **last = m_container + m_containerSize;
+       itr != last;
+       ++itr) {
     bounds_type bounds = (*itr)->preferred_size();
-    
+
     if ((*itr)->is_height_dynamic()) {
-      (*itr)->m_height = 0;
+      (*itr)->m_height             = 0;
       dynamicFrames[dynamicSize++] = std::make_pair(*itr, bounds);
 
     } else {
@@ -366,23 +401,29 @@ Frame::balance_row(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
   // following frames.
   //
   // Else if we're short, only give each what they require.
-  std::stable_sort(dynamicFrames, dynamicFrames + dynamicSize,
-                   std::bind(std::greater<extent_type>(),
-                                  std::bind(&dynamic_min_height, std::placeholders::_1),
-                                  std::bind(&dynamic_min_height, std::placeholders::_2)));
+  std::stable_sort(
+    dynamicFrames,
+    dynamicFrames + dynamicSize,
+    std::bind(std::greater<extent_type>(),
+              std::bind(&dynamic_min_height, std::placeholders::_1),
+              std::bind(&dynamic_min_height, std::placeholders::_2)));
 
   bool retry;
 
   do {
     retry = false;
 
-    for (dynamic_type *itr = dynamicFrames, *last = dynamicFrames + dynamicSize; itr != last; ++itr) {
-      uint32_t adjust = (std::max(remaining, 0) + std::distance(itr, last) - 1) / std::distance(itr, last);
-    
+    for (dynamic_type *itr = dynamicFrames, *last = dynamicFrames + dynamicSize;
+         itr != last;
+         ++itr) {
+      uint32_t adjust =
+        (std::max(remaining, 0) + std::distance(itr, last) - 1) /
+        std::distance(itr, last);
+
       adjust += itr->first->m_height;
       adjust = std::max(adjust, itr->second.minHeight);
       adjust = std::min(adjust, itr->second.maxHeight);
-        
+
       remaining -= adjust - itr->first->m_height;
 
       retry = retry || itr->first->m_height != adjust;
@@ -396,7 +437,9 @@ Frame::balance_row(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
   // the frame is too small, it will set the remaining windows to zero
   // extent which will flag them as offscreen.
 
-  for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr) {
+  for (Frame **itr = m_container, **last = m_container + m_containerSize;
+       itr != last;
+       ++itr) {
     // If there is any remaining space, check if we want to shift
     // the subsequent frames to the other side of this frame.
     if (remaining > 0 && (*itr)->has_bottom_frame()) {
@@ -421,12 +464,14 @@ Frame::balance_column(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
   dynamic_type dynamicFrames[max_size];
 
   int remaining = width;
-  
-  for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr) {
+
+  for (Frame **itr = m_container, **last = m_container + m_containerSize;
+       itr != last;
+       ++itr) {
     bounds_type bounds = (*itr)->preferred_size();
-    
+
     if ((*itr)->is_width_dynamic()) {
-      (*itr)->m_width = 0;
+      (*itr)->m_width              = 0;
       dynamicFrames[dynamicSize++] = std::make_pair(*itr, bounds);
 
     } else {
@@ -434,30 +479,36 @@ Frame::balance_column(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
       remaining -= bounds.minWidth;
     }
   }
-  
+
   // Sort the dynamic frames by the min size in the direction we are
   // interested in. Then try to satisfy the largest first, and if we
   // have any remaining space we can use that to extend it and any
   // following frames.
   //
   // Else if we're short, only give each what they require.
-  std::stable_sort(dynamicFrames, dynamicFrames + dynamicSize,
-                   std::bind(std::greater<extent_type>(),
-                                  std::bind(&dynamic_min_width, std::placeholders::_1),
-                                  std::bind(&dynamic_min_width, std::placeholders::_2)));
+  std::stable_sort(
+    dynamicFrames,
+    dynamicFrames + dynamicSize,
+    std::bind(std::greater<extent_type>(),
+              std::bind(&dynamic_min_width, std::placeholders::_1),
+              std::bind(&dynamic_min_width, std::placeholders::_2)));
 
   bool retry;
 
   do {
     retry = false;
 
-    for (dynamic_type *itr = dynamicFrames, *last = dynamicFrames + dynamicSize; itr != last; ++itr) {
-      uint32_t adjust = (std::max(remaining, 0) + std::distance(itr, last) - 1) / std::distance(itr, last);
-    
+    for (dynamic_type *itr = dynamicFrames, *last = dynamicFrames + dynamicSize;
+         itr != last;
+         ++itr) {
+      uint32_t adjust =
+        (std::max(remaining, 0) + std::distance(itr, last) - 1) /
+        std::distance(itr, last);
+
       adjust += itr->first->m_width;
       adjust = std::max(adjust, itr->second.minWidth);
       adjust = std::min(adjust, itr->second.maxWidth);
-        
+
       remaining -= adjust - itr->first->m_width;
 
       retry = retry || itr->first->m_width != adjust;
@@ -471,7 +522,9 @@ Frame::balance_column(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
   // the frame is too small, it will set the remaining windows to zero
   // extent which will flag them as offscreen.
 
-  for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr) {
+  for (Frame **itr = m_container, **last = m_container + m_containerSize;
+       itr != last;
+       ++itr) {
     // If there is any remaining space, check if we want to shift
     // the subsequent frames to the other side of this frame.
     if (remaining > 0 && (*itr)->has_left_frame()) {

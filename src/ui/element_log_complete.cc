@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -50,19 +50,26 @@
 
 namespace ui {
 
-ElementLogComplete::ElementLogComplete(torrent::log_buffer* l) :
-  m_window(NULL),
-  m_log(l) {
+ElementLogComplete::ElementLogComplete(torrent::log_buffer* l)
+  : m_window(NULL)
+  , m_log(l) {
 
-  unsigned int signal_index = torrent::main_thread()->signal_bitfield()->add_signal(std::bind(&ElementLogComplete::received_update, this));
+  unsigned int signal_index =
+    torrent::main_thread()->signal_bitfield()->add_signal(
+      std::bind(&ElementLogComplete::received_update, this));
 
-  m_log->lock_and_set_update_slot(std::bind(&torrent::thread_base::send_event_signal, torrent::main_thread(), signal_index, false));
+  m_log->lock_and_set_update_slot(
+    std::bind(&torrent::thread_base::send_event_signal,
+              torrent::main_thread(),
+              signal_index,
+              false));
 }
 
 void
 ElementLogComplete::activate(display::Frame* frame, bool focus) {
   if (is_active())
-    throw torrent::internal_error("ui::ElementLogComplete::activate(...) is_active().");
+    throw torrent::internal_error(
+      "ui::ElementLogComplete::activate(...) is_active().");
 
   control->input()->push_back(&m_bindings);
 
@@ -76,7 +83,8 @@ ElementLogComplete::activate(display::Frame* frame, bool focus) {
 void
 ElementLogComplete::disable() {
   if (!is_active())
-    throw torrent::internal_error("ui::ElementLogComplete::disable(...) !is_active().");
+    throw torrent::internal_error(
+      "ui::ElementLogComplete::disable(...) !is_active().");
 
   control->input()->erase(&m_bindings);
 

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -50,9 +50,8 @@
 
 namespace input {
 
-PathInput::PathInput() :
-  m_showNext(false) {
-}
+PathInput::PathInput()
+  : m_showNext(false) {}
 
 bool
 PathInput::pressed(int key) {
@@ -63,7 +62,10 @@ PathInput::pressed(int key) {
     return TextInput::pressed(key);
 
   } else if (m_showNext) {
-    for (signal_void::iterator itr = m_signal_show_next.begin(), last = m_signal_show_next.end(); itr != last; itr++)
+    for (signal_void::iterator itr  = m_signal_show_next.begin(),
+                               last = m_signal_show_next.end();
+         itr != last;
+         itr++)
       (*itr)();
 
   } else {
@@ -74,7 +76,7 @@ PathInput::pressed(int key) {
 }
 
 struct _transform_filename {
-  void operator () (utils::directory_entry& entry) {
+  void operator()(utils::directory_entry& entry) {
 #ifdef __sun__
     if (entry.d_type & S_IFDIR)
 #else
@@ -91,8 +93,10 @@ PathInput::receive_do_complete() {
   size_type dirEnd = find_last_delim();
 
   utils::Directory dir(dirEnd != 0 ? str().substr(0, dirEnd) : "./");
-  
-  if (!dir.update(utils::Directory::update_sort | utils::Directory::update_hide_dot) || dir.empty()) {
+
+  if (!dir.update(utils::Directory::update_sort |
+                  utils::Directory::update_hide_dot) ||
+      dir.empty()) {
     mark_dirty();
 
     return;
@@ -105,7 +109,10 @@ PathInput::receive_do_complete() {
   if (r.first == r.second)
     return; // Show some nice colors here.
 
-  std::string base = torrent::utils::make_base<std::string>(r.first, r.second, torrent::utils::const_mem_ref(&utils::directory_entry::d_name));
+  std::string base = torrent::utils::make_base<std::string>(
+    r.first,
+    r.second,
+    torrent::utils::const_mem_ref(&utils::directory_entry::d_name));
 
   // Clear the path after the cursor to make this code cleaner. It's
   // not really nessesary to add the complexity just because someone
@@ -123,7 +130,10 @@ PathInput::receive_do_complete() {
   if (m_showNext) {
     lt_log_print(torrent::LOG_UI_EVENTS, "path_input: show next page");
 
-    for (signal_itr_itr::iterator itr = m_signal_show_range.begin(), last = m_signal_show_range.end(); itr != last; itr++)
+    for (signal_itr_itr::iterator itr  = m_signal_show_range.begin(),
+                                  last = m_signal_show_range.end();
+         itr != last;
+         itr++)
       (*itr)(r.first, r.second);
   }
 }
@@ -141,12 +151,14 @@ PathInput::find_last_delim() {
 }
 
 inline bool
-find_complete_compare(const utils::directory_entry& complete, const std::string& base) {
+find_complete_compare(const utils::directory_entry& complete,
+                      const std::string&            base) {
   return complete.d_name.compare(0, base.size(), base);
 }
 
 inline bool
-find_complete_not_compare(const utils::directory_entry& complete, const std::string& base) {
+find_complete_not_compare(const utils::directory_entry& complete,
+                          const std::string&            base) {
   return !complete.d_name.compare(0, base.size(), base);
 }
 
@@ -154,8 +166,14 @@ PathInput::range_type
 PathInput::find_incomplete(utils::Directory& d, const std::string& f) {
   range_type r;
 
-  r.first  = std::find_if(d.begin(), d.end(), torrent::utils::bind2nd(std::ptr_fun(&find_complete_not_compare), f));
-  r.second = std::find_if(r.first,   d.end(), torrent::utils::bind2nd(std::ptr_fun(&find_complete_compare), f));
+  r.first = std::find_if(
+    d.begin(),
+    d.end(),
+    torrent::utils::bind2nd(std::ptr_fun(&find_complete_not_compare), f));
+  r.second = std::find_if(
+    r.first,
+    d.end(),
+    torrent::utils::bind2nd(std::ptr_fun(&find_complete_compare), f));
 
   return r;
 }

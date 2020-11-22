@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -36,21 +36,21 @@
 
 #include "config.h"
 
-#include <torrent/utils/error_number.h>
-#include <torrent/utils/socket_address.h>
 #include <sys/un.h>
 #include <torrent/connection_manager.h>
+#include <torrent/exceptions.h>
 #include <torrent/poll.h>
 #include <torrent/torrent.h>
-#include <torrent/exceptions.h>
+#include <torrent/utils/error_number.h>
+#include <torrent/utils/socket_address.h>
 
 #include "utils/functional_fun.h"
 #include "utils/socket_fd.h"
 
 #include "control.h"
 #include "globals.h"
-#include "scgi.h"
 #include "parse_commands.h"
+#include "scgi.h"
 
 namespace rpc {
 
@@ -58,7 +58,7 @@ SCgi::~SCgi() {
   if (!get_fd().is_valid())
     return;
 
-  for (SCgiTask* itr = m_task, *last = m_task + max_tasks; itr != last; ++itr)
+  for (SCgiTask *itr = m_task, *last = m_task + max_tasks; itr != last; ++itr)
     if (itr->is_open())
       itr->close();
 
@@ -74,9 +74,10 @@ SCgi::~SCgi() {
 
 void
 SCgi::open_port(void* sa, unsigned int length, bool dontRoute) {
-  if (!get_fd().open_stream() ||
-      (dontRoute && !get_fd().set_dont_route(true)))
-    throw torrent::resource_error("Could not open socket for listening: " + std::string(torrent::utils::error_number::current().c_str()));
+  if (!get_fd().open_stream() || (dontRoute && !get_fd().set_dont_route(true)))
+    throw torrent::resource_error(
+      "Could not open socket for listening: " +
+      std::string(torrent::utils::error_number::current().c_str()));
 
   open(sa, length);
 }
@@ -86,7 +87,7 @@ SCgi::open_named(const std::string& filename) {
   if (filename.empty() || filename.size() > 4096)
     throw torrent::resource_error("Invalid filename length.");
 
-  char buffer[sizeof(sockaddr_un) + filename.size()];
+  char         buffer[sizeof(sockaddr_un) + filename.size()];
   sockaddr_un* sa = reinterpret_cast<sockaddr_un*>(buffer);
 
 #ifdef __sun__
@@ -107,11 +108,13 @@ SCgi::open_named(const std::string& filename) {
 void
 SCgi::open(void* sa, unsigned int length) {
   try {
-    if (!get_fd().set_nonblock() ||
-        !get_fd().set_reuse_address(true) ||
-        !get_fd().bind(*reinterpret_cast<torrent::utils::socket_address*>(sa), length) ||
+    if (!get_fd().set_nonblock() || !get_fd().set_reuse_address(true) ||
+        !get_fd().bind(*reinterpret_cast<torrent::utils::socket_address*>(sa),
+                       length) ||
         !get_fd().listen(max_tasks))
-      throw torrent::resource_error("Could not prepare socket for listening: " + std::string(torrent::utils::error_number::current().c_str()));
+      throw torrent::resource_error(
+        "Could not prepare socket for listening: " +
+        std::string(torrent::utils::error_number::current().c_str()));
 
     torrent::connection_manager()->inc_socket_count();
 
@@ -140,17 +143,18 @@ SCgi::deactivate() {
 void
 SCgi::event_read() {
   torrent::utils::socket_address sa;
-  utils::SocketFd fd;
+  utils::SocketFd                fd;
 
   while ((fd = get_fd().accept(&sa)).is_valid()) {
-    SCgiTask* task = std::find_if(m_task, m_task + max_tasks, std::mem_fun_ref(&SCgiTask::is_available));
+    SCgiTask* task = std::find_if(
+      m_task, m_task + max_tasks, std::mem_fun_ref(&SCgiTask::is_available));
 
     if (task == m_task + max_tasks) {
       // Ergh... just closing for now.
       fd.close();
       continue;
     }
-    
+
     task->open(this, fd.get_fd());
   }
 }

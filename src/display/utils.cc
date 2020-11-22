@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -36,23 +36,23 @@
 
 #include "config.h"
 
-#include <cstring>
 #include <cstdio>
-#include <sstream>
+#include <cstring>
 #include <iomanip>
-#include <torrent/utils/socket_address.h>
-#include <torrent/utils/timer.h>
-#include <torrent/exceptions.h>
+#include <sstream>
 #include <torrent/connection_manager.h>
+#include <torrent/data/file_list.h>
+#include <torrent/data/file_manager.h>
+#include <torrent/download/resource_manager.h>
+#include <torrent/exceptions.h>
+#include <torrent/peer/client_info.h>
 #include <torrent/rate.h>
 #include <torrent/throttle.h>
 #include <torrent/torrent.h>
 #include <torrent/tracker.h>
 #include <torrent/tracker_list.h>
-#include <torrent/data/file_list.h>
-#include <torrent/data/file_manager.h>
-#include <torrent/download/resource_manager.h>
-#include <torrent/peer/client_info.h>
+#include <torrent/utils/socket_address.h>
+#include <torrent/utils/timer.h>
 
 #include "core/download.h"
 #include "core/manager.h"
@@ -82,41 +82,59 @@ print_string(char* first, char* last, char* str) {
 
 char*
 print_hhmmss(char* first, char* last, time_t t) {
-  return print_buffer(first, last, "%2d:%02d:%02d", (int)t / 3600, ((int)t / 60) % 60, (int)t % 60);
+  return print_buffer(first,
+                      last,
+                      "%2d:%02d:%02d",
+                      (int)t / 3600,
+                      ((int)t / 60) % 60,
+                      (int)t % 60);
 }
 
 char*
 print_hhmmss_local(char* first, char* last, time_t t) {
-  std::tm *u = std::localtime(&t);
-  
+  std::tm* u = std::localtime(&t);
+
   if (u == NULL)
-    //return "inv_time";
+    // return "inv_time";
     throw torrent::internal_error("print_hhmmss_local(...) failed.");
 
-  return print_buffer(first, last, "%2u:%02u:%02u", u->tm_hour, u->tm_min, u->tm_sec);
+  return print_buffer(
+    first, last, "%2u:%02u:%02u", u->tm_hour, u->tm_min, u->tm_sec);
 }
 
 char*
 print_ddhhmm(char* first, char* last, time_t t) {
   if (t / (24 * 3600) < 100)
-    return print_buffer(first, last, "%2id %2i:%02i", (int)t / (24 * 3600), ((int)t / 3600) % 24, ((int)t / 60) % 60);
+    return print_buffer(first,
+                        last,
+                        "%2id %2i:%02i",
+                        (int)t / (24 * 3600),
+                        ((int)t / 3600) % 24,
+                        ((int)t / 60) % 60);
   else
     return print_buffer(first, last, "--d --:--");
 }
 
 char*
 print_ddmmyyyy(char* first, char* last, time_t t) {
-  std::tm *u = std::gmtime(&t);
-  
+  std::tm* u = std::gmtime(&t);
+
   if (u == NULL)
-    //return "inv_time";
+    // return "inv_time";
     throw torrent::internal_error("print_ddmmyyyy(...) failed.");
 
-  return print_buffer(first, last, "%02u/%02u/%04u", u->tm_mday, (u->tm_mon + 1), (1900 + u->tm_year));
+  return print_buffer(first,
+                      last,
+                      "%02u/%02u/%04u",
+                      u->tm_mday,
+                      (u->tm_mon + 1),
+                      (1900 + u->tm_year));
 }
 
 char*
-print_address(char* first, char* last, const torrent::utils::socket_address* sa) {
+print_address(char*                                 first,
+              char*                                 last,
+              const torrent::utils::socket_address* sa) {
   if (!sa->address_c_str(first, last - first))
     return first;
 
@@ -125,7 +143,8 @@ print_address(char* first, char* last, const torrent::utils::socket_address* sa)
 
 inline char*
 print_address(char* first, char* last, const sockaddr* sa) {
-  return print_address(first, last, torrent::utils::socket_address::cast_from(sa));
+  return print_address(
+    first, last, torrent::utils::socket_address::cast_from(sa));
 }
 
 char*
@@ -143,13 +162,22 @@ print_download_info_full(char* first, char* last, core::Download* d) {
     first = print_buffer(first, last, "          ");
 
   if (d->is_done())
-    first = print_buffer(first, last, "done %10.1f MB", (double)d->download()->file_list()->size_bytes() / (double)(1 << 20));
+    first = print_buffer(first,
+                         last,
+                         "done %10.1f MB",
+                         (double)d->download()->file_list()->size_bytes() /
+                           (double)(1 << 20));
   else
-    first = print_buffer(first, last, "%6.1f / %6.1f MB",
-                         (double)d->download()->bytes_done() / (double)(1 << 20),
-                         (double)d->download()->file_list()->size_bytes() / (double)(1 << 20));
-  
-  first = print_buffer(first, last, " Rate: %5.1f / %5.1f KB Uploaded: %7.1f MB",
+    first = print_buffer(
+      first,
+      last,
+      "%6.1f / %6.1f MB",
+      (double)d->download()->bytes_done() / (double)(1 << 20),
+      (double)d->download()->file_list()->size_bytes() / (double)(1 << 20));
+
+  first = print_buffer(first,
+                       last,
+                       " Rate: %5.1f / %5.1f KB Uploaded: %7.1f MB",
                        (double)d->info()->up_rate()->rate() / (1 << 10),
                        (double)d->info()->down_rate()->rate() / (1 << 10),
                        (double)d->info()->up_rate()->total() / (1 << 20));
@@ -164,21 +192,40 @@ print_download_info_full(char* first, char* last, core::Download* d) {
     first = print_buffer(first, last, "                ");
   }
 
-  first = print_buffer(first, last, " [%c%c R: %4.2f",
-                       rpc::call_command_string("d.tied_to_file", rpc::make_target(d)).empty() ? ' ' : 'T',
-                       rpc::call_command_value("d.ignore_commands", rpc::make_target(d)) == 0 ? ' ' : 'I',
-                       (double)rpc::call_command_value("d.ratio", rpc::make_target(d)) / 1000.0);
+  first = print_buffer(
+    first,
+    last,
+    " [%c%c R: %4.2f",
+    rpc::call_command_string("d.tied_to_file", rpc::make_target(d)).empty()
+      ? ' '
+      : 'T',
+    rpc::call_command_value("d.ignore_commands", rpc::make_target(d)) == 0
+      ? ' '
+      : 'I',
+    (double)rpc::call_command_value("d.ratio", rpc::make_target(d)) / 1000.0);
 
   if (d->priority() != 2)
-    first = print_buffer(first, last, " %s", rpc::call_command_string("d.priority_str", rpc::make_target(d)).c_str());
+    first = print_buffer(
+      first,
+      last,
+      " %s",
+      rpc::call_command_string("d.priority_str", rpc::make_target(d)).c_str());
 
-  if (!d->bencode()->get_key("rtorrent").get_key_string("throttle_name").empty())
-    first = print_buffer(first, last , " %s", rpc::call_command_string("d.throttle_name", rpc::make_target(d)).c_str());
+  if (!d->bencode()
+         ->get_key("rtorrent")
+         .get_key_string("throttle_name")
+         .empty())
+    first = print_buffer(
+      first,
+      last,
+      " %s",
+      rpc::call_command_string("d.throttle_name", rpc::make_target(d)).c_str());
 
-  first = print_buffer(first, last , "]");
+  first = print_buffer(first, last, "]");
 
   if (first > last)
-    throw torrent::internal_error("print_download_info_full(...) wrote past end of the buffer.");
+    throw torrent::internal_error(
+      "print_download_info_full(...) wrote past end of the buffer.");
 
   return first;
 }
@@ -193,18 +240,27 @@ print_download_status(char* first, char* last, core::Download* d) {
     first = print_buffer(first, last, "Inactive: ");
 
   if (d->is_hash_checking()) {
-    first = print_buffer(first, last, "Checking hash [%2i%%]",
-                         (d->download()->chunks_hashed() * 100) / d->download()->file_list()->size_chunks());
+    first = print_buffer(first,
+                         last,
+                         "Checking hash [%2i%%]",
+                         (d->download()->chunks_hashed() * 100) /
+                           d->download()->file_list()->size_chunks());
 
   } else if (d->tracker_list()->has_active_not_scrape()) {
     torrent::TrackerList::iterator itr =
-      std::find_if(d->tracker_list()->begin(), d->tracker_list()->end(),
+      std::find_if(d->tracker_list()->begin(),
+                   d->tracker_list()->end(),
                    std::mem_fun(&torrent::Tracker::is_busy_not_scrape));
     char status[128];
 
     (*itr)->get_status(status, sizeof(status));
-    first = print_buffer(first, last, "Tracker[%i:%i]: Connecting to %s %s",
-                         (*itr)->group(), std::distance(d->tracker_list()->begin(), itr), (*itr)->url().c_str(), status);
+    first = print_buffer(first,
+                         last,
+                         "Tracker[%i:%i]: Connecting to %s %s",
+                         (*itr)->group(),
+                         std::distance(d->tracker_list()->begin(), itr),
+                         (*itr)->url().c_str(),
+                         status);
 
   } else if (!d->message().empty()) {
     first = print_buffer(first, last, "%s", d->message().c_str());
@@ -214,7 +270,8 @@ print_download_status(char* first, char* last, core::Download* d) {
   }
 
   if (first > last)
-    throw torrent::internal_error("print_download_status(...) wrote past end of the buffer.");
+    throw torrent::internal_error(
+      "print_download_status(...) wrote past end of the buffer.");
 
   return first;
 }
@@ -222,10 +279,14 @@ print_download_status(char* first, char* last, core::Download* d) {
 char*
 print_download_column_compact(char* first, char* last) {
   first = print_buffer(first, last, " %-64.64s", "Name");
-  first = print_buffer(first, last, "| Status | Downloaded | Size       | Done | Up Rate   | Down Rate | Uploaded   |  ETA      | Ratio| Misc ");
+  first = print_buffer(first,
+                       last,
+                       "| Status | Downloaded | Size       | Done | Up Rate   "
+                       "| Down Rate | Uploaded   |  ETA      | Ratio| Misc ");
 
   if (first > last)
-    throw torrent::internal_error("print_download_column_compact(...) wrote past end of the buffer.");
+    throw torrent::internal_error(
+      "print_download_column_compact(...) wrote past end of the buffer.");
 
   return first;
 }
@@ -242,20 +303,41 @@ print_download_info_compact(char* first, char* last, core::Download* d) {
   else
     first = print_buffer(first, last, "        ");
 
-  first = print_buffer(first, last, "| %7.1f MB ", (double)d->download()->bytes_done() / (double)(1 << 20));
-  first = print_buffer(first, last, "| %7.1f MB ", (double)d->download()->file_list()->size_bytes() / (double)(1 << 20));
+  first = print_buffer(first,
+                       last,
+                       "| %7.1f MB ",
+                       (double)d->download()->bytes_done() / (double)(1 << 20));
+  first = print_buffer(first,
+                       last,
+                       "| %7.1f MB ",
+                       (double)d->download()->file_list()->size_bytes() /
+                         (double)(1 << 20));
   first = print_buffer(first, last, "|");
 
   if (d->is_done())
     first = print_buffer(first, last, " 100%% ");
   else if (d->is_open())
-    first = print_buffer(first, last, "  %2u%% ",(d->download()->file_list()->completed_chunks() * 100) / d->download()->file_list()->size_chunks());
+    first =
+      print_buffer(first,
+                   last,
+                   "  %2u%% ",
+                   (d->download()->file_list()->completed_chunks() * 100) /
+                     d->download()->file_list()->size_chunks());
   else
     first = print_buffer(first, last, "      ");
 
-  first = print_buffer(first, last, "| %6.1f KB ", (double)d->info()->up_rate()->rate() / (1 << 10));
-  first = print_buffer(first, last, "| %6.1f KB ", (double)d->info()->down_rate()->rate() / (1 << 10));
-  first = print_buffer(first, last, "| %7.1f MB ", (double)d->info()->up_rate()->total() / (1 << 20));
+  first = print_buffer(first,
+                       last,
+                       "| %6.1f KB ",
+                       (double)d->info()->up_rate()->rate() / (1 << 10));
+  first = print_buffer(first,
+                       last,
+                       "| %6.1f KB ",
+                       (double)d->info()->down_rate()->rate() / (1 << 10));
+  first = print_buffer(first,
+                       last,
+                       "| %7.1f MB ",
+                       (double)d->info()->up_rate()->total() / (1 << 20));
   first = print_buffer(first, last, "| ");
 
   if (d->download()->info()->is_active() && !d->is_done())
@@ -263,20 +345,43 @@ print_download_info_compact(char* first, char* last, core::Download* d) {
   else
     first = print_buffer(first, last, "         ");
 
-  first = print_buffer(first, last, "| %4.2f ", (double)rpc::call_command_value("d.ratio", rpc::make_target(d)) / 1000.0);
-  first = print_buffer(first, last, "| %c%c",
-                       rpc::call_command_string("d.tied_to_file", rpc::make_target(d)).empty() ? ' ' : 'T',
-                       rpc::call_command_value("d.ignore_commands", rpc::make_target(d)) == 0 ? ' ' : 'I',
-                       (double)rpc::call_command_value("d.ratio", rpc::make_target(d)) / 1000.0);
+  first = print_buffer(
+    first,
+    last,
+    "| %4.2f ",
+    (double)rpc::call_command_value("d.ratio", rpc::make_target(d)) / 1000.0);
+  first = print_buffer(
+    first,
+    last,
+    "| %c%c",
+    rpc::call_command_string("d.tied_to_file", rpc::make_target(d)).empty()
+      ? ' '
+      : 'T',
+    rpc::call_command_value("d.ignore_commands", rpc::make_target(d)) == 0
+      ? ' '
+      : 'I',
+    (double)rpc::call_command_value("d.ratio", rpc::make_target(d)) / 1000.0);
 
   if (d->priority() != 2)
-    first = print_buffer(first, last, " %s", rpc::call_command_string("d.priority_str", rpc::make_target(d)).c_str());
+    first = print_buffer(
+      first,
+      last,
+      " %s",
+      rpc::call_command_string("d.priority_str", rpc::make_target(d)).c_str());
 
-  if (!d->bencode()->get_key("rtorrent").get_key_string("throttle_name").empty())
-    first = print_buffer(first, last , " %s", rpc::call_command_string("d.throttle_name", rpc::make_target(d)).c_str());
+  if (!d->bencode()
+         ->get_key("rtorrent")
+         .get_key_string("throttle_name")
+         .empty())
+    first = print_buffer(
+      first,
+      last,
+      " %s",
+      rpc::call_command_string("d.throttle_name", rpc::make_target(d)).c_str());
 
   if (first > last)
-    throw torrent::internal_error("print_download_info_compact(...) wrote past end of the buffer.");
+    throw torrent::internal_error(
+      "print_download_info_compact(...) wrote past end of the buffer.");
 
   return first;
 }
@@ -287,8 +392,10 @@ print_download_time_left(char* first, char* last, core::Download* d) {
 
   if (rate < 512)
     return print_buffer(first, last, "--d --:--");
-  
-  time_t remaining = (d->download()->file_list()->size_bytes() - d->download()->bytes_done()) / (rate & ~(uint32_t)(512 - 1));
+
+  time_t remaining =
+    (d->download()->file_list()->size_bytes() - d->download()->bytes_done()) /
+    (rate & ~(uint32_t)(512 - 1));
 
   return print_ddhhmm(first, last, remaining);
 }
@@ -296,49 +403,70 @@ print_download_time_left(char* first, char* last, core::Download* d) {
 char*
 print_download_percentage_done(char* first, char* last, core::Download* d) {
   if (!d->is_open() || d->is_done())
-    //return print_buffer(first, last, "[--%%]");
+    // return print_buffer(first, last, "[--%%]");
     return print_buffer(first, last, "     ");
   else
-    return print_buffer(first, last, "[%2u%%]", (d->download()->file_list()->completed_chunks() * 100) / d->download()->file_list()->size_chunks());
+    return print_buffer(first,
+                        last,
+                        "[%2u%%]",
+                        (d->download()->file_list()->completed_chunks() * 100) /
+                          d->download()->file_list()->size_chunks());
 }
 
 char*
-print_client_version(char* first, char* last, const torrent::ClientInfo& clientInfo) {
+print_client_version(char*                      first,
+                     char*                      last,
+                     const torrent::ClientInfo& clientInfo) {
   switch (torrent::ClientInfo::version_size(clientInfo.type())) {
-  case 4:
-    return print_buffer(first, last, "%s %hhu.%hhu.%hhu.%hhu",
-                        clientInfo.short_description(),
-                        clientInfo.version()[0], clientInfo.version()[1],
-                        clientInfo.version()[2], clientInfo.version()[3]);
-  case 3:
-    return print_buffer(first, last, "%s %hhu.%hhu.%hhu",
-                        clientInfo.short_description(),
-                        clientInfo.version()[0], clientInfo.version()[1],
-                        clientInfo.version()[2]);
-  default:
-    return print_buffer(first, last, "%s", clientInfo.short_description());
+    case 4:
+      return print_buffer(first,
+                          last,
+                          "%s %hhu.%hhu.%hhu.%hhu",
+                          clientInfo.short_description(),
+                          clientInfo.version()[0],
+                          clientInfo.version()[1],
+                          clientInfo.version()[2],
+                          clientInfo.version()[3]);
+    case 3:
+      return print_buffer(first,
+                          last,
+                          "%s %hhu.%hhu.%hhu",
+                          clientInfo.short_description(),
+                          clientInfo.version()[0],
+                          clientInfo.version()[1],
+                          clientInfo.version()[2]);
+    default:
+      return print_buffer(first, last, "%s", clientInfo.short_description());
   }
 }
 
 char*
-print_status_throttle_limit(char* first, char* last, bool up, const ui::ThrottleNameList& throttle_names) {
+print_status_throttle_limit(char*                       first,
+                            char*                       last,
+                            bool                        up,
+                            const ui::ThrottleNameList& throttle_names) {
   char throttle_str[40];
   throttle_str[0] = 0;
-  char* firstc = throttle_str;
-  char* lastc = throttle_str + 40 - 1;
+  char* firstc    = throttle_str;
+  char* lastc     = throttle_str + 40 - 1;
 
-  for (ui::ThrottleNameList::const_iterator itr = throttle_names.begin(), laste = throttle_names.end(); itr != laste; itr++) {
+  for (ui::ThrottleNameList::const_iterator itr   = throttle_names.begin(),
+                                            laste = throttle_names.end();
+       itr != laste;
+       itr++) {
 
     if (!(*itr).empty()) {
-      int64_t throttle_max = control->core()->retrieve_throttle_value(*itr, false, up);
+      int64_t throttle_max =
+        control->core()->retrieve_throttle_value(*itr, false, up);
 
       if (throttle_max > 0)
-        firstc = print_buffer(firstc, lastc, "|%1.0f", (double)throttle_max / 1024.0);
+        firstc =
+          print_buffer(firstc, lastc, "|%1.0f", (double)throttle_max / 1024.0);
     }
-
   }
 
-  // Add temp buffer (chop first char first) into main buffer if temp buffer isn't empty
+  // Add temp buffer (chop first char first) into main buffer if temp buffer
+  // isn't empty
   if (throttle_str[0] != 0)
     first = print_buffer(first, last, "(%s)", &throttle_str[1]);
 
@@ -346,46 +474,62 @@ print_status_throttle_limit(char* first, char* last, bool up, const ui::Throttle
 }
 
 char*
-print_status_throttle_rate(char* first, char* last, bool up, const ui::ThrottleNameList& throttle_names, const double& global_rate) {
+print_status_throttle_rate(char*                       first,
+                           char*                       last,
+                           bool                        up,
+                           const ui::ThrottleNameList& throttle_names,
+                           const double&               global_rate) {
   double main_rate = global_rate;
-  char throttle_str[50];
+  char   throttle_str[50];
   throttle_str[0] = 0;
-  char* firstc = throttle_str;
-  char* lastc = throttle_str + 50 - 1;
+  char* firstc    = throttle_str;
+  char* lastc     = throttle_str + 50 - 1;
 
-  for (ui::ThrottleNameList::const_iterator itr = throttle_names.begin(), laste = throttle_names.end(); itr != laste; itr++) {
+  for (ui::ThrottleNameList::const_iterator itr   = throttle_names.begin(),
+                                            laste = throttle_names.end();
+       itr != laste;
+       itr++) {
 
-    if (!(*itr).empty() && (up ? torrent::up_throttle_global()->is_throttled() : torrent::down_throttle_global()->is_throttled())) {
-      int64_t throttle_rate_value = control->core()->retrieve_throttle_value(*itr, true, up);
+    if (!(*itr).empty() &&
+        (up ? torrent::up_throttle_global()->is_throttled()
+            : torrent::down_throttle_global()->is_throttled())) {
+      int64_t throttle_rate_value =
+        control->core()->retrieve_throttle_value(*itr, true, up);
 
       if (throttle_rate_value > -1) {
         double throttle_rate = (double)throttle_rate_value / 1024.0;
-        main_rate = main_rate - throttle_rate;
+        main_rate            = main_rate - throttle_rate;
 
         firstc = print_buffer(firstc, lastc, "|%3.1f", throttle_rate);
       }
     }
-
   }
 
   // Add temp buffer into main buffer if temp buffer isn't empty
   if (throttle_str[0] != 0)
-    first = print_buffer(first, last, "(%3.1f%s)",
-                    main_rate < 0.0 ? 0.0 : main_rate,
-                    throttle_str);
+    first = print_buffer(first,
+                         last,
+                         "(%3.1f%s)",
+                         main_rate < 0.0 ? 0.0 : main_rate,
+                         throttle_str);
 
   return first;
 }
 
 char*
 print_status_info(char* first, char* last) {
-  ui::ThrottleNameList& throttle_up_names = control->ui()->get_status_throttle_up_names();
-  ui::ThrottleNameList& throttle_down_names = control->ui()->get_status_throttle_down_names();
+  ui::ThrottleNameList& throttle_up_names =
+    control->ui()->get_status_throttle_up_names();
+  ui::ThrottleNameList& throttle_down_names =
+    control->ui()->get_status_throttle_down_names();
 
   if (!torrent::up_throttle_global()->is_throttled()) {
     first = print_buffer(first, last, "[Throttle off");
   } else {
-    first = print_buffer(first, last, "[Throttle %3i", torrent::up_throttle_global()->max_rate() / 1024);
+    first = print_buffer(first,
+                         last,
+                         "[Throttle %3i",
+                         torrent::up_throttle_global()->max_rate() / 1024);
 
     if (!throttle_up_names.empty())
       first = print_status_throttle_limit(first, last, true, throttle_up_names);
@@ -394,10 +538,14 @@ print_status_info(char* first, char* last) {
   if (!torrent::down_throttle_global()->is_throttled()) {
     first = print_buffer(first, last, " / off KB]");
   } else {
-    first = print_buffer(first, last, " / %3i", torrent::down_throttle_global()->max_rate() / 1024);
+    first = print_buffer(first,
+                         last,
+                         " / %3i",
+                         torrent::down_throttle_global()->max_rate() / 1024);
 
     if (!throttle_down_names.empty())
-      first = print_status_throttle_limit(first, last, false, throttle_down_names);
+      first =
+        print_status_throttle_limit(first, last, false, throttle_down_names);
 
     first = print_buffer(first, last, " KB]");
   }
@@ -406,30 +554,43 @@ print_status_info(char* first, char* last) {
   first = print_buffer(first, last, " [Rate %5.1f", global_uprate);
 
   if (!throttle_up_names.empty())
-    first = print_status_throttle_rate(first, last, true, throttle_up_names, global_uprate);
+    first = print_status_throttle_rate(
+      first, last, true, throttle_up_names, global_uprate);
 
   double global_downrate = (double)torrent::down_rate()->rate() / 1024.0;
   first = print_buffer(first, last, " / %5.1f", global_downrate);
 
   if (!throttle_down_names.empty())
-    first = print_status_throttle_rate(first, last, false, throttle_down_names, global_downrate);
+    first = print_status_throttle_rate(
+      first, last, false, throttle_down_names, global_downrate);
 
   first = print_buffer(first, last, " KB]");
 
-  first = print_buffer(first, last, " [Port: %i]", (unsigned int)torrent::connection_manager()->listen_port());
+  first =
+    print_buffer(first,
+                 last,
+                 " [Port: %i]",
+                 (unsigned int)torrent::connection_manager()->listen_port());
 
-  if (!torrent::utils::socket_address::cast_from(torrent::connection_manager()->local_address())->is_address_any()) {
+  if (!torrent::utils::socket_address::cast_from(
+         torrent::connection_manager()->local_address())
+         ->is_address_any()) {
     first = print_buffer(first, last, " [Local ");
-    first = print_address(first, last, torrent::connection_manager()->local_address());
+    first = print_address(
+      first, last, torrent::connection_manager()->local_address());
     first = print_buffer(first, last, "]");
   }
-  
-  if (first > last)
-    throw torrent::internal_error("print_status_info(...) wrote past end of the buffer.");
 
-  if (!torrent::utils::socket_address::cast_from(torrent::connection_manager()->bind_address())->is_address_any()) {
+  if (first > last)
+    throw torrent::internal_error(
+      "print_status_info(...) wrote past end of the buffer.");
+
+  if (!torrent::utils::socket_address::cast_from(
+         torrent::connection_manager()->bind_address())
+         ->is_address_any()) {
     first = print_buffer(first, last, " [Bind ");
-    first = print_address(first, last, torrent::connection_manager()->bind_address());
+    first =
+      print_address(first, last, torrent::connection_manager()->bind_address());
     first = print_buffer(first, last, "]");
   }
 
@@ -438,24 +599,35 @@ print_status_info(char* first, char* last) {
 
 char*
 print_status_extra(char* first, char* last) {
-  first = print_buffer(first, last, " [U %i/%i]",
+  first = print_buffer(first,
+                       last,
+                       " [U %i/%i]",
                        torrent::resource_manager()->currently_upload_unchoked(),
                        torrent::resource_manager()->max_upload_unchoked());
 
-  first = print_buffer(first, last, " [D %i/%i]",
-                       torrent::resource_manager()->currently_download_unchoked(),
-                       torrent::resource_manager()->max_download_unchoked());
+  first =
+    print_buffer(first,
+                 last,
+                 " [D %i/%i]",
+                 torrent::resource_manager()->currently_download_unchoked(),
+                 torrent::resource_manager()->max_download_unchoked());
 
-  first = print_buffer(first, last, " [H %u/%u]",
+  first = print_buffer(first,
+                       last,
+                       " [H %u/%u]",
                        control->core()->http_stack()->active(),
-                       control->core()->http_stack()->max_active());                       
+                       control->core()->http_stack()->max_active());
 
-  first = print_buffer(first, last, " [S %i/%i/%i]",
+  first = print_buffer(first,
+                       last,
+                       " [S %i/%i/%i]",
                        torrent::total_handshakes(),
                        torrent::connection_manager()->size(),
                        torrent::connection_manager()->max_size());
-                       
-  first = print_buffer(first, last, " [F %i/%i]",
+
+  first = print_buffer(first,
+                       last,
+                       " [F %i/%i]",
                        torrent::file_manager()->open_files(),
                        torrent::file_manager()->max_open_files());
 

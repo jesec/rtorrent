@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -47,15 +47,18 @@
 
 namespace ui {
 
-ElementChunksSeen::ElementChunksSeen(core::Download* d) :
-  m_download(d),
-  m_window(NULL),
-  m_focus(0) {
+ElementChunksSeen::ElementChunksSeen(core::Download* d)
+  : m_download(d)
+  , m_window(NULL)
+  , m_focus(0) {
 
-  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] = std::bind(&slot_type::operator(), &m_slot_exit);
+  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
+    std::bind(&slot_type::operator(), &m_slot_exit);
 
-  m_bindings[KEY_DOWN]  = m_bindings['N' - '@'] = std::bind(&ElementChunksSeen::receive_next, this);
-  m_bindings[KEY_UP]    = m_bindings['P' - '@'] = std::bind(&ElementChunksSeen::receive_prev, this);
+  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] =
+    std::bind(&ElementChunksSeen::receive_next, this);
+  m_bindings[KEY_UP] = m_bindings['P' - '@'] =
+    std::bind(&ElementChunksSeen::receive_prev, this);
   m_bindings[KEY_NPAGE] = std::bind(&ElementChunksSeen::receive_pagenext, this);
   m_bindings[KEY_PPAGE] = std::bind(&ElementChunksSeen::receive_pageprev, this);
 }
@@ -63,7 +66,8 @@ ElementChunksSeen::ElementChunksSeen(core::Download* d) :
 void
 ElementChunksSeen::activate(display::Frame* frame, bool focus) {
   if (is_active())
-    throw torrent::internal_error("ui::ElementChunksSeen::activate(...) is_active().");
+    throw torrent::internal_error(
+      "ui::ElementChunksSeen::activate(...) is_active().");
 
   if (focus)
     control->input()->push_back(&m_bindings);
@@ -78,7 +82,8 @@ ElementChunksSeen::activate(display::Frame* frame, bool focus) {
 void
 ElementChunksSeen::disable() {
   if (!is_active())
-    throw torrent::internal_error("ui::ElementChunksSeen::disable(...) !is_active().");
+    throw torrent::internal_error(
+      "ui::ElementChunksSeen::disable(...) !is_active().");
 
   control->input()->erase(&m_bindings);
 
@@ -97,7 +102,8 @@ ElementChunksSeen::window() {
 // void
 // ElementChunksSeen::receive_disable() {
 //   if (m_window == NULL)
-//     throw std::logic_error("ui::ElementChunksSeen::receive_disable(...) called on a disabled object");
+//     throw std::logic_error("ui::ElementChunksSeen::receive_disable(...)
+//     called on a disabled object");
 
 //   if (m_download->download()->tracker(m_focus).is_enabled())
 //     m_download->download()->tracker(m_focus).disable();
@@ -110,7 +116,8 @@ ElementChunksSeen::window() {
 void
 ElementChunksSeen::receive_next() {
   if (m_window == NULL)
-    throw torrent::internal_error("ui::ElementChunksSeen::receive_next(...) called on a disabled object");
+    throw torrent::internal_error(
+      "ui::ElementChunksSeen::receive_next(...) called on a disabled object");
 
   if (++m_focus > m_window->max_focus())
     m_focus = 0;
@@ -121,7 +128,8 @@ ElementChunksSeen::receive_next() {
 void
 ElementChunksSeen::receive_prev() {
   if (m_window == NULL)
-    throw torrent::internal_error("ui::ElementChunksSeen::receive_prev(...) called on a disabled object");
+    throw torrent::internal_error(
+      "ui::ElementChunksSeen::receive_prev(...) called on a disabled object");
 
   if (m_focus > 0)
     --m_focus;
@@ -134,16 +142,17 @@ ElementChunksSeen::receive_prev() {
 void
 ElementChunksSeen::receive_pagenext() {
   if (m_window == NULL)
-    throw torrent::internal_error("ui::ElementChunksSeen::receive_pagenext(...) called on a disabled object");
+    throw torrent::internal_error("ui::ElementChunksSeen::receive_pagenext(...)"
+                                  " called on a disabled object");
 
-  unsigned int visible = m_window->height() - 1;
+  unsigned int visible  = m_window->height() - 1;
   unsigned int maxFocus = m_window->max_focus();
 
   if (maxFocus == 0 || m_focus == maxFocus)
     m_focus = 0;
   else if (m_focus + visible / 2 < maxFocus)
     m_focus += visible / 2;
-  else 
+  else
     m_focus = maxFocus;
 
   m_window->mark_dirty();
@@ -152,9 +161,10 @@ ElementChunksSeen::receive_pagenext() {
 void
 ElementChunksSeen::receive_pageprev() {
   if (m_window == NULL)
-    throw torrent::internal_error("ui::ElementChunksSeen::receive_pageprev(...) called on a disabled object");
+    throw torrent::internal_error("ui::ElementChunksSeen::receive_pageprev(...)"
+                                  " called on a disabled object");
 
-  unsigned int visible = m_window->height() - 1;
+  unsigned int visible  = m_window->height() - 1;
   unsigned int maxFocus = m_window->max_focus();
 
   if (m_focus > visible / 2)

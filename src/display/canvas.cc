@@ -36,10 +36,10 @@
 
 #include "config.h"
 
-#include <unistd.h>
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <torrent/exceptions.h>
+#include <unistd.h>
 
 #include "rpc/parse_commands.h"
 
@@ -48,14 +48,14 @@
 namespace display {
 
 bool Canvas::m_isInitialized = false;
-bool Canvas::m_isDaemon = false;
+bool Canvas::m_isDaemon      = false;
 
 Canvas::Canvas(int x, int y, int width, int height) {
   if (!m_isDaemon) {
-      m_window = newwin(height, width, y, x);
+    m_window = newwin(height, width, y, x);
 
-      if (m_window == NULL)
-        throw torrent::internal_error("Could not allocate ncurses canvas.");
+    if (m_window == NULL)
+      throw torrent::internal_error("Could not allocate ncurses canvas.");
   }
 }
 
@@ -68,12 +68,16 @@ Canvas::resize(int x, int y, int w, int h) {
 }
 
 void
-Canvas::print_attributes(unsigned int x, unsigned int y, const char* first, const char* last, const attributes_list* attributes) {
+Canvas::print_attributes(unsigned int           x,
+                         unsigned int           y,
+                         const char*            first,
+                         const char*            last,
+                         const attributes_list* attributes) {
   if (!m_isDaemon) {
     move(x, y);
 
     attr_t org_attr;
-    short org_pair;
+    short  org_pair;
     wattr_get(m_window, &org_attr, &org_pair, NULL);
 
     attributes_list::const_iterator attrItr = attributes->begin();

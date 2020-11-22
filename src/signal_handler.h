@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -42,7 +42,7 @@
 
 class SignalHandler {
 public:
-  typedef std::function<void ()> slot_void;
+  typedef std::function<void()> slot_void;
 
   // typedef void (*handler_slot)(int, siginfo_t *info, ucontext_t *uap);
   typedef void (*handler_slot)(int, siginfo_t*, void*);
@@ -54,18 +54,18 @@ public:
   static const unsigned int HIGHEST_SIGNAL = 32;
 #endif
 
-  static void         set_default(unsigned int signum);
-  static void         set_ignore(unsigned int signum);
-  static void         set_handler(unsigned int signum, slot_void slot);
+  static void set_default(unsigned int signum);
+  static void set_ignore(unsigned int signum);
+  static void set_handler(unsigned int signum, slot_void slot);
 
-  static void         set_sigaction_handler(unsigned int signum, handler_slot slot);
+  static void set_sigaction_handler(unsigned int signum, handler_slot slot);
 
-  static const char*  as_string(unsigned int signum);
+  static const char* as_string(unsigned int signum);
 
 private:
-  static void         caught(int signum);
+  static void caught(int signum);
 
-  static slot_void    m_handlers[HIGHEST_SIGNAL];
+  static slot_void m_handlers[HIGHEST_SIGNAL];
 };
 
 #endif

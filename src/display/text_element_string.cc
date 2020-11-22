@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -44,28 +44,32 @@
 namespace display {
 
 char*
-TextElementStringBase::print(char* first, char* last, Canvas::attributes_list* attributes, rpc::target_type target) {
+TextElementStringBase::print(char*                    first,
+                             char*                    last,
+                             Canvas::attributes_list* attributes,
+                             rpc::target_type         target) {
   Attributes baseAttribute = attributes->back();
-  push_attribute(attributes, Attributes(first, m_attributes, Attributes::color_invalid));
+  push_attribute(attributes,
+                 Attributes(first, m_attributes, Attributes::color_invalid));
 
   if (first == last)
     return first;
 
   if (m_flags & flag_escape_hex) {
-    char buffer[last - first];
+    char  buffer[last - first];
     char* bufferLast = copy_string(buffer, buffer + (last - first), target);
 
     first = torrent::utils::transform_hex(buffer, bufferLast, first, last);
 
   } else if (m_flags & flag_escape_html) {
-    char buffer[last - first];
+    char  buffer[last - first];
     char* bufferLast = copy_string(buffer, buffer + (last - first), target);
 
     first = torrent::utils::copy_escape_html(buffer, bufferLast, first, last);
 
   } else {
     first = copy_string(first, last, target);
-  }  
+  }
 
   push_attribute(attributes, Attributes(first, baseAttribute));
 
@@ -73,16 +77,20 @@ TextElementStringBase::print(char* first, char* last, Canvas::attributes_list* a
 }
 
 char*
-TextElementString::copy_string(char* first, char* last, rpc::target_type target) {
+TextElementString::copy_string(char*            first,
+                               char*            last,
+                               rpc::target_type target) {
   extent_type length = std::min<extent_type>(last - first, m_string.size());
-  
+
   std::memcpy(first, m_string.c_str(), length);
 
   return first + length;
 }
 
 char*
-TextElementCString::copy_string(char* first, char* last, rpc::target_type target) {
+TextElementCString::copy_string(char*            first,
+                                char*            last,
+                                rpc::target_type target) {
   extent_type length = std::min<extent_type>(last - first, m_length);
 
   std::memcpy(first, m_string, length);
@@ -91,42 +99,53 @@ TextElementCString::copy_string(char* first, char* last, rpc::target_type target
 }
 
 char*
-TextElementCommand::print(char* first, char* last, Canvas::attributes_list* attributes, rpc::target_type target) {
+TextElementCommand::print(char*                    first,
+                          char*                    last,
+                          Canvas::attributes_list* attributes,
+                          rpc::target_type         target) {
   Attributes baseAttribute = attributes->back();
-  push_attribute(attributes, Attributes(first, m_attributes, Attributes::color_invalid));
+  push_attribute(attributes,
+                 Attributes(first, m_attributes, Attributes::color_invalid));
 
-  torrent::Object result = rpc::parse_command(target, m_command, m_commandEnd).first;
+  torrent::Object result =
+    rpc::parse_command(target, m_command, m_commandEnd).first;
 
   if (first == last)
     return first;
 
   switch (result.type()) {
-  case torrent::Object::TYPE_STRING:
-  {
-    const std::string& str = result.as_string();
+    case torrent::Object::TYPE_STRING: {
+      const std::string& str = result.as_string();
 
-    if (m_flags & flag_escape_hex) {
-      first = torrent::utils::transform_hex(str.c_str(), str.c_str() + str.size(), first, last);
+      if (m_flags & flag_escape_hex) {
+        first = torrent::utils::transform_hex(
+          str.c_str(), str.c_str() + str.size(), first, last);
 
-    } else if (m_flags & flag_escape_html) {
-      first = torrent::utils::copy_escape_html(str.c_str(), str.c_str() + str.size(), first, last);
+      } else if (m_flags & flag_escape_html) {
+        first = torrent::utils::copy_escape_html(
+          str.c_str(), str.c_str() + str.size(), first, last);
 
-    } else {
-      size_t length = std::min<size_t>(str.size(), std::distance(first, last));
+      } else {
+        size_t length =
+          std::min<size_t>(str.size(), std::distance(first, last));
 
-      std::memcpy(first, str.c_str(), length);
-      first += std::min<size_t>(str.size(), length);
-    }  
+        std::memcpy(first, str.c_str(), length);
+        first += std::min<size_t>(str.size(), length);
+      }
 
-    break;
-  }
-  case torrent::Object::TYPE_VALUE:
-  { 
-    first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%lld", (long long int)result.as_value()), 0), last - first + 1);
-    break;
-  }
-  default:
-    return first;
+      break;
+    }
+    case torrent::Object::TYPE_VALUE: {
+      first += std::min<ptrdiff_t>(
+        std::max(
+          snprintf(
+            first, last - first + 1, "%lld", (long long int)result.as_value()),
+          0),
+        last - first + 1);
+      break;
+    }
+    default:
+      return first;
   }
 
   push_attribute(attributes, Attributes(first, baseAttribute));

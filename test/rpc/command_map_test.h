@@ -10,7 +10,9 @@ class CommandMapTest : public CppUnit::TestFixture {
 public:
   static const int cmd_size = 256;
 
-  void setUp() { m_commandItr = m_commands; }
+  void setUp() {
+    m_commandItr = m_commands;
+  }
   void tearDown() {}
 
   void test_basics();
@@ -18,6 +20,6 @@ public:
 private:
   rpc::CommandMap m_map;
 
-  rpc::command_base m_commands[cmd_size];
+  rpc::command_base  m_commands[cmd_size];
   rpc::command_base* m_commandItr;
 };

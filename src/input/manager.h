@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -48,10 +48,10 @@ class Manager : private std::vector<Bindings*> {
 public:
   typedef std::vector<Bindings*> Base;
 
-  using Base::iterator;
   using Base::const_iterator;
-  using Base::reverse_iterator;
   using Base::const_reverse_iterator;
+  using Base::iterator;
+  using Base::reverse_iterator;
 
   using Base::begin;
   using Base::end;
@@ -60,13 +60,16 @@ public:
 
   using Base::push_back;
 
-  Manager() : m_textInput(NULL) {}
+  Manager()
+    : m_textInput(NULL) {}
 
   void erase(Bindings* b);
 
   void pressed(int key);
 
-  void set_text_input(TextInput* input = NULL) { m_textInput = input; }
+  void set_text_input(TextInput* input = NULL) {
+    m_textInput = input;
+  }
 
 private:
   TextInput* m_textInput;

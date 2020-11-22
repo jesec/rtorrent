@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -52,59 +52,59 @@ TextInput::pressed(int key) {
 
   } else {
     switch (key) {
-    case 0x7F:
-    case 'h' - 'a' + 1: // ^H
-    case KEY_BACKSPACE:
-      if (m_pos != 0)
-        Base::erase(--m_pos, 1);
+      case 0x7F:
+      case 'h' - 'a' + 1: // ^H
+      case KEY_BACKSPACE:
+        if (m_pos != 0)
+          Base::erase(--m_pos, 1);
 
-      break;
+        break;
 
-    case KEY_DC:
-      if (m_pos != size())
-        Base::erase(m_pos, 1);
+      case KEY_DC:
+        if (m_pos != size())
+          Base::erase(m_pos, 1);
 
-      break;
+        break;
 
-    case 0x02:
-    case KEY_LEFT:
-      if (m_pos != 0)
-        --m_pos;
+      case 0x02:
+      case KEY_LEFT:
+        if (m_pos != 0)
+          --m_pos;
 
-      break;
+        break;
 
-    case 0x06:
-    case KEY_RIGHT:
-      if (m_pos != size())
-        ++m_pos;
+      case 0x06:
+      case KEY_RIGHT:
+        if (m_pos != size())
+          ++m_pos;
 
-      break;
+        break;
 
-    case KEY_HOME:
-      m_pos = 0;
-      break;
+      case KEY_HOME:
+        m_pos = 0;
+        break;
 
-    case KEY_END:
-      m_pos = size();
-      break;
+      case KEY_END:
+        m_pos = size();
+        break;
 
-    case 'u' - 'a' + 1: // ^U
-      Base::erase(0, m_pos);
-      m_pos = 0;
-      break;
+      case 'u' - 'a' + 1: // ^U
+        Base::erase(0, m_pos);
+        m_pos = 0;
+        break;
 
-    case 'k' - 'a' + 1: // ^K
-      Base::erase(m_pos, size()-m_pos);
-      break;
+      case 'k' - 'a' + 1: // ^K
+        Base::erase(m_pos, size() - m_pos);
+        break;
 
-    default:
-      return false;
+      default:
+        return false;
     }
   }
 
   mark_dirty();
 
   return true;
-}  
+}
 
 }

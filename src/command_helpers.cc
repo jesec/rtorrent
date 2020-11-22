@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -38,24 +38,38 @@
 
 #include <torrent/exceptions.h>
 
-#include "globals.h"
-#include "control.h"
 #include "command_helpers.h"
+#include "control.h"
+#include "globals.h"
 
-void initialize_command_dynamic();
-void initialize_command_download();
-void initialize_command_events();
-void initialize_command_file();
-void initialize_command_ip();
-void initialize_command_peer();
-void initialize_command_local();
-void initialize_command_logging();
-void initialize_command_network();
-void initialize_command_groups();
-void initialize_command_throttle();
-void initialize_command_tracker();
-void initialize_command_scheduler();
-void initialize_command_ui();
+void
+initialize_command_dynamic();
+void
+initialize_command_download();
+void
+initialize_command_events();
+void
+initialize_command_file();
+void
+initialize_command_ip();
+void
+initialize_command_peer();
+void
+initialize_command_local();
+void
+initialize_command_logging();
+void
+initialize_command_network();
+void
+initialize_command_groups();
+void
+initialize_command_throttle();
+void
+initialize_command_tracker();
+void
+initialize_command_scheduler();
+void
+initialize_command_ui();
 
 void
 initialize_commands() {

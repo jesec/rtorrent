@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -36,20 +36,23 @@
 
 #include "config.h"
 
-#include <iostream>
 #include <curl/curl.h>
 #include <curl/easy.h>
+#include <iostream>
 #include <torrent/exceptions.h>
 
-#include "globals.h"
 #include "curl_get.h"
 #include "curl_stack.h"
+#include "globals.h"
 
 namespace core {
 
 size_t
 curl_get_receive_write(void* data, size_t size, size_t nmemb, void* handle) {
-  if (!((CurlGet*)handle)->stream()->write((const char*)data, size * nmemb).fail())
+  if (!((CurlGet*)handle)
+         ->stream()
+         ->write((const char*)data, size * nmemb)
+         .fail())
     return size * nmemb;
   else
     return 0;
@@ -62,39 +65,44 @@ CurlGet::~CurlGet() noexcept(true) {
 void
 CurlGet::start() {
   if (is_busy())
-    throw torrent::internal_error("Tried to call CurlGet::start on a busy object.");
+    throw torrent::internal_error(
+      "Tried to call CurlGet::start on a busy object.");
 
   if (m_stream == NULL)
-    throw torrent::internal_error("Tried to call CurlGet::start without a valid output stream.");
+    throw torrent::internal_error(
+      "Tried to call CurlGet::start without a valid output stream.");
 
   m_handle = curl_easy_init();
 
   if (m_handle == NULL)
     throw torrent::internal_error("Call to curl_easy_init() failed.");
 
-  curl_easy_setopt(m_handle, CURLOPT_URL,            m_url.c_str());
-  curl_easy_setopt(m_handle, CURLOPT_WRITEFUNCTION,  &curl_get_receive_write);
-  curl_easy_setopt(m_handle, CURLOPT_WRITEDATA,      this);
+  curl_easy_setopt(m_handle, CURLOPT_URL, m_url.c_str());
+  curl_easy_setopt(m_handle, CURLOPT_WRITEFUNCTION, &curl_get_receive_write);
+  curl_easy_setopt(m_handle, CURLOPT_WRITEDATA, this);
 
   if (m_timeout != 0) {
     curl_easy_setopt(m_handle, CURLOPT_CONNECTTIMEOUT, (long)60);
-    curl_easy_setopt(m_handle, CURLOPT_TIMEOUT,        (long)m_timeout);
+    curl_easy_setopt(m_handle, CURLOPT_TIMEOUT, (long)m_timeout);
 
     // Normally libcurl should handle the timeout. But sometimes that doesn't
     // work right so we do a fallback timeout that just aborts the transfer.
     m_taskTimeout.slot() = std::bind(&CurlGet::receive_timeout, this);
     priority_queue_erase(&taskScheduler, &m_taskTimeout);
-    priority_queue_insert(&taskScheduler, &m_taskTimeout, cachedTime + torrent::utils::timer::from_seconds(m_timeout + 5));
+    priority_queue_insert(&taskScheduler,
+                          &m_taskTimeout,
+                          cachedTime +
+                            torrent::utils::timer::from_seconds(m_timeout + 5));
   }
 
-  curl_easy_setopt(m_handle, CURLOPT_FORBID_REUSE,   (long)1);
-  curl_easy_setopt(m_handle, CURLOPT_NOSIGNAL,       (long)1);
+  curl_easy_setopt(m_handle, CURLOPT_FORBID_REUSE, (long)1);
+  curl_easy_setopt(m_handle, CURLOPT_NOSIGNAL, (long)1);
   curl_easy_setopt(m_handle, CURLOPT_FOLLOWLOCATION, (long)1);
-  curl_easy_setopt(m_handle, CURLOPT_MAXREDIRS,      (long)5);
+  curl_easy_setopt(m_handle, CURLOPT_MAXREDIRS, (long)5);
 
-  curl_easy_setopt(m_handle, CURLOPT_IPRESOLVE,      CURL_IPRESOLVE_WHATEVER);
+  curl_easy_setopt(m_handle, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_WHATEVER);
 
-  curl_easy_setopt(m_handle, CURLOPT_ENCODING,       "");
+  curl_easy_setopt(m_handle, CURLOPT_ENCODING, "");
 
   m_ipv6 = false;
 
@@ -122,7 +130,7 @@ CurlGet::retry_ipv6() {
   curl_easy_cleanup(m_handle);
 
   m_handle = nhandle;
-  m_ipv6 = true;
+  m_ipv6   = true;
 }
 
 void

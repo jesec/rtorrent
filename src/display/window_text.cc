@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -45,13 +45,12 @@
 
 namespace display {
 
-WindowText::WindowText(rpc::target_type target, extent_type margin) :
-  Window(new Canvas, 0, 0, 0, extent_static, extent_static),
-  m_target(target),
-  m_errorHandler(NULL),
-  m_margin(margin),
-  m_interval(0) {
-}
+WindowText::WindowText(rpc::target_type target, extent_type margin)
+  : Window(new Canvas, 0, 0, 0, extent_static, extent_static)
+  , m_target(target)
+  , m_errorHandler(NULL)
+  , m_margin(margin)
+  , m_interval(0) {}
 
 void
 WindowText::clear() {
@@ -66,7 +65,7 @@ void
 WindowText::push_back(TextElement* element) {
   base_type::push_back(element);
 
-//   m_minHeight = size();
+  //   m_minHeight = size();
   m_maxHeight = size();
 
   if (element != NULL) {
@@ -84,7 +83,10 @@ WindowText::push_back(TextElement* element) {
 void
 WindowText::redraw() {
   if (m_interval != 0)
-    m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(m_interval)).round_seconds());
+    m_slotSchedule(
+      this,
+      (cachedTime + torrent::utils::timer::from_seconds(m_interval))
+        .round_seconds());
 
   m_canvas->erase();
 
@@ -97,24 +99,29 @@ WindowText::redraw() {
     char buffer[m_canvas->width() + 1];
 
     Canvas::attributes_list attributes;
-    attributes.push_back(Attributes(buffer, Attributes::a_normal, Attributes::color_default));
+    attributes.push_back(
+      Attributes(buffer, Attributes::a_normal, Attributes::color_default));
 
-    char* last = m_errorHandler->print(buffer, buffer + m_canvas->width(), &attributes, m_target);
+    char* last = m_errorHandler->print(
+      buffer, buffer + m_canvas->width(), &attributes, m_target);
 
     m_canvas->print_attributes(0, position, buffer, last, &attributes);
     return;
   }
 
-  for (iterator itr = begin(); itr != end() && position < m_canvas->height(); ++itr, ++position) {
+  for (iterator itr = begin(); itr != end() && position < m_canvas->height();
+       ++itr, ++position) {
     if (*itr == NULL)
       continue;
 
     char buffer[m_canvas->width() + 1];
 
     Canvas::attributes_list attributes;
-    attributes.push_back(Attributes(buffer, Attributes::a_normal, Attributes::color_default));
+    attributes.push_back(
+      Attributes(buffer, Attributes::a_normal, Attributes::color_default));
 
-    char* last = (*itr)->print(buffer, buffer + m_canvas->width(), &attributes, m_target);
+    char* last =
+      (*itr)->print(buffer, buffer + m_canvas->width(), &attributes, m_target);
 
     m_canvas->print_attributes(0, position, buffer, last, &attributes);
   }

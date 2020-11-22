@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -52,25 +52,32 @@ class Lockfile {
 public:
   typedef std::pair<std::string, pid_t> process_type;
 
-  Lockfile() : m_locked(false) {}
-  
-  bool                is_locked() const                 { return m_locked; }
-  bool                is_stale();
+  Lockfile()
+    : m_locked(false) {}
+
+  bool is_locked() const {
+    return m_locked;
+  }
+  bool is_stale();
 
   // If the path is empty no lock file will be created, although
   // is_locked() will return true.
-  bool                try_lock();
-  bool                unlock();
+  bool try_lock();
+  bool unlock();
 
-  const std::string&  path() const                      { return m_path; }
-  void                set_path(const std::string& path) { m_path = path; }
+  const std::string& path() const {
+    return m_path;
+  }
+  void set_path(const std::string& path) {
+    m_path = path;
+  }
 
-  std::string         locked_by_as_string() const;
-  process_type        locked_by() const;
+  std::string  locked_by_as_string() const;
+  process_type locked_by() const;
 
 private:
-  std::string         m_path;
-  bool                m_locked;
+  std::string m_path;
+  bool        m_locked;
 };
 
 }

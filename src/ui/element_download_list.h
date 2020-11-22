@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -45,7 +45,7 @@
 class Control;
 
 namespace core {
-  class View;
+class View;
 }
 
 namespace ui {
@@ -56,32 +56,34 @@ public:
 
   ElementDownloadList();
 
-  void                activate(display::Frame* frame, bool focus = true);
-  void                disable();
+  void activate(display::Frame* frame, bool focus = true);
+  void disable();
 
-  core::View*         view() { return m_view; }
-  void                set_view(core::View* l);
+  core::View* view() {
+    return m_view;
+  }
+  void set_view(core::View* l);
 
-  void                receive_command(const char* cmd);
+  void receive_command(const char* cmd);
 
-  void                receive_next();
-  void                receive_prev();
+  void receive_next();
+  void receive_prev();
 
-  void                receive_stop_download();
-  void                receive_close_download();
+  void receive_stop_download();
+  void receive_close_download();
 
-  void                receive_next_priority();
-  void                receive_prev_priority();
+  void receive_next_priority();
+  void receive_prev_priority();
 
-  void                receive_cycle_throttle();
+  void receive_cycle_throttle();
 
-  void                receive_change_view(const std::string& name);
+  void receive_change_view(const std::string& name);
 
-  void                toggle_layout();
+  void toggle_layout();
 
 private:
-  WDownloadList*      m_window;
-  core::View*         m_view;
+  WDownloadList* m_window;
+  core::View*    m_view;
 };
 
 }

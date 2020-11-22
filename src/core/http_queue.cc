@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -42,15 +42,15 @@
 #include <torrent/http.h>
 #include <torrent/utils/functional.h>
 
-#include "http_queue.h"
 #include "curl_get.h"
+#include "http_queue.h"
 
 namespace core {
 
 HttpQueue::iterator
 HttpQueue::insert(const std::string& url, std::iostream* s) {
   std::auto_ptr<CurlGet> h(m_slot_factory());
-  
+
   h->set_url(url);
   h->set_stream(s);
   h->set_timeout(5 * 60);
@@ -64,7 +64,10 @@ HttpQueue::insert(const std::string& url, std::iostream* s) {
 
   h.release();
 
-  for (signal_curl_get::iterator itr = m_signal_insert.begin(), last = m_signal_insert.end(); itr != last; itr++)
+  for (signal_curl_get::iterator itr  = m_signal_insert.begin(),
+                                 last = m_signal_insert.end();
+       itr != last;
+       itr++)
     (*itr)(*signal_itr);
 
   return signal_itr;
@@ -72,7 +75,10 @@ HttpQueue::insert(const std::string& url, std::iostream* s) {
 
 void
 HttpQueue::erase(iterator signal_itr) {
-  for (signal_curl_get::iterator itr = m_signal_erase.begin(), last = m_signal_erase.end(); itr != last; itr++)
+  for (signal_curl_get::iterator itr  = m_signal_erase.begin(),
+                                 last = m_signal_erase.end();
+       itr != last;
+       itr++)
     (*itr)(*signal_itr);
 
   delete *signal_itr;

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -37,22 +37,28 @@
 #ifndef RTORRENT_DISPLAY_WINDOW_TITLE_H
 #define RTORRENT_DISPLAY_WINDOW_TITLE_H
 
-#include <string>
 #include "window.h"
+#include <string>
 
 namespace display {
 
 class WindowTitle : public Window {
 public:
-  WindowTitle() : Window(new Canvas, 0, 0, 1, extent_full, extent_static) {}
+  WindowTitle()
+    : Window(new Canvas, 0, 0, 1, extent_full, extent_static) {}
 
-  const std::string&  title() const                       { return m_title; }
-  void                set_title(const std::string& title) { m_title = title; mark_dirty(); }
+  const std::string& title() const {
+    return m_title;
+  }
+  void set_title(const std::string& title) {
+    m_title = title;
+    mark_dirty();
+  }
 
-  virtual void        redraw();
+  virtual void redraw();
 
 private:
-  std::string         m_title;
+  std::string m_title;
 };
 
 }

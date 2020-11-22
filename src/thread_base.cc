@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -43,39 +43,55 @@
 #include <cstring>
 #include <iostream>
 #include <signal.h>
-#include <unistd.h>
 #include <torrent/buildinfo.h>
-#include <torrent/utils/error_number.h>
 #include <torrent/exceptions.h>
 #include <torrent/torrent.h>
+#include <torrent/utils/error_number.h>
 #include <torrent/utils/log.h>
+#include <unistd.h>
 
-#include "globals.h"
 #include "control.h"
 #include "core/manager.h"
+#include "globals.h"
 
 class lt_cacheline_aligned thread_queue_hack {
 public:
-  typedef ThreadBase::thread_base_func value_type;
+  typedef ThreadBase::thread_base_func  value_type;
   typedef ThreadBase::thread_base_func* iterator;
 
   static const unsigned int max_size = 32;
 
-  thread_queue_hack() { std::memset(this, 0, sizeof(thread_queue_hack)); }
+  thread_queue_hack() {
+    std::memset(this, 0, sizeof(thread_queue_hack));
+  }
 
-  void     lock()   { while (!__sync_bool_compare_and_swap(&m_lock, 0, 1)) usleep(0); }
-  void     unlock() { __sync_bool_compare_and_swap(&m_lock, 1, 0); }
+  void lock() {
+    while (!__sync_bool_compare_and_swap(&m_lock, 0, 1))
+      usleep(0);
+  }
+  void unlock() {
+    __sync_bool_compare_and_swap(&m_lock, 1, 0);
+  }
 
-  iterator begin() { return m_queue; }
-  iterator max_capacity() { return m_queue + max_size; }
+  iterator begin() {
+    return m_queue;
+  }
+  iterator max_capacity() {
+    return m_queue + max_size;
+  }
 
-  iterator end_and_lock() { lock(); return std::find(begin(), max_capacity(), (value_type)NULL); }
+  iterator end_and_lock() {
+    lock();
+    return std::find(begin(), max_capacity(), (value_type)NULL);
+  }
 
-  bool     empty() const { return m_queue[0] == NULL; }
+  bool empty() const {
+    return m_queue[0] == NULL;
+  }
 
   void push_back(value_type v) {
     iterator itr = end_and_lock();
-  
+
     if (itr == max_capacity())
       throw torrent::internal_error("Overflowed thread_queue.");
 
@@ -87,7 +103,8 @@ public:
     iterator itr = begin();
     lock();
 
-    while (*itr != NULL) *dest++ = *itr++;
+    while (*itr != NULL)
+      *dest++ = *itr++;
 
     clear_and_unlock();
     return dest;
@@ -98,12 +115,15 @@ public:
     __sync_synchronize();
   }
 
- private:
+private:
   int        m_lock;
   value_type m_queue[max_size + 1];
 };
 
-void throw_shutdown_exception() { throw torrent::shutdown_exception(); }
+void
+throw_shutdown_exception() {
+  throw torrent::shutdown_exception();
+}
 
 ThreadBase::ThreadBase() {
   m_taskShutdown.slot() = std::bind(&throw_shutdown_exception);
@@ -119,7 +139,8 @@ ThreadBase::~ThreadBase() noexcept(true) {
 void
 ThreadBase::stop_thread(ThreadBase* thread) {
   if (!thread->m_taskShutdown.is_queued())
-    priority_queue_insert(&thread->m_taskScheduler, &thread->m_taskShutdown, cachedTime);
+    priority_queue_insert(
+      &thread->m_taskScheduler, &thread->m_taskShutdown, cachedTime);
 }
 
 int64_t
@@ -134,9 +155,10 @@ ThreadBase::next_timeout_usec() {
 
 void
 ThreadBase::call_queued_items() {
-  thread_base_func result[thread_queue_hack::max_size];
+  thread_base_func  result[thread_queue_hack::max_size];
   thread_base_func* first = result;
-  thread_base_func* last = m_threadQueue->copy_and_clear((thread_base_func*)result);
+  thread_base_func* last =
+    m_threadQueue->copy_and_clear((thread_base_func*)result);
 
   while (first != last && *first)
     (*first++)(this);

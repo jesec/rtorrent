@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -36,13 +36,13 @@
 
 #include "config.h"
 
-#include <torrent/utils/allocators.h>
-#include <torrent/utils/error_number.h>
 #include <cstdio>
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <torrent/exceptions.h>
 #include <torrent/poll.h>
+#include <torrent/utils/allocators.h>
+#include <torrent/utils/error_number.h>
 #include <torrent/utils/log.h>
 
 #include "utils/socket_fd.h"
@@ -61,7 +61,9 @@ namespace rpc {
 
 // If bufferSize is zero then memcpy won't do anything.
 inline void
-SCgiTask::realloc_buffer(uint32_t size, const char* buffer, uint32_t bufferSize) {
+SCgiTask::realloc_buffer(uint32_t    size,
+                         const char* buffer,
+                         uint32_t    bufferSize) {
   char* tmp = torrent::utils::cacheline_allocator<char>::alloc_size(size);
 
   std::memcpy(tmp, buffer, bufferSize);
@@ -73,7 +75,8 @@ void
 SCgiTask::open(SCgi* parent, int fd) {
   m_parent   = parent;
   m_fileDesc = fd;
-  m_buffer   = torrent::utils::cacheline_allocator<char>::alloc_size((m_bufferSize = default_buffer_size) + 1);
+  m_buffer   = torrent::utils::cacheline_allocator<char>::alloc_size(
+    (m_bufferSize = default_buffer_size) + 1);
   m_position = m_buffer;
   m_body     = NULL;
 
@@ -81,7 +84,7 @@ SCgiTask::open(SCgi* parent, int fd) {
   worker_thread->poll()->insert_read(this);
   worker_thread->poll()->insert_error(this);
 
-//   scgiTimer = torrent::utils::timer::current();
+  //   scgiTimer = torrent::utils::timer::current();
 }
 
 void
@@ -101,17 +104,20 @@ SCgiTask::close() {
   m_buffer = NULL;
 
   // Test
-//   char buffer[512];
-//   sprintf(buffer, "SCgi system call processed: %i", (int)(torrent::utils::timer::current() - scgiTimer).usec());
-//   control->core()->push_log(std::string(buffer));
+  //   char buffer[512];
+  //   sprintf(buffer, "SCgi system call processed: %i",
+  //   (int)(torrent::utils::timer::current() - scgiTimer).usec());
+  //   control->core()->push_log(std::string(buffer));
 }
 
 void
 SCgiTask::event_read() {
-  int bytes = ::recv(m_fileDesc, m_position, m_bufferSize - (m_position - m_buffer), 0);
+  int bytes =
+    ::recv(m_fileDesc, m_position, m_bufferSize - (m_position - m_buffer), 0);
 
   if (bytes <= 0) {
-    if (bytes == 0 || !torrent::utils::error_number::current().is_blocked_momentary())
+    if (bytes == 0 ||
+        !torrent::utils::error_number::current().is_blocked_momentary())
       close();
 
     return;
@@ -134,7 +140,8 @@ SCgiTask::event_read() {
 
     // If the request doesn't start with an integer or if it didn't
     // end in ':', then close the connection.
-    if (current == m_buffer || *current != ':' || headerSize < 17 || headerSize > max_header_size)
+    if (current == m_buffer || *current != ':' || headerSize < 17 ||
+        headerSize > max_header_size)
       goto event_read_failed;
 
     if (std::distance(++current, m_position) < headerSize + 1)
@@ -146,10 +153,11 @@ SCgiTask::event_read() {
     char* contentPos;
     contentSize = strtol(current + 15, &contentPos, 0);
 
-    if (*contentPos != '\0' || contentSize <= 0 || contentSize > max_content_size)
+    if (*contentPos != '\0' || contentSize <= 0 ||
+        contentSize > max_content_size)
       goto event_read_failed;
 
-    m_body = current + headerSize + 1;
+    m_body     = current + headerSize + 1;
     headerSize = std::distance(m_buffer, m_body);
 
     if ((unsigned int)(contentSize + headerSize) < m_bufferSize) {
@@ -160,13 +168,15 @@ SCgiTask::event_read() {
 
       std::memmove(m_buffer, m_body, std::distance(m_body, m_position));
       m_position = m_buffer + std::distance(m_body, m_position);
-      m_body = m_buffer;
+      m_body     = m_buffer;
 
     } else {
-      realloc_buffer((m_bufferSize = contentSize) + 1, m_body, std::distance(m_body, m_position));
+      realloc_buffer((m_bufferSize = contentSize) + 1,
+                     m_body,
+                     std::distance(m_body, m_position));
 
       m_position = m_buffer + std::distance(m_body, m_position);
-      m_body = m_buffer;
+      m_body     = m_buffer;
     }
   }
 
@@ -183,16 +193,23 @@ SCgiTask::event_read() {
     write(m_parent->log_fd(), "\n---\n", sizeof("\n---\n"));
   }
 
-  lt_log_print_dump(torrent::LOG_RPC_DUMP, m_body, m_bufferSize - std::distance(m_buffer, m_body), "scgi", "RPC read.", 0);
+  lt_log_print_dump(torrent::LOG_RPC_DUMP,
+                    m_body,
+                    m_bufferSize - std::distance(m_buffer, m_body),
+                    "scgi",
+                    "RPC read.",
+                    0);
 
   // Close if the call failed, else stay open to write back data.
-  if (!m_parent->receive_call(this, m_body, m_bufferSize - std::distance(m_buffer, m_body)))
+  if (!m_parent->receive_call(
+        this, m_body, m_bufferSize - std::distance(m_buffer, m_body)))
     close();
 
   return;
 
- event_read_failed:
-//   throw torrent::internal_error("SCgiTask::event_read() fault not handled.");
+event_read_failed:
+  //   throw torrent::internal_error("SCgiTask::event_read() fault not
+  //   handled.");
   close();
 }
 
@@ -222,18 +239,22 @@ SCgiTask::event_error() {
 bool
 SCgiTask::receive_write(const char* buffer, uint32_t length) {
   if (buffer == NULL || length > (100 << 20))
-    throw torrent::internal_error("SCgiTask::receive_write(...) received bad input.");
+    throw torrent::internal_error(
+      "SCgiTask::receive_write(...) received bad input.");
 
   // Need to cast due to a bug in MacOSX gcc-4.0.1.
   if (length + 256 > std::max(m_bufferSize, (unsigned int)default_buffer_size))
     realloc_buffer(length + 256, NULL, 0);
 
   // Who ever bothers to check the return value?
-  int headerSize = sprintf(m_buffer, "Status: 200 OK\r\nContent-Type: text/xml\r\nContent-Length: %i\r\n\r\n", length);
+  int headerSize = sprintf(
+    m_buffer,
+    "Status: 200 OK\r\nContent-Type: text/xml\r\nContent-Length: %i\r\n\r\n",
+    length);
 
-  m_position = m_buffer;
+  m_position   = m_buffer;
   m_bufferSize = length + headerSize;
-  
+
   std::memcpy(m_buffer + headerSize, buffer, length);
 
   if (m_parent->log_fd() >= 0) {
@@ -244,7 +265,8 @@ SCgiTask::receive_write(const char* buffer, uint32_t length) {
     result = write(m_parent->log_fd(), "\n---\n", sizeof("\n---\n"));
   }
 
-  lt_log_print_dump(torrent::LOG_RPC_DUMP, m_buffer, m_bufferSize, "scgi", "RPC write.", 0);
+  lt_log_print_dump(
+    torrent::LOG_RPC_DUMP, m_buffer, m_bufferSize, "scgi", "RPC write.", 0);
 
   event_write();
   return true;

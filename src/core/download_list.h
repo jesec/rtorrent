@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -42,7 +42,7 @@
 #include <string>
 
 namespace torrent {
-  class HashString;
+class HashString;
 }
 
 namespace core {
@@ -57,14 +57,14 @@ class Download;
 
 class DownloadList : private std::list<Download*> {
 public:
-  typedef std::list<Download*>               base_type;
+  typedef std::list<Download*> base_type;
 
-  using base_type::iterator;
   using base_type::const_iterator;
-  using base_type::reverse_iterator;
   using base_type::const_reverse_iterator;
-  using base_type::value_type;
+  using base_type::iterator;
   using base_type::pointer;
+  using base_type::reverse_iterator;
+  using base_type::value_type;
 
   using base_type::begin;
   using base_type::end;
@@ -74,43 +74,47 @@ public:
   using base_type::empty;
   using base_type::size;
 
-  DownloadList() { }
+  DownloadList() {}
 
-  void                clear();
+  void clear();
 
-  void                session_save();
+  void session_save();
 
-  iterator            find(const torrent::HashString& hash);
+  iterator find(const torrent::HashString& hash);
 
-  iterator            find_hex(const char* hash);
-  Download*           find_hex_ptr(const char* hash);
+  iterator  find_hex(const char* hash);
+  Download* find_hex_ptr(const char* hash);
 
   // Might move this to DownloadFactory.
-  Download*           create(std::istream* str, bool printLog);
-  Download*           create(torrent::Object* obj, bool printLog);
+  Download* create(std::istream* str, bool printLog);
+  Download* create(torrent::Object* obj, bool printLog);
 
-  iterator            insert(Download* d);
+  iterator insert(Download* d);
 
-  void                erase_ptr(Download* d);
-  iterator            erase(iterator itr);
+  void     erase_ptr(Download* d);
+  iterator erase(iterator itr);
 
-  //void                save(Download* d);
+  // void                save(Download* d);
 
-  bool                open(Download* d);
-  void                open_throw(Download* d);
+  bool open(Download* d);
+  void open_throw(Download* d);
 
-  void                close(Download* d);
-  void                close_directly(Download* d);
-  void                close_quick(Download* d);
-  void                close_throw(Download* d);
+  void close(Download* d);
+  void close_directly(Download* d);
+  void close_quick(Download* d);
+  void close_throw(Download* d);
 
-  void                resume(Download* d, int flags = 0);
-  void                pause(Download* d, int flags = 0);
+  void resume(Download* d, int flags = 0);
+  void pause(Download* d, int flags = 0);
 
-  void                resume_default(Download* d) { resume(d); }
-  void                pause_default(Download* d) { pause(d); }
+  void resume_default(Download* d) {
+    resume(d);
+  }
+  void pause_default(Download* d) {
+    pause(d);
+  }
 
-  void                check_hash(Download* d);
+  void check_hash(Download* d);
 
   enum {
     D_SLOTS_INSERT,
@@ -128,18 +132,29 @@ public:
   };
 
   static const char* slot_name(int m) {
-    switch(m) {
-    case D_SLOTS_INSERT: return "event.download.inserted";
-    case D_SLOTS_ERASE: return "event.download.erased";
-    case D_SLOTS_OPEN: return "event.download.opened";
-    case D_SLOTS_CLOSE: return "event.download.closed";
-    case D_SLOTS_START: return "event.download.resumed";
-    case D_SLOTS_STOP: return "event.download.paused";
-    case D_SLOTS_HASH_QUEUED: return "event.download.hash_queued";
-    case D_SLOTS_HASH_REMOVED: return "event.download.hash_removed";
-    case D_SLOTS_HASH_DONE: return "event.download.hash_done";
-    case D_SLOTS_FINISHED: return "event.download.finished";
-    default: return "BORK";
+    switch (m) {
+      case D_SLOTS_INSERT:
+        return "event.download.inserted";
+      case D_SLOTS_ERASE:
+        return "event.download.erased";
+      case D_SLOTS_OPEN:
+        return "event.download.opened";
+      case D_SLOTS_CLOSE:
+        return "event.download.closed";
+      case D_SLOTS_START:
+        return "event.download.resumed";
+      case D_SLOTS_STOP:
+        return "event.download.paused";
+      case D_SLOTS_HASH_QUEUED:
+        return "event.download.hash_queued";
+      case D_SLOTS_HASH_REMOVED:
+        return "event.download.hash_removed";
+      case D_SLOTS_HASH_DONE:
+        return "event.download.hash_done";
+      case D_SLOTS_FINISHED:
+        return "event.download.finished";
+      default:
+        return "BORK";
     }
   }
 
@@ -153,17 +168,17 @@ public:
 
 private:
   DownloadList(const DownloadList&);
-  void operator = (const DownloadList&);
+  void operator=(const DownloadList&);
 
-  void                hash_done(Download* d);
-  void                hash_queue(Download* d, int type);
+  void hash_done(Download* d);
+  void hash_queue(Download* d, int type);
 
-  inline void         check_contains(Download* d);
+  inline void check_contains(Download* d);
 
-  void                received_finished(Download* d);
-  void                confirm_finished(Download* d);
+  void received_finished(Download* d);
+  void confirm_finished(Download* d);
 
-  void                process_meta_download(Download* d);
+  void process_meta_download(Download* d);
 };
 
 }

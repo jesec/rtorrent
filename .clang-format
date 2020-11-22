@@ -1,0 +1,9 @@
+BasedOnStyle: Mozilla
+BreakBeforeBraces: Attach
+AlignConsecutiveAssignments: true
+AlignConsecutiveBitFields: true
+AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: Right
+AlignTrailingComments: true
+AllowShortFunctionsOnASingleLine: Empty

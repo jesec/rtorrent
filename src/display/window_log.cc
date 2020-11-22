@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -46,15 +46,21 @@
 
 namespace display {
 
-WindowLog::WindowLog(torrent::log_buffer* l) :
-  Window(new Canvas, 0, 0, 0, extent_full, extent_static),
-  m_log(l) {
+WindowLog::WindowLog(torrent::log_buffer* l)
+  : Window(new Canvas, 0, 0, 0, extent_full, extent_static)
+  , m_log(l) {
 
   m_taskUpdate.slot() = std::bind(&WindowLog::receive_update, this);
 
-  unsigned int signal_index = torrent::main_thread()->signal_bitfield()->add_signal(std::bind(&WindowLog::receive_update, this));
+  unsigned int signal_index =
+    torrent::main_thread()->signal_bitfield()->add_signal(
+      std::bind(&WindowLog::receive_update, this));
 
-  m_log->lock_and_set_update_slot(std::bind(&torrent::thread_base::send_event_signal, torrent::main_thread(), signal_index, false));
+  m_log->lock_and_set_update_slot(
+    std::bind(&torrent::thread_base::send_event_signal,
+              torrent::main_thread(),
+              signal_index,
+              false));
 }
 
 WindowLog::~WindowLog() {
@@ -73,11 +79,13 @@ WindowLog::redraw() {
 
   int pos = m_canvas->height();
 
-  for (iterator itr = m_log->end(), last = find_older(); itr != last && pos > 0; --pos) {
+  for (iterator itr = m_log->end(), last = find_older(); itr != last && pos > 0;
+       --pos) {
     itr--;
 
     char buffer[16];
-    print_hhmmss_local(buffer, buffer + 16, static_cast<time_t>(itr->timestamp));
+    print_hhmmss_local(
+      buffer, buffer + 16, static_cast<time_t>(itr->timestamp));
 
     m_canvas->print(0, pos - 1, "(%s) %s", buffer, itr->message.c_str());
   }
@@ -90,8 +98,10 @@ WindowLog::receive_update() {
   if (!is_active())
     return;
 
-  iterator itr = find_older();
-  extent_type height = std::min(std::distance(itr, (iterator)m_log->end()), (std::iterator_traits<iterator>::difference_type)10);
+  iterator    itr = find_older();
+  extent_type height =
+    std::min(std::distance(itr, (iterator)m_log->end()),
+             (std::iterator_traits<iterator>::difference_type)10);
 
   if (height != m_maxHeight) {
     m_minHeight = height != 0 ? 1 : 0;
@@ -106,7 +116,10 @@ WindowLog::receive_update() {
   priority_queue_erase(&taskScheduler, &m_taskUpdate);
 
   if (height != 0)
-    priority_queue_insert(&taskScheduler, &m_taskUpdate, (cachedTime + torrent::utils::timer::from_seconds(5)).round_seconds());
+    priority_queue_insert(
+      &taskScheduler,
+      &m_taskUpdate,
+      (cachedTime + torrent::utils::timer::from_seconds(5)).round_seconds());
 }
 
 }

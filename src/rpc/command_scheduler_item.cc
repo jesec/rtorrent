@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -49,7 +49,8 @@ CommandSchedulerItem::~CommandSchedulerItem() {
 void
 CommandSchedulerItem::enable(torrent::utils::timer t) {
   if (t == torrent::utils::timer())
-    throw torrent::internal_error("CommandSchedulerItem::enable() t == torrent::utils::timer().");
+    throw torrent::internal_error(
+      "CommandSchedulerItem::enable() t == torrent::utils::timer().");
 
   if (is_queued())
     disable();
@@ -73,7 +74,9 @@ CommandSchedulerItem::next_time_scheduled() const {
     return torrent::utils::timer();
 
   if (m_timeScheduled == torrent::utils::timer())
-    throw torrent::internal_error("CommandSchedulerItem::next_time_scheduled() m_timeScheduled == torrent::utils::timer().");
+    throw torrent::internal_error(
+      "CommandSchedulerItem::next_time_scheduled() m_timeScheduled == "
+      "torrent::utils::timer().");
 
   torrent::utils::timer next = m_timeScheduled;
 

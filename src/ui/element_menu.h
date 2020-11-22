@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -42,8 +42,8 @@
 #include "element_base.h"
 
 namespace display {
-  class WindowText;
-  class TextElementStringBase;
+class WindowText;
+class TextElementStringBase;
 }
 
 namespace ui {
@@ -51,17 +51,19 @@ namespace ui {
 struct ElementMenuEntry {
   display::TextElementStringBase* m_element;
 
-  std::function<void ()>     m_slotFocus;
-  std::function<void ()>     m_slotSelect;
+  std::function<void()> m_slotFocus;
+  std::function<void()> m_slotSelect;
 };
 
-class ElementMenu : public ElementBase, public std::vector<ElementMenuEntry> {
+class ElementMenu
+  : public ElementBase
+  , public std::vector<ElementMenuEntry> {
 public:
   typedef std::vector<ElementMenuEntry> base_type;
 
-  typedef display::WindowText         WindowText;
+  typedef display::WindowText WindowText;
 
-  typedef uint32_t                    size_type;
+  typedef uint32_t size_type;
 
   typedef base_type::value_type       value_type;
   typedef base_type::reference        reference;
@@ -77,32 +79,34 @@ public:
   ElementMenu();
   ~ElementMenu();
 
-  void                activate(display::Frame* frame, bool focus = false);
-  void                disable();
+  void activate(display::Frame* frame, bool focus = false);
+  void disable();
 
   // Consider returning a pointer that can be used to manipulate
   // entries, f.ex disabling them.
 
   // The c string is not copied nor freed, so it should be constant.
-  void                push_back(const char* name,
-                                const slot_type& slotSelect = slot_type(),
-                                const slot_type& slotFocus = slot_type());
+  void push_back(const char*      name,
+                 const slot_type& slotSelect = slot_type(),
+                 const slot_type& slotFocus  = slot_type());
 
-  void                entry_next();
-  void                entry_prev();
+  void entry_next();
+  void entry_prev();
 
-  void                entry_select();
+  void entry_select();
 
-  void                set_entry(size_type idx, bool triggerSlot);
-  void                set_entry_trigger(size_type idx) { set_entry(idx, true); }
+  void set_entry(size_type idx, bool triggerSlot);
+  void set_entry_trigger(size_type idx) {
+    set_entry(idx, true);
+  }
 
 private:
-  void                focus_entry(size_type idx);
-  void                unfocus_entry(size_type idx);
+  void focus_entry(size_type idx);
+  void unfocus_entry(size_type idx);
 
-  WindowText*         m_window;
+  WindowText* m_window;
 
-  size_type           m_entry;
+  size_type m_entry;
 };
 
 }

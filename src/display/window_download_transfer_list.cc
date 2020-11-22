@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -38,9 +38,9 @@
 
 #include <cmath>
 #include <stdexcept>
-#include <torrent/utils/string_manip.h>
 #include <torrent/data/block_list.h>
 #include <torrent/data/transfer_list.h>
+#include <torrent/utils/string_manip.h>
 
 #include "core/download.h"
 
@@ -48,21 +48,24 @@
 
 namespace display {
 
-WindowDownloadTransferList::WindowDownloadTransferList(core::Download* d, unsigned int *focus) :
-  Window(new Canvas, 0, 0, 0, extent_full, extent_full),
-  m_download(d) {
-}
+WindowDownloadTransferList::WindowDownloadTransferList(core::Download* d,
+                                                       unsigned int*   focus)
+  : Window(new Canvas, 0, 0, 0, extent_full, extent_full)
+  , m_download(d) {}
 
 void
 WindowDownloadTransferList::redraw() {
   // TODO: Make this depend on tracker signal.
-  m_slotSchedule(this, (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
+  m_slotSchedule(
+    this,
+    (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
   m_canvas->erase();
 
   if (m_canvas->height() < 3 || m_canvas->width() < 18)
     return;
 
-  const torrent::TransferList* transfers = m_download->download()->transfer_list();
+  const torrent::TransferList* transfers =
+    m_download->download()->transfer_list();
 
   m_canvas->print(2, 0, "Transfer list: [Size %i]", transfers->size());
 
@@ -72,11 +75,20 @@ WindowDownloadTransferList::redraw() {
   // is just something i threw in there, someone really should
   // prettify this. (This is a very subtle hint)
 
-  for (unsigned int y = 1; y < m_canvas->height() && itr != transfers->end(); ++y, ++itr) {
-    m_canvas->print(0, y, "%5u [P: %u F: %u]", (*itr)->index(), (*itr)->priority(), (*itr)->failed());
+  for (unsigned int y = 1; y < m_canvas->height() && itr != transfers->end();
+       ++y, ++itr) {
+    m_canvas->print(0,
+                    y,
+                    "%5u [P: %u F: %u]",
+                    (*itr)->index(),
+                    (*itr)->priority(),
+                    (*itr)->failed());
 
     // Handle window size.
-    for (torrent::BlockList::const_iterator bItr = (*itr)->begin(), bLast = (*itr)->end(); bItr != bLast; ++bItr) {
+    for (torrent::BlockList::const_iterator bItr  = (*itr)->begin(),
+                                            bLast = (*itr)->end();
+         bItr != bLast;
+         ++bItr) {
       if (m_canvas->get_x() >= m_canvas->width() - 1) {
         if (++y >= m_canvas->height())
           break;
@@ -84,16 +96,16 @@ WindowDownloadTransferList::redraw() {
         m_canvas->move(17, y);
       }
 
-      char id;
+      char   id;
       chtype attr = A_NORMAL;
 
       if (bItr->is_finished()) {
         attr = A_REVERSE;
-        id = key_id(bItr->leader()->const_peer_info());
-        
+        id   = key_id(bItr->leader()->const_peer_info());
+
       } else if (bItr->is_transfering()) {
         attr = A_BOLD;
-        id = key_id(bItr->leader()->const_peer_info());
+        id   = key_id(bItr->leader()->const_peer_info());
 
       } else if (bItr->queued()->size() >= 1) {
         id = std::tolower(key_id(bItr->queued()->back()->const_peer_info()));
@@ -115,16 +127,20 @@ WindowDownloadTransferList::rows() const {
   if (m_canvas->width() < 18)
     return 0;
 
-//   return (m_download->download()->chunks_total() + chunks_per_row() - 1) / chunks_per_row();
+  //   return (m_download->download()->chunks_total() + chunks_per_row() - 1) /
+  //   chunks_per_row();
   return 0;
 }
 
 char
 WindowDownloadTransferList::key_id(torrent::BlockTransfer::key_type key) {
-  uint32_t oldestTime = cachedTime.seconds();
-  assigned_vector::iterator oldestItr = m_assigned.begin();
+  uint32_t                  oldestTime = cachedTime.seconds();
+  assigned_vector::iterator oldestItr  = m_assigned.begin();
 
-  for (assigned_vector::iterator itr = m_assigned.begin(), last = m_assigned.end(); itr != last; ++itr) {
+  for (assigned_vector::iterator itr  = m_assigned.begin(),
+                                 last = m_assigned.end();
+       itr != last;
+       ++itr) {
     if (itr->m_key == key) {
       itr->m_last = cachedTime.seconds();
       return itr->m_id;
@@ -132,11 +148,12 @@ WindowDownloadTransferList::key_id(torrent::BlockTransfer::key_type key) {
 
     if (itr->m_last < oldestTime) {
       oldestTime = itr->m_last;
-      oldestItr = itr;
+      oldestItr  = itr;
     }
   }
 
-  if (oldestItr == m_assigned.end() || cachedTime.seconds() - oldestTime <= 60) {
+  if (oldestItr == m_assigned.end() ||
+      cachedTime.seconds() - oldestTime <= 60) {
     // We didn't find any previously used id's to take over.
 
     // Return 'f' when we run out of characters.

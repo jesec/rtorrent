@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -36,9 +36,9 @@
 
 #include "config.h"
 
+#include <torrent/exceptions.h>
 #include <torrent/utils/file_stat.h>
 #include <torrent/utils/path.h>
-#include <torrent/exceptions.h>
 
 #include "file_status_cache.h"
 
@@ -54,12 +54,14 @@ FileStatusCache::insert(const std::string& path, int flags) {
   if (!fs.update(torrent::utils::path_expand(path)))
     return false;
 
-  std::pair<iterator, bool> result = base_type::insert(value_type(path, file_status()));
+  std::pair<iterator, bool> result =
+    base_type::insert(value_type(path, file_status()));
 
   // Return false if the file hasn't been modified since last time. We
   // use 'equal to' instead of 'greater than' since the file might
   // have been replaced by another file, and thus should be re-tried.
-  if (!result.second && result.first->second.m_mtime == (uint32_t)fs.modified_time())
+  if (!result.second &&
+      result.first->second.m_mtime == (uint32_t)fs.modified_time())
     return false;
 
   result.first->second.m_flags = 0;
@@ -74,9 +76,10 @@ FileStatusCache::prune() {
 
   while (itr != end()) {
     torrent::utils::file_stat fs;
-    iterator tmp = itr++;
+    iterator                  tmp = itr++;
 
-    if (!fs.update(torrent::utils::path_expand(tmp->first)) || tmp->second.m_mtime != (uint32_t)fs.modified_time())
+    if (!fs.update(torrent::utils::path_expand(tmp->first)) ||
+        tmp->second.m_mtime != (uint32_t)fs.modified_time())
       base_type::erase(tmp);
   }
 }

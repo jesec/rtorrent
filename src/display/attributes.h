@@ -38,24 +38,40 @@ public:
   static const int color_default = 0;
 
   Attributes() {}
-  Attributes(const char* pos, int attr, int col) :
-    m_position(pos), m_attributes(attr), m_colors(col) {}
-  Attributes(const char* pos, const Attributes& old) :
-    m_position(pos), m_attributes(old.m_attributes), m_colors(old.m_colors) {}
+  Attributes(const char* pos, int attr, int col)
+    : m_position(pos)
+    , m_attributes(attr)
+    , m_colors(col) {}
+  Attributes(const char* pos, const Attributes& old)
+    : m_position(pos)
+    , m_attributes(old.m_attributes)
+    , m_colors(old.m_colors) {}
 
-  const char*         position() const              { return m_position; }
-  void                set_position(const char* pos) { m_position = pos; }
+  const char* position() const {
+    return m_position;
+  }
+  void set_position(const char* pos) {
+    m_position = pos;
+  }
 
-  int                 attributes() const            { return m_attributes; }
-  void                set_attributes(int attr)      { m_attributes = attr; }
+  int attributes() const {
+    return m_attributes;
+  }
+  void set_attributes(int attr) {
+    m_attributes = attr;
+  }
 
-  int                 colors() const                { return m_colors; }
-  void                set_colors(int col)           { m_colors = col; }
+  int colors() const {
+    return m_colors;
+  }
+  void set_colors(int col) {
+    m_colors = col;
+  }
 
 private:
-  const char*         m_position;
-  int                 m_attributes;
-  int                 m_colors;
+  const char* m_position;
+  int         m_attributes;
+  int         m_colors;
 };
 
 }

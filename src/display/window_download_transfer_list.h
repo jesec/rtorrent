@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -43,7 +43,7 @@
 #include "window.h"
 
 namespace core {
-  class Download;
+class Download;
 }
 
 namespace display {
@@ -51,27 +51,32 @@ namespace display {
 class WindowDownloadTransferList : public Window {
 public:
   struct assigned_type {
-    assigned_type(torrent::BlockTransfer::key_type key, uint32_t last, char id) : m_key(key), m_last(last), m_id(id) { }
-    
-    torrent::BlockTransfer::key_type m_key;    
-    uint32_t m_last;
-    char m_id;
+    assigned_type(torrent::BlockTransfer::key_type key, uint32_t last, char id)
+      : m_key(key)
+      , m_last(last)
+      , m_id(id) {}
+
+    torrent::BlockTransfer::key_type m_key;
+    uint32_t                         m_last;
+    char                             m_id;
   };
 
   typedef std::vector<assigned_type> assigned_vector;
 
   WindowDownloadTransferList(core::Download* d, unsigned int* focus);
 
-  virtual void        redraw();
+  virtual void redraw();
 
-  unsigned int        rows() const;
-  unsigned int        max_focus() const        { return std::max<int>(rows() - height() + 1, 0); }
+  unsigned int rows() const;
+  unsigned int max_focus() const {
+    return std::max<int>(rows() - height() + 1, 0);
+  }
 
 private:
-  char                key_id(torrent::BlockTransfer::key_type key);
+  char key_id(torrent::BlockTransfer::key_type key);
 
-  core::Download*     m_download;
-  assigned_vector     m_assigned;
+  core::Download* m_download;
+  assigned_vector m_assigned;
 };
 
 }

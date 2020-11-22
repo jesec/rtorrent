@@ -9,7 +9,7 @@ class CommandTest : public CppUnit::TestFixture {
   CPPUNIT_TEST_SUITE_END();
 
 public:
-  void setUp() { }
+  void setUp() {}
   void tearDown() {}
 
   void test_stack();

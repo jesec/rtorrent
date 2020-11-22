@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -47,49 +47,60 @@
 #include "scgi_task.h"
 
 namespace utils {
-  class SocketFd;
+class SocketFd;
 }
 
 namespace rpc {
 
 class lt_cacheline_aligned SCgi : public torrent::Event {
 public:
-  typedef utils::function2<bool, const char*, uint32_t>             slot_write;
+  typedef utils::function2<bool, const char*, uint32_t> slot_write;
 
   static const int max_tasks = 100;
 
   // Global lock:
-  SCgi() : m_logFd(-1) {}
+  SCgi()
+    : m_logFd(-1) {}
   virtual ~SCgi();
 
-  const char*         type_name() const { return "scgi"; }
+  const char* type_name() const {
+    return "scgi";
+  }
 
-  void                open_port(void* sa, unsigned int length, bool dontRoute);
-  void                open_named(const std::string& filename);
+  void open_port(void* sa, unsigned int length, bool dontRoute);
+  void open_named(const std::string& filename);
 
-  void                activate();
-  void                deactivate();
+  void activate();
+  void deactivate();
 
-  const std::string&  path() const { return m_path; }
+  const std::string& path() const {
+    return m_path;
+  }
 
-  int                 log_fd() const     { return m_logFd; }
-  void                set_log_fd(int fd) { m_logFd = fd; }
+  int log_fd() const {
+    return m_logFd;
+  }
+  void set_log_fd(int fd) {
+    m_logFd = fd;
+  }
 
   // Thread local:
-  virtual void        event_read();
-  virtual void        event_write();
-  virtual void        event_error();
+  virtual void event_read();
+  virtual void event_write();
+  virtual void event_error();
 
-  bool                receive_call(SCgiTask* task, const char* buffer, uint32_t length);
+  bool receive_call(SCgiTask* task, const char* buffer, uint32_t length);
 
-  utils::SocketFd&    get_fd()            { return *reinterpret_cast<utils::SocketFd*>(&m_fileDesc); }
+  utils::SocketFd& get_fd() {
+    return *reinterpret_cast<utils::SocketFd*>(&m_fileDesc);
+  }
 
 private:
-  void                open(void* sa, unsigned int length);
+  void open(void* sa, unsigned int length);
 
-  std::string         m_path;
-  int                 m_logFd;
-  SCgiTask            m_task[max_tasks];
+  std::string m_path;
+  int         m_logFd;
+  SCgiTask    m_task[max_tasks];
 };
 
 }

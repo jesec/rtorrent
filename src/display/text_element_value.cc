@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -45,9 +45,10 @@ namespace display {
 
 // Should be in text_element.cc.
 void
-TextElement::push_attribute(Canvas::attributes_list* attributes, Attributes value) {
+TextElement::push_attribute(Canvas::attributes_list* attributes,
+                            Attributes               value) {
   Attributes base = attributes->back();
-  
+
   if (value.colors() == Attributes::color_invalid)
     value.set_colors(base.colors());
 
@@ -56,14 +57,19 @@ TextElement::push_attribute(Canvas::attributes_list* attributes, Attributes valu
 
   if (base.position() == value.position())
     attributes->back() = value;
-  else if (base.colors() != value.colors() || base.attributes() != value.attributes())
+  else if (base.colors() != value.colors() ||
+           base.attributes() != value.attributes())
     attributes->push_back(value);
 }
 
 char*
-TextElementValueBase::print(char* first, char* last, Canvas::attributes_list* attributes, rpc::target_type target) {
+TextElementValueBase::print(char*                    first,
+                            char*                    last,
+                            Canvas::attributes_list* attributes,
+                            rpc::target_type         target) {
   Attributes baseAttribute = attributes->back();
-  push_attribute(attributes, Attributes(first, m_attributes, Attributes::color_invalid));
+  push_attribute(attributes,
+                 Attributes(first, m_attributes, Attributes::color_invalid));
 
   int64_t val = value(target.second);
 
@@ -82,49 +88,105 @@ TextElementValueBase::print(char* first, char* last, Canvas::attributes_list* at
 
   } else if (m_flags & flag_kb) {
     // Just use a default width of 5 for now.
-    first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%5.1f", (double)val / (1 << 10)), 0), last - first + 1);
+    first += std::min<ptrdiff_t>(
+      std::max(
+        snprintf(first, last - first + 1, "%5.1f", (double)val / (1 << 10)), 0),
+      last - first + 1);
 
   } else if (m_flags & flag_mb) {
     // Just use a default width of 8 for now.
-    first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%8.1f", (double)val / (1 << 20)), 0), last - first + 1);
+    first += std::min<ptrdiff_t>(
+      std::max(
+        snprintf(first, last - first + 1, "%8.1f", (double)val / (1 << 20)), 0),
+      last - first + 1);
 
   } else if (m_flags & flag_xb) {
 
     if (val < (int64_t(1000) << 10))
-      first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%5.1f KB", (double)val / (int64_t(1) << 10)), 0), last - first + 1);
+      first +=
+        std::min<ptrdiff_t>(std::max(snprintf(first,
+                                              last - first + 1,
+                                              "%5.1f KB",
+                                              (double)val / (int64_t(1) << 10)),
+                                     0),
+                            last - first + 1);
     else if (val < (int64_t(1000) << 20))
-      first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%5.1f MB", (double)val / (int64_t(1) << 20)), 0), last - first + 1);
+      first +=
+        std::min<ptrdiff_t>(std::max(snprintf(first,
+                                              last - first + 1,
+                                              "%5.1f MB",
+                                              (double)val / (int64_t(1) << 20)),
+                                     0),
+                            last - first + 1);
     else if (val < (int64_t(1000) << 30))
-      first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%5.1f GB", (double)val / (int64_t(1) << 30)), 0), last - first + 1);
+      first +=
+        std::min<ptrdiff_t>(std::max(snprintf(first,
+                                              last - first + 1,
+                                              "%5.1f GB",
+                                              (double)val / (int64_t(1) << 30)),
+                                     0),
+                            last - first + 1);
     else
-      first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%5.1f TB", (double)val / (int64_t(1) << 40)), 0), last - first + 1);
+      first +=
+        std::min<ptrdiff_t>(std::max(snprintf(first,
+                                              last - first + 1,
+                                              "%5.1f TB",
+                                              (double)val / (int64_t(1) << 40)),
+                                     0),
+                            last - first + 1);
 
   } else if (m_flags & flag_timer) {
     if (val == 0)
-      first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "--:--:--"), 0), last - first + 1);
+      first += std::min<ptrdiff_t>(
+        std::max(snprintf(first, last - first + 1, "--:--:--"), 0),
+        last - first + 1);
     else
-      first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%2d:%02d:%02d", (int)(val / 3600), (int)((val / 60) % 60), (int)(val % 60)), 0), last - first + 1);
+      first += std::min<ptrdiff_t>(std::max(snprintf(first,
+                                                     last - first + 1,
+                                                     "%2d:%02d:%02d",
+                                                     (int)(val / 3600),
+                                                     (int)((val / 60) % 60),
+                                                     (int)(val % 60)),
+                                            0),
+                                   last - first + 1);
 
   } else if (m_flags & flag_date) {
-    time_t t = val;
-    std::tm *u = std::gmtime(&t);
-  
+    time_t   t = val;
+    std::tm* u = std::gmtime(&t);
+
     if (u == NULL)
       return first;
 
-    first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%02u/%02u/%04u", u->tm_mday, (u->tm_mon + 1), (1900 + u->tm_year)), 0), last - first + 1);
+    first += std::min<ptrdiff_t>(std::max(snprintf(first,
+                                                   last - first + 1,
+                                                   "%02u/%02u/%04u",
+                                                   u->tm_mday,
+                                                   (u->tm_mon + 1),
+                                                   (1900 + u->tm_year)),
+                                          0),
+                                 last - first + 1);
 
   } else if (m_flags & flag_time) {
-    time_t t = val;
-    std::tm *u = std::gmtime(&t);
-  
+    time_t   t = val;
+    std::tm* u = std::gmtime(&t);
+
     if (u == NULL)
       return first;
 
-    first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%2d:%02d:%02d", u->tm_hour, u->tm_min, u->tm_sec), 0), last - first + 1);
+    first += std::min<ptrdiff_t>(std::max(snprintf(first,
+                                                   last - first + 1,
+                                                   "%2d:%02d:%02d",
+                                                   u->tm_hour,
+                                                   u->tm_min,
+                                                   u->tm_sec),
+                                          0),
+                                 last - first + 1);
 
   } else {
-    first += std::min<ptrdiff_t>(std::max(snprintf(first, last - first + 1, "%lld", (long long int)val), 0), last - first + 1);
+    first += std::min<ptrdiff_t>(
+      std::max(snprintf(first, last - first + 1, "%lld", (long long int)val),
+               0),
+      last - first + 1);
   }
 
   push_attribute(attributes, Attributes(first, baseAttribute));

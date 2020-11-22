@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -47,39 +47,55 @@ namespace rpc {
 
 class CommandSchedulerItem {
 public:
-  typedef std::function<void ()> slot_void;
+  typedef std::function<void()> slot_void;
 
-  CommandSchedulerItem(const std::string& key) : m_key(key), m_interval(0) {}
+  CommandSchedulerItem(const std::string& key)
+    : m_key(key)
+    , m_interval(0) {}
   ~CommandSchedulerItem();
 
-  bool                is_queued() const           { return m_task.is_queued(); }
+  bool is_queued() const {
+    return m_task.is_queued();
+  }
 
-  void                enable(torrent::utils::timer t);
-  void                disable();
+  void enable(torrent::utils::timer t);
+  void disable();
 
-  const std::string&  key() const                 { return m_key; }
-  torrent::Object&    command()                   { return m_command; }
+  const std::string& key() const {
+    return m_key;
+  }
+  torrent::Object& command() {
+    return m_command;
+  }
 
   // 'interval()' should in the future return some more dynamic values.
-  uint32_t            interval() const            { return m_interval; }
-  void                set_interval(uint32_t v)    { m_interval = v; }
+  uint32_t interval() const {
+    return m_interval;
+  }
+  void set_interval(uint32_t v) {
+    m_interval = v;
+  }
 
-  torrent::utils::timer          time_scheduled() const      { return m_timeScheduled; }
-  torrent::utils::timer          next_time_scheduled() const;
+  torrent::utils::timer time_scheduled() const {
+    return m_timeScheduled;
+  }
+  torrent::utils::timer next_time_scheduled() const;
 
-  slot_void&          slot()                      { return m_task.slot(); }
+  slot_void& slot() {
+    return m_task.slot();
+  }
 
 private:
   CommandSchedulerItem(const CommandSchedulerItem&);
-  void operator = (const CommandSchedulerItem&);
+  void operator=(const CommandSchedulerItem&);
 
-  std::string         m_key;
-  torrent::Object     m_command;
-  
-  uint32_t            m_interval;
-  torrent::utils::timer          m_timeScheduled;
+  std::string     m_key;
+  torrent::Object m_command;
 
-  torrent::utils::priority_item  m_task;
+  uint32_t              m_interval;
+  torrent::utils::timer m_timeScheduled;
+
+  torrent::utils::priority_item m_task;
 
   // Flags for various things.
 };

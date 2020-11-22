@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -37,10 +37,10 @@
 #ifndef RTORRENT_UI_ELEMENT_STRING_LIST_H
 #define RTORRENT_UI_ELEMENT_STRING_LIST_H
 
-#include <list>
-#include <string>
 #include <algorithm>
 #include <functional>
+#include <list>
+#include <string>
 #include <torrent/utils/log.h>
 
 #include "element_base.h"
@@ -53,56 +53,62 @@ namespace ui {
 
 class ElementStringList : public ElementBase {
 public:
-  typedef display::WindowStringList     WStringList;
-  typedef std::list<std::string>        List;
+  typedef display::WindowStringList WStringList;
+  typedef std::list<std::string>    List;
 
   ElementStringList();
 
-  void                activate(display::Frame* frame, bool focus = true);
-  void                disable();
+  void activate(display::Frame* frame, bool focus = true);
+  void disable();
 
-  display::Window*    window() { return m_window; }
+  display::Window* window() {
+    return m_window;
+  }
 
-  template <typename InputIter>
-  void                set_range(InputIter first, InputIter last) {
+  template<typename InputIter>
+  void set_range(InputIter first, InputIter last) {
     m_list.clear();
 
     while (first != last)
       m_list.push_back(*(first++));
 
     if (m_window != NULL) {
-      lt_log_print(torrent::LOG_UI_EVENTS, "element_string_list: set range (visible)");
+      lt_log_print(torrent::LOG_UI_EVENTS,
+                   "element_string_list: set range (visible)");
 
       m_window->set_range(m_list.begin(), m_list.end());
       m_window->mark_dirty();
     } else {
-      lt_log_print(torrent::LOG_UI_EVENTS, "element_string_list: set range (hidden)");
+      lt_log_print(torrent::LOG_UI_EVENTS,
+                   "element_string_list: set range (hidden)");
     }
   }
 
   // A hack, clean this up.
-  template <typename InputIter>
-  void                set_range_dirent(InputIter first, InputIter last) {
+  template<typename InputIter>
+  void set_range_dirent(InputIter first, InputIter last) {
     m_list.clear();
 
     while (first != last)
       m_list.push_back((first++)->d_name);
 
     if (m_window != NULL) {
-      lt_log_print(torrent::LOG_UI_EVENTS, "element_string_list: set dirent range (visible)");
+      lt_log_print(torrent::LOG_UI_EVENTS,
+                   "element_string_list: set dirent range (visible)");
 
       m_window->set_range(m_list.begin(), m_list.end());
       m_window->mark_dirty();
     } else {
-      lt_log_print(torrent::LOG_UI_EVENTS, "element_string_list: set dirent range (hidden)");
+      lt_log_print(torrent::LOG_UI_EVENTS,
+                   "element_string_list: set dirent range (hidden)");
     }
   }
 
-  void                next_screen();
+  void next_screen();
 
 private:
-  WStringList*        m_window;
-  List                m_list;
+  WStringList* m_window;
+  List         m_list;
 };
 
 }

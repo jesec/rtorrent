@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -40,8 +40,8 @@
 #include <functional>
 #include <list>
 
-#include "utils/directory.h"
 #include "text_input.h"
+#include "utils/directory.h"
 
 namespace input {
 
@@ -50,29 +50,33 @@ public:
   typedef utils::Directory::iterator              directory_itr;
   typedef std::pair<directory_itr, directory_itr> range_type;
 
-  typedef std::function<void ()>                             slot_void;
-  typedef std::function<void (directory_itr, directory_itr)> slot_itr_itr;
-  typedef std::list<slot_void>                                    signal_void;
-  typedef std::list<slot_itr_itr>                                 signal_itr_itr;
+  typedef std::function<void()>                             slot_void;
+  typedef std::function<void(directory_itr, directory_itr)> slot_itr_itr;
+  typedef std::list<slot_void>                              signal_void;
+  typedef std::list<slot_itr_itr>                           signal_itr_itr;
 
   PathInput();
   virtual ~PathInput() {}
 
-  signal_void&        signal_show_next()  { return m_signal_show_next; }
-  signal_itr_itr&     signal_show_range() { return m_signal_show_range; }
+  signal_void& signal_show_next() {
+    return m_signal_show_next;
+  }
+  signal_itr_itr& signal_show_range() {
+    return m_signal_show_range;
+  }
 
-  virtual bool        pressed(int key);
+  virtual bool pressed(int key);
 
 private:
-  void                receive_do_complete();
+  void receive_do_complete();
 
-  size_type           find_last_delim();
-  range_type          find_incomplete(utils::Directory& d, const std::string& f);
+  size_type  find_last_delim();
+  range_type find_incomplete(utils::Directory& d, const std::string& f);
 
-  bool                m_showNext;
+  bool m_showNext;
 
-  signal_void         m_signal_show_next;
-  signal_itr_itr      m_signal_show_range;
+  signal_void    m_signal_show_next;
+  signal_itr_itr m_signal_show_range;
 };
 
 }

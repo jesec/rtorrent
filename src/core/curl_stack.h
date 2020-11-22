@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -56,16 +56,16 @@ class CurlSocket;
 // removal of elements.
 
 class CurlStack : std::deque<CurlGet*> {
- public:
+public:
   friend class CurlGet;
 
   typedef std::deque<CurlGet*> base_type;
 
-  using base_type::value_type;
-  using base_type::iterator;
   using base_type::const_iterator;
-  using base_type::reverse_iterator;
   using base_type::const_reverse_iterator;
+  using base_type::iterator;
+  using base_type::reverse_iterator;
+  using base_type::value_type;
 
   using base_type::begin;
   using base_type::end;
@@ -75,76 +75,114 @@ class CurlStack : std::deque<CurlGet*> {
   using base_type::back;
   using base_type::front;
 
-  using base_type::size;
   using base_type::empty;
+  using base_type::size;
 
   CurlStack();
   ~CurlStack();
 
-  CurlGet*            new_object();
-  CurlSocket*         new_socket(int fd);
+  CurlGet*    new_object();
+  CurlSocket* new_socket(int fd);
 
-  unsigned int        active() const                         { return m_active; }
-  unsigned int        max_active() const                     { return m_maxActive; }
-  void                set_max_active(unsigned int a)         { m_maxActive = a; }
+  unsigned int active() const {
+    return m_active;
+  }
+  unsigned int max_active() const {
+    return m_maxActive;
+  }
+  void set_max_active(unsigned int a) {
+    m_maxActive = a;
+  }
 
-  const std::string&  user_agent() const                     { return m_userAgent; }
-  const std::string&  http_proxy() const                     { return m_httpProxy; }
-  const std::string&  bind_address() const                   { return m_bindAddress; }
-  const std::string&  http_capath() const                    { return m_httpCaPath; }
-  const std::string&  http_cacert() const                    { return m_httpCaCert; }
+  const std::string& user_agent() const {
+    return m_userAgent;
+  }
+  const std::string& http_proxy() const {
+    return m_httpProxy;
+  }
+  const std::string& bind_address() const {
+    return m_bindAddress;
+  }
+  const std::string& http_capath() const {
+    return m_httpCaPath;
+  }
+  const std::string& http_cacert() const {
+    return m_httpCaCert;
+  }
 
-  void                set_user_agent(const std::string& s)   { m_userAgent = s; }
-  void                set_http_proxy(const std::string& s)   { m_httpProxy = s; }
-  void                set_bind_address(const std::string& s) { m_bindAddress = s; }
-  void                set_http_capath(const std::string& s)  { m_httpCaPath = s; }
-  void                set_http_cacert(const std::string& s)  { m_httpCaCert = s; }
+  void set_user_agent(const std::string& s) {
+    m_userAgent = s;
+  }
+  void set_http_proxy(const std::string& s) {
+    m_httpProxy = s;
+  }
+  void set_bind_address(const std::string& s) {
+    m_bindAddress = s;
+  }
+  void set_http_capath(const std::string& s) {
+    m_httpCaPath = s;
+  }
+  void set_http_cacert(const std::string& s) {
+    m_httpCaCert = s;
+  }
 
-  bool                ssl_verify_host() const                { return m_ssl_verify_host; }
-  bool                ssl_verify_peer() const                { return m_ssl_verify_peer; }
-  void                set_ssl_verify_host(bool s)            { m_ssl_verify_host = s; }
-  void                set_ssl_verify_peer(bool s)            { m_ssl_verify_peer = s; }
+  bool ssl_verify_host() const {
+    return m_ssl_verify_host;
+  }
+  bool ssl_verify_peer() const {
+    return m_ssl_verify_peer;
+  }
+  void set_ssl_verify_host(bool s) {
+    m_ssl_verify_host = s;
+  }
+  void set_ssl_verify_peer(bool s) {
+    m_ssl_verify_peer = s;
+  }
 
-  long                dns_timeout() const                    { return m_dns_timeout; }
-  void                set_dns_timeout(long timeout)          { m_dns_timeout = timeout; }
+  long dns_timeout() const {
+    return m_dns_timeout;
+  }
+  void set_dns_timeout(long timeout) {
+    m_dns_timeout = timeout;
+  }
 
-  static void         global_init();
-  static void         global_cleanup();
+  static void global_init();
+  static void global_cleanup();
 
-  void                receive_action(CurlSocket* socket, int type);
+  void receive_action(CurlSocket* socket, int type);
 
-  static int          set_timeout(void* handle, long timeout_ms, void* userp);
+  static int set_timeout(void* handle, long timeout_ms, void* userp);
 
-  void                transfer_done(void* handle, const char* msg);
+  void transfer_done(void* handle, const char* msg);
 
- protected:
-  void                add_get(CurlGet* get);
-  void                remove_get(CurlGet* get);
+protected:
+  void add_get(CurlGet* get);
+  void remove_get(CurlGet* get);
 
- private:
+private:
   CurlStack(const CurlStack&);
-  void operator = (const CurlStack&);
+  void operator=(const CurlStack&);
 
-  void                receive_timeout();
+  void receive_timeout();
 
-  bool                process_done_handle();
+  bool process_done_handle();
 
-  void*               m_handle;
+  void* m_handle;
 
-  unsigned int        m_active;
-  unsigned int        m_maxActive;
+  unsigned int m_active;
+  unsigned int m_maxActive;
 
-  torrent::utils::priority_item  m_taskTimeout;
+  torrent::utils::priority_item m_taskTimeout;
 
-  std::string         m_userAgent;
-  std::string         m_httpProxy;
-  std::string         m_bindAddress;
-  std::string         m_httpCaPath;
-  std::string         m_httpCaCert;
+  std::string m_userAgent;
+  std::string m_httpProxy;
+  std::string m_bindAddress;
+  std::string m_httpCaPath;
+  std::string m_httpCaCert;
 
-  bool                m_ssl_verify_host;
-  bool                m_ssl_verify_peer;
-  long                m_dns_timeout;
+  bool m_ssl_verify_host;
+  bool m_ssl_verify_peer;
+  long m_dns_timeout;
 };
 
 }

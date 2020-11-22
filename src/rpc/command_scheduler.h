@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -38,8 +38,8 @@
 #define RTORRENT_COMMAND_SCHEDULER_H
 
 #include <cstdint>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "utils/functional_fun.h"
 
@@ -54,40 +54,46 @@ class CommandSchedulerItem;
 class CommandScheduler : public std::vector<CommandSchedulerItem*> {
 public:
   typedef utils::function1<void, const std::string&> SlotString;
-  typedef std::pair<int, int>                      Time;
-  typedef std::vector<CommandSchedulerItem*>       base_type;
+  typedef std::pair<int, int>                        Time;
+  typedef std::vector<CommandSchedulerItem*>         base_type;
 
-  using base_type::value_type;
   using base_type::begin;
   using base_type::end;
+  using base_type::value_type;
 
   CommandScheduler() {}
   ~CommandScheduler();
 
-  void                set_slot_error_message(SlotString::base_type* s) { m_slotErrorMessage.set(s); }
+  void set_slot_error_message(SlotString::base_type* s) {
+    m_slotErrorMessage.set(s);
+  }
 
   // slot_error_message or something.
 
-  iterator            find(const std::string& key);
+  iterator find(const std::string& key);
 
   // If the key already exists then the old item is deleted. It is
   // safe to call erase on end().
-  iterator            insert(const std::string& key);
-  void                erase(iterator itr);
-  void                erase_str(const std::string& key)                { erase(find(key)); }
+  iterator insert(const std::string& key);
+  void     erase(iterator itr);
+  void     erase_str(const std::string& key) {
+    erase(find(key));
+  }
 
-  void                parse(const std::string& key, const std::string& bufAbsolute,
-                            const std::string& bufInterval, const torrent::Object& command);
+  void parse(const std::string&     key,
+             const std::string&     bufAbsolute,
+             const std::string&     bufInterval,
+             const torrent::Object& command);
 
-  static uint32_t     parse_absolute(const char* str);
-  static uint32_t     parse_interval(const char* str);
+  static uint32_t parse_absolute(const char* str);
+  static uint32_t parse_interval(const char* str);
 
-  static Time         parse_time(const char* str);
+  static Time parse_time(const char* str);
 
 private:
-  void                call_item(value_type item);
+  void call_item(value_type item);
 
-  SlotString          m_slotErrorMessage;
+  SlotString m_slotErrorMessage;
 };
 
 }

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -54,59 +54,93 @@
 
 namespace ui {
 
-ElementDownloadList::ElementDownloadList() :
-  m_window(NULL),
-  m_view(NULL) {
+ElementDownloadList::ElementDownloadList()
+  : m_window(NULL)
+  , m_view(NULL) {
 
   receive_change_view("main");
 
   if (m_view == NULL)
-    throw torrent::internal_error("View \"main\" must be present to initialize the main display.");
+    throw torrent::internal_error(
+      "View \"main\" must be present to initialize the main display.");
 
-  m_bindings['\x13'] = std::bind(&ElementDownloadList::receive_command, this, "d.start=");
-  m_bindings['\x04'] = std::bind(&ElementDownloadList::receive_command, this, "branch=d.state=,d.stop=,d.erase=");
-  m_bindings['\x0B'] = std::bind(&ElementDownloadList::receive_command, this, "d.ignore_commands.set=1; d.stop=; d.close=");
-  m_bindings['\x12'] = std::bind(&ElementDownloadList::receive_command, this, "d.complete.set=0; d.check_hash=");
-  m_bindings['\x05'] = std::bind(&ElementDownloadList::receive_command, this,
-                                      "f.multicall=,f.set_create_queued=0,f.set_resize_queued=0; print=\"Queued create/resize of files in torrent.\"");
+  m_bindings['\x13'] =
+    std::bind(&ElementDownloadList::receive_command, this, "d.start=");
+  m_bindings['\x04'] = std::bind(&ElementDownloadList::receive_command,
+                                 this,
+                                 "branch=d.state=,d.stop=,d.erase=");
+  m_bindings['\x0B'] = std::bind(&ElementDownloadList::receive_command,
+                                 this,
+                                 "d.ignore_commands.set=1; d.stop=; d.close=");
+  m_bindings['\x12'] = std::bind(&ElementDownloadList::receive_command,
+                                 this,
+                                 "d.complete.set=0; d.check_hash=");
+  m_bindings['\x05'] =
+    std::bind(&ElementDownloadList::receive_command,
+              this,
+              "f.multicall=,f.set_create_queued=0,f.set_resize_queued=0; "
+              "print=\"Queued create/resize of files in torrent.\"");
 
-  m_bindings['+']    = std::bind(&ElementDownloadList::receive_next_priority, this);
-  m_bindings['-']    = std::bind(&ElementDownloadList::receive_prev_priority, this);
-  m_bindings['T'-'@']= std::bind(&ElementDownloadList::receive_cycle_throttle, this);
-  m_bindings['I']    = std::bind(&ElementDownloadList::receive_command, this,
-                                  "branch=d.ignore_commands=,"
-                                  "{d.ignore_commands.set=0, print=\"Torrent set to heed commands.\"},"
-                                  "{d.ignore_commands.set=1, print=\"Torrent set to ignore commands.\"}");
-  m_bindings['B'-'@']= std::bind(&ElementDownloadList::receive_command, this,
-                                  "branch=d.is_active=,"
-                                  "{print=\"Cannot enable initial seeding on an active download.\"},"
-                                  "{d.connection_seed.set=initial_seed, print=\"Enabled initial seeding for the selected download.\"}");
+  m_bindings['+'] =
+    std::bind(&ElementDownloadList::receive_next_priority, this);
+  m_bindings['-'] =
+    std::bind(&ElementDownloadList::receive_prev_priority, this);
+  m_bindings['T' - '@'] =
+    std::bind(&ElementDownloadList::receive_cycle_throttle, this);
+  m_bindings['I'] = std::bind(
+    &ElementDownloadList::receive_command,
+    this,
+    "branch=d.ignore_commands=,"
+    "{d.ignore_commands.set=0, print=\"Torrent set to heed commands.\"},"
+    "{d.ignore_commands.set=1, print=\"Torrent set to ignore commands.\"}");
+  m_bindings['B' - '@'] = std::bind(
+    &ElementDownloadList::receive_command,
+    this,
+    "branch=d.is_active=,"
+    "{print=\"Cannot enable initial seeding on an active download.\"},"
+    "{d.connection_seed.set=initial_seed, print=\"Enabled initial seeding for "
+    "the selected download.\"}");
 
-  m_bindings['U']    = std::bind(&ElementDownloadList::receive_command, this,
-                                      "d.delete_tied=; print=\"Cleared tied to file association for the selected download.\"");
+  m_bindings['U'] = std::bind(&ElementDownloadList::receive_command,
+                              this,
+                              "d.delete_tied=; print=\"Cleared tied to file "
+                              "association for the selected download.\"");
 
   // These should also be commands.
-  m_bindings['1']           = std::bind(&ElementDownloadList::receive_change_view, this, "main");
-  m_bindings['2']           = std::bind(&ElementDownloadList::receive_change_view, this, "name");
-  m_bindings['3']           = std::bind(&ElementDownloadList::receive_change_view, this, "started");
-  m_bindings['4']           = std::bind(&ElementDownloadList::receive_change_view, this, "stopped");
-  m_bindings['5']           = std::bind(&ElementDownloadList::receive_change_view, this, "complete");
-  m_bindings['6']           = std::bind(&ElementDownloadList::receive_change_view, this, "incomplete");
-  m_bindings['7']           = std::bind(&ElementDownloadList::receive_change_view, this, "hashing");
-  m_bindings['8']           = std::bind(&ElementDownloadList::receive_change_view, this, "seeding");
-  m_bindings['9']           = std::bind(&ElementDownloadList::receive_change_view, this, "leeching");
-  m_bindings['0']           = std::bind(&ElementDownloadList::receive_change_view, this, "active");
+  m_bindings['1'] =
+    std::bind(&ElementDownloadList::receive_change_view, this, "main");
+  m_bindings['2'] =
+    std::bind(&ElementDownloadList::receive_change_view, this, "name");
+  m_bindings['3'] =
+    std::bind(&ElementDownloadList::receive_change_view, this, "started");
+  m_bindings['4'] =
+    std::bind(&ElementDownloadList::receive_change_view, this, "stopped");
+  m_bindings['5'] =
+    std::bind(&ElementDownloadList::receive_change_view, this, "complete");
+  m_bindings['6'] =
+    std::bind(&ElementDownloadList::receive_change_view, this, "incomplete");
+  m_bindings['7'] =
+    std::bind(&ElementDownloadList::receive_change_view, this, "hashing");
+  m_bindings['8'] =
+    std::bind(&ElementDownloadList::receive_change_view, this, "seeding");
+  m_bindings['9'] =
+    std::bind(&ElementDownloadList::receive_change_view, this, "leeching");
+  m_bindings['0'] =
+    std::bind(&ElementDownloadList::receive_change_view, this, "active");
 
-  m_bindings[KEY_UP]   = m_bindings['P' - '@'] = std::bind(&ElementDownloadList::receive_prev, this);
-  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] = std::bind(&ElementDownloadList::receive_next, this);
+  m_bindings[KEY_UP] = m_bindings['P' - '@'] =
+    std::bind(&ElementDownloadList::receive_prev, this);
+  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] =
+    std::bind(&ElementDownloadList::receive_next, this);
 
-  m_bindings['L']           = std::bind(&ElementDownloadList::toggle_layout, this);
+  m_bindings['L'] = std::bind(&ElementDownloadList::toggle_layout, this);
 }
 
 void
 ElementDownloadList::activate(display::Frame* frame, bool focus) {
   if (is_active())
-    throw torrent::internal_error("ui::ElementDownloadList::activate(...) is_active().");
+    throw torrent::internal_error(
+      "ui::ElementDownloadList::activate(...) is_active().");
 
   control->input()->push_back(&m_bindings);
 
@@ -121,7 +155,8 @@ ElementDownloadList::activate(display::Frame* frame, bool focus) {
 void
 ElementDownloadList::disable() {
   if (!is_active())
-    throw torrent::internal_error("ui::ElementDownloadList::disable(...) !is_active().");
+    throw torrent::internal_error(
+      "ui::ElementDownloadList::disable(...) !is_active().");
 
   control->input()->erase(&m_bindings);
 
@@ -150,7 +185,8 @@ ElementDownloadList::receive_command(const char* cmd) {
     if (m_view->focus() == m_view->end_visible())
       rpc::parse_command_multiple(rpc::make_target(), cmd, cmd + strlen(cmd));
     else
-      rpc::parse_command_multiple(rpc::make_target(*m_view->focus()), cmd, cmd + strlen(cmd));
+      rpc::parse_command_multiple(
+        rpc::make_target(*m_view->focus()), cmd, cmd + strlen(cmd));
 
     m_view->set_last_changed();
 
@@ -197,17 +233,20 @@ ElementDownloadList::receive_cycle_throttle() {
 
   core::Download* download = *m_view->focus();
   if (download->is_active()) {
-    lt_log_print(torrent::LOG_TORRENT_WARN, "Cannot change throttle on active download.");
+    lt_log_print(torrent::LOG_TORRENT_WARN,
+                 "Cannot change throttle on active download.");
     return;
   }
 
-  core::ThrottleMap::const_iterator itr = control->core()->throttles().find(download->bencode()->get_key("rtorrent").get_key_string("throttle_name"));
+  core::ThrottleMap::const_iterator itr = control->core()->throttles().find(
+    download->bencode()->get_key("rtorrent").get_key_string("throttle_name"));
   if (itr == control->core()->throttles().end())
     itr = control->core()->throttles().begin();
   else
     ++itr;
 
-  download->set_throttle_name(itr == control->core()->throttles().end() ? std::string() : itr->first);
+  download->set_throttle_name(
+    itr == control->core()->throttles().end() ? std::string() : itr->first);
   m_window->mark_dirty();
 }
 
@@ -222,17 +261,22 @@ ElementDownloadList::receive_change_view(const std::string& name) {
 
   std::string old_name = view() ? view()->name() : "";
   if (!old_name.empty())
-    rpc::commands.call_catch("event.view.hide", rpc::make_target(), name,
+    rpc::commands.call_catch("event.view.hide",
+                             rpc::make_target(),
+                             name,
                              "View hide event action failed: ");
   set_view(*itr);
   if (!old_name.empty())
-    rpc::commands.call_catch("event.view.show", rpc::make_target(), old_name,
+    rpc::commands.call_catch("event.view.show",
+                             rpc::make_target(),
+                             old_name,
                              "View show event action failed: ");
 }
 
 void
 ElementDownloadList::toggle_layout() {
-  const std::string layout_name = rpc::call_command_string("ui.torrent_list.layout");
+  const std::string layout_name =
+    rpc::call_command_string("ui.torrent_list.layout");
 
   if (layout_name == "full") {
     rpc::call_command("ui.torrent_list.layout.set", "compact");

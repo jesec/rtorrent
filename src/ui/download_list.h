@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -37,28 +37,28 @@
 #ifndef RTORRENT_UI_DOWNLOAD_LIST_H
 #define RTORRENT_UI_DOWNLOAD_LIST_H
 
+#include "display/manager.h"
 #include "element_base.h"
 #include "globals.h"
-#include "display/manager.h"
 
 class Control;
 
 namespace core {
-  class Download;
-  class View;
+class Download;
+class View;
 }
 
 namespace input {
-  class Bindings;
+class Bindings;
 }
 
 namespace display {
-  class Frame;
-  class WindowDownloadList;
-  class WindowHttpQueue;
-  class WindowInput;
-  class WindowLog;
-  class WindowLogComplete;
+class Frame;
+class WindowDownloadList;
+class WindowHttpQueue;
+class WindowInput;
+class WindowLog;
+class WindowLogComplete;
 }
 
 namespace ui {
@@ -67,11 +67,11 @@ class Download;
 
 class DownloadList : public ElementBase {
 public:
-  typedef display::WindowDownloadList              WList;
-  typedef display::WindowLog                       WLog;
-  typedef display::WindowLogComplete               WLogComplete;
+  typedef display::WindowDownloadList WList;
+  typedef display::WindowLog          WLog;
+  typedef display::WindowLogComplete  WLogComplete;
 
-  typedef std::function<void (const std::string&)> slot_string;
+  typedef std::function<void(const std::string&)> slot_string;
 
   typedef enum {
     DISPLAY_DOWNLOAD,
@@ -94,34 +94,36 @@ public:
   DownloadList();
   ~DownloadList();
 
-  void                activate(display::Frame* frame, bool focus = true);
-  void                disable();
+  void activate(display::Frame* frame, bool focus = true);
+  void disable();
 
-  void                activate_display(Display d);
+  void activate_display(Display d);
 
-  core::View*         current_view();
-  void                set_current_view(const std::string& name);
+  core::View* current_view();
+  void        set_current_view(const std::string& name);
 
-  void                slot_open_uri(slot_string s) { m_slot_open_uri = s; }
+  void slot_open_uri(slot_string s) {
+    m_slot_open_uri = s;
+  }
 
-  void                unfocus_download(core::Download* d);
+  void unfocus_download(core::Download* d);
 
 private:
   DownloadList(const DownloadList&);
-  void operator = (const DownloadList&);
+  void operator=(const DownloadList&);
 
-  void                receive_view_input(Input type);
-  void                receive_exit_input(Input type);
+  void receive_view_input(Input type);
+  void receive_exit_input(Input type);
 
-  void                setup_keys();
-  void                setup_input();
+  void setup_keys();
+  void setup_input();
 
-  Display             m_state;
+  Display m_state;
 
-  ElementBase*        m_uiArray[DISPLAY_MAX_SIZE];
-  WLog*               m_windowLog;
+  ElementBase* m_uiArray[DISPLAY_MAX_SIZE];
+  WLog*        m_windowLog;
 
-  slot_string         m_slot_open_uri;
+  slot_string m_slot_open_uri;
 };
 
 }

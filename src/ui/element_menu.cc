@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -39,8 +39,8 @@
 #include <torrent/exceptions.h>
 
 #include "display/frame.h"
-#include "display/window_text.h"
 #include "display/text_element_string.h"
+#include "display/window_text.h"
 #include "input/manager.h"
 
 #include "control.h"
@@ -54,9 +54,11 @@ ElementMenu::focus_entry(size_type idx) {
     return;
 
   if (m_focus)
-    base_type::operator[](idx).m_element->set_attributes(display::Attributes::a_reverse);
+    base_type::operator[](idx).m_element->set_attributes(
+      display::Attributes::a_reverse);
   else
-    base_type::operator[](idx).m_element->set_attributes(display::Attributes::a_bold);
+    base_type::operator[](idx).m_element->set_attributes(
+      display::Attributes::a_bold);
 }
 
 inline void
@@ -64,19 +66,24 @@ ElementMenu::unfocus_entry(size_type idx) {
   if (idx >= size())
     return;
 
-  base_type::operator[](idx).m_element->set_attributes(display::Attributes::a_normal);
+  base_type::operator[](idx).m_element->set_attributes(
+    display::Attributes::a_normal);
 }
 
-ElementMenu::ElementMenu() :
-  m_window(new WindowText(rpc::make_target(), 2)),
-  m_entry(entry_invalid) {
+ElementMenu::ElementMenu()
+  : m_window(new WindowText(rpc::make_target(), 2))
+  , m_entry(entry_invalid) {
 
   // Move bindings into a function that defines default bindings.
-  m_bindings[KEY_LEFT]  = m_bindings['B' - '@'] = std::bind(&slot_type::operator(), &m_slot_exit);
-  m_bindings[KEY_RIGHT] = m_bindings['F' - '@'] = std::bind(&ElementMenu::entry_select, this);
+  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
+    std::bind(&slot_type::operator(), &m_slot_exit);
+  m_bindings[KEY_RIGHT] = m_bindings['F' - '@'] =
+    std::bind(&ElementMenu::entry_select, this);
 
-  m_bindings[KEY_UP]   = m_bindings['P' - '@'] = std::bind(&ElementMenu::entry_prev, this);
-  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] = std::bind(&ElementMenu::entry_next, this);
+  m_bindings[KEY_UP] = m_bindings['P' - '@'] =
+    std::bind(&ElementMenu::entry_prev, this);
+  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] =
+    std::bind(&ElementMenu::entry_next, this);
 }
 
 ElementMenu::~ElementMenu() {
@@ -86,7 +93,8 @@ ElementMenu::~ElementMenu() {
 void
 ElementMenu::activate(display::Frame* frame, bool focus) {
   if (is_active())
-    throw torrent::internal_error("ui::ElementMenu::activate(...) is_active().");
+    throw torrent::internal_error(
+      "ui::ElementMenu::activate(...) is_active().");
 
   if (focus)
     control->input()->push_back(&m_bindings);
@@ -103,7 +111,8 @@ ElementMenu::activate(display::Frame* frame, bool focus) {
 void
 ElementMenu::disable() {
   if (!is_active())
-    throw torrent::internal_error("ui::ElementMenu::disable(...) !is_active().");
+    throw torrent::internal_error(
+      "ui::ElementMenu::disable(...) !is_active().");
 
   control->input()->erase(&m_bindings);
 
@@ -114,7 +123,9 @@ ElementMenu::disable() {
 }
 
 void
-ElementMenu::push_back(const char* name, const slot_type& slotSelect, const slot_type& slotFocus) {
+ElementMenu::push_back(const char*      name,
+                       const slot_type& slotSelect,
+                       const slot_type& slotFocus) {
   iterator entry = base_type::insert(end(), value_type());
 
   entry->m_element    = new display::TextElementCString(name);
@@ -135,7 +146,7 @@ ElementMenu::entry_next() {
     return;
 
   unfocus_entry(m_entry);
-  
+
   if (++m_entry >= size())
     m_entry = 0;
 

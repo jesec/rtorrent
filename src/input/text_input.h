@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -45,38 +45,55 @@ namespace input {
 
 class TextInput : private std::string {
 public:
-  typedef std::string                 Base;
-  typedef std::function<void ()> slot_void;
+  typedef std::string           Base;
+  typedef std::function<void()> slot_void;
 
   using Base::c_str;
   using Base::empty;
+  using Base::npos;
   using Base::size;
   using Base::size_type;
-  using Base::npos;
 
-  TextInput() : m_pos(0) {}
+  TextInput()
+    : m_pos(0) {}
   virtual ~TextInput() {}
 
-  size_type           get_pos()                  { return m_pos; }
-  void                set_pos(size_type pos)     { m_pos = pos; }
+  size_type get_pos() {
+    return m_pos;
+  }
+  void set_pos(size_type pos) {
+    m_pos = pos;
+  }
 
-  virtual bool        pressed(int key);
+  virtual bool pressed(int key);
 
-  void                clear()                    { m_pos = 0; Base::clear(); }
+  void clear() {
+    m_pos = 0;
+    Base::clear();
+  }
 
-  void                slot_dirty(slot_void s)    { m_slot_dirty = s; }
-  void                mark_dirty()               { if (m_slot_dirty) m_slot_dirty(); }
+  void slot_dirty(slot_void s) {
+    m_slot_dirty = s;
+  }
+  void mark_dirty() {
+    if (m_slot_dirty)
+      m_slot_dirty();
+  }
 
-  std::string&        str()                      { return *this; }
+  std::string& str() {
+    return *this;
+  }
 
-  Bindings&           bindings()                 { return m_bindings; }
+  Bindings& bindings() {
+    return m_bindings;
+  }
 
 private:
-  size_type           m_pos;
+  size_type m_pos;
 
-  slot_void           m_slot_dirty;
+  slot_void m_slot_dirty;
 
-  Bindings            m_bindings;
+  Bindings m_bindings;
 };
 
 }

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -38,11 +38,11 @@
 
 #include <fcntl.h>
 #include <string>
-#include <unistd.h>
-#include <torrent/utils/error_number.h>
-#include <torrent/utils/path.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <torrent/utils/error_number.h>
+#include <torrent/utils/path.h>
+#include <unistd.h>
 
 #include "exec_file.h"
 #include "parse.h"
@@ -52,7 +52,7 @@ namespace rpc {
 
 const unsigned int ExecFile::max_args;
 const unsigned int ExecFile::buffer_size;
-    
+
 const int ExecFile::flag_expand_tilde;
 const int ExecFile::flag_throw;
 const int ExecFile::flag_capture;
@@ -95,7 +95,9 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
 
       if (detached_pid != 0) {
         if (m_logFd != -1)
-          write(m_logFd, "\n--- Background task ---\n", sizeof("\n--- Background task ---\n"));
+          write(m_logFd,
+                "\n--- Background task ---\n",
+                sizeof("\n--- Background task ---\n"));
 
         _exit(0);
       }
@@ -143,7 +145,7 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
     m_capture = std::string();
     ::close(pipeFd[1]);
 
-    char buffer[4096];
+    char    buffer[4096];
     ssize_t length;
 
     do {
@@ -166,7 +168,8 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
 
   do {
     wpid = waitpid(childPid, &status, 0);
-  } while (wpid == -1 && torrent::utils::error_number::current().value() == torrent::utils::error_number::e_intr);
+  } while (wpid == -1 && torrent::utils::error_number::current().value() ==
+                           torrent::utils::error_number::e_intr);
 
   ThreadBase::acquire_global_lock();
 
@@ -190,8 +193,8 @@ ExecFile::execute_object(const torrent::Object& rawArgs, int flags) {
   char** argsCurrent = argsBuffer;
 
   // Size of value strings are less than 24.
-  char   valueBuffer[buffer_size];
-  char*  valueCurrent = valueBuffer;
+  char  valueBuffer[buffer_size];
+  char* valueCurrent = valueBuffer;
 
   if (rawArgs.is_list()) {
     const torrent::Object::list_type& args = rawArgs.as_list();
@@ -199,28 +202,36 @@ ExecFile::execute_object(const torrent::Object& rawArgs, int flags) {
     if (args.empty())
       throw torrent::input_error("Too few arguments.");
 
-    for (torrent::Object::list_const_iterator itr = args.begin(), last = args.end(); itr != last; itr++, argsCurrent++) {
+    for (torrent::Object::list_const_iterator itr  = args.begin(),
+                                              last = args.end();
+         itr != last;
+         itr++, argsCurrent++) {
       if (argsCurrent == argsBuffer + max_args - 1)
         throw torrent::input_error("Too many arguments.");
 
-      if (itr->is_string() && (!(flags & flag_expand_tilde) || *itr->as_string().c_str() != '~')) {
+      if (itr->is_string() &&
+          (!(flags & flag_expand_tilde) || *itr->as_string().c_str() != '~')) {
         *argsCurrent = const_cast<char*>(itr->as_string().c_str());
 
       } else {
         *argsCurrent = valueCurrent;
-        valueCurrent = print_object(valueCurrent, valueBuffer + buffer_size, &*itr, flags) + 1;
+        valueCurrent =
+          print_object(valueCurrent, valueBuffer + buffer_size, &*itr, flags) +
+          1;
 
         if (valueCurrent >= valueBuffer + buffer_size)
           throw torrent::input_error("Overflowed execute arg buffer.");
-      }      
+      }
     }
 
   } else {
     const torrent::Object::string_type& args = rawArgs.as_string();
-    
+
     if ((flags & flag_expand_tilde) && args.c_str()[0] == '~') {
       *argsCurrent = valueCurrent;
-      valueCurrent = print_object(valueCurrent, valueBuffer + buffer_size, &rawArgs, flags) + 1;
+      valueCurrent =
+        print_object(valueCurrent, valueBuffer + buffer_size, &rawArgs, flags) +
+        1;
     } else {
       *argsCurrent = const_cast<char*>(args.c_str());
     }

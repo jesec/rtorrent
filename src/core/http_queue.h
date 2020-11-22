@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -47,15 +47,15 @@ class CurlGet;
 
 class HttpQueue : private std::list<CurlGet*> {
 public:
-  typedef std::list<CurlGet*>                 base_type;
-  typedef std::function<CurlGet* ()>     slot_factory;
-  typedef std::function<void (CurlGet*)> slot_curl_get;
-  typedef std::list<slot_curl_get>            signal_curl_get;
+  typedef std::list<CurlGet*>           base_type;
+  typedef std::function<CurlGet*()>     slot_factory;
+  typedef std::function<void(CurlGet*)> slot_curl_get;
+  typedef std::list<slot_curl_get>      signal_curl_get;
 
-  using base_type::iterator;
   using base_type::const_iterator;
-  using base_type::reverse_iterator;
   using base_type::const_reverse_iterator;
+  using base_type::iterator;
+  using base_type::reverse_iterator;
 
   using base_type::begin;
   using base_type::end;
@@ -66,22 +66,30 @@ public:
   using base_type::size;
 
   HttpQueue() {}
-  ~HttpQueue() { clear(); }
+  ~HttpQueue() {
+    clear();
+  }
 
   // Note that any slots connected to the CurlGet signals must be
   // pushed in front of the erase slot added by HttpQueue::insert.
   //
   // Consider adding a flag to indicate whetever HttpQueue should
   // delete the stream.
-  iterator    insert(const std::string& url, std::iostream* s);
-  void        erase(iterator itr);
+  iterator insert(const std::string& url, std::iostream* s);
+  void     erase(iterator itr);
 
-  void        clear();
+  void clear();
 
-  void             set_slot_factory(slot_factory s) { m_slot_factory = s; }
+  void set_slot_factory(slot_factory s) {
+    m_slot_factory = s;
+  }
 
-  signal_curl_get& signal_insert() { return m_signal_insert; }
-  signal_curl_get& signal_erase()  { return m_signal_erase; }
+  signal_curl_get& signal_insert() {
+    return m_signal_insert;
+  }
+  signal_curl_get& signal_erase() {
+    return m_signal_erase;
+  }
 
 private:
   slot_factory    m_slot_factory;

@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -36,23 +36,22 @@
 
 #include "config.h"
 
-#include "thread_worker.h"
-#include "globals.h"
 #include "control.h"
+#include "globals.h"
+#include "thread_worker.h"
 
-#include <fcntl.h>
-#include <unistd.h>
 #include <cassert>
-#include <torrent/utils/path.h>
+#include <fcntl.h>
 #include <torrent/exceptions.h>
+#include <torrent/utils/path.h>
+#include <unistd.h>
 
 #include "core/manager.h"
+#include "rpc/parse_commands.h"
 #include "rpc/scgi.h"
 #include "rpc/xmlrpc.h"
-#include "rpc/parse_commands.h"
 
-ThreadWorker::ThreadWorker() {
-}
+ThreadWorker::ThreadWorker() {}
 
 ThreadWorker::~ThreadWorker() {
   if (m_safe.scgi)
@@ -61,7 +60,7 @@ ThreadWorker::~ThreadWorker() {
 
 void
 ThreadWorker::init_thread() {
-  m_poll = core::create_poll();
+  m_poll  = core::create_poll();
   m_state = STATE_INITIALIZED;
 }
 
@@ -73,7 +72,8 @@ ThreadWorker::set_scgi(rpc::SCgi* scgi) {
   change_xmlrpc_log();
 
   // The xmlrpc process call requires a global lock.
-//   m_safe.scgi->set_slot_process(utils::mem_fn(&rpc::xmlrpc, &rpc::XmlRpc::process));
+  //   m_safe.scgi->set_slot_process(utils::mem_fn(&rpc::xmlrpc,
+  //   &rpc::XmlRpc::process));
 
   // Synchronize in order to ensure the worker thread sees the updated
   // SCgi object.
@@ -94,7 +94,8 @@ ThreadWorker::start_scgi(ThreadBase* baseThread) {
   ThreadWorker* thread = (ThreadWorker*)baseThread;
 
   if (thread->m_safe.scgi == NULL)
-    throw torrent::internal_error("Tried to start SCGI but object was not present.");
+    throw torrent::internal_error(
+      "Tried to start SCGI but object was not present.");
 
   thread->m_safe.scgi->activate();
 }
@@ -122,12 +123,16 @@ ThreadWorker::change_xmlrpc_log() {
   if (m_xmlrpcLog.empty())
     return;
 
-  scgi()->set_log_fd(open(torrent::utils::path_expand(m_xmlrpcLog).c_str(), O_WRONLY | O_APPEND | O_CREAT, 0644));
+  scgi()->set_log_fd(open(torrent::utils::path_expand(m_xmlrpcLog).c_str(),
+                          O_WRONLY | O_APPEND | O_CREAT,
+                          0644));
 
   if (scgi()->log_fd() == -1) {
-    control->core()->push_log_std("Could not open XMLRPC log file '" + m_xmlrpcLog + "'.");
+    control->core()->push_log_std("Could not open XMLRPC log file '" +
+                                  m_xmlrpcLog + "'.");
     return;
   }
 
-  control->core()->push_log_std("Logging XMLRPC events to '" + m_xmlrpcLog + "'.");
+  control->core()->push_log_std("Logging XMLRPC events to '" + m_xmlrpcLog +
+                                "'.");
 }

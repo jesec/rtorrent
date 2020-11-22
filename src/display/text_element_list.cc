@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -37,8 +37,8 @@
 #include "config.h"
 
 #include <algorithm>
-#include <torrent/utils/functional.h>
 #include <torrent/exceptions.h>
+#include <torrent/utils/functional.h>
 
 #include "text_element_list.h"
 
@@ -51,7 +51,10 @@ TextElementList::clear() {
 }
 
 char*
-TextElementList::print(char* first, char* last, Canvas::attributes_list* attributes, rpc::target_type target) {
+TextElementList::print(char*                    first,
+                       char*                    last,
+                       Canvas::attributes_list* attributes,
+                       rpc::target_type         target) {
   int column = m_columnWidth != NULL ? m_column : 0;
 
   // Call print for each element even if first == last so that any
@@ -61,12 +64,14 @@ TextElementList::print(char* first, char* last, Canvas::attributes_list* attribu
       char* columnEnd = std::min(last, first + *m_columnWidth);
 
       if (columnEnd < first || columnEnd > last)
-        throw torrent::internal_error("TextElementList::print(...) columnEnd < first || columnEnd > last.");
+        throw torrent::internal_error(
+          "TextElementList::print(...) columnEnd < first || columnEnd > last.");
 
       first = (*itr)->print(first, columnEnd, attributes, target);
 
       if (first > columnEnd)
-        throw torrent::internal_error("TextElementList::print(...) first > columnEnd.");
+        throw torrent::internal_error(
+          "TextElementList::print(...) first > columnEnd.");
 
       std::memset(first, ' ', columnEnd - first);
       first = columnEnd;
@@ -81,17 +86,19 @@ TextElementList::print(char* first, char* last, Canvas::attributes_list* attribu
 TextElementList::extent_type
 TextElementList::max_length() {
   extent_type length = 0;
-  int column = m_columnWidth != NULL ? m_column : 0;
+  int         column = m_columnWidth != NULL ? m_column : 0;
 
   for (iterator itr = begin(); itr != end(); ++itr) {
-    extent_type l = column-- > 0 ? std::min((*itr)->max_length(), *m_columnWidth) : (*itr)->max_length();
+    extent_type l = column-- > 0
+                      ? std::min((*itr)->max_length(), *m_columnWidth)
+                      : (*itr)->max_length();
 
     if (l == extent_full)
       return extent_full;
-    
+
     length += l;
   }
-  
+
   return length;
 }
 

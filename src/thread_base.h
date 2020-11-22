@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -57,21 +57,23 @@ public:
   ThreadBase();
   virtual ~ThreadBase() noexcept(true);
 
-  priority_queue&     task_scheduler() { return m_taskScheduler; }
+  priority_queue& task_scheduler() {
+    return m_taskScheduler;
+  }
 
   // Throw torrent::shutdown_exception to stop the thread.
-  static void         stop_thread(ThreadBase* thread);
+  static void stop_thread(ThreadBase* thread);
 
   // ATM, only interaction with a thread's allowed by other threads is
   // through the queue_item call.
 
-  void                queue_item(thread_base_func newFunc);
+  void queue_item(thread_base_func newFunc);
 
 protected:
-  int64_t             next_timeout_usec();
+  int64_t next_timeout_usec();
 
-  void                call_queued_items();
-  virtual void        call_events();
+  void         call_queued_items();
+  virtual void call_events();
 
   // TODO: Add thread name.
 
@@ -79,11 +81,11 @@ protected:
 
   torrent::utils::priority_queue_default m_taskScheduler;
 
-  torrent::utils::priority_item  m_taskShutdown;
+  torrent::utils::priority_item m_taskShutdown;
 
   // Temporary hack to pass messages to a thread. This really needs to
   // be cleaned up and/or integrated into the priority queue itself.
-  thread_queue_hack*  m_threadQueue;
+  thread_queue_hack* m_threadQueue;
 };
 
 #endif

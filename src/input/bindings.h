@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -44,37 +44,44 @@
 
 namespace input {
 
-class Bindings : private std::map<int, std::function<void ()> > {
+class Bindings : private std::map<int, std::function<void()>> {
 public:
-  typedef std::function<void ()> slot_void;
-  typedef std::map<int, slot_void>    base_type;
+  typedef std::function<void()>    slot_void;
+  typedef std::map<int, slot_void> base_type;
 
-  using base_type::iterator;
   using base_type::const_iterator;
-  using base_type::reverse_iterator;
   using base_type::const_reverse_iterator;
+  using base_type::iterator;
+  using base_type::reverse_iterator;
 
   using base_type::begin;
   using base_type::end;
+  using base_type::find;
   using base_type::rbegin;
   using base_type::rend;
-  using base_type::find;
 
   using base_type::erase;
 
   using base_type::operator[];
 
-  Bindings() : m_enabled(true) {}
+  Bindings()
+    : m_enabled(true) {}
 
-  void                enable()           { m_enabled = true; }
-  void                disable()          { m_enabled = false; }
+  void enable() {
+    m_enabled = true;
+  }
+  void disable() {
+    m_enabled = false;
+  }
 
-  bool                pressed(int key);
+  bool pressed(int key);
 
-  void                ignore(int key)     { (*this)[key] = slot_void(); }
+  void ignore(int key) {
+    (*this)[key] = slot_void();
+  }
 
 private:
-  bool                m_enabled;
+  bool m_enabled;
 };
 
 }

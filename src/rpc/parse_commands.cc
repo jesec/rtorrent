@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -39,9 +39,9 @@
 #include <algorithm>
 #include <fstream>
 #include <string>
+#include <torrent/exceptions.h>
 #include <torrent/utils/functional.h>
 #include <torrent/utils/path.h>
-#include <torrent/exceptions.h>
 
 #include "parse.h"
 #include "parse_commands.h"
@@ -53,13 +53,13 @@ XmlRpc     xmlrpc;
 ExecFile   execFile;
 
 struct command_map_is_space : std::unary_function<char, bool> {
-  bool operator () (char c) const {
+  bool operator()(char c) const {
     return c == ' ' || c == '\t';
   }
 };
 
 struct command_map_is_newline : std::unary_function<char, bool> {
-  bool operator () (char c) const {
+  bool operator()(char c) const {
     return c == '\n' || c == '\0' || c == ';';
   }
 };
@@ -86,7 +86,10 @@ parse_command_execute(target_type target, torrent::Object* object) {
   if (object->is_list()) {
     // For now, until we can flag the lists we want executed and those
     // we can't, disable recursion completely.
-    for (torrent::Object::list_iterator itr = object->as_list().begin(), last = object->as_list().end(); itr != last; itr++) {
+    for (torrent::Object::list_iterator itr  = object->as_list().begin(),
+                                        last = object->as_list().end();
+         itr != last;
+         itr++) {
       if (itr->is_list())
         continue;
 
@@ -97,7 +100,8 @@ parse_command_execute(target_type target, torrent::Object* object) {
     parse_command_execute(target, &object->as_dict_obj());
 
     if (object->flags() & torrent::Object::flag_function) {
-      *object = rpc::commands.call_command(object->as_dict_key().c_str(), object->as_dict_obj(), target);
+      *object = rpc::commands.call_command(
+        object->as_dict_key().c_str(), object->as_dict_obj(), target);
 
     } else {
       uint32_t flags = object->flags() & torrent::Object::mask_function;
@@ -108,19 +112,25 @@ parse_command_execute(target_type target, torrent::Object* object) {
   } else if (object->is_string() && *object->as_string().c_str() == '$') {
     const std::string& str = object->as_string();
 
-    *object = parse_command(target, str.c_str() + 1, str.c_str() + str.size()).first;
+    *object =
+      parse_command(target, str.c_str() + 1, str.c_str() + str.size()).first;
   }
 }
 
 // Use a static length buffer for dest.
 inline const char*
-parse_command_name(const char* first, const char* last, char* dest_first, char* dest_last) {
+parse_command_name(const char* first,
+                   const char* last,
+                   char*       dest_first,
+                   char*       dest_last) {
   if (first == last || !std::isalpha(*first))
     throw torrent::input_error("Invalid start of command name.");
 
-  last = first + std::min(std::distance(first, last), std::distance(dest_first, dest_last) - 1);
+  last = first + std::min(std::distance(first, last),
+                          std::distance(dest_first, dest_last) - 1);
 
-  while (first != last && (std::isalnum(*first) || *first == '_' || *first == '.'))
+  while (first != last &&
+         (std::isalnum(*first) || *first == '_' || *first == '.'))
     *dest_first++ = *first++;
 
   *dest_first = '\0';
@@ -135,14 +145,15 @@ parse_command(target_type target, const char* first, const char* last) {
 
   if (first == last || *first == '#')
     return std::make_pair(torrent::Object(), first);
-  
+
   char key[128];
 
   first = parse_command_name(first, last, key, key + 128);
   first = std::find_if(first, last, std::not1(command_map_is_space()));
-  
+
   if (first == last || *first != '=')
-    throw torrent::input_error("Could not find '=' in command '" + std::string(key) + "'.");
+    throw torrent::input_error("Could not find '=' in command '" +
+                               std::string(key) + "'.");
 
   torrent::Object args;
   first = parse_whole_list(first + 1, last, &args, &parse_is_delim_command);
@@ -151,7 +162,7 @@ parse_command(target_type target, const char* first, const char* last) {
   // the whitespace at the end. This ensures us that the caller
   // doesn't need to do this nor check for junk at the end.
   first = std::find_if(first, last, std::not1(command_map_is_space()));
-  
+
   if (first != last) {
     if (*first != '\n' && *first != ';' && *first != '\0')
       throw torrent::input_error("Junk at end of input.");
@@ -167,7 +178,9 @@ parse_command(target_type target, const char* first, const char* last) {
 }
 
 torrent::Object
-parse_command_multiple(target_type target, const char* first, const char* last) {
+parse_command_multiple(target_type target,
+                       const char* first,
+                       const char* last) {
   parse_command_type result;
 
   while (first != last) {
@@ -189,31 +202,33 @@ parse_command_file(const std::string& path) {
     return false;
 
   unsigned int lineNumber = 0;
-  char buffer[4096];
+  char         buffer[4096];
 
   try {
     unsigned int getCount = 0;
 
-    while (file.good()
-           && !file.getline(buffer + getCount, 4096 - getCount).fail()) {
-      
+    while (file.good() &&
+           !file.getline(buffer + getCount, 4096 - getCount).fail()) {
+
       if (file.gcount() == 0)
-        throw torrent::internal_error("parse_command_file(...) file.gcount() == 0.");
+        throw torrent::internal_error(
+          "parse_command_file(...) file.gcount() == 0.");
       int lineLength = file.gcount() - 1;
       // In case we are at the end of the file and the last character is
-      // not a line feed, we'll just increase the read character count so 
+      // not a line feed, we'll just increase the read character count so
       // that the last would also be included in option line.
       if (file.eof() && file.get() != '\n')
         lineLength++;
-      
-      int escaped = parse_count_escaped(buffer + getCount, buffer + getCount + lineLength);
+
+      int escaped =
+        parse_count_escaped(buffer + getCount, buffer + getCount + lineLength);
 
       lineNumber++;
       getCount += lineLength;
 
       if (getCount == 4096 - 1)
         throw torrent::input_error("Exceeded max line length.");
-      
+
       if (escaped & 0x1) {
         // Remove the escape characters and continue reading.
         getCount -= escaped;
@@ -226,7 +241,12 @@ parse_command_file(const std::string& path) {
     }
 
   } catch (torrent::input_error& e) {
-    snprintf(buffer, 2048, "Error in option file: %s:%u: %s", path.c_str(), lineNumber, e.what());
+    snprintf(buffer,
+             2048,
+             "Error in option file: %s:%u: %s",
+             path.c_str(),
+             lineNumber,
+             e.what());
 
     throw torrent::input_error(buffer);
   }
@@ -237,45 +257,53 @@ parse_command_file(const std::string& path) {
 torrent::Object
 call_object(const torrent::Object& command, target_type target) {
   switch (command.type()) {
-  case torrent::Object::TYPE_RAW_STRING:
-    return parse_command_multiple(target, command.as_raw_string().begin(), command.as_raw_string().end());
-  case torrent::Object::TYPE_STRING:
-    return parse_command_multiple(target, command.as_string().c_str(), command.as_string().c_str() + command.as_string().size());
+    case torrent::Object::TYPE_RAW_STRING:
+      return parse_command_multiple(
+        target, command.as_raw_string().begin(), command.as_raw_string().end());
+    case torrent::Object::TYPE_STRING:
+      return parse_command_multiple(target,
+                                    command.as_string().c_str(),
+                                    command.as_string().c_str() +
+                                      command.as_string().size());
 
-  case torrent::Object::TYPE_LIST:
-  {
-    torrent::Object result;
+    case torrent::Object::TYPE_LIST: {
+      torrent::Object result;
 
-    for (torrent::Object::list_const_iterator itr = command.as_list().begin(), last = command.as_list().end(); itr != last; itr++)
-      result = call_object(*itr, target);
+      for (torrent::Object::list_const_iterator itr = command.as_list().begin(),
+                                                last = command.as_list().end();
+           itr != last;
+           itr++)
+        result = call_object(*itr, target);
 
-    return result;
-  }
-  case torrent::Object::TYPE_MAP:
-  {
-    for (torrent::Object::map_const_iterator itr = command.as_map().begin(), last = command.as_map().end(); itr != last; itr++)
-      call_object(itr->second, target);
+      return result;
+    }
+    case torrent::Object::TYPE_MAP: {
+      for (torrent::Object::map_const_iterator itr  = command.as_map().begin(),
+                                               last = command.as_map().end();
+           itr != last;
+           itr++)
+        call_object(itr->second, target);
 
-    return torrent::Object();
-  }
-  case torrent::Object::TYPE_DICT_KEY:
-  {
-    // This can/should be optimized...
-    torrent::Object tmp_command = command;
+      return torrent::Object();
+    }
+    case torrent::Object::TYPE_DICT_KEY: {
+      // This can/should be optimized...
+      torrent::Object tmp_command = command;
 
-    // Unquote the root function object so 'parse_command_execute'
-    // doesn't end up calling it.
-    //
-    // TODO: Only call this if mask_function is set?
-    uint32_t flags = tmp_command.flags() & torrent::Object::mask_function;
-    tmp_command.unset_flags(torrent::Object::mask_function);
-    tmp_command.set_flags((flags >> 1) & torrent::Object::mask_function);
+      // Unquote the root function object so 'parse_command_execute'
+      // doesn't end up calling it.
+      //
+      // TODO: Only call this if mask_function is set?
+      uint32_t flags = tmp_command.flags() & torrent::Object::mask_function;
+      tmp_command.unset_flags(torrent::Object::mask_function);
+      tmp_command.set_flags((flags >> 1) & torrent::Object::mask_function);
 
-    parse_command_execute(target, &tmp_command);
-    return commands.call_command(tmp_command.as_dict_key().c_str(), tmp_command.as_dict_obj(), target);
-  }
-  default:
-    return torrent::Object();
+      parse_command_execute(target, &tmp_command);
+      return commands.call_command(
+        tmp_command.as_dict_key().c_str(), tmp_command.as_dict_obj(), target);
+    }
+    default:
+      return torrent::Object();
   }
 }
 
@@ -284,9 +312,11 @@ call_object(const torrent::Object& command, target_type target) {
 //
 
 const torrent::Object
-command_function_call_object(const torrent::Object& cmd, target_type target, const torrent::Object& args) {
+command_function_call_object(const torrent::Object& cmd,
+                             target_type            target,
+                             const torrent::Object& args) {
   rpc::command_base::stack_type stack;
-  torrent::Object* last_stack;
+  torrent::Object*              last_stack;
 
   if (args.is_list())
     last_stack = rpc::command_base::push_stack(args.as_list(), &stack);

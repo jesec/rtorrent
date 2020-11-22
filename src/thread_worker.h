@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -54,34 +54,39 @@ public:
   ThreadWorker();
   ~ThreadWorker();
 
-  const char*         name() const { return "rtorrent scgi"; }
+  const char* name() const {
+    return "rtorrent scgi";
+  }
 
-  virtual void        init_thread();
+  virtual void init_thread();
 
-  rpc::SCgi*          scgi() { return m_safe.scgi; }
-  bool                set_scgi(rpc::SCgi* scgi);
-  
-  void                set_xmlrpc_log(const std::string& filename);
+  rpc::SCgi* scgi() {
+    return m_safe.scgi;
+  }
+  bool set_scgi(rpc::SCgi* scgi);
 
-  static void         start_scgi(ThreadBase* thread);
-  static void         msg_change_xmlrpc_log(ThreadBase* thread);
+  void set_xmlrpc_log(const std::string& filename);
+
+  static void start_scgi(ThreadBase* thread);
+  static void msg_change_xmlrpc_log(ThreadBase* thread);
 
 private:
-  void                task_touch_log();
+  void task_touch_log();
 
-  void                change_xmlrpc_log();
+  void change_xmlrpc_log();
 
   struct lt_cacheline_aligned safe_type {
-    safe_type() : scgi(NULL) {}
+    safe_type()
+      : scgi(NULL) {}
 
     rpc::SCgi* scgi;
   };
 
-  safe_type           m_safe;
+  safe_type m_safe;
 
   // The following types shall only be modified while holding the
   // global lock.
-  std::string         m_xmlrpcLog;
+  std::string m_xmlrpcLog;
 };
 
 #endif

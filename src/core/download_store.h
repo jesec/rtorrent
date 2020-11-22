@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -42,7 +42,7 @@
 #include "utils/lockfile.h"
 
 namespace utils {
-  class Directory;
+class Directory;
 }
 
 namespace core {
@@ -53,31 +53,41 @@ class DownloadStore {
 public:
   static const int flag_skip_static = 0x1;
 
-  bool                is_enabled()                            { return m_lockfile.is_locked(); }
+  bool is_enabled() {
+    return m_lockfile.is_locked();
+  }
 
-  void                enable(bool lock);
-  void                disable();
+  void enable(bool lock);
+  void disable();
 
-  const std::string&  path() const                            { return m_path; }
-  void                set_path(const std::string& path);
+  const std::string& path() const {
+    return m_path;
+  }
+  void set_path(const std::string& path);
 
-  bool                save(Download* d, int flags);
-  bool                save_full(Download* d)   { return save(d, 0); }
-  bool                save_resume(Download* d) { return save(d, flag_skip_static); }
-  void                remove(Download* d);
+  bool save(Download* d, int flags);
+  bool save_full(Download* d) {
+    return save(d, 0);
+  }
+  bool save_resume(Download* d) {
+    return save(d, flag_skip_static);
+  }
+  void remove(Download* d);
 
   // Currently shows all entries in the correct format.
-  utils::Directory    get_formated_entries();
+  utils::Directory get_formated_entries();
 
-  static bool         is_correct_format(const std::string& f);
+  static bool is_correct_format(const std::string& f);
 
 private:
-  std::string         create_filename(Download* d);
+  std::string create_filename(Download* d);
 
-  bool                write_bencode(const std::string& filename, const torrent::Object& obj, uint32_t skip_mask);
+  bool write_bencode(const std::string&     filename,
+                     const torrent::Object& obj,
+                     uint32_t               skip_mask);
 
-  std::string         m_path;
-  utils::Lockfile     m_lockfile;
+  std::string     m_path;
+  utils::Lockfile m_lockfile;
 };
 
 }

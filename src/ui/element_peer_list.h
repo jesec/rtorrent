@@ -5,12 +5,12 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -53,48 +53,44 @@ public:
 
   typedef torrent::ConnectionList::signal_peer_type::iterator signal_connection;
 
-  typedef enum {
-    DISPLAY_LIST,
-    DISPLAY_INFO,
-    DISPLAY_MAX_SIZE
-  } Display;
+  typedef enum { DISPLAY_LIST, DISPLAY_INFO, DISPLAY_MAX_SIZE } Display;
 
   ElementPeerList(core::Download* d);
   ~ElementPeerList();
 
-  void                activate(display::Frame* frame, bool focus = true);
-  void                disable();
+  void activate(display::Frame* frame, bool focus = true);
+  void disable();
 
-  void                activate_display(Display display);
+  void activate_display(Display display);
 
 private:
   inline ElementText* create_info();
 
-  void                receive_next();
-  void                receive_prev();
+  void receive_next();
+  void receive_prev();
 
-  void                receive_disconnect_peer();
+  void receive_disconnect_peer();
 
-  void                receive_peer_connected(torrent::Peer* p);
-  void                receive_peer_disconnected(torrent::Peer* p);
+  void receive_peer_connected(torrent::Peer* p);
+  void receive_peer_disconnected(torrent::Peer* p);
 
-  void                receive_snub_peer();
-  void                receive_ban_peer();
+  void receive_snub_peer();
+  void receive_ban_peer();
 
-  void                update_itr();
+  void update_itr();
 
-  core::Download*     m_download;
-  
-  Display             m_state;
-  display::Window*    m_windowList;
-  
-  ElementText*        m_elementInfo;
+  core::Download* m_download;
 
-  PList               m_list;
-  PList::iterator     m_listItr;
+  Display          m_state;
+  display::Window* m_windowList;
 
-  signal_connection   m_peer_connected;
-  signal_connection   m_peer_disconnected;
+  ElementText* m_elementInfo;
+
+  PList           m_list;
+  PList::iterator m_listItr;
+
+  signal_connection m_peer_connected;
+  signal_connection m_peer_disconnected;
 };
 
 }
