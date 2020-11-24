@@ -43,20 +43,6 @@ else()
   add_link_options("-flto" "-s")
 endif()
 
-# Required packages
-find_package(CURL REQUIRED)
-
-set(CURSES_NEED_WIDE ON)
-find_package(Curses)
-if(NOT CURSES_FOUND)
-  set(CURSES_NEED_WIDE OFF)
-  find_package(Curses REQUIRED)
-endif()
-
-if(USE_XMLRPC)
-  find_package(XMLRPC REQUIRED c++)
-endif()
-
 # Use GNU install destinations
 include(GNUInstallDirs)
 
@@ -67,6 +53,20 @@ include(GenerateRTorrentBuildinfo)
 include_directories(${PROJECT_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
 
 if(NOT BUILDINFO_ONLY)
+  # Required packages
+  find_package(CURL REQUIRED)
+
+  set(CURSES_NEED_WIDE ON)
+  find_package(Curses)
+  if(NOT CURSES_FOUND)
+    set(CURSES_NEED_WIDE OFF)
+    find_package(Curses REQUIRED)
+  endif()
+
+  if(USE_XMLRPC)
+    find_package(XMLRPC REQUIRED c++)
+  endif()
+
   file(GLOB_RECURSE RTORRENT_COMMON_SRCS "${PROJECT_SOURCE_DIR}/src/*.cc")
   list(REMOVE_ITEM RTORRENT_COMMON_SRCS "${PROJECT_SOURCE_DIR}/src/main.cc")
 
