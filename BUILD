@@ -41,7 +41,7 @@ cc_library(
     copts = COPTS,
     includes = ["include"],
     linkopts = LINKOPTS + [
-        "-lncurses",
+        "-lncursesw",
         "-lcurl",
         "-lpthread",
         "-lxmlrpc_server",
