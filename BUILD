@@ -49,6 +49,7 @@ cc_library(
         "-lxmlrpc_util",
         "-lxmlrpc_xmlparse",
         "-lxmlrpc_xmltok",
+        "-lstdc++",
     ],
     deps = [
         "@curl",
