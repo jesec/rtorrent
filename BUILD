@@ -43,9 +43,12 @@ cc_library(
     linkopts = LINKOPTS + [
         "-lncursesw",
         "-lpthread",
+        "-ltinfo",
         "-lxmlrpc_server",
         "-lxmlrpc",
         "-lxmlrpc_util",
+        "-lxmlrpc_xmlparse",
+        "-lxmlrpc_xmltok",
     ],
     deps = [
         "@curl",
@@ -60,6 +63,9 @@ cc_binary(
         "//:included_headers",
     ],
     copts = COPTS,
+    features = [
+        "fully_static_link",
+    ],
     includes = ["include"],
     linkopts = LINKOPTS,
     deps = [
