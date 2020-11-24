@@ -42,13 +42,15 @@ cc_library(
     includes = ["include"],
     linkopts = LINKOPTS + [
         "-lncursesw",
-        "-lcurl",
         "-lpthread",
         "-lxmlrpc_server",
         "-lxmlrpc",
         "-lxmlrpc_util",
     ],
-    deps = ["@libtorrent//:torrent"],
+    deps = [
+        "@curl",
+        "@libtorrent//:torrent",
+    ],
 )
 
 cc_binary(
