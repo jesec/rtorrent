@@ -44,7 +44,6 @@ else()
 endif()
 
 # Required packages
-find_package(Torrent REQUIRED)
 find_package(CURL REQUIRED)
 
 set(CURSES_NEED_WIDE ON)
@@ -72,6 +71,7 @@ if(NOT BUILDINFO_ONLY)
   list(REMOVE_ITEM RTORRENT_COMMON_SRCS "${PROJECT_SOURCE_DIR}/src/main.cc")
 
   # common objects
+  find_package(Torrent REQUIRED)
   add_library(rtorrent_common OBJECT ${RTORRENT_COMMON_SRCS})
   target_link_libraries(rtorrent_common torrent ${CURL_LIBRARIES}
                         ${CURSES_LIBRARIES})

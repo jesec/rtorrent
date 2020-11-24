@@ -1,0 +1,90 @@
+name: Test on Linux
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  cmake:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: sudo apt install -y ninja-build libc6-dev libcppunit-dev libcurl4-openssl-dev libncursesw5-dev libssl-dev libxmlrpc-c++8-dev zlib1g-dev
+
+      - name: Checkout libTorrent
+        uses: actions/checkout@v2
+        with:
+          repository: jesec/libtorrent
+          path: libtorrent
+
+      - name: Install libTorrent
+        run: |
+          cmake -GNinja -S libtorrent -B libtorrent
+          sudo ninja -C libtorrent install
+          sudo ldconfig
+
+      - run: cmake -DCMAKE_INSTALL_PREFIX=install -GNinja .
+      - run: ninja install
+      - run: ctest --verbose
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: rtorrent-cmake
+          path: install/
+
+  bazel:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: sudo apt install -y libc6-dev libcppunit-dev libcurl4-openssl-dev libncursesw5-dev libssl-dev libxmlrpc-c++8-dev zlib1g-dev
+      - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
+      - run: sudo chmod +x /usr/local/bin/bazel
+      - run: bazel build -s
+      - run: bazel test -s
+
+  bazel-clang:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Clang
+        run: |
+          ubuntu_codename=`lsb_release -c | cut -f2`
+          wget https://apt.llvm.org/llvm-snapshot.gpg.key
+          sudo apt-key add llvm-snapshot.gpg.key
+          sudo add-apt-repository "deb http://apt.llvm.org/$ubuntu_codename/ llvm-toolchain-$ubuntu_codename-$LLVM_VERSION main"
+          sudo apt-get update
+          sudo apt-get install -y clang-$LLVM_VERSION llvm-$LLVM_VERSION lld-$LLVM_VERSION
+          sudo ln -sf /usr/bin/clang-$LLVM_VERSION /usr/bin/clang
+          sudo ln -sf /usr/bin/ld.lld-$LLVM_VERSION /usr/bin/ld.lld
+          sudo ln -sf /usr/bin/llvm-ar-$LLVM_VERSION /usr/bin/llvm-ar
+          sudo ln -sf /usr/bin/llvm-nm-$LLVM_VERSION /usr/bin/llvm-nm
+          sudo ln -sf /usr/bin/llvm-objcopy-$LLVM_VERSION /usr/bin/llvm-objcopy
+          sudo ln -sf /usr/bin/llvm-objdump-$LLVM_VERSION /usr/bin/llvm-objdump
+          sudo ln -sf /usr/bin/llvm-strip-$LLVM_VERSION /usr/bin/llvm-strip
+          sudo ln -sf /usr/bin/llvm-config-$LLVM_VERSION /usr/bin/llvm-config
+        env:
+          LLVM_VERSION: 11
+
+      - run: sudo apt install -y libc6-dev libcppunit-dev libcurl4-openssl-dev libncursesw5-dev libssl-dev libxmlrpc-c++8-dev zlib1g-dev
+      - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
+      - run: sudo chmod +x /usr/local/bin/bazel
+
+      - run: bazel build --config=clang -s
+      - run: cp bazel-bin/rtorrent rtorrent
+
+      - run: bazel test --config=clang -s
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: rtorrent-bazel
+          path: rtorrent
