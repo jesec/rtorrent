@@ -19,7 +19,7 @@ option(USE_XMLRPC "Enable XML-RPC interface" ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Compiler options - Common
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options("-faligned-new" "-Wall" "-Wextra")
 

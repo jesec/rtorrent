@@ -1,7 +1,7 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 
 COPTS = [
-    "-std=c++11",
+    "-std=c++17",
     "-Ofast",
     "-Wall",
     "-Wextra",

@@ -1,20 +1,18 @@
 #ifndef RTORRENT_DISPLAY_ATTRIBUTES_H
 #define RTORRENT_DISPLAY_ATTRIBUTES_H
 
-#include "buildinfo.h"
-
 #include <string>
 #include <vector>
 
-#if defined(HAVE_NCURSESW_CURSES_H)
+#if __has_include(<ncursesw/curses.h>)
 #include <ncursesw/curses.h>
-#elif defined(HAVE_NCURSESW_H)
+#elif __has_include(<ncursesw.h>)
 #include <ncursesw.h>
-#elif defined(HAVE_NCURSES_CURSES_H)
+#elif __has_include(<ncurses/curses.h>)
 #include <ncurses/curses.h>
-#elif defined(HAVE_NCURSES_H)
+#elif __has_include(<ncurses.h>)
 #include <ncurses.h>
-#elif defined(HAVE_CURSES_H)
+#elif __has_include(<curses.h>)
 #include <curses.h>
 #else
 #error "SysV or X/Open-compatible Curses header file required"
