@@ -514,9 +514,14 @@ main(int argc, char** argv) {
                                             F_OK) != -1) {
         rpc::parse_command_single(
           rpc::make_target(), "try_import = ~/.config/rtorrent/rtorrent.rc");
-      } else {
+      } else if (home_dir != NULL &&
+                 access((std::string(home_dir) + "/.rtorrent.rc").c_str(),
+                        F_OK) != -1) {
         rpc::parse_command_single(rpc::make_target(),
                                   "try_import = ~/.rtorrent.rc");
+      } else {
+        rpc::parse_command_single(rpc::make_target(),
+                                  "try_import = /etc/rtorrent/rtorrent.rc");
       }
     }
 
