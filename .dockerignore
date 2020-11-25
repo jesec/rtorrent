@@ -1,0 +1,99 @@
+.git/
+
+# Compiled source #
+###################
+install
+**/*.o
+**/*.lo
+**/*.a
+**/*.la
+**/*.so
+**/*.in
+**/*.sub
+**/*.pc
+**/*.orig
+**/*.rej
+
+# Autoconf files #
+##################
+
+**/.deps
+**/.libs
+**/Makefile
+**/aclocal.m4
+**/autom4te.cache
+**/compile
+**/config.h
+**/config.guess
+**/config.status
+**/confdefs.h
+**/conftest.dir
+**/configure
+**/depcomp
+**/install-sh
+**/libtool
+**/ltmain.sh
+**/missing
+**/stamp-h1
+
+**/src/rtorrent
+**/scripts/libtool.m4
+**/scripts/lt*.m4
+
+# Editor poo #
+##############
+**/.vscode
+**/.#*
+**/\#*#
+**/*~
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+**/*.gz
+**/*.tar
+**/*.zip
+
+# Logs and databases #
+######################
+**/*.log
+
+# OS generated files #
+######################
+**/.DS_Store?
+**/.dirstamp
+**/ehthumbs.db
+**/Icon?
+**/Thumbs.db
+**/TAGS
+
+# rTorrent specific files
+###########################
+**/src/rtorrent
+**/test/rtorrentTest
+**/test-driver
+**/test/rtorrentTest.trs
+
+# Bazel files #
+###############
+bazel-*
+
+# CMake generated files #
+#########################
+build
+**/*.ninja
+**/.ninja_deps
+**/.ninja_log
+**/buildinfo.h
+**/CMakeLists.txt.user
+**/CMakeCache.txt
+**/CMakeFiles
+**/CMakeScripts
+**/Testing
+**/Makefile
+**/cmake_install.cmake
+**/install_manifest.txt
+**/compile_commands.json
+**/CTestTestfile.cmake
+**/_deps
