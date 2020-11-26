@@ -62,4 +62,4 @@ jobs:
       - run: npm run build
 
       - name: End-to-end test rTorrent with Flood's test suite
-        run: npm t -- --selectProjects rtorrent
+        run: npm t -- --selectProjects rtorrent || npm t -- --selectProjects rtorrent || npm t -- --selectProjects rtorrent
