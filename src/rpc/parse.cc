@@ -297,6 +297,7 @@ convert_to_string(const torrent::Object& rawSrc) {
       if (src.as_raw_bencode().is_value())
         return src.as_raw_bencode().as_value_string();
 
+      [[fallthrough]];
     default:
       throw torrent::input_error("Not a string.");
   }
