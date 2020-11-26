@@ -106,7 +106,7 @@ parse_command_name(const char* first,
 // the code below for both cases.
 parse_command_type
 parse_command(target_type target, const char* first, const char* last) {
-  first = std::find_if(first, last, std::not1(command_map_is_space()));
+  first = std::find_if(first, last, std::not_fn(command_map_is_space()));
 
   if (first == last || *first == '#')
     return std::make_pair(torrent::Object(), first);
@@ -114,7 +114,7 @@ parse_command(target_type target, const char* first, const char* last) {
   char key[128];
 
   first = parse_command_name(first, last, key, key + 128);
-  first = std::find_if(first, last, std::not1(command_map_is_space()));
+  first = std::find_if(first, last, std::not_fn(command_map_is_space()));
 
   if (first == last || *first != '=')
     throw torrent::input_error("Could not find '=' in command '" +
@@ -126,7 +126,7 @@ parse_command(target_type target, const char* first, const char* last) {
   // Find the last character that is part of this command, skipping
   // the whitespace at the end. This ensures us that the caller
   // doesn't need to do this nor check for junk at the end.
-  first = std::find_if(first, last, std::not1(command_map_is_space()));
+  first = std::find_if(first, last, std::not_fn(command_map_is_space()));
 
   if (first != last) {
     if (*first != '\n' && *first != ';' && *first != '\0')

@@ -224,7 +224,7 @@ CurlStack::remove_get(CurlGet* get) {
 
   if (m_active == m_maxActive &&
       (itr = std::find_if(
-         begin(), end(), std::not1(std::mem_fn(&CurlGet::is_active)))) !=
+         begin(), end(), std::not_fn(std::mem_fn(&CurlGet::is_active)))) !=
         end()) {
     (*itr)->set_active(true);
 

@@ -57,12 +57,12 @@ bool
 OptionParser::has_flag(char flag, int argc, char** argv) {
   char options[3] = { '-', flag, '\0' };
 
-  return std::find_if(
-           argv,
-           argv + argc,
-           std::not1<std::function<int(const char*)>>([options](const char* s) {
-             return std::strcmp(options, s);
-           })) != argv + argc;
+  return std::find_if(argv,
+                      argv + argc,
+                      std::not_fn<std::function<int(const char*)>>(
+                        [options](const char* s) {
+                          return std::strcmp(options, s);
+                        })) != argv + argc;
 }
 
 std::string

@@ -464,13 +464,12 @@ path_expand(std::vector<std::string>* paths, const std::string& pattern) {
       // starts with the same.
       itr->update((r.pattern()[0] != '.') ? utils::Directory::update_hide_dot
                                           : 0);
-      itr->erase(
-        std::remove_if(itr->begin(),
-                       itr->end(),
-                       torrent::utils::on(torrent::utils::mem_ref(
-                                            &utils::directory_entry::d_name),
-                                          std::not1(r))),
-        itr->end());
+      itr->erase(std::remove_if(itr->begin(),
+                                itr->end(),
+                                [r](utils::directory_entry& e) {
+                                  return std::not_fn(r)(e.d_name);
+                                }),
+                 itr->end());
 
       std::transform(itr->begin(),
                      itr->end(),

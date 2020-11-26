@@ -76,12 +76,9 @@ DownloadList::session_save() {
 DownloadList::iterator
 DownloadList::find(const torrent::HashString& hash) {
   return std::find_if(
-    begin(),
-    end(),
-    torrent::utils::equal(
-      hash,
-      torrent::utils::on(std::mem_fn(&Download::info),
-                         std::mem_fn(&torrent::DownloadInfo::hash))));
+    begin(), end(), torrent::utils::equal(hash, [](Download* download) {
+      return download->info()->hash();
+    }));
 }
 
 DownloadList::iterator
@@ -95,12 +92,9 @@ DownloadList::find_hex(const char* hash) {
            torrent::utils::hexchar_to_value(*(hash + 1));
 
   return std::find_if(
-    begin(),
-    end(),
-    torrent::utils::equal(
-      key,
-      torrent::utils::on(std::mem_fn(&Download::info),
-                         std::mem_fn(&torrent::DownloadInfo::hash))));
+    begin(), end(), torrent::utils::equal(key, [](Download* download) {
+      return download->info()->hash();
+    }));
 }
 
 Download*
