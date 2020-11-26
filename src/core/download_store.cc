@@ -180,7 +180,11 @@ DownloadStore::get_formated_entries() {
       "core::DownloadStore::update() could not open directory \"" + m_path +
       "\"");
 
-  d.erase(std::remove_if(d.begin(), d.end(), std::ptr_fun(&not_correct_format)),
+  d.erase(std::remove_if(d.begin(),
+                         d.end(),
+                         [](const utils::directory_entry& entry) {
+                           return not_correct_format(entry);
+                         }),
           d.end());
 
   return d;
