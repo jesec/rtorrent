@@ -29,12 +29,12 @@ public:
   xmlrpc_error(int type, const char* msg)
     : m_type(type)
     , m_msg(msg) {}
-  virtual ~xmlrpc_error() throw() {}
+  virtual ~xmlrpc_error() noexcept {}
 
-  virtual int type() const throw() {
+  virtual int type() const noexcept {
     return m_type;
   }
-  virtual const char* what() const throw() {
+  virtual const char* what() const noexcept {
     return m_msg;
   }
 
