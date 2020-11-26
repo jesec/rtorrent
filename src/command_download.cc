@@ -677,10 +677,9 @@ d_list_push_back_unique(core::Download*        download,
   torrent::Object::list_type& list =
     download_get_variable(download, first_key, second_key).as_list();
 
-  if (std::find_if(list.begin(),
-                   list.end(),
-                   torrent::utils::bind1st(std::ptr_fun(&torrent::object_equal),
-                                           args)) == list.end())
+  if (std::find_if(list.begin(), list.end(), [args](torrent::Object& o) {
+        return torrent::object_equal(args, o);
+      }) == list.end())
     list.push_back(rawArgs);
 
   return torrent::Object();
@@ -699,10 +698,9 @@ d_list_has(core::Download*        download,
     download_get_variable(download, first_key, second_key).as_list();
 
   return (int64_t)(
-    std::find_if(list.begin(),
-                 list.end(),
-                 torrent::utils::bind1st(std::ptr_fun(&torrent::object_equal),
-                                         args)) != list.end());
+    std::find_if(list.begin(), list.end(), [args](torrent::Object& o) {
+      return torrent::object_equal(args, o);
+    }) != list.end());
 }
 
 torrent::Object
@@ -719,8 +717,9 @@ d_list_remove(core::Download*        download,
 
   list.erase(std::remove_if(list.begin(),
                             list.end(),
-                            torrent::utils::bind1st(
-                              std::ptr_fun(&torrent::object_equal), args)),
+                            [args](torrent::Object& o) {
+                              return torrent::object_equal(args, o);
+                            }),
              list.end());
 
   return torrent::Object();

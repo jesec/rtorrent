@@ -181,15 +181,17 @@ Manager::cleanup() {
 void
 Manager::shutdown(bool force) {
   if (!force)
-    std::for_each(
-      m_downloadList->begin(),
-      m_downloadList->end(),
-      std::bind1st(std::mem_fun(&DownloadList::pause_default), m_downloadList));
+    std::for_each(m_downloadList->begin(),
+                  m_downloadList->end(),
+                  [this](Download* download) {
+                    return m_downloadList->pause_default(download);
+                  });
   else
-    std::for_each(
-      m_downloadList->begin(),
-      m_downloadList->end(),
-      std::bind1st(std::mem_fun(&DownloadList::close_quick), m_downloadList));
+    std::for_each(m_downloadList->begin(),
+                  m_downloadList->end(),
+                  [this](Download* download) {
+                    return m_downloadList->close_quick(download);
+                  });
 }
 
 void
@@ -470,12 +472,13 @@ path_expand(std::vector<std::string>* paths, const std::string& pattern) {
                                           std::not1(r))),
         itr->end());
 
-      std::transform(
-        itr->begin(),
-        itr->end(),
-        std::back_inserter(nextCache),
-        torrent::utils::bind1st(std::ptr_fun(&path_expand_transform),
-                                itr->path() + (itr->path() == "/" ? "" : "/")));
+      std::transform(itr->begin(),
+                     itr->end(),
+                     std::back_inserter(nextCache),
+                     [itr](const utils::directory_entry& entry) {
+                       return path_expand_transform(
+                         itr->path() + (itr->path() == "/" ? "" : "/"), entry);
+                     });
     }
 
     currentCache.clear();

@@ -51,7 +51,7 @@ DownloadList::check_contains(Download* d) {
 void
 DownloadList::clear() {
   std::for_each(
-    begin(), end(), std::bind1st(std::mem_fun(&DownloadList::close), this));
+    begin(), end(), [this](Download* download) { return close(download); });
   std::for_each(begin(), end(), torrent::utils::call_delete<Download>());
 
   base_type::clear();
@@ -59,11 +59,9 @@ DownloadList::clear() {
 
 void
 DownloadList::session_save() {
-  unsigned int c =
-    std::count_if(begin(),
-                  end(),
-                  std::bind1st(std::mem_fun(&DownloadStore::save_resume),
-                               control->core()->download_store()));
+  unsigned int c = std::count_if(begin(), end(), [](Download* download) {
+    return control->core()->download_store()->save_resume(download);
+  });
 
   if (c != size())
     lt_log_print(torrent::LOG_ERROR, "Failed to save session torrents.");
@@ -188,10 +186,10 @@ DownloadList::insert(Download* download) {
     // the download remains in the view.
     std::for_each(control->view_manager()->begin(),
                   control->view_manager()->end(),
-                  std::bind2nd(std::mem_fun(&View::insert), download));
+                  [download](View* v) { return v->insert(download); });
     std::for_each(control->view_manager()->begin(),
                   control->view_manager()->end(),
-                  std::bind2nd(std::mem_fun(&View::filter_download), download));
+                  [download](View* v) { return v->filter_download(download); });
 
     DL_TRIGGER_EVENT(*itr, "event.download.inserted");
 
@@ -231,7 +229,7 @@ DownloadList::erase(iterator itr) {
   DL_TRIGGER_EVENT(*itr, "event.download.erased");
   std::for_each(control->view_manager()->begin(),
                 control->view_manager()->end(),
-                std::bind2nd(std::mem_fun(&View::erase), *itr));
+                [&itr](View* v) { return v->erase(*itr); });
 
   torrent::download_remove(*(*itr)->download());
   delete *itr;

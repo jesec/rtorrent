@@ -168,9 +168,9 @@ View::initialize(const std::string& name) {
   m_name = name;
 
   // Urgh, wrong. No filtering being done.
-  std::for_each(dlist->begin(),
-                dlist->end(),
-                torrent::utils::bind1st(std::mem_fun(&View::push_back), this));
+  std::for_each(dlist->begin(), dlist->end(), [this](Download* download) {
+    return push_back(download);
+  });
 
   m_size  = base_type::size();
   m_focus = 0;
@@ -372,9 +372,9 @@ View::clear_filter_on() {
 inline void
 View::insert_visible(Download* d) {
   iterator itr =
-    std::find_if(begin_visible(),
-                 end_visible(),
-                 std::bind1st(view_downloads_compare(m_sortNew), d));
+    std::find_if(begin_visible(), end_visible(), [d, this](Download* download) {
+      return view_downloads_compare(m_sortNew)(d, download);
+    });
 
   m_size++;
   m_focus += (m_focus >= position(itr));

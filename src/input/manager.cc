@@ -32,7 +32,7 @@ Manager::pressed(int key) {
     m_textInput->pressed(key);
   else
     std::find_if(
-      rbegin(), rend(), std::bind2nd(std::mem_fun(&Bindings::pressed), key));
+      rbegin(), rend(), [key](Bindings* b) { return b->pressed(key); });
 }
 
 }

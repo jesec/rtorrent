@@ -132,13 +132,13 @@ PathInput::find_incomplete(utils::Directory& d, const std::string& f) {
   range_type r;
 
   r.first = std::find_if(
-    d.begin(),
-    d.end(),
-    torrent::utils::bind2nd(std::ptr_fun(&find_complete_not_compare), f));
-  r.second = std::find_if(
-    r.first,
-    d.end(),
-    torrent::utils::bind2nd(std::ptr_fun(&find_complete_compare), f));
+    d.begin(), d.end(), [f](const utils::directory_entry& complete) {
+      return find_complete_not_compare(complete, f);
+    });
+  r.second =
+    std::find_if(r.first, d.end(), [f](const utils::directory_entry& complete) {
+      return find_complete_compare(complete, f);
+    });
 
   return r;
 }
