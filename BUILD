@@ -41,9 +41,7 @@ cc_library(
     copts = COPTS,
     includes = ["include"],
     linkopts = LINKOPTS + [
-        "-lncursesw",
         "-lpthread",
-        "-ltinfo",
         "-lxmlrpc_server",
         "-lxmlrpc",
         "-lxmlrpc_util",
@@ -54,6 +52,7 @@ cc_library(
     deps = [
         "@curl",
         "@libtorrent//:torrent",
+        "@ncurses//:ncursesw",
     ],
 )
 

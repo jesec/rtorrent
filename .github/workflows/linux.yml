@@ -44,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: sudo apt install -y libc6-dev libcppunit-dev libncursesw5-dev libxmlrpc-c++8-dev
+      - run: sudo apt install -y libc6-dev libcppunit-dev libxmlrpc-c++8-dev
       - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
       - run: sudo chmod +x /usr/local/bin/bazel
       - run: bazel build -s
@@ -75,7 +75,7 @@ jobs:
         env:
           LLVM_VERSION: 11
 
-      - run: sudo apt install -y libc6-dev libcppunit-dev libncursesw5-dev libxmlrpc-c++8-dev
+      - run: sudo apt install -y libc6-dev libcppunit-dev libxmlrpc-c++8-dev
       - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
       - run: sudo chmod +x /usr/local/bin/bazel
 

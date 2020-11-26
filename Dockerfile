@@ -10,8 +10,6 @@ RUN apk --no-cache add \
     cmake \
     git \
     linux-headers \
-    ncurses-dev \
-    ncurses-static \
     xmlrpc-c-dev
 
 # Install Bazel 3 from edge testing repository
