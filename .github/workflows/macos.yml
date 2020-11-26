@@ -9,10 +9,20 @@ on:
       - master
 
 jobs:
-  bazel:
+  unit-bazel:
     runs-on: macos-11.0
 
     steps:
       - uses: actions/checkout@v2
+
       - run: brew install cppunit xmlrpc-c
+
+      - run: bazel build -s
+      - run: cp bazel-bin/rtorrent rtorrent
+
       - run: bazel test -s
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: rtorrent-macos
+          path: rtorrent

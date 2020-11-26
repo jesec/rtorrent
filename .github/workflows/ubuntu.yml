@@ -1,4 +1,4 @@
-name: Test on Linux
+name: Test on Ubuntu
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  cmake:
+  unit-cmake:
     runs-on: ubuntu-20.04
 
     steps:
@@ -35,10 +35,10 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: rtorrent-cmake
+          name: rtorrent-linux-cmake
           path: install/
 
-  bazel:
+  unit-bazel:
     runs-on: ubuntu-20.04
 
     steps:
@@ -50,7 +50,7 @@ jobs:
       - run: bazel build -s
       - run: bazel test -s
 
-  bazel-clang:
+  unit-bazel-clang:
     runs-on: ubuntu-20.04
 
     steps:
@@ -86,5 +86,5 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: rtorrent-bazel
+          name: rtorrent-linux
           path: rtorrent
