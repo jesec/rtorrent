@@ -41,7 +41,8 @@ public:
 
 inline ip_table_list::iterator
 ip_table_list::insert(const std::string& name) {
-  ip_table_node tmp = { name };
+  ipv4_table    table;
+  ip_table_node tmp = { name, table };
 
   return base_type::insert(end(), tmp);
 }
