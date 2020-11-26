@@ -66,10 +66,6 @@ struct rt_triple : private std::pair<T1, T2> {
   rt_triple(const base_type& b)
     : base_type(b)
     , third() {}
-
-  rt_triple(const rt_triple& src)
-    : base_type(src.first, src.second)
-    , third(src.third) {}
 };
 
 // Since it gets used so many places we might as well put it in the
