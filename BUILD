@@ -66,6 +66,7 @@ cc_library(
         "@ncurses//:ncursesw",
     ] + select({
         "//:macos": [
+            "@xml2",
             "@xmlrpc",
         ],
         "//conditions:default": [],
