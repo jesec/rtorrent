@@ -456,7 +456,7 @@ Root::load_input_history() {
 
     while (std::getline(history_file, line)) {
       if (!line.empty()) {
-        int delim_pos = line.find("|");
+        size_t delim_pos = line.find("|");
 
         if (delim_pos != std::string::npos) {
           int type = std::atoi(line.substr(0, delim_pos).c_str());
