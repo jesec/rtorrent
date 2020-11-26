@@ -31,7 +31,7 @@ ElementLogComplete::ElementLogComplete(torrent::log_buffer* l)
 }
 
 void
-ElementLogComplete::activate(display::Frame* frame, bool focus) {
+ElementLogComplete::activate(display::Frame* frame, bool) {
   if (is_active())
     throw torrent::internal_error(
       "ui::ElementLogComplete::activate(...) is_active().");

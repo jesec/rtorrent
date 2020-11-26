@@ -59,7 +59,7 @@ DownloadList::~DownloadList() {
 }
 
 void
-DownloadList::activate(display::Frame* frame, bool focus) {
+DownloadList::activate(display::Frame* frame, bool) {
   if (is_active())
     throw torrent::internal_error(
       "ui::DownloadList::activate() called on an already activated object");

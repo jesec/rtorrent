@@ -152,10 +152,11 @@ SCgiTask::event_read() {
   worker_thread->poll()->insert_write(this);
 
   if (m_parent->log_fd() >= 0) {
+    ssize_t __attribute__((unused)) result;
     // Clean up logging, this is just plain ugly...
     //    write(m_logFd, "\n---\n", sizeof("\n---\n"));
-    write(m_parent->log_fd(), m_buffer, m_bufferSize);
-    write(m_parent->log_fd(), "\n---\n", sizeof("\n---\n"));
+    result = write(m_parent->log_fd(), m_buffer, m_bufferSize);
+    result = write(m_parent->log_fd(), "\n---\n", sizeof("\n---\n"));
   }
 
   lt_log_print_dump(torrent::LOG_RPC_DUMP,
@@ -223,7 +224,7 @@ SCgiTask::receive_write(const char* buffer, uint32_t length) {
   std::memcpy(m_buffer + headerSize, buffer, length);
 
   if (m_parent->log_fd() >= 0) {
-    int result;
+    ssize_t result;
     // Clean up logging, this is just plain ugly...
     //    write(m_logFd, "\n---\n", sizeof("\n---\n"));
     result = write(m_parent->log_fd(), m_buffer, m_bufferSize);

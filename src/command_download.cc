@@ -338,7 +338,7 @@ struct call_add_d_peer_t {
     : m_download(d)
     , m_port(port) {}
 
-  void operator()(const sockaddr* sa, int err) {
+  void operator()(const sockaddr* sa, int) {
     if (sa == NULL) {
       lt_log_print(torrent::LOG_TORRENT_WARN,
                    "could not resolve hostname for added peer");

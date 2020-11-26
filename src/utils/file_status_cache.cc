@@ -10,7 +10,7 @@
 namespace utils {
 
 bool
-FileStatusCache::insert(const std::string& path, int flags) {
+FileStatusCache::insert(const std::string& path) {
   torrent::utils::file_stat fs;
 
   // Should we expand somewhere else? Problem is it adds a lot of junk

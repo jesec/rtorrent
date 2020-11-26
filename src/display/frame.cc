@@ -335,7 +335,7 @@ dynamic_min_width(const Frame::dynamic_type& value) {
 }
 
 inline void
-Frame::balance_row(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+Frame::balance_row(uint32_t x, uint32_t y, uint32_t, uint32_t height) {
   // Find the size of the static frames. The dynamic frames are added
   // to a temporary list for the second pass. Each frame uses the
   // m_width and m_height as temporary storage for width and height in
@@ -420,7 +420,7 @@ Frame::balance_row(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 }
 
 inline void
-Frame::balance_column(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+Frame::balance_column(uint32_t x, uint32_t y, uint32_t width, uint32_t) {
   // Find the size of the static frames. The dynamic frames are added
   // to a temporary list for the second pass. Each frame uses the
   // m_width and m_height as temporary storage for width and height in

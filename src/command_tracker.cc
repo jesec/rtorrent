@@ -28,7 +28,7 @@ struct call_add_node_t {
   call_add_node_t(int port)
     : m_port(port) {}
 
-  void operator()(const sockaddr* sa, int err) {
+  void operator()(const sockaddr* sa, int) {
     if (sa == NULL) {
       lt_log_print(torrent::LOG_DHT_WARN, "Could not resolve host.");
     } else {

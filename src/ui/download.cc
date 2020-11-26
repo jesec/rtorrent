@@ -229,7 +229,7 @@ Download::create_info() {
 }
 
 void
-Download::activate(display::Frame* frame, bool focus) {
+Download::activate(display::Frame* frame, bool) {
   if (is_active())
     throw torrent::internal_error(
       "ui::Download::activate() called on an already activated object.");

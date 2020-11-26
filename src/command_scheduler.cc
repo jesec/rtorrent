@@ -54,7 +54,7 @@ cmd_scheduler_simple_removed(core::Download* download) {
 }
 
 torrent::Object
-cmd_scheduler_simple_update(core::Download* download) {
+cmd_scheduler_simple_update(core::Download*) {
   core::View* viewActive  = *control->view_manager()->find("active");
   core::View* viewStarted = *control->view_manager()->find("started");
 

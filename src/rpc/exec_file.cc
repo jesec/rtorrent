@@ -28,18 +28,20 @@ const int ExecFile::flag_background;
 
 int
 ExecFile::execute(const char* file, char* const* argv, int flags) {
+  ssize_t __attribute__((unused)) result;
+
   // Write the execued command and its parameters to the log fd.
   if (m_logFd != -1) {
     for (char* const* itr = argv; *itr != NULL; itr++) {
       if (itr == argv)
-        write(m_logFd, "\n---\n", sizeof("\n---\n"));
+        result = write(m_logFd, "\n---\n", sizeof("\n---\n"));
       else
-        write(m_logFd, " ", 1);
+        result = write(m_logFd, " ", 1);
 
-      write(m_logFd, *itr, std::strlen(*itr));
+      result = write(m_logFd, *itr, std::strlen(*itr));
     }
 
-    write(m_logFd, "\n---\n", sizeof("\n---\n"));
+    result = write(m_logFd, "\n---\n", sizeof("\n---\n"));
   }
 
   int pipeFd[2];
@@ -61,9 +63,9 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
 
       if (detached_pid != 0) {
         if (m_logFd != -1)
-          write(m_logFd,
-                "\n--- Background task ---\n",
-                sizeof("\n--- Background task ---\n"));
+          result = write(m_logFd,
+                         "\n--- Background task ---\n",
+                         sizeof("\n--- Background task ---\n"));
 
         _exit(0);
       }
@@ -98,9 +100,7 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
     for (int i = 3, last = sysconf(_SC_OPEN_MAX); i != last; i++)
       ::close(i);
 
-    int result = execvp(file, argv);
-
-    _exit(result);
+    _exit(execvp(file, argv));
   }
 
   // We yield the global lock when waiting for the executed command to
@@ -124,8 +124,9 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
     ::close(pipeFd[0]);
 
     if (m_logFd != -1) {
-      write(m_logFd, "Captured output:\n", sizeof("Captured output:\n"));
-      write(m_logFd, m_capture.data(), m_capture.length());
+      result =
+        write(m_logFd, "Captured output:\n", sizeof("Captured output:\n"));
+      result = write(m_logFd, m_capture.data(), m_capture.length());
     }
   }
 
@@ -145,9 +146,10 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
   // Check return value?
   if (m_logFd != -1) {
     if (status == 0)
-      write(m_logFd, "\n--- Success ---\n", sizeof("\n--- Success ---\n"));
+      result =
+        write(m_logFd, "\n--- Success ---\n", sizeof("\n--- Success ---\n"));
     else
-      write(m_logFd, "\n--- Error ---\n", sizeof("\n--- Error ---\n"));
+      result = write(m_logFd, "\n--- Error ---\n", sizeof("\n--- Error ---\n"));
   }
 
   return status;

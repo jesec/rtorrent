@@ -43,9 +43,7 @@ TextElementStringBase::print(char*                    first,
 }
 
 char*
-TextElementString::copy_string(char*            first,
-                               char*            last,
-                               rpc::target_type target) {
+TextElementString::copy_string(char* first, char* last, rpc::target_type) {
   extent_type length = std::min<extent_type>(last - first, m_string.size());
 
   std::memcpy(first, m_string.c_str(), length);
@@ -54,9 +52,7 @@ TextElementString::copy_string(char*            first,
 }
 
 char*
-TextElementCString::copy_string(char*            first,
-                                char*            last,
-                                rpc::target_type target) {
+TextElementCString::copy_string(char* first, char* last, rpc::target_type) {
   extent_type length = std::min<extent_type>(last - first, m_length);
 
   std::memcpy(first, m_string, length);

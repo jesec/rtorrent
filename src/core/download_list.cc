@@ -40,13 +40,16 @@
 
 namespace core {
 
+#ifdef RT_USE_EXTRA_DEBUG
 inline void
 DownloadList::check_contains(Download* d) {
-#ifdef RT_USE_EXTRA_DEBUG
   if (std::find(begin(), end(), d) == end())
     throw torrent::internal_error("DownloadList::check_contains(...) failed.");
-#endif
 }
+#else
+inline void
+DownloadList::check_contains(Download*) {}
+#endif
 
 void
 DownloadList::clear() {

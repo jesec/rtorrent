@@ -366,7 +366,7 @@ Manager::try_create_download(const std::string&       uri,
   // If the path was attempted loaded before, skip it.
   if ((flags & create_tied) && !(flags & create_raw_data) &&
       !is_network_uri(uri) && !is_magnet_uri(uri) &&
-      !file_status_cache()->insert(uri, 0))
+      !file_status_cache()->insert(uri))
     return;
 
   // Adding download.

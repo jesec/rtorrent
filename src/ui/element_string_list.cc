@@ -15,7 +15,7 @@ ElementStringList::ElementStringList()
   : m_window(NULL) {}
 
 void
-ElementStringList::activate(display::Frame* frame, bool focus) {
+ElementStringList::activate(display::Frame* frame, bool) {
   if (is_active())
     throw torrent::internal_error(
       "ui::ElementStringList::activate(...) is_active().");

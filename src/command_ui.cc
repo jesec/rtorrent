@@ -110,7 +110,7 @@ apply_view_set(const torrent::Object::list_type& args) {
 }
 
 torrent::Object
-apply_print(rpc::target_type target, const torrent::Object& rawArgs) {
+apply_print(rpc::target_type, const torrent::Object& rawArgs) {
   char buffer[1024];
   rpc::print_object(buffer, buffer + 1024, &rawArgs, 0);
 
@@ -119,7 +119,7 @@ apply_print(rpc::target_type target, const torrent::Object& rawArgs) {
 }
 
 torrent::Object
-apply_cat(rpc::target_type target, const torrent::Object& rawArgs) {
+apply_cat(rpc::target_type, const torrent::Object& rawArgs) {
   std::string result;
 
   rpc::print_object_std(&result, &rawArgs, 0);
@@ -127,7 +127,7 @@ apply_cat(rpc::target_type target, const torrent::Object& rawArgs) {
 }
 
 torrent::Object
-apply_value(rpc::target_type target, const torrent::Object::list_type& args) {
+apply_value(rpc::target_type, const torrent::Object::list_type& args) {
   if (args.size() < 1)
     throw torrent::input_error("'value' takes at least a number argument!");
   if (args.size() > 2)
@@ -206,7 +206,7 @@ apply_not(rpc::target_type target, const torrent::Object& rawArgs) {
 }
 
 torrent::Object
-apply_false(rpc::target_type target, const torrent::Object& rawArgs) {
+apply_false(rpc::target_type, const torrent::Object&) {
   return (int64_t)0;
 }
 

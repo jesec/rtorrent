@@ -16,7 +16,7 @@
 namespace core {
 
 int
-CurlSocket::receive_socket(void*         easy_handle,
+CurlSocket::receive_socket(void*,
                            curl_socket_t fd,
                            int           what,
                            void*         userp,
