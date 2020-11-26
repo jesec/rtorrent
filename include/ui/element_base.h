@@ -18,12 +18,12 @@ public:
   typedef std::function<void()> slot_type;
 
   ElementBase()
-    : m_frame(NULL)
+    : m_frame(nullptr)
     , m_focus(false) {}
   virtual ~ElementBase() noexcept(false) {}
 
   bool is_active() const {
-    return m_frame != NULL;
+    return m_frame != nullptr;
   }
 
   input::Bindings& bindings() {

@@ -135,7 +135,7 @@ WindowPeerList::redraw() {
 
     const torrent::BlockTransfer* transfer = p->transfer();
 
-    if (transfer != NULL)
+    if (transfer != nullptr)
       m_canvas->print(x, y, "%i", transfer->index());
 
     x += 6;

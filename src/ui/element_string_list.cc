@@ -12,7 +12,7 @@
 namespace ui {
 
 ElementStringList::ElementStringList()
-  : m_window(NULL) {}
+  : m_window(nullptr) {}
 
 void
 ElementStringList::activate(display::Frame* frame, bool) {
@@ -42,15 +42,15 @@ ElementStringList::disable() {
   control->input()->erase(&m_bindings);
 
   m_frame->clear();
-  m_frame = NULL;
+  m_frame = nullptr;
 
   delete m_window;
-  m_window = NULL;
+  m_window = nullptr;
 }
 
 void
 ElementStringList::next_screen() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     return;
 
   if (m_window->get_draw_end() != m_list.end())

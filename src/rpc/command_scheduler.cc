@@ -35,7 +35,7 @@ CommandScheduler::insert(const std::string& key) {
   iterator itr = find(key);
 
   if (itr == end())
-    itr = base_type::insert(end(), NULL);
+    itr = base_type::insert(end(), nullptr);
   else
     delete *itr;
 
@@ -126,7 +126,7 @@ CommandScheduler::parse_absolute(const char* str) {
     case 2:
       t = cachedTime.tval().tv_sec;
 
-      if (localtime_r(&t, &local) == NULL)
+      if (localtime_r(&t, &local) == nullptr)
         throw torrent::input_error(
           "Could not convert unix time to local time.");
 
@@ -135,7 +135,7 @@ CommandScheduler::parse_absolute(const char* str) {
     case 3:
       t = cachedTime.tval().tv_sec;
 
-      if (localtime_r(&t, &local) == NULL)
+      if (localtime_r(&t, &local) == nullptr)
         throw torrent::input_error(
           "Could not convert unix time to local time.");
 

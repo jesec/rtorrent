@@ -44,7 +44,7 @@ WindowDownloadChunksSeen::redraw() {
 
   const uint8_t* seen = m_download->download()->chunks_seen();
 
-  if (seen == NULL ||
+  if (seen == nullptr ||
       m_download->download()->file_list()->bitfield()->empty()) {
     m_canvas->print(2, 2, "Not available.");
     return;
@@ -67,7 +67,7 @@ WindowDownloadChunksSeen::redraw() {
     m_download->download()->file_list()->bitfield();
   const torrent::TransferList* transfers =
     m_download->download()->transfer_list();
-  std::vector<torrent::BlockList*> transferChunks(transfers->size(), 0);
+  std::vector<torrent::BlockList*> transferChunks(transfers->size(), nullptr);
 
   std::copy(transfers->begin(), transfers->end(), transferChunks.begin());
   std::sort(transferChunks.begin(),

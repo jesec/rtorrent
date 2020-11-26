@@ -204,14 +204,14 @@ public:
   static void pop_stack(stack_type* stack, torrent::Object* last_stack);
 
   template<typename T>
-  void set_function(T s, int value = command_base_is_valid<T>::value) {
+  void set_function(T s, int = command_base_is_valid<T>::value) {
     _pod<T>() = s;
   }
 
   template<command_base_call_type T>
   void set_function_2(
     typename command_base_is_type<T>::type s,
-    int                                    value =
+    int =
       command_base_is_valid<typename command_base_is_type<T>::type>::value) {
     _pod<typename command_base_is_type<T>::type>() = s;
   }
@@ -268,7 +268,7 @@ is_target_pair(const target_type& target) {
 
 template<typename T>
 inline T
-get_target_cast(target_type target, int type = target_type_id<T>::value) {
+get_target_cast(target_type target, int = target_type_id<T>::value) {
   return (T)target.second;
 }
 

@@ -60,15 +60,15 @@ CurlStack::receive_action(CurlSocket* socket, int events) {
   do {
     int count;
 #if (LIBCURL_VERSION_NUM >= 0x071003)
-    code = curl_multi_socket_action((CURLM*)m_handle,
-                                    socket != NULL ? socket->file_descriptor()
-                                                   : CURL_SOCKET_TIMEOUT,
-                                    events,
-                                    &count);
+    code = curl_multi_socket_action(
+      (CURLM*)m_handle,
+      socket != nullptr ? socket->file_descriptor() : CURL_SOCKET_TIMEOUT,
+      events,
+      &count);
 #else
     code = curl_multi_socket((CURLM*)m_handle,
-                             socket != NULL ? socket->file_descriptor()
-                                            : CURL_SOCKET_TIMEOUT,
+                             socket != nullptr ? socket->file_descriptor()
+                                               : CURL_SOCKET_TIMEOUT,
                              &count);
 #endif
 
@@ -77,7 +77,7 @@ CurlStack::receive_action(CurlSocket* socket, int events) {
 
     // Socket might be removed when cleaning handles below, future
     // calls should not use it.
-    socket = NULL;
+    socket = nullptr;
     events = 0;
 
     if ((unsigned int)count != size()) {
@@ -96,7 +96,7 @@ CurlStack::process_done_handle() {
   int      remaining_msgs = 0;
   CURLMsg* msg = curl_multi_info_read((CURLM*)m_handle, &remaining_msgs);
 
-  if (msg == NULL)
+  if (msg == nullptr)
     return false;
 
   if (msg->msg != CURLMSG_DONE)
@@ -123,7 +123,7 @@ CurlStack::process_done_handle() {
   } else {
     transfer_done(msg->easy_handle,
                   msg->data.result == CURLE_OK
-                    ? NULL
+                    ? nullptr
                     : curl_easy_strerror(msg->data.result));
   }
 
@@ -141,7 +141,7 @@ CurlStack::transfer_done(void* handle, const char* msg) {
     throw torrent::internal_error(
       "Could not find CurlGet with the right easy_handle.");
 
-  if (msg == NULL)
+  if (msg == nullptr)
     (*itr)->trigger_done();
   else
     (*itr)->trigger_failed(msg);
@@ -149,7 +149,7 @@ CurlStack::transfer_done(void* handle, const char* msg) {
 
 void
 CurlStack::receive_timeout() {
-  receive_action(NULL, 0);
+  receive_action(nullptr, 0);
 
   // Sometimes libcurl forgets to reset the timeout. Try to poll the value in
   // that case, or use 10 seconds.

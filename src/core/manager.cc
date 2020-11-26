@@ -51,7 +51,7 @@ Manager::push_log(const char* msg) {
 }
 
 Manager::Manager()
-  : m_hashingView(NULL)
+  : m_hashingView(nullptr)
   , m_log_important(torrent::log_open_log_buffer("important"))
   , m_log_complete(torrent::log_open_log_buffer("complete")) {
   m_downloadStore   = new DownloadStore();
@@ -78,9 +78,9 @@ Manager::~Manager() {
 
 void
 Manager::set_hashing_view(View* v) {
-  if (v == NULL || m_hashingView != NULL)
+  if (v == nullptr || m_hashingView != nullptr)
     throw torrent::internal_error(
-      "Manager::set_hashing_view(...) received NULL or is already set.");
+      "Manager::set_hashing_view(...) received nullptr or is already set.");
 
   m_hashingView = v;
   m_hashingView->signal_changed().push_back(
@@ -91,13 +91,13 @@ torrent::ThrottlePair
 Manager::get_throttle(const std::string& name) {
   ThrottleMap::const_iterator itr = m_throttles.find(name);
   torrent::ThrottlePair       throttles =
-    (itr == m_throttles.end() ? torrent::ThrottlePair(NULL, NULL)
+    (itr == m_throttles.end() ? torrent::ThrottlePair(nullptr, nullptr)
                               : itr->second);
 
-  if (throttles.first == NULL)
+  if (throttles.first == nullptr)
     throttles.first = torrent::up_throttle_global();
 
-  if (throttles.second == NULL)
+  if (throttles.second == nullptr)
     throttles.second = torrent::down_throttle_global();
 
   return throttles;
@@ -118,7 +118,7 @@ torrent::ThrottlePair
 Manager::get_address_throttle(const sockaddr* addr) {
   return m_addressThrottles.get(
     torrent::utils::socket_address::cast_from(addr)->sa_inet()->address_h(),
-    torrent::ThrottlePair(NULL, NULL));
+    torrent::ThrottlePair(nullptr, nullptr));
 }
 
 int64_t
@@ -134,7 +134,7 @@ Manager::retrieve_throttle_value(const torrent::Object::string_type& name,
 
     // check whether the actual up/down throttle exist (one of the pair can be
     // missing)
-    if (throttle == NULL)
+    if (throttle == nullptr)
       return (int64_t)-1;
 
     int64_t throttle_max = (int64_t)throttle->max_rate();
@@ -408,7 +408,7 @@ Manager::try_create_download_from_meta_download(torrent::Object*   bencode,
   f->slot_finished(
     std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
 
-  // Bit of a waste to create the bencode repesentation here
+  // Bit of a waste to create the bencode representation here
   // only to have the DownloadFactory decode it.
   std::stringstream s;
   s.imbue(std::locale::classic());
@@ -523,7 +523,7 @@ Manager::try_create_download_expand(const std::string& uri,
 
 // DownloadList's hashing related functions don't actually start the
 // hashing, it only reacts to events. This functions checks the
-// hashing view and starts hashing if nessesary.
+// hashing view and starts hashing if necessary.
 void
 Manager::receive_hashing_changed() {
   bool foundHashing = std::find_if(m_hashingView->begin_visible(),

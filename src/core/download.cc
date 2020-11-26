@@ -91,7 +91,7 @@ Download::distributed_copies() const {
   const uint8_t*           avail    = m_download.chunks_seen();
   const torrent::Bitfield* bitfield = m_download.file_list()->bitfield();
 
-  if (avail == NULL)
+  if (avail == nullptr)
     return 0;
 
   int minAvail = std::numeric_limits<uint8_t>::max();
@@ -149,7 +149,7 @@ Download::set_root_directory(const std::string& path) {
     control->core()->download_list()->close_directly(this);
 
     throw torrent::input_error("Cannot change the directory of an open "
-                               "download atter the files have been moved.");
+                               "download after the files have been moved.");
   }
 
   control->core()->download_list()->close_directly(this);

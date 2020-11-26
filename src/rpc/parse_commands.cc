@@ -288,7 +288,7 @@ command_function_call_object(const torrent::Object& cmd,
   else if (args.type() != torrent::Object::TYPE_NONE)
     last_stack = rpc::command_base::push_stack(&args, &args + 1, &stack);
   else
-    last_stack = rpc::command_base::push_stack(NULL, NULL, &stack);
+    last_stack = rpc::command_base::push_stack(nullptr, nullptr, &stack);
 
   try {
     torrent::Object result = call_object(cmd, target);

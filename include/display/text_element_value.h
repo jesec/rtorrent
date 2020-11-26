@@ -73,7 +73,7 @@ public:
   }
 
 private:
-  virtual int64_t value(void* object) {
+  virtual int64_t value(void*) {
     return m_value;
   }
 
@@ -98,7 +98,7 @@ public:
   }
 
 private:
-  virtual int64_t value(void* object) {
+  virtual int64_t value(void*) {
     return m_slot();
   }
 
@@ -125,7 +125,7 @@ public:
 
 private:
   virtual int64_t value(void* object) {
-    if (object == NULL)
+    if (object == nullptr)
       return 0;
 
     return m_slot(reinterpret_cast<arg1_type>(object));

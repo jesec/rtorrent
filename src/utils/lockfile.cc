@@ -103,7 +103,7 @@ Lockfile::locked_by() const {
   long long int pid;
 
   if (beginPid + 2 >= last || *(beginPid++) != ':' || *(beginPid++) != '+' ||
-      (pid = strtoll(beginPid, &endPid, 10)) == 0 || endPid == NULL)
+      (pid = strtoll(beginPid, &endPid, 10)) == 0 || endPid == nullptr)
     return process_type(std::string(), 0);
 
   return process_type(std::string(first, endHostname), pid);

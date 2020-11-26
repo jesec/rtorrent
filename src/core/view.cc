@@ -245,7 +245,7 @@ View::prev_focus() {
 
 void
 View::sort() {
-  Download* curFocus = focus() != end_visible() ? *focus() : NULL;
+  Download* curFocus = focus() != end_visible() ? *focus() : nullptr;
 
   // Don't go randomly switching around equivalent elements.
   std::stable_sort(

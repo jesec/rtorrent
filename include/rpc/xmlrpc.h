@@ -45,12 +45,12 @@ public:
   static const int call_file_itr = 6;
 
   XmlRpc()
-    : m_env(NULL)
-    , m_registry(NULL)
+    : m_env(nullptr)
+    , m_registry(nullptr)
     , m_dialect(dialect_i8) {}
 
   bool is_valid() const {
-    return m_env != NULL;
+    return m_env != nullptr;
   }
 
   void initialize();

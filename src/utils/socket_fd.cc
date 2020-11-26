@@ -212,8 +212,8 @@ SocketFd::accept(torrent::utils::socket_address* sa) {
   check_valid();
   socklen_t len = sizeof(torrent::utils::socket_address);
 
-  if (sa == NULL) {
-    return SocketFd(::accept(m_fd, NULL, &len));
+  if (sa == nullptr) {
+    return SocketFd(::accept(m_fd, nullptr, &len));
   }
   int fd = ::accept(m_fd, sa->c_sockaddr(), &len);
   if (fd != -1 && m_ipv6_socket &&

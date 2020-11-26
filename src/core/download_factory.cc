@@ -63,8 +63,8 @@ is_magnet_uri(const std::string& uri) {
 
 DownloadFactory::DownloadFactory(Manager* m)
   : m_manager(m)
-  , m_stream(NULL)
-  , m_object(NULL)
+  , m_stream(nullptr)
+  , m_object(nullptr)
   , m_commited(false)
   , m_loaded(false)
   ,
@@ -93,7 +93,7 @@ DownloadFactory::~DownloadFactory() {
 
   delete m_stream;
   delete m_object;
-  m_stream = NULL;
+  m_stream = nullptr;
 }
 
 void
@@ -182,12 +182,13 @@ DownloadFactory::receive_commit() {
 void
 DownloadFactory::receive_success() {
   Download* download =
-    m_stream != NULL ? m_manager->download_list()->create(m_stream, m_printLog)
-                     : m_manager->download_list()->create(m_object, m_printLog);
+    m_stream != nullptr
+      ? m_manager->download_list()->create(m_stream, m_printLog)
+      : m_manager->download_list()->create(m_object, m_printLog);
 
-  m_object = NULL;
+  m_object = nullptr;
 
-  if (download == NULL) {
+  if (download == nullptr) {
     // core::Manager should already have added the error message to
     // the log.
     m_slot_finished();

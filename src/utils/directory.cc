@@ -33,7 +33,7 @@ Directory::update(int flags) {
 
   DIR* d = opendir(torrent::utils::path_expand(m_path).c_str());
 
-  if (d == NULL)
+  if (d == nullptr)
     return false;
 
   struct dirent* entry;
@@ -41,7 +41,7 @@ Directory::update(int flags) {
   struct stat s;
 #endif
 
-  while ((entry = readdir(d)) != NULL) {
+  while ((entry = readdir(d)) != nullptr) {
     if ((flags & update_hide_dot) && entry->d_name[0] == '.')
       continue;
 

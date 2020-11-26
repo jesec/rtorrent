@@ -152,7 +152,7 @@ ipv4_range_parse(const char* address,
   // skip everything up to and including last ':' character and whitespace
   const char* addr = strrchr(address_copy, ':');
 
-  addr = (addr == NULL) ? address_copy : addr + 1;
+  addr = (addr == nullptr) ? address_copy : addr + 1;
 
   while (addr[0] == ' ' || addr[0] == '\t')
     addr++;
@@ -166,7 +166,7 @@ ipv4_range_parse(const char* address,
 
   address_start_str[address_start_index] = '\0';
 
-  if (strchr(addr, '-') != NULL) {
+  if (strchr(addr, '-') != nullptr) {
     // explicit range
     char               address_end_str[20];
     int                address_end_index = 0;
@@ -192,7 +192,7 @@ ipv4_range_parse(const char* address,
       if (*address_start <= *address_end)
         valid = true;
     }
-  } else if (strchr(addr, '/') != NULL) {
+  } else if (strchr(addr, '/') != nullptr) {
     // cidr range
     char     mask_bits_str[20];
     int      mask_bits_index = 0;

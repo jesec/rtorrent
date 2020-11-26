@@ -339,7 +339,7 @@ struct call_add_d_peer_t {
     , m_port(port) {}
 
   void operator()(const sockaddr* sa, int) {
-    if (sa == NULL) {
+    if (sa == nullptr) {
       lt_log_print(torrent::LOG_TORRENT_WARN,
                    "could not resolve hostname for added peer");
     } else {
@@ -384,7 +384,7 @@ torrent::Object
 d_chunks_seen(core::Download* download) {
   const uint8_t* seen = download->download()->chunks_seen();
 
-  if (seen == NULL)
+  if (seen == nullptr)
     return std::string();
 
   uint32_t size = download->download()->file_list()->size_chunks();
@@ -591,8 +591,8 @@ download_tracker_insert(core::Download*                   download,
 torrent::Object&
 download_get_variable(core::Download* download,
                       const char*     first_key,
-                      const char*     second_key = NULL) {
-  if (second_key == NULL)
+                      const char*     second_key = nullptr) {
+  if (second_key == nullptr)
     return download->bencode()->get_key(first_key);
 
   return download->bencode()->get_key(first_key).get_key(second_key);
@@ -602,8 +602,8 @@ torrent::Object
 download_set_variable(core::Download*        download,
                       const torrent::Object& rawArgs,
                       const char*            first_key,
-                      const char*            second_key = NULL) {
-  if (second_key == NULL)
+                      const char*            second_key = nullptr) {
+  if (second_key == nullptr)
     return download->bencode()->get_key(first_key) =
              torrent::object_create_normal(rawArgs);
 
@@ -615,8 +615,8 @@ torrent::Object
 download_set_variable_value(core::Download*                    download,
                             const torrent::Object::value_type& args,
                             const char*                        first_key,
-                            const char* second_key = NULL) {
-  if (second_key == NULL)
+                            const char* second_key = nullptr) {
+  if (second_key == nullptr)
     return download->bencode()->get_key(first_key) = args;
 
   return download->bencode()->get_key(first_key).get_key(second_key) = args;
@@ -626,9 +626,9 @@ torrent::Object
 download_set_variable_value_ifz(core::Download*                    download,
                                 const torrent::Object::value_type& args,
                                 const char*                        first_key,
-                                const char* second_key = NULL) {
+                                const char* second_key = nullptr) {
   torrent::Object& object =
-    second_key == NULL
+    second_key == nullptr
       ? download->bencode()->get_key(first_key)
       : download->bencode()->get_key(first_key).get_key(second_key);
 
@@ -642,8 +642,8 @@ torrent::Object
 download_set_variable_string(core::Download*                     download,
                              const torrent::Object::string_type& args,
                              const char*                         first_key,
-                             const char* second_key = NULL) {
-  if (second_key == NULL)
+                             const char* second_key = nullptr) {
+  if (second_key == nullptr)
     return download->bencode()->get_key(first_key) = args;
 
   return download->bencode()->get_key(first_key).get_key(second_key) = args;

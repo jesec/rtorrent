@@ -60,7 +60,7 @@ public:
   void adjust_down_throttle(int throttle);
 
   display::Window* window() {
-    return NULL;
+    return nullptr;
   }
   core::Download* download() {
     return m_download;

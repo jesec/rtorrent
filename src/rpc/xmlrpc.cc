@@ -47,7 +47,7 @@ torrent::Object
 xmlrpc_to_object(xmlrpc_env*       env,
                  xmlrpc_value*     value,
                  int               callType = 0,
-                 rpc::target_type* target   = NULL);
+                 rpc::target_type* target   = nullptr);
 
 inline torrent::Object
 xmlrpc_list_entry_to_object(xmlrpc_env* env, xmlrpc_value* src, int index) {
@@ -136,7 +136,7 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
 
       core::Download* download = xmlrpc.slot_find_download()(str);
 
-      if (download == NULL) {
+      if (download == nullptr) {
         ::free((void*)str);
         throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Could not find info-hash.");
       }
@@ -199,7 +199,7 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
       ::free((void*)str);
 
       // Check if the target pointer is NULL.
-      if (target.second == NULL)
+      if (target.second == nullptr)
         throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Invalid index.");
 
       return target;
@@ -222,11 +222,11 @@ xmlrpc_to_index_type(int index, int callType, core::Download* download) {
       result = xmlrpc.slot_find_tracker()(download, index);
       break;
     default:
-      result = NULL;
+      result = nullptr;
       break;
   }
 
-  if (result == NULL)
+  if (result == nullptr)
     throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Invalid index.");
 
   return rpc::make_target(callType, result);
@@ -486,7 +486,7 @@ xmlrpc_call_command(xmlrpc_env* env, xmlrpc_value* args, void* voidServerInfo) {
                           std::string((const char*)voidServerInfo) +
                           "\" does not exist.")
                            .c_str());
-    return NULL;
+    return nullptr;
   }
 
   try {
@@ -503,18 +503,18 @@ xmlrpc_call_command(xmlrpc_env* env, xmlrpc_value* args, void* voidServerInfo) {
       xmlrpc_to_object(env, args, XmlRpc::call_any, &target).swap(object);
 
     if (env->fault_occurred)
-      return NULL;
+      return nullptr;
 
     return object_to_xmlrpc(env,
                             rpc::commands.call_command(itr, object, target));
 
   } catch (xmlrpc_error& e) {
     xmlrpc_env_set_fault(env, e.type(), e.what());
-    return NULL;
+    return nullptr;
 
   } catch (torrent::local_error& e) {
     xmlrpc_env_set_fault(env, XMLRPC_PARSE_ERROR, e.what());
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -546,7 +546,7 @@ XmlRpc::process(const char* inBuffer, uint32_t length, slot_write slotWrite) {
   xmlrpc_env_init(&localEnv);
 
   xmlrpc_mem_block* memblock = xmlrpc_registry_process_call(
-    &localEnv, (xmlrpc_registry*)m_registry, NULL, inBuffer, length);
+    &localEnv, (xmlrpc_registry*)m_registry, nullptr, inBuffer, length);
 
   if (localEnv.fault_occurred && localEnv.fault_code == XMLRPC_INTERNAL_ERROR)
     throw torrent::internal_error("Internal error in XMLRPC.");
@@ -566,7 +566,7 @@ XmlRpc::insert_command(const char* name, const char* parm, const char* doc) {
 
   xmlrpc_registry_add_method_w_doc(&localEnv,
                                    (xmlrpc_registry*)m_registry,
-                                   NULL,
+                                   nullptr,
                                    name,
                                    &xmlrpc_call_command,
                                    const_cast<char*>(name),

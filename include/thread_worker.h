@@ -44,7 +44,7 @@ private:
 
   struct lt_cacheline_aligned safe_type {
     safe_type()
-      : scgi(NULL) {}
+      : scgi(nullptr) {}
 
     rpc::SCgi* scgi;
   };

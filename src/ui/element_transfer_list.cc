@@ -14,7 +14,7 @@ namespace ui {
 
 ElementTransferList::ElementTransferList(core::Download* d)
   : m_download(d)
-  , m_window(NULL)
+  , m_window(nullptr)
   , m_focus(0) {
 
   m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
@@ -53,10 +53,10 @@ ElementTransferList::disable() {
   control->input()->erase(&m_bindings);
 
   m_frame->clear();
-  m_frame = NULL;
+  m_frame = nullptr;
 
   delete m_window;
-  m_window = NULL;
+  m_window = nullptr;
 }
 
 display::Window*
@@ -80,7 +80,7 @@ ElementTransferList::window() {
 
 void
 ElementTransferList::receive_next() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error(
       "ui::ElementTransferList::receive_next(...) called on a disabled object");
 
@@ -92,7 +92,7 @@ ElementTransferList::receive_next() {
 
 void
 ElementTransferList::receive_prev() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error(
       "ui::ElementTransferList::receive_prev(...) called on a disabled object");
 
@@ -106,7 +106,7 @@ ElementTransferList::receive_prev() {
 
 void
 ElementTransferList::receive_pagenext() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error("ui::ElementTransferList::receive_pagenext(.."
                                   ".) called on a disabled object");
 
@@ -125,7 +125,7 @@ ElementTransferList::receive_pagenext() {
 
 void
 ElementTransferList::receive_pageprev() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error("ui::ElementTransferList::receive_pageprev(.."
                                   ".) called on a disabled object");
 

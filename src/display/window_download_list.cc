@@ -16,23 +16,23 @@ namespace display {
 
 WindowDownloadList::WindowDownloadList()
   : Window(new Canvas, 0, 120, 1, extent_full, extent_full)
-  , m_view(NULL) {}
+  , m_view(nullptr) {}
 
 WindowDownloadList::~WindowDownloadList() {
-  if (m_view != NULL)
+  if (m_view != nullptr)
     m_view->signal_changed().erase(m_changed_itr);
 
-  m_view = NULL;
+  m_view = nullptr;
 }
 
 void
 WindowDownloadList::set_view(core::View* l) {
-  if (m_view != NULL)
+  if (m_view != nullptr)
     m_view->signal_changed().erase(m_changed_itr);
 
   m_view = l;
 
-  if (m_view != NULL)
+  if (m_view != nullptr)
     m_changed_itr = m_view->signal_changed().insert(
       m_view->signal_changed().begin(), std::bind(&Window::mark_dirty, this));
 }
@@ -45,7 +45,7 @@ WindowDownloadList::redraw() {
 
   m_canvas->erase();
 
-  if (m_view == NULL)
+  if (m_view == nullptr)
     return;
 
   m_canvas->print(0,

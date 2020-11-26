@@ -43,7 +43,7 @@ SCgiTask::open(SCgi* parent, int fd) {
   m_buffer   = torrent::utils::cacheline_allocator<char>::alloc_size(
     (m_bufferSize = default_buffer_size) + 1);
   m_position = m_buffer;
-  m_body     = NULL;
+  m_body     = nullptr;
 
   worker_thread->poll()->open(this);
   worker_thread->poll()->insert_read(this);
@@ -66,7 +66,7 @@ SCgiTask::close() {
   get_fd().clear();
 
   ::free(m_buffer);
-  m_buffer = NULL;
+  m_buffer = nullptr;
 
   // Test
   //   char buffer[512];
@@ -92,7 +92,7 @@ SCgiTask::event_read() {
   m_position += bytes;
   *m_position = '\0';
 
-  if (m_body == NULL) {
+  if (m_body == nullptr) {
     // Don't bother caching the parsed values, as we're likely to
     // receive all the data we need the first time.
     char* current;
@@ -204,13 +204,13 @@ SCgiTask::event_error() {
 
 bool
 SCgiTask::receive_write(const char* buffer, uint32_t length) {
-  if (buffer == NULL || length > (100 << 20))
+  if (buffer == nullptr || length > (100 << 20))
     throw torrent::internal_error(
       "SCgiTask::receive_write(...) received bad input.");
 
   // Need to cast due to a bug in MacOSX gcc-4.0.1.
   if (length + 256 > std::max(m_bufferSize, (unsigned int)default_buffer_size))
-    realloc_buffer(length + 256, NULL, 0);
+    realloc_buffer(length + 256, nullptr, 0);
 
   // Who ever bothers to check the return value?
   int headerSize = sprintf(
@@ -224,7 +224,7 @@ SCgiTask::receive_write(const char* buffer, uint32_t length) {
   std::memcpy(m_buffer + headerSize, buffer, length);
 
   if (m_parent->log_fd() >= 0) {
-    ssize_t result;
+    ssize_t __attribute__((unused)) result;
     // Clean up logging, this is just plain ugly...
     //    write(m_logFd, "\n---\n", sizeof("\n---\n"));
     result = write(m_parent->log_fd(), m_buffer, m_bufferSize);

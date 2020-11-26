@@ -28,13 +28,13 @@ public:
   using Base::push_back;
 
   Manager()
-    : m_textInput(NULL) {}
+    : m_textInput(nullptr) {}
 
   void erase(Bindings* b);
 
   void pressed(int key);
 
-  void set_text_input(TextInput* input = NULL) {
+  void set_text_input(TextInput* input = nullptr) {
     m_textInput = input;
   }
 

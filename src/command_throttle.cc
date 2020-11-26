@@ -85,18 +85,19 @@ apply_throttle(const torrent::Object::list_type& args, bool up) {
 
   core::ThrottleMap::iterator itr = control->core()->throttles().find(name);
   if (itr == control->core()->throttles().end())
-    itr = control->core()
-            ->throttles()
-            .insert(std::make_pair(name, torrent::ThrottlePair(NULL, NULL)))
-            .first;
+    itr =
+      control->core()
+        ->throttles()
+        .insert(std::make_pair(name, torrent::ThrottlePair(nullptr, nullptr)))
+        .first;
 
   torrent::Throttle*& throttle = up ? itr->second.first : itr->second.second;
-  if (rate != 0 && throttle == NULL)
+  if (rate != 0 && throttle == nullptr)
     throttle =
       (up ? torrent::up_throttle_global() : torrent::down_throttle_global())
         ->create_slave();
 
-  if (throttle != NULL)
+  if (throttle != nullptr)
     throttle->set_max_rate(rate * 1024);
 
   return torrent::Object();
@@ -111,7 +112,7 @@ torrent::Object
 retrieve_throttle_info(const torrent::Object::string_type& name, int flags) {
   core::ThrottleMap::iterator itr = control->core()->throttles().find(name);
   torrent::ThrottlePair throttles = itr == control->core()->throttles().end()
-                                      ? torrent::ThrottlePair(NULL, NULL)
+                                      ? torrent::ThrottlePair(nullptr, nullptr)
                                       : itr->second;
   torrent::Throttle*    throttle =
     flags & throttle_info_down ? throttles.second : throttles.first;
@@ -119,10 +120,10 @@ retrieve_throttle_info(const torrent::Object::string_type& name, int flags) {
                                 ? torrent::down_throttle_global()
                                 : torrent::up_throttle_global();
 
-  if (throttle == NULL && name.empty())
+  if (throttle == nullptr && name.empty())
     throttle = global;
 
-  if (throttle == NULL)
+  if (throttle == nullptr)
     return flags & throttle_info_rate ? (int64_t)0 : (int64_t)-1;
   else if (!throttle->is_throttled() || !global->is_throttled())
     return (int64_t)0;

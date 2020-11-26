@@ -258,7 +258,7 @@ Download::disable() {
   m_windowDownloadStatus->set_active(false);
   m_frame->clear();
 
-  m_frame = NULL;
+  m_frame = nullptr;
 }
 
 void
@@ -392,8 +392,8 @@ Download::adjust_down_throttle(int throttle) {
   core::ThrottleMap::iterator itr = control->core()->throttles().find(
     m_download->bencode()->get_key("rtorrent").get_key_string("throttle_name"));
 
-  if (itr == control->core()->throttles().end() || itr->second.second == NULL ||
-      itr->first == "NULL")
+  if (itr == control->core()->throttles().end() ||
+      itr->second.second == nullptr || itr->first == "NULL")
     control->ui()->adjust_down_throttle(throttle);
   else
     itr->second.second->set_max_rate(std::max<int>(
@@ -411,8 +411,8 @@ Download::adjust_up_throttle(int throttle) {
   core::ThrottleMap::iterator itr = control->core()->throttles().find(
     m_download->bencode()->get_key("rtorrent").get_key_string("throttle_name"));
 
-  if (itr == control->core()->throttles().end() || itr->second.first == NULL ||
-      itr->first == "NULL")
+  if (itr == control->core()->throttles().end() ||
+      itr->second.first == nullptr || itr->first == "NULL")
     control->ui()->adjust_up_throttle(throttle);
   else
     itr->second.first->set_max_rate(std::max<int>(

@@ -107,7 +107,7 @@ Download*
 DownloadList::find_hex_ptr(const char* hash) {
   iterator itr = find_hex(hash);
 
-  return itr != end() ? *itr : NULL;
+  return itr != end() ? *itr : nullptr;
 }
 
 Download*
@@ -124,7 +124,7 @@ DownloadList::create(torrent::Object* obj, bool printLog) {
       lt_log_print(
         torrent::LOG_TORRENT_ERROR, "Could not create download: %s", e.what());
 
-    return NULL;
+    return nullptr;
   }
 
   // There's no non-critical exceptions that should be throwable by
@@ -150,7 +150,7 @@ DownloadList::create(std::istream* str, bool printLog) {
           torrent::LOG_TORRENT_ERROR,
           "Could not create download, the input is not a valid torrent.");
 
-      return NULL;
+      return nullptr;
     }
 
     download = torrent::download_add(object);
@@ -162,7 +162,7 @@ DownloadList::create(std::istream* str, bool printLog) {
       lt_log_print(
         torrent::LOG_TORRENT_ERROR, "Could not create download: %s", e.what());
 
-    return NULL;
+    return nullptr;
   }
 
   // There's no non-critical exceptions that should be throwable by
@@ -344,7 +344,7 @@ DownloadList::close_throw(Download* download) {
 
   // Save the torrent on close, this covers shutdown and if a torrent
   // is manually closed which would clear the progress data. For
-  // better crash protection, save regulary in addition to this.
+  // better crash protection, save regularly in addition to this.
   //
   // Used to be in pause, but this was wrong for rehashing etc.
   //
@@ -381,7 +381,7 @@ DownloadList::resume(Download* download, int flags) {
     rpc::parse_command_single(rpc::make_target(download),
                               "view.set_visible=active");
 
-    // We need to make sure the flags aren't reset if someone decideds
+    // We need to make sure the flags aren't reset if someone decides
     // to call resume() while it is hashing, etc.
     if (download->resume_flags() == ~uint32_t())
       download->set_resume_flags(flags);
@@ -625,7 +625,7 @@ DownloadList::hash_done(Download* download) {
   // downloaded to ensure something was transferred, thus we didn't
   // just hash an already completed torrent with lacking session data?
   //
-  // Perhaps we should use a seperate variable or state, and check
+  // Perhaps we should use a separate variable or state, and check
   // that. Thus we can bork the download if the hash check doesn't
   // confirm all the data, avoiding large BW usage on f.ex. the
   // ReiserFS bug with >4GB files.

@@ -16,7 +16,7 @@ namespace ui {
 
 ElementTrackerList::ElementTrackerList(core::Download* d)
   : m_download(d)
-  , m_window(NULL)
+  , m_window(nullptr)
   , m_focus(0) {
 
   m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
@@ -33,7 +33,7 @@ ElementTrackerList::ElementTrackerList(core::Download* d)
 
 void
 ElementTrackerList::activate(display::Frame* frame, bool focus) {
-  if (m_window != NULL)
+  if (m_window != nullptr)
     throw torrent::internal_error(
       "ui::ElementTrackerList::activate(...) is_active().");
 
@@ -50,17 +50,17 @@ ElementTrackerList::activate(display::Frame* frame, bool focus) {
 
 void
 ElementTrackerList::disable() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error(
       "ui::ElementTrackerList::disable(...) !is_active().");
 
   control->input()->erase(&m_bindings);
 
   m_frame->clear();
-  m_frame = NULL;
+  m_frame = nullptr;
 
   delete m_window;
-  m_window = NULL;
+  m_window = nullptr;
 }
 
 display::Window*
@@ -70,7 +70,7 @@ ElementTrackerList::window() {
 
 void
 ElementTrackerList::receive_disable() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error("ui::ElementTrackerList::receive_disable(...)"
                                   " called on a disabled object");
 
@@ -86,7 +86,7 @@ ElementTrackerList::receive_disable() {
 
 void
 ElementTrackerList::receive_next() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error(
       "ui::ElementTrackerList::receive_next(...) called on a disabled object");
 
@@ -98,7 +98,7 @@ ElementTrackerList::receive_next() {
 
 void
 ElementTrackerList::receive_prev() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error(
       "ui::ElementTrackerList::receive_prev(...) called on a disabled object");
 
@@ -115,7 +115,7 @@ ElementTrackerList::receive_prev() {
 
 void
 ElementTrackerList::receive_cycle_group() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error("ui::ElementTrackerList::receive_group_cycle("
                                   "...) called on a disabled object");
 

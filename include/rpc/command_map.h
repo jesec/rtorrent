@@ -125,11 +125,13 @@ public:
   const mapped_type call_command(
     key_type           key,
     const mapped_type& arg,
-    target_type target = target_type((int)command_base::target_generic, NULL));
+    target_type        target = target_type((int)command_base::target_generic,
+                                     nullptr));
   const mapped_type call_command(
     iterator           itr,
     const mapped_type& arg,
-    target_type target = target_type((int)command_base::target_generic, NULL));
+    target_type        target = target_type((int)command_base::target_generic,
+                                     nullptr));
 
   const mapped_type call_command_d(key_type           key,
                                    core::Download*    download,
@@ -163,7 +165,7 @@ private:
 
 inline target_type
 make_target() {
-  return target_type((int)command_base::target_generic, NULL);
+  return target_type((int)command_base::target_generic, nullptr);
 }
 inline target_type
 make_target(int type, void* target) {

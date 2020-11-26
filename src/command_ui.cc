@@ -137,17 +137,17 @@ apply_value(rpc::target_type, const torrent::Object::list_type& args) {
   if (args.front().is_value()) {
     val = args.front().as_value();
   } else {
-    int   base   = args.size() > 1
-                     ? args.back().is_value()
-                         ? args.back().as_value()
-                         : strtol(args.back().as_string().c_str(), NULL, 10)
-                     : 10;
-    char* endptr = 0;
+    int   base = args.size() > 1
+                   ? args.back().is_value()
+                       ? args.back().as_value()
+                       : strtol(args.back().as_string().c_str(), nullptr, 10)
+                   : 10;
+    char* endptr;
 
     val = strtoll(args.front().as_string().c_str(), &endptr, base);
     while (*endptr == ' ' || *endptr == '\n')
       ++endptr;
-    if (*endptr)
+    if (*endptr && *endptr != '\0')
       throw torrent::input_error("Junk at end of number: " +
                                  args.front().as_string());
   }
@@ -444,7 +444,7 @@ apply_to_time(const torrent::Object& rawArgs, int flags) {
   else
     u = std::gmtime(&t);
 
-  if (u == NULL)
+  if (u == nullptr)
     return torrent::Object();
 
   char buffer[11];

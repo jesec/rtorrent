@@ -14,7 +14,7 @@ namespace ui {
 
 ElementChunksSeen::ElementChunksSeen(core::Download* d)
   : m_download(d)
-  , m_window(NULL)
+  , m_window(nullptr)
   , m_focus(0) {
 
   m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
@@ -53,10 +53,10 @@ ElementChunksSeen::disable() {
   control->input()->erase(&m_bindings);
 
   m_frame->clear();
-  m_frame = NULL;
+  m_frame = nullptr;
 
   delete m_window;
-  m_window = NULL;
+  m_window = nullptr;
 }
 
 display::Window*
@@ -80,7 +80,7 @@ ElementChunksSeen::window() {
 
 void
 ElementChunksSeen::receive_next() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error(
       "ui::ElementChunksSeen::receive_next(...) called on a disabled object");
 
@@ -92,7 +92,7 @@ ElementChunksSeen::receive_next() {
 
 void
 ElementChunksSeen::receive_prev() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error(
       "ui::ElementChunksSeen::receive_prev(...) called on a disabled object");
 
@@ -106,7 +106,7 @@ ElementChunksSeen::receive_prev() {
 
 void
 ElementChunksSeen::receive_pagenext() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error("ui::ElementChunksSeen::receive_pagenext(...)"
                                   " called on a disabled object");
 
@@ -125,7 +125,7 @@ ElementChunksSeen::receive_pagenext() {
 
 void
 ElementChunksSeen::receive_pageprev() {
-  if (m_window == NULL)
+  if (m_window == nullptr)
     throw torrent::internal_error("ui::ElementChunksSeen::receive_pageprev(...)"
                                   " called on a disabled object");
 

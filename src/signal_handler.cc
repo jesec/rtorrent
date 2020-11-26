@@ -51,7 +51,7 @@ SignalHandler::set_handler(unsigned int signum, slot_void slot) {
   sa.sa_flags   = SA_RESTART;
   sa.sa_handler = &SignalHandler::caught;
 
-  if (sigaction(signum, &sa, NULL) == -1)
+  if (sigaction(signum, &sa, nullptr) == -1)
     throw std::logic_error(
       "Could not set sigaction: " +
       std::string(torrent::utils::error_number::current().c_str()));
@@ -71,7 +71,7 @@ SignalHandler::set_sigaction_handler(unsigned int signum, handler_slot slot) {
 
   sigemptyset(&sa.sa_mask);
 
-  if (sigaction(signum, &sa, NULL) == -1)
+  if (sigaction(signum, &sa, nullptr) == -1)
     throw std::logic_error(
       "Could not set sigaction: " +
       std::string(torrent::utils::error_number::current().c_str()));

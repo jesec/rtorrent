@@ -32,7 +32,7 @@ public:
 
   TextElementList()
     : m_column(0)
-    , m_columnWidth(0) {}
+    , m_columnWidth(nullptr) {}
   virtual ~TextElementList() {
     clear();
   }

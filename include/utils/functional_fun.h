@@ -87,7 +87,7 @@ public:
   typedef function_base1<Result, Arg1> base_type;
 
   bool is_valid() const {
-    return m_base.get() != NULL;
+    return m_base.get() != nullptr;
   }
 
   void set(base_type* base) {
@@ -152,7 +152,7 @@ public:
   }
 
   template<typename Discard>
-  Result operator()(Discard discard, Arg2 arg2) {
+  Result operator()(Discard, Arg2 arg2) {
     return (*m_base)(arg2);
   }
 

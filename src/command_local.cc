@@ -71,9 +71,9 @@ system_hostname() {
 
 torrent::Object
 system_get_cwd() {
-  char* buffer = getcwd(NULL, 0);
+  char* buffer = getcwd(nullptr, 0);
 
-  if (buffer == NULL)
+  if (buffer == nullptr)
     throw torrent::input_error("Unable to read cwd.");
 
   torrent::Object result = torrent::Object(std::string(buffer));
@@ -230,7 +230,7 @@ cmd_file_append(const torrent::Object::list_type& args) {
 
   FILE* output = fopen(args.front().as_string().c_str(), "a");
 
-  if (output == NULL)
+  if (output == nullptr)
     throw torrent::input_error(
       "Could not append to file '" + args.front().as_string() +
       "': " + torrent::utils::error_number::current().c_str());

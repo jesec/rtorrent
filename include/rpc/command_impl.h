@@ -84,7 +84,7 @@ struct target_type_id<core::Download*, core::Download*> {
 
 template<>
 inline bool
-is_target_compatible<target_type>(const target_type& target) {
+is_target_compatible<target_type>(const target_type&) {
   return true;
 }
 template<>
@@ -96,13 +96,13 @@ is_target_compatible<torrent::File*>(const target_type& target) {
 
 template<>
 inline target_type
-get_target_cast<target_type>(target_type target, int type) {
+get_target_cast<target_type>(target_type target, int) {
   return target;
 }
 
 template<>
 inline torrent::File*
-get_target_cast<torrent::File*>(target_type target, int type) {
+get_target_cast<torrent::File*>(target_type target, int) {
   if (target.first == command_base::target_file_itr)
     return static_cast<torrent::FileListIterator*>(target.second)->file();
   else

@@ -29,7 +29,7 @@ struct call_add_node_t {
     : m_port(port) {}
 
   void operator()(const sockaddr* sa, int) {
-    if (sa == NULL) {
+    if (sa == nullptr) {
       lt_log_print(torrent::LOG_DHT_WARN, "Could not resolve host.");
     } else {
       torrent::dht_manager()->add_node(sa, m_port);

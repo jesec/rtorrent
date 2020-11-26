@@ -179,8 +179,8 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
                 std::placeholders::_2),
       &rpc::command_base_call<rpc::target_type>,
       cmd_flags,
-      NULL,
-      NULL);
+      nullptr,
+      nullptr);
 
   } else {
     rpc::commands.insert_slot<rpc::command_base_is_type<
@@ -190,8 +190,8 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
         &rpc::object_storage::get_str, control->object_storage(), rawKey),
       &rpc::command_base_call<rpc::target_type>,
       cmd_flags,
-      NULL,
-      NULL);
+      nullptr,
+      nullptr);
   }
 
   // Not the right argument.
@@ -221,8 +221,8 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
                     std::placeholders::_2),
           &rpc::command_base_call_value<rpc::target_type>,
           cmd_flags,
-          NULL,
-          NULL);
+          nullptr,
+          nullptr);
         break;
       case rpc::object_storage::flag_value_type:
         rpc::commands.insert_slot<rpc::command_base_is_type<
@@ -234,8 +234,8 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
                     std::placeholders::_2),
           &rpc::command_base_call_value<rpc::target_type>,
           cmd_flags,
-          NULL,
-          NULL);
+          nullptr,
+          nullptr);
         break;
       case rpc::object_storage::flag_string_type:
         rpc::commands.insert_slot<rpc::command_base_is_type<
@@ -247,8 +247,8 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
                     std::placeholders::_2),
           &rpc::command_base_call_string<rpc::target_type>,
           cmd_flags,
-          NULL,
-          NULL);
+          nullptr,
+          nullptr);
         break;
       case rpc::object_storage::flag_list_type:
         rpc::commands.insert_slot<rpc::command_base_is_type<
@@ -260,8 +260,8 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
                     std::placeholders::_2),
           &rpc::command_base_call_list<rpc::target_type>,
           cmd_flags,
-          NULL,
-          NULL);
+          nullptr,
+          nullptr);
         break;
       case rpc::object_storage::flag_function_type:
       case rpc::object_storage::flag_multi_type:

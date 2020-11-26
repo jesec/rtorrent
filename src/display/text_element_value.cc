@@ -120,7 +120,7 @@ TextElementValueBase::print(char*                    first,
     time_t   t = val;
     std::tm* u = std::gmtime(&t);
 
-    if (u == NULL)
+    if (u == nullptr)
       return first;
 
     first += std::min<ptrdiff_t>(std::max(snprintf(first,
@@ -136,7 +136,7 @@ TextElementValueBase::print(char*                    first,
     time_t   t = val;
     std::tm* u = std::gmtime(&t);
 
-    if (u == NULL)
+    if (u == nullptr)
       return first;
 
     first += std::min<ptrdiff_t>(std::max(snprintf(first,

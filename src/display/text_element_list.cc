@@ -20,7 +20,7 @@ TextElementList::print(char*                    first,
                        char*                    last,
                        Canvas::attributes_list* attributes,
                        rpc::target_type         target) {
-  int column = m_columnWidth != NULL ? m_column : 0;
+  int column = m_columnWidth != nullptr ? m_column : 0;
 
   // Call print for each element even if first == last so that any
   // attributes gets added to the list.
@@ -51,7 +51,7 @@ TextElementList::print(char*                    first,
 TextElementList::extent_type
 TextElementList::max_length() {
   extent_type length = 0;
-  int         column = m_columnWidth != NULL ? m_column : 0;
+  int         column = m_columnWidth != nullptr ? m_column : 0;
 
   for (iterator itr = begin(); itr != end(); ++itr) {
     extent_type l = column-- > 0

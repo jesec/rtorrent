@@ -38,7 +38,7 @@ public:
     while (first != last)
       m_list.push_back(*(first++));
 
-    if (m_window != NULL) {
+    if (m_window != nullptr) {
       lt_log_print(torrent::LOG_UI_EVENTS,
                    "element_string_list: set range (visible)");
 
@@ -58,7 +58,7 @@ public:
     while (first != last)
       m_list.push_back((first++)->d_name);
 
-    if (m_window != NULL) {
+    if (m_window != nullptr) {
       lt_log_print(torrent::LOG_UI_EVENTS,
                    "element_string_list: set dirent range (visible)");
 

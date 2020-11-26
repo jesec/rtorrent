@@ -21,7 +21,7 @@ public:
 
   CurlGet(CurlStack* s)
     : m_active(false)
-    , m_handle(NULL)
+    , m_handle(nullptr)
     , m_stack(s) {}
   virtual ~CurlGet() noexcept(true);
 
