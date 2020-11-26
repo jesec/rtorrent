@@ -9,6 +9,7 @@ config_setting(
 COPTS = [
     "-std=c++17",
     "-Ofast",
+    "-Werror",
     "-Wall",
     "-Wextra",
     "-faligned-new",
