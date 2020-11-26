@@ -51,7 +51,10 @@ cc_library(
         "-lpthread",
         "-lstdc++",
     ] + select({
-        "//:macos": [],
+        "//:macos": [
+            "-lxml2",
+            "-liconv",
+        ],
         "//conditions:default": [
             "-lxmlrpc_server",
             "-lxmlrpc",
@@ -66,7 +69,6 @@ cc_library(
         "@ncurses//:ncursesw",
     ] + select({
         "//:macos": [
-            "@xml2",
             "@xmlrpc",
         ],
         "//conditions:default": [],

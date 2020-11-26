@@ -14,5 +14,5 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: brew install cppunit libxml2 xmlrpc-c
+      - run: brew install cppunit xmlrpc-c
       - run: bazel test -s

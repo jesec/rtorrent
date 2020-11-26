@@ -75,23 +75,3 @@ new_local_repository(
     build_file_content = _MACOS_XMLRPC,
     path = "/usr/local/opt/xmlrpc-c",
 )
-
-_MACOS_XML2 = """
-load("@rules_cc//cc:defs.bzl", "cc_library")
-
-cc_library(
-  name = "xml2",
-  srcs = [
-      "lib/libxml2.a",
-  ],
-  hdrs = glob(["include/libxml2/**"]),
-  includes = ["include"],
-  visibility = ["//visibility:public"],
-)
-"""
-
-new_local_repository(
-    name = "xml2",
-    build_file_content = _MACOS_XML2,
-    path = "/usr/local/opt/libxml2",
-)
