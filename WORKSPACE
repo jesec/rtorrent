@@ -34,3 +34,46 @@ http_archive(
         "https://invisible-mirror.net/archives/ncurses/ncurses-6.2.tar.gz",
     ],
 )
+
+# MacOS workarounds
+_MACOS_CPPUNIT = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+  name = "cppunit",
+  srcs = ["lib/libcppunit.dylib"],
+  hdrs = glob(["include/cppunit/**"]),
+  includes = ["include"],
+  visibility = ["//visibility:public"],
+)
+"""
+
+new_local_repository(
+    name = "cppunit",
+    build_file_content = _MACOS_CPPUNIT,
+    path = "/usr/local/opt/cppunit",
+)
+
+_MACOS_XMLRPC = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+  name = "xmlrpc",
+  srcs = [
+      "lib/libxmlrpc_server.a",
+      "lib/libxmlrpc.a",
+      "lib/libxmlrpc_util.a",
+      "lib/libxmlrpc_xmlparse.a",
+      "lib/libxmlrpc_xmltok.a",
+  ],
+  hdrs = glob(["include/**/*"]),
+  includes = ["include"],
+  visibility = ["//visibility:public"],
+)
+"""
+
+new_local_repository(
+    name = "xmlrpc",
+    build_file_content = _MACOS_XMLRPC,
+    path = "/usr/local/opt/xmlrpc-c",
+)

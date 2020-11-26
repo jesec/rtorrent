@@ -1,0 +1,18 @@
+name: Test on MacOS
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  bazel:
+    runs-on: macos-11.0
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: brew install cppunit xmlrpc-c
+      - run: bazel test -s || true

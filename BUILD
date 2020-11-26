@@ -1,5 +1,11 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 
+config_setting(
+    name = "macos",
+    values = {"cpu": "darwin"},
+    visibility = ["//visibility:private"],
+)
+
 COPTS = [
     "-std=c++17",
     "-Ofast",
@@ -42,18 +48,27 @@ cc_library(
     includes = ["include"],
     linkopts = LINKOPTS + [
         "-lpthread",
-        "-lxmlrpc_server",
-        "-lxmlrpc",
-        "-lxmlrpc_util",
-        "-lxmlrpc_xmlparse",
-        "-lxmlrpc_xmltok",
         "-lstdc++",
-    ],
+    ] + select({
+        "//:macos": [],
+        "//conditions:default": [
+            "-lxmlrpc_server",
+            "-lxmlrpc",
+            "-lxmlrpc_util",
+            "-lxmlrpc_xmlparse",
+            "-lxmlrpc_xmltok",
+        ],
+    }),
     deps = [
         "@curl",
         "@libtorrent//:torrent",
         "@ncurses//:ncursesw",
-    ],
+    ] + select({
+        "//:macos": [
+            "@xmlrpc",
+        ],
+        "//conditions:default": [],
+    }),
 )
 
 cc_binary(
@@ -81,11 +96,17 @@ cc_test(
     ]) + ["//:included_headers"],
     copts = COPTS,
     includes = ["include"],
-    linkopts = LINKOPTS + [
-        "-lcppunit",
-    ],
+    linkopts = LINKOPTS + select({
+        "//:macos": [],
+        "//conditions:default": ["-lcppunit"],
+    }),
     deps = [
         "//:rtorrent_common",
         "@libtorrent//:torrent",
-    ],
+    ] + select({
+        "//:macos": [
+            "@cppunit",
+        ],
+        "//conditions:default": [],
+    }),
 )
