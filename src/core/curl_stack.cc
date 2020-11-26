@@ -107,7 +107,7 @@ CurlStack::process_done_handle() {
     iterator itr = std::find_if(
       begin(),
       end(),
-      torrent::utils::equal(msg->easy_handle, std::mem_fun(&CurlGet::handle)));
+      torrent::utils::equal(msg->easy_handle, std::mem_fn(&CurlGet::handle)));
 
     if (itr == end())
       throw torrent::internal_error(
@@ -135,7 +135,7 @@ CurlStack::transfer_done(void* handle, const char* msg) {
   iterator itr =
     std::find_if(begin(),
                  end(),
-                 torrent::utils::equal(handle, std::mem_fun(&CurlGet::handle)));
+                 torrent::utils::equal(handle, std::mem_fn(&CurlGet::handle)));
 
   if (itr == end())
     throw torrent::internal_error(
@@ -224,7 +224,7 @@ CurlStack::remove_get(CurlGet* get) {
 
   if (m_active == m_maxActive &&
       (itr = std::find_if(
-         begin(), end(), std::not1(std::mem_fun(&CurlGet::is_active)))) !=
+         begin(), end(), std::not1(std::mem_fn(&CurlGet::is_active)))) !=
         end()) {
     (*itr)->set_active(true);
 

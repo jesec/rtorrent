@@ -42,13 +42,13 @@ ViewManager::insert(const std::string& name) {
 ViewManager::iterator
 ViewManager::find(const std::string& name) {
   return std::find_if(
-    begin(), end(), torrent::utils::equal(name, std::mem_fun(&View::name)));
+    begin(), end(), torrent::utils::equal(name, std::mem_fn(&View::name)));
 }
 
 ViewManager::iterator
 ViewManager::find_throw(const std::string& name) {
   iterator itr = std::find_if(
-    begin(), end(), torrent::utils::equal(name, std::mem_fun(&View::name)));
+    begin(), end(), torrent::utils::equal(name, std::mem_fn(&View::name)));
 
   if (itr == end())
     throw torrent::input_error("Could not find view: " + name);

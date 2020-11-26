@@ -528,7 +528,7 @@ void
 Manager::receive_hashing_changed() {
   bool foundHashing = std::find_if(m_hashingView->begin_visible(),
                                    m_hashingView->end_visible(),
-                                   std::mem_fun(&Download::is_hash_checking)) !=
+                                   std::mem_fn(&Download::is_hash_checking)) !=
                       m_hashingView->end_visible();
 
   // Try quick hashing all those with hashing == initial, set them to

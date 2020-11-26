@@ -215,7 +215,7 @@ print_download_status(char* first, char* last, core::Download* d) {
     torrent::TrackerList::iterator itr =
       std::find_if(d->tracker_list()->begin(),
                    d->tracker_list()->end(),
-                   std::mem_fun(&torrent::Tracker::is_busy_not_scrape));
+                   std::mem_fn(&torrent::Tracker::is_busy_not_scrape));
     char status[128];
 
     (*itr)->get_status(status, sizeof(status));

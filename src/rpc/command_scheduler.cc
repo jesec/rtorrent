@@ -24,7 +24,7 @@ CommandScheduler::find(const std::string& key) {
   return std::find_if(
     begin(),
     end(),
-    torrent::utils::equal(key, std::mem_fun(&CommandSchedulerItem::key)));
+    torrent::utils::equal(key, std::mem_fn(&CommandSchedulerItem::key)));
 }
 
 CommandScheduler::iterator

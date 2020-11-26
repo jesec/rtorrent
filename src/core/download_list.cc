@@ -80,8 +80,8 @@ DownloadList::find(const torrent::HashString& hash) {
     end(),
     torrent::utils::equal(
       hash,
-      torrent::utils::on(std::mem_fun(&Download::info),
-                         std::mem_fun(&torrent::DownloadInfo::hash))));
+      torrent::utils::on(std::mem_fn(&Download::info),
+                         std::mem_fn(&torrent::DownloadInfo::hash))));
 }
 
 DownloadList::iterator
@@ -99,8 +99,8 @@ DownloadList::find_hex(const char* hash) {
     end(),
     torrent::utils::equal(
       key,
-      torrent::utils::on(std::mem_fun(&Download::info),
-                         std::mem_fun(&torrent::DownloadInfo::hash))));
+      torrent::utils::on(std::mem_fn(&Download::info),
+                         std::mem_fn(&torrent::DownloadInfo::hash))));
 }
 
 Download*

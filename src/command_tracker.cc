@@ -74,8 +74,8 @@ apply_enable_trackers(int64_t arg) {
        ++itr) {
     std::for_each((*itr)->tracker_list()->begin(),
                   (*itr)->tracker_list()->end(),
-                  arg ? std::mem_fun(&torrent::Tracker::enable)
-                      : std::mem_fun(&torrent::Tracker::disable));
+                  arg ? std::mem_fn(&torrent::Tracker::enable)
+                      : std::mem_fn(&torrent::Tracker::disable));
 
     if (arg && !rpc::call_command_value("trackers.use_udp"))
       (*itr)->enable_udp_trackers(false);
