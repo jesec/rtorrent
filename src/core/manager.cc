@@ -488,7 +488,7 @@ path_expand(std::vector<std::string>* paths, const std::string& pattern) {
   std::transform(currentCache.begin(),
                  currentCache.end(),
                  std::back_inserter(*paths),
-                 std::mem_fun_ref(&utils::Directory::path));
+                 [](utils::Directory& d) { return d.path(); });
 }
 
 bool

@@ -94,8 +94,9 @@ WindowDownloadChunksSeen::redraw() {
                  (uint32_t)(chunk - seen) == (*itrTransfer)->index()) {
         if (std::find_if((*itrTransfer)->begin(),
                          (*itrTransfer)->end(),
-                         std::mem_fun_ref(&torrent::Block::is_transfering)) !=
-            (*itrTransfer)->end())
+                         [](torrent::Block& b) {
+                           return b.is_transfering();
+                         }) != (*itrTransfer)->end())
           attr = A_REVERSE;
         else
           attr = A_BOLD | A_UNDERLINE;

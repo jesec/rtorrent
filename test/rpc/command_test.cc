@@ -6,7 +6,7 @@ bool
 command_stack_all_empty() {
   return std::find_if(rpc::command_base::stack_begin(),
                       rpc::command_base::stack_end(),
-                      std::mem_fun_ref(&torrent::Object::is_not_empty)) ==
+                      [](torrent::Object& o) { return o.is_not_empty(); }) ==
          rpc::command_base::stack_end();
 }
 
