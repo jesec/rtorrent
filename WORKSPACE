@@ -63,8 +63,6 @@ cc_library(
       "lib/libxmlrpc_server.a",
       "lib/libxmlrpc.a",
       "lib/libxmlrpc_util.a",
-      "lib/libxmlrpc_xmlparse.a",
-      "lib/libxmlrpc_xmltok.a",
   ],
   hdrs = glob(["include/**/*"]),
   includes = ["include"],
