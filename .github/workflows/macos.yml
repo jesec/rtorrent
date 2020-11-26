@@ -26,3 +26,34 @@ jobs:
         with:
           name: rtorrent-macos
           path: rtorrent
+
+  end-to-end:
+    needs: unit-bazel
+    runs-on: macos-11.0
+
+    steps:
+      - name: Copy rTorrent built in previous job
+        uses: actions/download-artifact@v2
+        with:
+          name: rtorrent-macos
+
+      - name: Install rTorrent to /usr/local/bin
+        run: |
+          sudo mv rtorrent /usr/local/bin/
+          sudo chmod +x /usr/local/bin/rtorrent
+
+      - name: Checkout the latest Flood release
+        run: |
+          latest=`curl -s https://api.github.com/repos/jesec/flood/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")'`
+          git clone --depth 1 --branch $latest https://github.com/jesec/flood.git .
+
+      - name: Use Node.js 15
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15
+
+      - run: npm ci --no-optional
+      - run: npm run build
+
+      - name: End-to-end test rTorrent with Flood's test suite
+        run: npm t -- --selectProjects rtorrent
