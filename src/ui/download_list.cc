@@ -47,9 +47,11 @@ DownloadList::DownloadList()
 }
 
 DownloadList::~DownloadList() {
-  if (is_active())
-    throw std::logic_error(
+  if (is_active()) {
+    torrent::destruct_error(
       "ui::DownloadList::~DownloadList() called on an active object");
+    return;
+  }
 
   std::for_each(m_uiArray,
                 m_uiArray + DISPLAY_MAX_SIZE,

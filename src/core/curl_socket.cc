@@ -61,8 +61,7 @@ CurlSocket::receive_socket(void*,
 
 CurlSocket::~CurlSocket() {
   if (m_fileDesc != -1)
-    throw torrent::internal_error(
-      "CurlSocket::~CurlSocket() m_fileDesc != -1.");
+    torrent::destruct_error("CurlSocket::~CurlSocket() m_fileDesc != -1.");
 }
 
 void

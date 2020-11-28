@@ -67,9 +67,11 @@ Download::Download(core::Download* d)
 }
 
 Download::~Download() {
-  if (is_active())
-    throw torrent::internal_error(
+  if (is_active()) {
+    torrent::destruct_error(
       "ui::Download::~Download() called on an active object.");
+    return;
+  }
 
   std::for_each(m_uiArray,
                 m_uiArray + DISPLAY_MAX_SIZE,

@@ -20,7 +20,7 @@ public:
   ElementBase()
     : m_frame(nullptr)
     , m_focus(false) {}
-  virtual ~ElementBase() noexcept(false) {}
+  virtual ~ElementBase() {}
 
   bool is_active() const {
     return m_frame != nullptr;
