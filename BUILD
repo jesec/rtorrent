@@ -30,6 +30,7 @@ LINKOPTS = select({
     "//:opt": [
         "-O3",
         "-flto",
+        "-Wl,--strip-all",
     ],
     "//conditions:default": [],
 })
