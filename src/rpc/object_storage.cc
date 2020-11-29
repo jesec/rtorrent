@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
-#include <torrent/utils/functional.h>
-
 #include "rpc/parse.h"
 #include "rpc/parse_commands.h"
 
@@ -222,10 +220,10 @@ object_storage::erase_multi_key(const torrent::raw_string& key,
   if (r_itr == m_rlookup.end())
     return;
 
-  rlookup_mapped_iterator rm_itr = std::find_if(
-    r_itr->second.begin(),
-    r_itr->second.end(),
-    torrent::utils::equal(key, torrent::utils::mem_ptr(&value_type::first)));
+  rlookup_mapped_iterator rm_itr =
+    std::find_if(r_itr->second.begin(),
+                 r_itr->second.end(),
+                 [key](value_type* v) { return key == v->first; });
 
   if (rm_itr != r_itr->second.end())
     r_itr->second.erase(rm_itr);
@@ -248,11 +246,10 @@ object_storage::set_multi_key_obj(const torrent::raw_string& key,
         m_rlookup.insert(std::make_pair(cmd_key, rlookup_type::mapped_type()))
           .first;
 
-    if (std::find_if(r_itr->second.begin(),
-                     r_itr->second.end(),
-                     torrent::utils::equal(
-                       key, torrent::utils::mem_ptr(&value_type::first))) ==
-        r_itr->second.end())
+    if (std::find_if(
+          r_itr->second.begin(), r_itr->second.end(), [key](value_type* v) {
+            return key == v->first;
+          }) == r_itr->second.end())
       r_itr->second.push_back(&*itr);
   }
 
@@ -266,13 +263,10 @@ object_storage::rlookup_list(const std::string& cmd_key) {
   rlookup_iterator r_itr = m_rlookup.find(cmd_key);
 
   if (r_itr != m_rlookup.end())
-    std::transform(
-      r_itr->second.begin(),
-      r_itr->second.end(),
-      std::back_inserter(result),
-      std::bind(&key_type::c_str,
-                std::bind(torrent::utils::mem_ptr(&value_type::first),
-                          std::placeholders::_1)));
+    std::transform(r_itr->second.begin(),
+                   r_itr->second.end(),
+                   std::back_inserter(result),
+                   [](value_type* v) { return v->first.c_str(); });
 
   return result;
 }

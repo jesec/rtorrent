@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <torrent/utils/algorithm.h>
-#include <torrent/utils/functional.h>
 #include <torrent/utils/path.h>
 
 #include <dirent.h>
@@ -75,9 +74,9 @@ PathInput::receive_do_complete() {
     return; // Show some nice colors here.
 
   std::string base = torrent::utils::make_base<std::string>(
-    r.first,
-    r.second,
-    torrent::utils::const_mem_ref(&utils::directory_entry::d_name));
+    r.first, r.second, [](const utils::directory_entry& entry) {
+      return entry.d_name;
+    });
 
   // Clear the path after the cursor to make this code cleaner. It's
   // not really nessesary to add the complexity just because someone

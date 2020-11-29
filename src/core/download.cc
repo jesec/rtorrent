@@ -9,7 +9,6 @@
 #include <torrent/tracker.h>
 #include <torrent/tracker_list.h>
 #include <torrent/utils/file_stat.h>
-#include <torrent/utils/functional.h>
 #include <torrent/utils/path.h>
 
 #include "rpc/parse_commands.h"

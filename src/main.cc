@@ -17,7 +17,6 @@
 #include <torrent/poll.h>
 #include <torrent/torrent.h>
 #include <torrent/utils/error_number.h>
-#include <torrent/utils/functional.h>
 #include <torrent/utils/log.h>
 #include <unistd.h>
 
@@ -136,8 +135,7 @@ load_session_torrents() {
 
     // Replace with session torrent flag.
     f->set_session(true);
-    f->slot_finished(
-      std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
+    f->slot_finished([f]() { delete f; });
     f->load(entries.path() + first->d_name);
     f->commit();
   }
@@ -152,8 +150,7 @@ load_arg_torrents(char** first, char** last) {
 
     // Replace with session torrent flag.
     f->set_start(true);
-    f->slot_finished(
-      std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
+    f->slot_finished([f]() { delete f; });
     f->load(*first);
     f->commit();
   }

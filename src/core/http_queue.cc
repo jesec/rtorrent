@@ -5,7 +5,6 @@
 #include <sstream>
 
 #include <torrent/http.h>
-#include <torrent/utils/functional.h>
 
 #include "core/curl_get.h"
 #include "core/http_queue.h"

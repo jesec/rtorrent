@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <torrent/exceptions.h>
-#include <torrent/utils/functional.h>
 
 #include "display/text_element_list.h"
 
@@ -11,7 +10,7 @@ namespace display {
 
 void
 TextElementList::clear() {
-  std::for_each(begin(), end(), torrent::utils::call_delete<TextElement>());
+  std::for_each(begin(), end(), [](TextElement* element) { delete element; });
   base_type::clear();
 }
 

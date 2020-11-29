@@ -9,7 +9,6 @@
 #include <torrent/throttle.h>
 #include <torrent/torrent.h>
 #include <torrent/tracker_list.h>
-#include <torrent/utils/functional.h>
 #include <torrent/utils/string_manip.h>
 
 #include "control.h"
@@ -73,9 +72,8 @@ Download::~Download() {
     return;
   }
 
-  std::for_each(m_uiArray,
-                m_uiArray + DISPLAY_MAX_SIZE,
-                torrent::utils::call_delete<ElementBase>());
+  std::for_each(
+    m_uiArray, m_uiArray + DISPLAY_MAX_SIZE, [](ElementBase* b) { delete b; });
 
   delete m_windowDownloadStatus;
 }

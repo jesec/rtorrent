@@ -2,7 +2,6 @@
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
 #include <algorithm>
-#include <torrent/utils/functional.h>
 
 #include "display/canvas.h"
 #include "display/utils.h"
@@ -20,7 +19,7 @@ WindowText::WindowText(rpc::target_type target, extent_type margin)
 
 void
 WindowText::clear() {
-  std::for_each(begin(), end(), torrent::utils::call_delete<TextElement>());
+  std::for_each(begin(), end(), [](TextElement* element) { delete element; });
   base_type::clear();
 
   delete m_errorHandler;

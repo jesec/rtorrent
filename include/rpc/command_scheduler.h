@@ -8,8 +8,6 @@
 #include <string>
 #include <vector>
 
-#include "utils/functional_fun.h"
-
 namespace torrent {
 class Object;
 }
@@ -20,9 +18,9 @@ class CommandSchedulerItem;
 
 class CommandScheduler : public std::vector<CommandSchedulerItem*> {
 public:
-  typedef utils::function1<void, const std::string&> SlotString;
-  typedef std::pair<int, int>                        Time;
-  typedef std::vector<CommandSchedulerItem*>         base_type;
+  typedef std::function<void(const std::string&)> SlotString;
+  typedef std::pair<int, int>                     Time;
+  typedef std::vector<CommandSchedulerItem*>      base_type;
 
   using base_type::begin;
   using base_type::end;
@@ -31,8 +29,8 @@ public:
   CommandScheduler() {}
   ~CommandScheduler();
 
-  void set_slot_error_message(SlotString::base_type* s) {
-    m_slotErrorMessage.set(s);
+  void set_slot_error_message(SlotString s) {
+    m_slotErrorMessage = s;
   }
 
   // slot_error_message or something.
@@ -60,7 +58,7 @@ public:
 private:
   void call_item(value_type item);
 
-  SlotString m_slotErrorMessage;
+  SlotString m_slotErrorMessage = nullptr;
 };
 
 }

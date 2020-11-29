@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <stdexcept>
-#include <torrent/utils/functional.h>
 
 #include "display/canvas.h"
 #include "display/window.h"

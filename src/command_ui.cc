@@ -7,7 +7,6 @@
 #include <regex>
 
 #include <torrent/utils/algorithm.h>
-#include <torrent/utils/functional.h>
 #include <torrent/utils/log.h>
 
 #include "core/manager.h"

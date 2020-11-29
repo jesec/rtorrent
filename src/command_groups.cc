@@ -115,11 +115,12 @@ cg_get_index(const torrent::Object& raw_args) {
 
   if (arg.is_string()) {
     if (!rpc::parse_whole_value_nothrow(arg.as_string().c_str(), &index)) {
-      std::vector<torrent::choke_group*>::iterator itr = std::find_if(
-        cg_list_hack.begin(),
-        cg_list_hack.end(),
-        torrent::utils::equal(arg.as_string(),
-                              std::mem_fn(&torrent::choke_group::name)));
+      std::vector<torrent::choke_group*>::iterator itr =
+        std::find_if(cg_list_hack.begin(),
+                     cg_list_hack.end(),
+                     [arg](torrent::choke_group* c) {
+                       return arg.as_string() == c->name();
+                     });
 
       if (itr == cg_list_hack.end())
         throw torrent::input_error("Choke group not found.");
@@ -180,12 +181,11 @@ apply_cg_insert(const std::string& arg) {
     throw torrent::input_error(
       "Cannot use a value string as choke group name.");
 
-  if (arg.empty() ||
-      std::find_if(
-        cg_list_hack.begin(),
-        cg_list_hack.end(),
-        torrent::utils::equal(arg, std::mem_fn(&torrent::choke_group::name))) !=
-        cg_list_hack.end())
+  if (arg.empty() || std::find_if(cg_list_hack.begin(),
+                                  cg_list_hack.end(),
+                                  [arg](torrent::choke_group* cg) {
+                                    return arg == cg->name();
+                                  }) != cg_list_hack.end())
     throw torrent::input_error("Duplicate name for choke group.");
 
   cg_list_hack.push_back(new torrent::choke_group());
@@ -201,10 +201,10 @@ apply_cg_insert(const std::string& arg) {
 
 torrent::Object
 apply_cg_index_of(const std::string& arg) {
-  std::vector<torrent::choke_group*>::iterator itr = std::find_if(
-    cg_list_hack.begin(),
-    cg_list_hack.end(),
-    torrent::utils::equal(arg, std::mem_fn(&torrent::choke_group::name)));
+  std::vector<torrent::choke_group*>::iterator itr =
+    std::find_if(cg_list_hack.begin(),
+                 cg_list_hack.end(),
+                 [arg](torrent::choke_group* cg) { return arg == cg->name(); });
 
   if (itr == cg_list_hack.end())
     throw torrent::input_error("Choke group not found.");

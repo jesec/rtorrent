@@ -9,8 +9,6 @@
 #include <torrent/buildinfo.h>
 #include <torrent/event.h>
 
-#include "utils/functional_fun.h"
-
 #include "rpc/scgi_task.h"
 
 namespace utils {
@@ -21,7 +19,7 @@ namespace rpc {
 
 class lt_cacheline_aligned SCgi : public torrent::Event {
 public:
-  typedef utils::function2<bool, const char*, uint32_t> slot_write;
+  typedef std::function<bool(const char*, uint32_t)> slot_write;
 
   static const int max_tasks = 100;
 

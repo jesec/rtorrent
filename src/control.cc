@@ -24,7 +24,6 @@
 #include "rpc/parse_commands.h"
 #include "rpc/scgi.h"
 #include "ui/root.h"
-#include "utils/functional_fun.h"
 
 #include "control.h"
 
@@ -54,7 +53,7 @@ Control::Control()
   m_taskShutdown.slot() = std::bind(&Control::handle_shutdown, this);
 
   m_commandScheduler->set_slot_error_message(
-    utils::mem_fn(m_core, &core::Manager::push_log_std));
+    [this](const std::string& msg) { m_core->push_log_std(msg); });
 }
 
 Control::~Control() {
@@ -77,11 +76,12 @@ void
 Control::initialize() {
   display::Canvas::initialize();
   display::Window::slot_schedule(
-    torrent::utils::make_mem_fun(m_display, &display::Manager::schedule));
+    [this](display::Window* w, torrent::utils::timer t) {
+      return m_display->schedule(w, t);
+    });
   display::Window::slot_unschedule(
-    torrent::utils::make_mem_fun(m_display, &display::Manager::unschedule));
-  display::Window::slot_adjust(
-    torrent::utils::make_mem_fun(m_display, &display::Manager::adjust_layout));
+    [this](display::Window* w) { return m_display->unschedule(w); });
+  display::Window::slot_adjust([this]() { return m_display->adjust_layout(); });
 
   m_core->http_stack()->set_user_agent(RT_USER_AGENT);
 

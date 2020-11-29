@@ -5,7 +5,6 @@
 #include <functional>
 #include <torrent/download.h>
 #include <torrent/exceptions.h>
-#include <torrent/utils/functional.h>
 
 #include "control.h"
 #include "core/download.h"

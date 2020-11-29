@@ -4,7 +4,8 @@
 #ifndef RTORRENT_WINDOW_BASE_H
 #define RTORRENT_WINDOW_BASE_H
 
-#include <torrent/utils/functional.h>
+#include <functional>
+
 #include <torrent/utils/timer.h>
 
 #include "display/canvas.h"
@@ -19,11 +20,9 @@ class Window {
 public:
   typedef uint32_t extent_type;
 
-  typedef torrent::utils::mem_fun0<Manager, void>          Slot;
-  typedef torrent::utils::mem_fun1<Manager, void, Window*> SlotWindow;
-  typedef torrent::utils::
-    mem_fun2<Manager, void, Window*, torrent::utils::timer>
-      SlotTimer;
+  typedef std::function<void()>                               Slot;
+  typedef std::function<void(Window*)>                        SlotWindow;
+  typedef std::function<void(Window*, torrent::utils::timer)> SlotTimer;
 
   static const int flag_active    = (1 << 0);
   static const int flag_offscreen = (1 << 1);

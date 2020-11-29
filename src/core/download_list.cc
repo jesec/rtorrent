@@ -13,7 +13,6 @@
 #include <torrent/object.h>
 #include <torrent/object_stream.h>
 #include <torrent/torrent.h>
-#include <torrent/utils/functional.h>
 #include <torrent/utils/log.h>
 #include <torrent/utils/resume.h>
 #include <torrent/utils/string_manip.h>
@@ -54,8 +53,10 @@ DownloadList::check_contains(Download*) {}
 void
 DownloadList::clear() {
   std::for_each(
-    begin(), end(), [this](Download* download) { return close(download); });
-  std::for_each(begin(), end(), torrent::utils::call_delete<Download>());
+    begin(), end(), [this](Download* download) { close(download); });
+
+  std::for_each(
+    begin(), end(), [this](Download* download) { delete download; });
 
   base_type::clear();
 }
@@ -75,10 +76,9 @@ DownloadList::session_save() {
 
 DownloadList::iterator
 DownloadList::find(const torrent::HashString& hash) {
-  return std::find_if(
-    begin(), end(), torrent::utils::equal(hash, [](Download* download) {
-      return download->info()->hash();
-    }));
+  return std::find_if(begin(), end(), [hash](Download* download) {
+    return hash == download->info()->hash();
+  });
 }
 
 DownloadList::iterator
@@ -91,10 +91,9 @@ DownloadList::find_hex(const char* hash) {
     *itr = (torrent::utils::hexchar_to_value(*hash) << 4) +
            torrent::utils::hexchar_to_value(*(hash + 1));
 
-  return std::find_if(
-    begin(), end(), torrent::utils::equal(key, [](Download* download) {
-      return download->info()->hash();
-    }));
+  return std::find_if(begin(), end(), [key](Download* download) {
+    return key == download->info()->hash();
+  });
 }
 
 Download*

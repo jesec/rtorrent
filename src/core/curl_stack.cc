@@ -5,7 +5,6 @@
 
 #include <curl/multi.h>
 #include <torrent/exceptions.h>
-#include <torrent/utils/functional.h>
 
 #include "core/curl_get.h"
 #include "core/curl_socket.h"
@@ -104,10 +103,9 @@ CurlStack::process_done_handle() {
       "CurlStack::receive_action() msg->msg != CURLMSG_DONE.");
 
   if (msg->data.result == CURLE_COULDNT_RESOLVE_HOST) {
-    iterator itr = std::find_if(
-      begin(),
-      end(),
-      torrent::utils::equal(msg->easy_handle, std::mem_fn(&CurlGet::handle)));
+    iterator itr = std::find_if(begin(), end(), [msg](CurlGet* g) {
+      return msg->easy_handle == g->handle();
+    });
 
     if (itr == end())
       throw torrent::internal_error(
@@ -132,10 +130,8 @@ CurlStack::process_done_handle() {
 
 void
 CurlStack::transfer_done(void* handle, const char* msg) {
-  iterator itr =
-    std::find_if(begin(),
-                 end(),
-                 torrent::utils::equal(handle, std::mem_fn(&CurlGet::handle)));
+  iterator itr = std::find_if(
+    begin(), end(), [handle](CurlGet* g) { return handle == g->handle(); });
 
   if (itr == end())
     throw torrent::internal_error(

@@ -12,7 +12,6 @@
 #include "control.h"
 #include "globals.h"
 #include "rpc/parse_commands.h"
-#include "utils/functional_fun.h"
 #include "utils/socket_fd.h"
 
 #include "rpc/scgi.h"
@@ -138,13 +137,13 @@ SCgi::event_error() {
 
 bool
 SCgi::receive_call(SCgiTask* task, const char* buffer, uint32_t length) {
-  slot_write slotWrite;
-  slotWrite.set(utils::mem_fn(task, &SCgiTask::receive_write));
-
   torrent::thread_base::acquire_global_lock();
   torrent::main_thread()->interrupt();
 
-  bool result = xmlrpc.process(buffer, length, slotWrite);
+  bool result =
+    xmlrpc.process(buffer, length, [task](const char* buffer, uint32_t length) {
+      return task->receive_write(buffer, length);
+    });
 
   torrent::thread_base::release_global_lock();
 

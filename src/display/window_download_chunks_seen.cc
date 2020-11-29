@@ -7,7 +7,6 @@
 #include <torrent/data/block.h>
 #include <torrent/data/block_list.h>
 #include <torrent/data/transfer_list.h>
-#include <torrent/utils/functional.h>
 #include <torrent/utils/string_manip.h>
 
 #include "core/download.h"
@@ -72,8 +71,9 @@ WindowDownloadChunksSeen::redraw() {
   std::copy(transfers->begin(), transfers->end(), transferChunks.begin());
   std::sort(transferChunks.begin(),
             transferChunks.end(),
-            torrent::utils::less2(std::mem_fn(&torrent::BlockList::index),
-                                  std::mem_fn(&torrent::BlockList::index)));
+            [](torrent::BlockList* l1, torrent::BlockList* l2) {
+              return l1->index() < l2->index();
+            });
 
   std::vector<torrent::BlockList*>::const_iterator itrTransfer =
     transferChunks.begin();

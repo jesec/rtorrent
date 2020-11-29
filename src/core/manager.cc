@@ -377,8 +377,7 @@ Manager::try_create_download(const std::string&       uri,
 
   f->set_start(flags & create_start);
   f->set_print_log(!(flags & create_quiet));
-  f->slot_finished(
-    std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
+  f->slot_finished([f]() { delete f; });
 
   if (flags & create_raw_data)
     f->load_raw_data(uri);
@@ -405,8 +404,7 @@ Manager::try_create_download_from_meta_download(torrent::Object*   bencode,
 
   f->set_start(meta.get_key_value("start"));
   f->set_print_log(meta.get_key_value("print_log"));
-  f->slot_finished(
-    std::bind(&torrent::utils::call_delete_func<core::DownloadFactory>, f));
+  f->slot_finished([f]() { delete f; });
 
   // Bit of a waste to create the bencode representation here
   // only to have the DownloadFactory decode it.

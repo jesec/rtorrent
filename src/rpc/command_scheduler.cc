@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include <time.h>
 #include <torrent/exceptions.h>
-#include <torrent/utils/functional.h>
 #include <torrent/utils/string_manip.h>
 
 #include "rpc/command_scheduler.h"
@@ -16,15 +15,13 @@ namespace rpc {
 
 CommandScheduler::~CommandScheduler() {
   std::for_each(
-    begin(), end(), torrent::utils::call_delete<CommandSchedulerItem>());
+    begin(), end(), [](CommandSchedulerItem* item) { delete item; });
 }
 
 CommandScheduler::iterator
 CommandScheduler::find(const std::string& key) {
   return std::find_if(
-    begin(),
-    end(),
-    torrent::utils::equal(key, std::mem_fn(&CommandSchedulerItem::key)));
+    begin(), end(), [key](CommandSchedulerItem* i) { return key == i->key(); });
 }
 
 CommandScheduler::iterator
@@ -71,7 +68,7 @@ CommandScheduler::call_item(value_type item) {
     rpc::call_object(item->command());
 
   } catch (torrent::input_error& e) {
-    if (m_slotErrorMessage.is_valid())
+    if (m_slotErrorMessage != nullptr)
       m_slotErrorMessage("Scheduled command failed: " + item->key() + ": " +
                          e.what());
   }
