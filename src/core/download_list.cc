@@ -55,8 +55,7 @@ DownloadList::clear() {
   std::for_each(
     begin(), end(), [this](Download* download) { close(download); });
 
-  std::for_each(
-    begin(), end(), [this](Download* download) { delete download; });
+  std::for_each(begin(), end(), [](Download* download) { delete download; });
 
   base_type::clear();
 }
