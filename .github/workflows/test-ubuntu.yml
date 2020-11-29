@@ -47,7 +47,6 @@ jobs:
       - run: sudo apt install -y libc6-dev libcppunit-dev libxmlrpc-c++8-dev
       - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
       - run: sudo chmod +x /usr/local/bin/bazel
-      - run: bazel build -s
       - run: bazel test -s
 
   unit-bazel-clang:
@@ -79,10 +78,10 @@ jobs:
       - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
       - run: sudo chmod +x /usr/local/bin/bazel
 
+      - run: bazel test --config=clang -s
+
       - run: bazel build --config=clang -s
       - run: cp bazel-bin/rtorrent rtorrent
-
-      - run: bazel test --config=clang -s
 
       - uses: actions/upload-artifact@v2
         with:

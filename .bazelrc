@@ -1,4 +1,4 @@
 build -c opt rtorrent
 build:clang -c opt --action_env=CC=clang --action_env=CXX=clang++ rtorrent
 build:gcc -c opt --action_env=CC=gcc --action_env=CXX=g++ rtorrent
-test -c opt --test_output=all rtorrent_test
+test -c dbg --test_output=all rtorrent_test
