@@ -8,6 +8,18 @@ licenses(["notice"])  # MIT/X derivative license
 
 exports_files(["COPYING"])
 
+config_setting(
+    name = "windows",
+    values = {"cpu": "x64_windows"},
+    visibility = ["//visibility:private"],
+)
+
+config_setting(
+    name = "osx",
+    values = {"cpu": "darwin"},
+    visibility = ["//visibility:private"],
+)
+
 CURL_WIN_COPTS = [
     "/Iexternal/curl/lib",
     "/DBUILDING_LIBCURL",
@@ -33,18 +45,6 @@ CURL_WIN_SRCS = [
     "lib/vtls/schannel_verify.c",
     "lib/idn_win32.c",
 ]
-
-config_setting(
-    name = "windows",
-    values = {"cpu": "x64_windows"},
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "osx",
-    values = {"cpu": "darwin"},
-    visibility = ["//visibility:private"],
-)
 
 cc_library(
     name = "curl",
@@ -332,6 +332,7 @@ cc_library(
     }),
     visibility = ["//visibility:public"],
     deps = [
+        "@cares//:ares",
         "@zlib",
     ] + select({
         "//:windows": [],
@@ -379,6 +380,8 @@ cc_binary(
         "src/tool_doswin.h",
         "src/tool_easysrc.c",
         "src/tool_easysrc.h",
+        "src/tool_filetime.c",
+        "src/tool_filetime.h",
         "src/tool_formparse.c",
         "src/tool_formparse.h",
         "src/tool_getparam.c",
@@ -399,8 +402,6 @@ cc_binary(
         "src/tool_main.h",
         "src/tool_metalink.c",
         "src/tool_metalink.h",
-        "src/tool_mfiles.c",
-        "src/tool_mfiles.h",
         "src/tool_msgs.c",
         "src/tool_msgs.h",
         "src/tool_operate.c",
@@ -413,6 +414,8 @@ cc_binary(
         "src/tool_paramhlp.h",
         "src/tool_parsecfg.c",
         "src/tool_parsecfg.h",
+        "src/tool_progress.c",
+        "src/tool_progress.h",
         "src/tool_sdecls.h",
         "src/tool_setopt.c",
         "src/tool_setopt.h",
@@ -428,8 +431,6 @@ cc_binary(
         "src/tool_version.h",
         "src/tool_vms.c",
         "src/tool_vms.h",
-        "src/tool_writeenv.c",
-        "src/tool_writeenv.h",
         "src/tool_writeout.c",
         "src/tool_writeout.h",
         "src/tool_xattr.c",
@@ -708,6 +709,8 @@ genrule(
         "#    define _DARWIN_USE_64_BIT_INODE 1",
         "#  endif",
         "#endif",
+        "",
+        "#define USE_ARES 1",
         "",
         "#endif  // EXTERNAL_CURL_INCLUDE_CURL_CONFIG_H_",
         "EOF",
