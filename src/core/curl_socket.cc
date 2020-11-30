@@ -75,29 +75,17 @@ CurlSocket::close() {
 
 void
 CurlSocket::event_read() {
-#if (LIBCURL_VERSION_NUM >= 0x071003)
   return m_stack->receive_action(this, CURL_CSELECT_IN);
-#else
-  return m_stack->receive_action(this, 0);
-#endif
 }
 
 void
 CurlSocket::event_write() {
-#if (LIBCURL_VERSION_NUM >= 0x071003)
   return m_stack->receive_action(this, CURL_CSELECT_OUT);
-#else
-  return m_stack->receive_action(this, 0);
-#endif
 }
 
 void
 CurlSocket::event_error() {
-#if (LIBCURL_VERSION_NUM >= 0x071003)
   return m_stack->receive_action(this, CURL_CSELECT_ERR);
-#else
-  return m_stack->receive_action(this, 0);
-#endif
 }
 
 }

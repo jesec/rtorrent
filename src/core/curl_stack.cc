@@ -22,11 +22,9 @@ CurlStack::CurlStack()
 
   m_taskTimeout.slot() = std::bind(&CurlStack::receive_timeout, this);
 
-#if (LIBCURL_VERSION_NUM >= 0x071000)
   curl_multi_setopt((CURLM*)m_handle, CURLMOPT_TIMERDATA, this);
   curl_multi_setopt(
     (CURLM*)m_handle, CURLMOPT_TIMERFUNCTION, &CurlStack::set_timeout);
-#endif
   curl_multi_setopt((CURLM*)m_handle, CURLMOPT_SOCKETDATA, this);
   curl_multi_setopt(
     (CURLM*)m_handle, CURLMOPT_SOCKETFUNCTION, &CurlSocket::receive_socket);
@@ -58,18 +56,11 @@ CurlStack::receive_action(CurlSocket* socket, int events) {
 
   do {
     int count;
-#if (LIBCURL_VERSION_NUM >= 0x071003)
     code = curl_multi_socket_action(
       (CURLM*)m_handle,
       socket != nullptr ? socket->file_descriptor() : CURL_SOCKET_TIMEOUT,
       events,
       &count);
-#else
-    code = curl_multi_socket((CURLM*)m_handle,
-                             socket != nullptr ? socket->file_descriptor()
-                                               : CURL_SOCKET_TIMEOUT,
-                             &count);
-#endif
 
     if (code > 0)
       throw torrent::internal_error("Error calling curl_multi_socket_action.");
@@ -193,10 +184,6 @@ CurlStack::add_get(CurlGet* get) {
 
   if (curl_multi_add_handle((CURLM*)m_handle, get->handle()) > 0)
     throw torrent::internal_error("Error calling curl_multi_add_handle.");
-
-#if (LIBCURL_VERSION_NUM < 0x071000)
-  receive_timeout();
-#endif
 }
 
 void
