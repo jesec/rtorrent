@@ -103,16 +103,9 @@ jobs:
           sudo mv rtorrent /usr/local/bin/
           sudo chmod +x /usr/local/bin/rtorrent
 
-      - name: Get tag of the latest Flood release
-        id: flood
-        uses: pozetroninc/github-action-get-latest-release@v0.5.0
-        with:
-          repository: jesec/flood
-          excludes: prerelease, draft
-
-      - name: Checkout the latest Flood release
+      - name: Checkout Flood
         run: |
-          git clone --depth 1 --branch ${{ steps.flood.outputs.release }} https://github.com/jesec/flood.git .
+          git clone --depth 1 --branch master https://github.com/jesec/flood.git .
 
       - name: Use Node.js 15
         uses: actions/setup-node@v1
@@ -123,4 +116,8 @@ jobs:
       - run: npm run build
 
       - name: End-to-end test rTorrent with Flood's test suite
-        run: npm t -- --selectProjects rtorrent || npm t -- --selectProjects rtorrent || npm t -- --selectProjects rtorrent
+        uses: nick-invision/retry@v2
+        with:
+          max_attempts: 5
+          timeout_minutes: 30
+          command: npm t -- --selectProjects rtorrent --runTestsByPath server/routes/api/torrents.test.ts server/routes/api/client.test.ts
