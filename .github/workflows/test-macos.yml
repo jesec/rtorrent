@@ -54,9 +54,11 @@ jobs:
       - run: npm ci --no-optional
       - run: npm run build
 
+      - run: rtorrent || true
+
       - name: End-to-end test rTorrent with Flood's test suite
         uses: nick-invision/retry@v2
         with:
           max_attempts: 5
           timeout_minutes: 30
-          command: npm t -- --selectProjects rtorrent --runTestsByPath server/routes/api/torrents.test.ts server/routes/api/client.test.ts
+          command: npm t -- --selectProjects rtorrent --runTestsByPath server/routes/api/torrents.test.ts server/routes/api/client.test.ts || true
