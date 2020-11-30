@@ -3,9 +3,12 @@
 
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
+#include <glob.h>
 #include <sstream>
 #include <sys/select.h>
+
 #include <torrent/connection_manager.h>
 #include <torrent/error.h>
 #include <torrent/exceptions.h>
@@ -423,69 +426,23 @@ path_expand_transform(std::string path, const utils::directory_entry& entry) {
 // Move this somewhere better.
 void
 path_expand(std::vector<std::string>* paths, const std::string& pattern) {
-  std::vector<utils::Directory> currentCache;
-  std::vector<utils::Directory> nextCache;
+  glob_t glob_result;
 
-  torrent::utils::split_iterator_t<std::string> first =
-    torrent::utils::split_iterator(pattern, '/');
-  torrent::utils::split_iterator_t<std::string> last =
-    torrent::utils::split_iterator(pattern);
+  glob(pattern.c_str(), GLOB_TILDE_CHECK, NULL, &glob_result);
 
-  if (first == last)
-    return;
+  for (unsigned int i = 0; i < glob_result.gl_pathc; i++) {
+    std::string     resolved_path;
+    std::error_code error;
 
-  // Check for initial '/' that indicates the root.
-  if ((*first).empty()) {
-    currentCache.push_back(utils::Directory("/"));
-    ++first;
-  } else if (torrent::utils::trim(*first) == "~") {
-    currentCache.push_back(utils::Directory("~"));
-    ++first;
-  } else {
-    currentCache.push_back(utils::Directory("."));
-  }
+    resolved_path = std::filesystem::absolute(glob_result.gl_pathv[i], error)
+                      .lexically_normal();
 
-  // Might be an idea to use depth-first search instead.
-
-  for (; first != last; ++first) {
-    utils::regex r(*first);
-
-    if (r.pattern().empty())
-      continue;
-
-    // Special case for ".."?
-
-    for (std::vector<utils::Directory>::iterator itr = currentCache.begin();
-         itr != currentCache.end();
-         ++itr) {
-      // Only include filenames starting with '.' if the pattern
-      // starts with the same.
-      itr->update((r.pattern()[0] != '.') ? utils::Directory::update_hide_dot
-                                          : 0);
-      itr->erase(std::remove_if(itr->begin(),
-                                itr->end(),
-                                [r](utils::directory_entry& e) {
-                                  return std::not_fn(r)(e.d_name);
-                                }),
-                 itr->end());
-
-      std::transform(itr->begin(),
-                     itr->end(),
-                     std::back_inserter(nextCache),
-                     [itr](const utils::directory_entry& entry) {
-                       return path_expand_transform(
-                         itr->path() + (itr->path() == "/" ? "" : "/"), entry);
-                     });
+    if (!error) {
+      paths->push_back(resolved_path);
     }
-
-    currentCache.clear();
-    currentCache.swap(nextCache);
   }
 
-  std::transform(currentCache.begin(),
-                 currentCache.end(),
-                 std::back_inserter(*paths),
-                 [](utils::Directory& d) { return d.path(); });
+  globfree(&glob_result);
 }
 
 bool
