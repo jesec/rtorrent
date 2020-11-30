@@ -428,7 +428,7 @@ void
 path_expand(std::vector<std::string>* paths, const std::string& pattern) {
   glob_t glob_result;
 
-  glob(pattern.c_str(), GLOB_TILDE_CHECK, NULL, &glob_result);
+  glob(pattern.c_str(), GLOB_TILDE, NULL, &glob_result);
 
   for (unsigned int i = 0; i < glob_result.gl_pathc; i++) {
     std::string     resolved_path;
