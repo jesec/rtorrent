@@ -27,7 +27,6 @@
 #include "rpc/parse_commands.h"
 #include "utils/directory.h"
 #include "utils/file_status_cache.h"
-#include "utils/regex.h"
 
 #include "control.h"
 #include "core/curl_get.h"

@@ -3,6 +3,8 @@
 
 #include <cstdio>
 #include <functional>
+#include <regex>
+
 #include <torrent/connection_manager.h>
 #include <torrent/data/download_data.h>
 #include <torrent/data/file.h>
@@ -28,7 +30,6 @@
 #include "core/download_store.h"
 #include "core/manager.h"
 #include "rpc/parse.h"
-#include "utils/regex.h"
 
 #include "command_helpers.h"
 #include "control.h"
@@ -409,7 +410,7 @@ f_multicall(core::Download* download, const torrent::Object::list_type& args) {
   // parsing and searching command map for every single call.
   torrent::Object             resultRaw = torrent::Object::create_list();
   torrent::Object::list_type& result    = resultRaw.as_list();
-  std::vector<utils::regex>   regex_list;
+  std::vector<std::string>    regex_list;
 
   bool use_regex = true;
 
@@ -428,12 +429,19 @@ f_multicall(core::Download* download, const torrent::Object::list_type& args) {
                                          last = download->file_list()->end();
        itr != last;
        itr++) {
-    if (use_regex && std::find_if(regex_list.begin(),
-                                  regex_list.end(),
-                                  std::bind(&utils::regex::operator(),
-                                            std::placeholders::_1,
-                                            (*itr)->path()->as_string())) ==
-                       regex_list.end())
+    if (use_regex &&
+        std::find_if(
+          regex_list.begin(), regex_list.end(), [itr](std::string pattern) {
+            bool isAMatch = false;
+            try {
+              std::regex re(pattern);
+              isAMatch = std::regex_match((*itr)->path()->as_string(), re);
+            } catch (const std::regex_error& e) {
+              control->core()->push_log_std("regex_error: " +
+                                            std::string(e.what()));
+            }
+            return isAMatch;
+          }) == regex_list.end())
       continue;
 
     torrent::Object::list_type& row =
