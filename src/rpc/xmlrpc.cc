@@ -399,8 +399,8 @@ object_to_xmlrpc(xmlrpc_env* env, const torrent::Object& object) {
         xmlrpc_env_init(env);
 
         const std::string& str = object.as_string();
-        char               buffer[str.size() + 1];
-        char*              dst = buffer;
+        char* buffer = static_cast<char*>(calloc(str.size() + 1, sizeof(char)));
+        char* dst    = buffer;
         for (std::string::const_iterator itr = str.begin(); itr != str.end();
              ++itr)
           *dst++ =
@@ -411,6 +411,7 @@ object_to_xmlrpc(xmlrpc_env* env, const torrent::Object& object) {
         *dst = 0;
 
         result = xmlrpc_string_new(env, buffer);
+        free(buffer);
       }
 
       return result;

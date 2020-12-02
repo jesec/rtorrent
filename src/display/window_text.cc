@@ -61,7 +61,8 @@ WindowText::redraw() {
     return;
 
   if (m_errorHandler != nullptr && m_target.second == nullptr) {
-    char buffer[m_canvas->width() + 1];
+    char* buffer =
+      static_cast<char*>(calloc(m_canvas->width() + 1, sizeof(char)));
 
     Canvas::attributes_list attributes;
     attributes.push_back(
@@ -71,6 +72,8 @@ WindowText::redraw() {
       buffer, buffer + m_canvas->width(), &attributes, m_target);
 
     m_canvas->print_attributes(0, position, buffer, last, &attributes);
+
+    free(buffer);
     return;
   }
 
@@ -79,7 +82,8 @@ WindowText::redraw() {
     if (*itr == nullptr)
       continue;
 
-    char buffer[m_canvas->width() + 1];
+    char* buffer =
+      static_cast<char*>(calloc(m_canvas->width() + 1, sizeof(char)));
 
     Canvas::attributes_list attributes;
     attributes.push_back(
@@ -89,6 +93,8 @@ WindowText::redraw() {
       (*itr)->print(buffer, buffer + m_canvas->width(), &attributes, m_target);
 
     m_canvas->print_attributes(0, position, buffer, last, &attributes);
+
+    free(buffer);
   }
 }
 

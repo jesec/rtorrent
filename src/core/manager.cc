@@ -326,7 +326,7 @@ Manager::set_proxy_address(const std::string& addr) {
   int                           port;
   torrent::utils::address_info* ai;
 
-  char buf[addr.length() + 1];
+  char* buf = static_cast<char*>(calloc(sizeof(char), addr.length() + 1));
 
   int err = std::sscanf(addr.c_str(), "%[^:]:%i", buf, &port);
 
@@ -336,8 +336,12 @@ Manager::set_proxy_address(const std::string& addr) {
   if (err == 1)
     port = 80;
 
-  if ((err = torrent::utils::address_info::get_address_info(
-         buf, PF_INET, SOCK_STREAM, &ai)) != 0)
+  err = torrent::utils::address_info::get_address_info(
+    buf, PF_INET, SOCK_STREAM, &ai);
+
+  free(buf);
+
+  if (err != 0)
     throw torrent::input_error(
       "Could not set proxy address: " +
       std::string(torrent::utils::address_info::strerror(err)) + ".");

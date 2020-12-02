@@ -27,8 +27,8 @@ WindowFileList::WindowFileList(const ui::ElementFileList* element)
 // positions.
 std::wstring
 wstring_width(const std::string& i_str, int width) {
-  wchar_t result[width + 1];
-  size_t  length = std::mbstowcs(result, i_str.c_str(), width);
+  wchar_t* result = static_cast<wchar_t*>(calloc(width + 1, sizeof(wchar_t)));
+  size_t   length = std::mbstowcs(result, i_str.c_str(), width);
 
   // If not valid UTF-8 encoding, at least copy the printable characters.
   if (length == (size_t)-1) {

@@ -51,7 +51,8 @@ SCgi::open_named(const std::string& filename) {
   if (filename.empty() || filename.size() > 4096)
     throw torrent::resource_error("Invalid filename length.");
 
-  char         buffer[sizeof(sockaddr_un) + filename.size()];
+  char* buffer = static_cast<char*>(
+    calloc(sizeof(char), sizeof(sockaddr_un) + filename.size()));
   sockaddr_un* sa = reinterpret_cast<sockaddr_un*>(buffer);
 
 #ifdef __sun__

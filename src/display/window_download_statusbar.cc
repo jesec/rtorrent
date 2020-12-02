@@ -29,8 +29,8 @@ WindowDownloadStatusbar::redraw() {
 
   m_canvas->erase();
 
-  char  buffer[m_canvas->width()];
-  char* last = buffer + m_canvas->width() - 2;
+  char* buffer = static_cast<char*>(calloc(m_canvas->width(), sizeof(char)));
+  char* last   = buffer + m_canvas->width() - 2;
 
   print_download_info_full(buffer, last, m_download);
   m_canvas->print(0, 0, "%s", buffer);
@@ -66,6 +66,8 @@ WindowDownloadStatusbar::redraw() {
                           ->tracker_controller()
                           ->seconds_to_next_timeout()),
                   buffer);
+
+  free(buffer);
 }
 
 }

@@ -22,17 +22,17 @@ TextElementStringBase::print(char*                    first,
     return first;
 
   if (m_flags & flag_escape_hex) {
-    char  buffer[last - first];
+    char* buffer     = static_cast<char*>(calloc(last - first, sizeof(char)));
     char* bufferLast = copy_string(buffer, buffer + (last - first), target);
 
     first = torrent::utils::transform_hex(buffer, bufferLast, first, last);
-
+    free(buffer);
   } else if (m_flags & flag_escape_html) {
-    char  buffer[last - first];
+    char* buffer     = static_cast<char*>(calloc(last - first, sizeof(char)));
     char* bufferLast = copy_string(buffer, buffer + (last - first), target);
 
     first = torrent::utils::copy_escape_html(buffer, bufferLast, first, last);
-
+    free(buffer);
   } else {
     first = copy_string(first, last, target);
   }

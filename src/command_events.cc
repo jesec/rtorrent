@@ -30,7 +30,8 @@ torrent::Object
 apply_on_ratio(const torrent::Object& rawArgs) {
   const std::string& groupName = rawArgs.as_string();
 
-  char buffer[32 + groupName.size()];
+  char* buffer =
+    static_cast<char*>(calloc(32 + groupName.size(), sizeof(char)));
   sprintf(buffer, "group2.%s.view", groupName.c_str());
 
   core::ViewManager::iterator viewItr = control->view_manager()->find(
@@ -91,6 +92,7 @@ apply_on_ratio(const torrent::Object& rawArgs) {
                              "Ratio reached, but command failed: ");
   }
 
+  free(buffer);
   return torrent::Object();
 }
 
@@ -305,8 +307,9 @@ d_multicall(const torrent::Object::list_type& args) {
 
   // Add some pre-parsing of the commands, so we don't spend time
   // parsing and searching command map for every single call.
-  unsigned int    dlist_size = (*viewItr)->size_visible();
-  core::Download* dlist[dlist_size];
+  unsigned int     dlist_size = (*viewItr)->size_visible();
+  core::Download** dlist =
+    static_cast<core::Download**>(malloc(sizeof(core::Download) * dlist_size));
 
   std::copy((*viewItr)->begin_visible(), (*viewItr)->end_visible(), dlist);
 

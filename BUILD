@@ -17,6 +17,7 @@ COPTS = [
     "-Werror",
     "-Wall",
     "-Wextra",
+    "-Wvla",
     "-faligned-new",
 ] + select({
     "//:opt": [

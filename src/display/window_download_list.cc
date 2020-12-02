@@ -104,7 +104,8 @@ WindowDownloadList::redraw() {
     ++range.second;
 
   int   pos = 1;
-  char  buffer[m_canvas->width() + 1];
+  char* buffer =
+    static_cast<char*>(calloc(m_canvas->width() + 1, sizeof(char)));
   char* last = buffer + m_canvas->width() - 2 + 1;
 
   // Add a proper 'column info' method.
@@ -141,6 +142,8 @@ WindowDownloadList::redraw() {
       range.first++;
     }
   }
+
+  free(buffer);
 }
 
 }
