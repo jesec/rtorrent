@@ -17,9 +17,9 @@ jobs:
 
       - run: brew install cppunit xmlrpc-c
 
-      - run: bazel test -s
+      - run: bazel test -s rtorrent_test
 
-      - run: bazel build -s
+      - run: bazel build -s rtorrent
       - run: cp bazel-bin/rtorrent rtorrent
 
       - uses: actions/upload-artifact@v2

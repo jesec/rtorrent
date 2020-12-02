@@ -47,7 +47,7 @@ jobs:
       - run: sudo apt install -y libc6-dev libcppunit-dev libxmlrpc-c++8-dev
       - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
       - run: sudo chmod +x /usr/local/bin/bazel
-      - run: bazel test -s
+      - run: bazel test -s rtorrent_test
 
   unit-bazel-clang:
     runs-on: ubuntu-20.04
@@ -78,9 +78,9 @@ jobs:
       - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
       - run: sudo chmod +x /usr/local/bin/bazel
 
-      - run: bazel test --config=clang -s
+      - run: bazel test --config=clang -s rtorrent_test
 
-      - run: bazel build --config=clang -s
+      - run: bazel build --config=clang -s rtorrent
       - run: cp bazel-bin/rtorrent rtorrent
 
       - uses: actions/upload-artifact@v2

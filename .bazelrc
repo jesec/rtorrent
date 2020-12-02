@@ -1,4 +1,43 @@
-build -c opt rtorrent
-build:clang -c opt --action_env=CC=clang --action_env=CXX=clang++ rtorrent
-build:gcc -c opt --action_env=CC=gcc --action_env=CXX=g++ rtorrent
-test -c dbg --test_output=all rtorrent_test
+# Optimized mode by default
+build -c opt
+
+# Address sanitizer
+build:asan -c dbg
+build:asan --copt -fsanitize=address
+build:asan --copt -fno-omit-frame-pointer
+build:asan --linkopt -fsanitize=address
+
+# Thread sanitizer
+build:tsan -c dbg
+build:tsan --copt -fsanitize=thread
+build:tsan --copt -fno-omit-frame-pointer
+build:tsan --linkopt -fsanitize=thread
+
+# Memory sanitizer
+build:msan -c dbg
+build:msan --action_env=CC=clang
+build:msan --action_env=CXX=clang++
+build:msan --copt -fsanitize=memory
+build:msan --copt -fno-omit-frame-pointer
+build:msan --linkopt -fsanitize=memory
+
+# Undefined Behavior sanitizer
+build:ubsan -c dbg
+build:ubsan --copt -fsanitize=undefined
+build:ubsan --copt -fno-omit-frame-pointer
+build:ubsan --linkopt -fsanitize=undefined
+build:ubsan --linkopt -lubsan
+
+# Use Clang
+build:clang -c opt
+build:clang --action_env=CC=clang
+build:clang --action_env=CXX=clang++
+
+# Use GCC
+build:gcc -c opt
+build:gcc --action_env=CC=gcc
+build:gcc --action_env=CXX=g++
+
+# Test
+test -c dbg
+test --test_output=all

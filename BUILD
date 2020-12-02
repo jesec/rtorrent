@@ -103,7 +103,20 @@ cc_binary(
     linkopts = LINKOPTS,
     deps = [
         "//:rtorrent_common",
-        "@libtorrent//:torrent",
+    ],
+)
+
+cc_binary(
+    name = "rtorrent_shared",
+    srcs = [
+        "src/main.cc",
+        "//:included_headers",
+    ],
+    copts = COPTS,
+    includes = ["include"],
+    linkopts = LINKOPTS,
+    deps = [
+        "//:rtorrent_common",
     ],
 )
 
@@ -120,7 +133,6 @@ cc_test(
     }),
     deps = [
         "//:rtorrent_common",
-        "@libtorrent//:torrent",
     ] + select({
         "//:macos": [
             "@cppunit",

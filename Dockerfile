@@ -27,7 +27,7 @@ COPY . ./
 RUN sed -i /ltinfo/d BUILD
 
 # Build rTorrent
-RUN bazel build
+RUN bazel build rtorrent
 
 # Now get the clean image
 FROM ${ALPINE_IMAGE} as rtorrent
