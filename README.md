@@ -32,9 +32,15 @@ bazel build rtorrent
 
 [Dockerfile](https://github.com/jesec/rtorrent/blob/master/Dockerfile)
 
-To test: `docker run -it --user root:root jesec/rtorrent`
+To test: `docker run -it jesec/rtorrent`
 
-Note that you have to explicitly configure and specify user.
+Note that you have to expose BitTorrent port (e.g. `-p 50000:50000`) and map folders (e.g. `-v /home/download:/home/download`) yourself.
+
+By default, rTorrent's files are located in `/home/download/.local/share/rtorrent`. Check [doc/rtorrent.rc](https://github.com/jesec/rtorrent/blob/master/doc/rtorrent.rc) to know more about the default configurations.
+
+You can execute rTorrent [commands](https://rtorrent-docs.readthedocs.io/en/latest/cmd-ref.html) at start to set port, set announced IP, etc.
+
+For example, to launch rTorrent with port `6881` and DHT disabled, `docker run -it jesec/rtorrent -o network.port_range.set=6881-6881,dht.mode.set=disable`.
 
 To integrate with [Flood](https://flood.js.org), see [flood:Dockerfile.rtorrent](https://github.com/jesec/flood/blob/master/Dockerfile.rtorrent).
 
