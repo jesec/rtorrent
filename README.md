@@ -12,6 +12,8 @@ git clone https://github.com/jesec/rtorrent.git
 cd rtorrent
 
 # Install Bazel
+# Use the build of your system and architecture
+# bazelisk-linux-arm64 and bazelisk-darwin-amd64 are also available
 sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
 sudo chmod +x /usr/local/bin/bazel
 
