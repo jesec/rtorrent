@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <inttypes.h>
 #include <iostream>
+#include <queue>
 #include <sstream>
 #include <string>
 #include <torrent/buildinfo.h>
@@ -66,7 +67,10 @@ void
 do_nothing_str(const std::string&) {}
 
 int
-parse_options(int argc, char** argv) {
+parse_options(int                                              argc,
+              char**                                           argv,
+              std::queue<std::string>*                         cmd1,
+              std::queue<std::pair<std::string, std::string>>* cmd2) {
   try {
     OptionParser optionParser;
 
@@ -102,11 +106,11 @@ parse_options(int argc, char** argv) {
                                          std::placeholders::_1));
 
     optionParser.insert_option(
-      'O', std::bind(&rpc::parse_command_single_std, std::placeholders::_1));
-    optionParser.insert_option_list('o',
-                                    std::bind(&rpc::call_command_set_std_string,
-                                              std::placeholders::_1,
-                                              std::placeholders::_2));
+      'O', [&cmd1](const std::string& cmd) { cmd1->push(cmd); });
+    optionParser.insert_option_list(
+      'o', [&cmd2](const std::string& key, const std::string& arg) {
+        cmd2->push(std::pair(key, arg));
+      });
 
     return optionParser.process(argc, argv);
 
@@ -491,7 +495,10 @@ main(int argc, char** argv) {
     }
 #endif
 
-    int firstArg = parse_options(argc, argv);
+    std::queue<std::string>                         cmd1;
+    std::queue<std::pair<std::string, std::string>> cmd2;
+
+    int firstArg = parse_options(argc, argv, &cmd1, &cmd2);
 
     if (OptionParser::has_flag('n', argc, argv)) {
       lt_log_print(torrent::LOG_WARN, "Ignoring rtorrent.rc.");
@@ -520,6 +527,18 @@ main(int argc, char** argv) {
         rpc::parse_command_single(rpc::make_target(),
                                   "try_import = /etc/rtorrent/rtorrent.rc");
       }
+    }
+
+    while (!cmd1.empty()) {
+      const auto cmd = cmd1.front();
+      rpc::parse_command_single_std(cmd);
+      cmd1.pop();
+    }
+
+    while (!cmd2.empty()) {
+      const auto pair = cmd2.front();
+      rpc::call_command_set_std_string(pair.first, pair.second);
+      cmd2.pop();
     }
 
     LT_LOG("seeded srandom and srand48 (seed:%u)", random_seed);
