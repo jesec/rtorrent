@@ -43,9 +43,11 @@ RUN apk --no-cache add \
 # Copy default configuration file to /etc/rtorrent
 COPY --from=build /root/rtorrent/doc/rtorrent.rc /etc/rtorrent/
 
-# Run as "nobody"
-# Users should explicitly set UID/GID and/or grant privileges
-USER nobody
+# Create "download" user
+RUN adduser -h /home/download -s /sbin/nologin --disabled-password --uid 1001 download
+
+# Run as "download" user
+USER download
 
 # rTorrent
 ENTRYPOINT ["rtorrent"]
