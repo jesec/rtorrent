@@ -4,23 +4,33 @@
 
 To learn how to use rTorrent visit the [Wiki](https://github.com/rakshasa/rtorrent/wiki).
 
-## Build
+## Build (Bazel)
+
+Bazel 3 or later is required.
+
+Bazel manages most dependencies.
+
+Unmanaged dependencies:
+
+- GCC/Clang compiler toolchain and C/C++ development files (C++17 support required)
+- cmake (for build info generation)
+- libxmlrpc-c with development files (for XMLRPC support)
+- libcppunit with development files (optional, for unit tests)
 
 ```sh
-# Clone repository
-git clone https://github.com/jesec/rtorrent.git
-cd rtorrent
-
 # Install Bazel
 # Use the build of your system and architecture
 # bazelisk-linux-arm64 and bazelisk-darwin-amd64 are also available
 sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
 sudo chmod +x /usr/local/bin/bazel
 
-# Install dependencies and build tools
+# Install unmanaged dependencies and build tools
 # Use the package manager of your distribution
-# Unmanaged dependencies: cmake, compiler toolchain (GCC/Clang) and XMLRPC-C development files
 sudo apt install build-essential cmake libc6-dev libxmlrpc-c++8-dev
+
+# Clone repository
+git clone https://github.com/jesec/rtorrent.git
+cd rtorrent
 
 # Build
 # To generate a fully static executable, use rtorrent.
@@ -30,6 +40,46 @@ sudo apt install build-essential cmake libc6-dev libxmlrpc-c++8-dev
 bazel build rtorrent
 
 # Binary available at bazel-bin/rtorrent (or bazel-bin/rtorrent-shared)
+```
+
+## Build (CMake)
+
+CMake 3.5 or later is required.
+
+You have to install dependencies manually to system or let CMake know where to find them.
+
+Dependencies:
+
+- GCC/Clang compiler toolchain and C/C++ development files (C++17 support required)
+- libtorrent with development files (core dependency, matching version required)
+- libcurl with development files
+- libncurses/libncursesw with development files (for terminal UI)
+- libxmlrpc-c with development files (optional if USE_XMLRPC=OFF, for XMLRPC support)
+- libcppunit with development files (optional, for unit tests)
+
+```sh
+# Compile and install libtorrent (matching version required)
+# Check README of libtorrent for instructions
+
+# Install dependencies and build tools
+# Use the package manager of your distribution
+sudo apt install build-essential cmake libc6-dev libcurl4-openssl-dev libncursesw5-dev libxmlrpc-c++8-dev libcppunit-dev
+
+# Clone repository
+git clone https://github.com/jesec/rtorrent.git
+cd rtorrent
+
+# Configure and generate Makefile
+cmake .
+
+# Build
+# By default, shared binaries are generated
+make
+
+# Binary available at ./rtorrent
+
+# Install (optional)
+sudo make install
 ```
 
 ## Docker

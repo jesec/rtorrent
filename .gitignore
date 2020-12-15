@@ -80,6 +80,8 @@ test/rtorrentTest.trs
 # CMake generated files #
 #########################
 /build
+/rtorrent
+/rtorrent_test
 *.ninja
 .ninja_deps
 .ninja_log
