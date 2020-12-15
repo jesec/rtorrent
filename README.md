@@ -1,10 +1,50 @@
 # RTorrent BitTorrent Client
 
-## Introduction
+rTorrent is a stable, high-performance and low resource consumption BitTorrent client.
+
+## Getting started
+
+### Installation
+
+Fully static binaries are available at [Github Actions](https://github.com/jesec/rtorrent/actions?query=workflow%3A%22Publish+rolling+build%22).
+
+- Extract, `sudo cp rtorrent /usr/local/bin/rtorrent` and `sudo chmod +x /usr/local/bin/rtorrent`
+- Download default configuration from [doc/rtorrent.rc](https://github.com/jesec/rtorrent/raw/master/doc/rtorrent.rc) and copy it to `/etc/rtorrent/rtorrent.rc` or `$HOME/.rtorrent.rc`.
+
+Or [run with Docker](https://github.com/jesec/rtorrent#docker)
+
+Or [build from source](https://github.com/jesec/rtorrent#build)
+
+### Use
+
+Run `rtorrent`
+
+You can execute rTorrent [commands](https://rtorrent-docs.readthedocs.io/en/latest/cmd-ref.html) to set port, set announced IP, etc.
+
+For example, to launch rTorrent with port `6881` and DHT disabled, `rtorrent -o network.port_range.set=6881-6881,dht.mode.set=disable`.
+
+Checkout [Flood](https://flood.js.org), a modern Web UI for rTorrent.
 
 To learn how to use rTorrent visit the [Wiki](https://github.com/rakshasa/rtorrent/wiki).
 
-## Build (Bazel)
+### Configuration
+
+Default configuration file is available at [doc/rtorrent.rc](https://github.com/jesec/rtorrent/blob/master/doc/rtorrent.rc). It is often installed to `/etc/rtorrent/rtorrent.rc`.
+
+You may modify the configuration file to fit your needs. Alternatively, use `-o`, as documented above, to override some configurations but keep using the loaded configuration file.
+
+rTorrent loads **a** configuration file from several locations:
+
+- $XDG_CONFIG_HOME/rtorrent/rtorrent.rc (highest priority)
+- $HOME/.config/rtorrent/rtorrent.rc
+- $HOME/.rtorrent.rc
+- /etc/rtorrent/rtorrent.rc (lowest priority)
+
+Or, use `-n` argument to prevent rTorrent from loading any configuration file. Then you can use `-o try_import=<path>` to load a config file from an arbitrary location.
+
+## Build
+
+### Bazel
 
 Bazel 3 or later is required.
 
@@ -42,7 +82,7 @@ bazel build rtorrent
 # Binary available at bazel-bin/rtorrent (or bazel-bin/rtorrent-shared)
 ```
 
-## Build (CMake)
+### CMake
 
 CMake 3.5 or later is required.
 
@@ -90,13 +130,9 @@ To test: `docker run -it jesec/rtorrent`
 
 Note that you have to expose BitTorrent port (e.g. `-p 50000:50000`) and map folders (e.g. `-v /home/download:/home/download`) yourself.
 
-By default, rTorrent's files are located in `/home/download/.local/share/rtorrent`. Check [doc/rtorrent.rc](https://github.com/jesec/rtorrent/blob/master/doc/rtorrent.rc) to know more about the default configurations.
+By default, rTorrent's files are located in `$HOME/.local/share/rtorrent`. Check [doc/rtorrent.rc](https://github.com/jesec/rtorrent/blob/master/doc/rtorrent.rc) to know more about the default configurations.
 
-You can execute rTorrent [commands](https://rtorrent-docs.readthedocs.io/en/latest/cmd-ref.html) at start to set port, set announced IP, etc.
-
-For example, to launch rTorrent with port `6881` and DHT disabled, `docker run -it jesec/rtorrent -o network.port_range.set=6881-6881,dht.mode.set=disable`.
-
-To integrate with [Flood](https://flood.js.org), see [flood:Dockerfile.rtorrent](https://github.com/jesec/flood/blob/master/Dockerfile.rtorrent).
+To integrate with [Flood](https://flood.js.org), see [flood:Dockerfile.rtorrent](https://github.com/jesec/flood/blob/master/Dockerfile.rtorrent) and [discussions](https://github.com/jesec/flood/discussions/120).
 
 ## Donate to rTorrent development
 
