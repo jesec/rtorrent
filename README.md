@@ -23,9 +23,13 @@ sudo chmod +x /usr/local/bin/bazel
 sudo apt install build-essential cmake libc6-dev libxmlrpc-c++8-dev
 
 # Build
+# To generate a fully static executable, use rtorrent.
+# To generate a shared executable, use rtorrent-shared.
+# Note that certain versions of glibc have bugs that make static executables unreliable.
+# If you do want fully static, reproducible, portable and stable executable, build with Dockerfile.
 bazel build rtorrent
 
-# Binary available at bazel-bin/rtorrent
+# Binary available at bazel-bin/rtorrent (or bazel-bin/rtorrent-shared)
 ```
 
 ## Docker
