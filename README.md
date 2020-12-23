@@ -6,10 +6,20 @@ rTorrent is a stable, high-performance and low resource consumption BitTorrent c
 
 ### Installation
 
-Fully static binaries are available at [Github Actions](https://github.com/jesec/rtorrent/actions?query=workflow%3A%22Publish+rolling+build%22).
+Fully static binaries are available at [Releases](https://github.com/jesec/rtorrent/releases).
 
-- Extract, `sudo cp rtorrent /usr/local/bin/rtorrent` and `sudo chmod +x /usr/local/bin/rtorrent`
-- Download default configuration from [doc/rtorrent.rc](https://github.com/jesec/rtorrent/raw/master/doc/rtorrent.rc) and copy it to `/etc/rtorrent/rtorrent.rc` or `$HOME/.rtorrent.rc`.
+```sh
+# Install rTorrent to /usr/local/bin/rtorrent
+# rtorrent-linux-amd64 and rtorrent-linux-arm64 are available
+sudo wget https://github.com/jesec/rtorrent/releases/latest/download/rtorrent-linux-amd64 -O /usr/local/bin/rtorrent
+
+# Make it executable
+sudo chmod +x /usr/local/bin/rtorrent
+
+# Default configuration
+mkdir -p /etc/rtorrent
+sudo wget https://github.com/jesec/rtorrent/releases/latest/download/rtorrent.rc -O /etc/rtorrent/rtorrent.rc
+```
 
 Or [run with Docker](https://github.com/jesec/rtorrent#docker)
 

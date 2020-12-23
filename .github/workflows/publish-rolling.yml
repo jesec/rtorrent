@@ -48,3 +48,25 @@ jobs:
         with:
           name: rtorrent-static-linux-arm64
           path: linux_arm64/usr/local/bin/rtorrent
+
+      - run: |
+          mv linux_amd64/usr/local/bin/rtorrent rtorrent-linux-amd64
+          mv linux_arm64/usr/local/bin/rtorrent rtorrent-linux-arm64
+
+      - name: Get the version
+        id: get_version
+        run: |
+          echo ::set-output name=BRANCH::${GITHUB_REF#refs/heads/}
+          echo ::set-output name=COMMIT::$(git rev-parse --short "$GITHUB_SHA")
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Build ${{ steps.get_version.outputs.BRANCH }}.${{ steps.get_version.outputs.COMMIT }}
+          body_path: body
+          files: |
+            rtorrent-linux-amd64
+            rtorrent-linux-arm64
+            doc/rtorrent.rc
