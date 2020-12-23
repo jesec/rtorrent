@@ -2,6 +2,10 @@
 
 rTorrent is a stable, high-performance and low resource consumption BitTorrent client.
 
+This distribution focuses on additional user-facing features, optimizations and better integrations with modern users of RPC interfaces. One of the long-term goal of this project is to switch from antique XML-RPC to modern protocols with bidirectional capabilities such as gRPC, JSON-RPC over WebSocket or GraphQL, which allows real-time events, less serialization/transfer overheads, better security, etc.
+
+There is NO CHANGE in consensus-layer (BitTorrent protocol). As such, this distribution will behave exactly the same as [vanilla rTorrent](https://github.com/rakshasa/rtorrent) in the swarm, and there will not be any compatibility issue with certain trackers, if rTorrent 0.9.8 is supported.
+
 ## Getting started
 
 ### Installation
