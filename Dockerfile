@@ -23,9 +23,6 @@ COPY . ./
 # # Checkout rTorrent sources from Github repository
 # RUN git clone https://github.com/jesec/rtorrent .
 
-# Alpine does not have or use libtinfo
-RUN sed -i /ltinfo/d BUILD
-
 # Build rTorrent
 RUN bazel build rtorrent
 
