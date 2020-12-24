@@ -1,9 +1,9 @@
-name: Publish rolling build
+name: Release
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - "v*"
 
 jobs:
   docker:
@@ -55,17 +55,14 @@ jobs:
 
       - name: Get the version
         id: get_version
-        run: |
-          echo ::set-output name=BRANCH::${GITHUB_REF#refs/heads/}
-          echo ::set-output name=COMMIT::$(git rev-parse --short "$GITHUB_SHA")
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Build ${{ steps.get_version.outputs.BRANCH }}.${{ steps.get_version.outputs.COMMIT }}
-          body_path: body
+          name: ${{ steps.get_version.outputs.VERSION }}
           files: |
             rtorrent-linux-amd64
             rtorrent-linux-arm64
