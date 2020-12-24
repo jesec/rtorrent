@@ -67,3 +67,4 @@ jobs:
             rtorrent-linux-amd64
             rtorrent-linux-arm64
             doc/rtorrent.rc
+            doc/rtorrent@.service

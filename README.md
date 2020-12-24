@@ -21,8 +21,15 @@ sudo wget https://github.com/jesec/rtorrent/releases/latest/download/rtorrent-li
 sudo chmod +x /usr/local/bin/rtorrent
 
 # Default configuration
-mkdir -p /etc/rtorrent
+sudo mkdir -p /etc/rtorrent
 sudo wget https://github.com/jesec/rtorrent/releases/latest/download/rtorrent.rc -O /etc/rtorrent/rtorrent.rc
+
+# Install as a systemd service (optional)
+# This example uses "download" user. Replace it with the an existing user that rTorrent should run with.
+sudo wget https://github.com/jesec/rtorrent/releases/latest/download/rtorrent@.service -O /etc/systemd/system/rtorrent@.service
+sudo systemctl daemon-reload
+sudo systemctl enable rtorrent@download
+sudo systemctl start rtorrent@download
 ```
 
 Or [run with Docker](https://github.com/jesec/rtorrent#docker)
