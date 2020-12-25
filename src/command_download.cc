@@ -1075,7 +1075,7 @@ initialize_command_download() {
   CMD2_DL_VAR_STRING(
     "d.down.choke_heuristics.seed", "rtorrent", "choke_heuristics.down.seed");
 
-  CMD2_DL("d.down.sequential", CMD2_ON_INFO(is_sequential_enabled));
+  CMD2_DL("d.down.sequential", CMD2_ON_DL(is_sequential_enabled));
   CMD2_DL_VALUE_V("d.down.sequential.set",
                   std::bind(&torrent::Download::set_sequential_enabled,
                             CMD2_BIND_DL,
