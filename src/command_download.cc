@@ -1044,8 +1044,8 @@ initialize_command_download() {
                            std::placeholders::_1,
                            std::placeholders::_2));
 
-  CMD2_DL_VAR_STRING("d.connection_leech", "rtorrent", "connection_leech");
-  CMD2_DL_VAR_STRING("d.connection_seed", "rtorrent", "connection_seed");
+  CMD2_DL_VAR_STRING_PUBLIC("d.connection_leech", "rtorrent", "connection_leech");
+  CMD2_DL_VAR_STRING_PUBLIC("d.connection_seed", "rtorrent", "connection_seed");
 
   CMD2_DL("d.up.choke_heuristics",
           std::bind(&torrent::option_as_string,
