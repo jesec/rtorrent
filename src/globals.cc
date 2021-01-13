@@ -5,7 +5,6 @@
 
 torrent::utils::priority_queue_default taskScheduler;
 torrent::utils::timer                  cachedTime;
-rpc::ip_table_list                     ip_tables;
 
 Control*      control       = nullptr;
 ThreadWorker* worker_thread = nullptr;

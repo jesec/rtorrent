@@ -7,7 +7,6 @@
 #include <torrent/utils/priority_queue_default.h>
 #include <torrent/utils/timer.h>
 
-#include "rpc/ip_table_list.h"
 #include "thread_base.h"
 #include "thread_worker.h"
 
@@ -20,7 +19,6 @@ class Control;
 
 extern torrent::utils::priority_queue_default taskScheduler;
 extern torrent::utils::timer                  cachedTime;
-extern rpc::ip_table_list                     ip_tables;
 
 extern Control*      control;
 extern ThreadWorker* worker_thread;

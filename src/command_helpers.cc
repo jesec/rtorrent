@@ -16,8 +16,6 @@ initialize_command_events();
 void
 initialize_command_file();
 void
-initialize_command_ip();
-void
 initialize_command_peer();
 void
 initialize_command_local();
@@ -47,7 +45,6 @@ initialize_commands() {
   initialize_command_ui();
   initialize_command_download();
   initialize_command_file();
-  initialize_command_ip();
   initialize_command_peer();
   initialize_command_throttle();
   initialize_command_tracker();
