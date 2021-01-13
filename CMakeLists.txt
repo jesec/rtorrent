@@ -55,6 +55,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
 if(NOT BUILDINFO_ONLY)
   # Required packages
   find_package(CURL REQUIRED)
+  include_directories(${CURL_INCLUDE_DIRS})
 
   set(CURSES_NEED_WIDE ON)
   find_package(Curses)
@@ -62,9 +63,11 @@ if(NOT BUILDINFO_ONLY)
     set(CURSES_NEED_WIDE OFF)
     find_package(Curses REQUIRED)
   endif()
+  include_directories(${CURSES_INCLUDE_DIRS})
 
   if(USE_XMLRPC)
     find_package(XMLRPC REQUIRED c++)
+    include_directories(${XMLRPC_INCLUDE_DIRS})
   endif()
 
   file(GLOB_RECURSE RTORRENT_COMMON_SRCS "${PROJECT_SOURCE_DIR}/src/*.cc")
@@ -72,8 +75,9 @@ if(NOT BUILDINFO_ONLY)
 
   # common objects
   find_package(Torrent REQUIRED)
+  include_directories(${TORRENT_INCLUDE_DIR})
   add_library(rtorrent_common OBJECT ${RTORRENT_COMMON_SRCS})
-  target_link_libraries(rtorrent_common torrent ${CURL_LIBRARIES}
+  target_link_libraries(rtorrent_common ${TORRENT_LIBRARY} ${CURL_LIBRARIES}
                         ${CURSES_LIBRARIES})
   if(USE_XMLRPC)
     target_link_libraries(rtorrent_common ${XMLRPC_LIBRARIES})
@@ -90,6 +94,7 @@ if(NOT BUILDINFO_ONLY)
     enable_testing()
     file(GLOB_RECURSE RTORRENT_TEST_SRCS "${PROJECT_SOURCE_DIR}/test/*.cc")
     add_executable(rtorrent_test ${RTORRENT_TEST_SRCS})
+    include_directories(${CPPUNIT_INCLUDE_DIR})
     target_link_libraries(rtorrent_test rtorrent_common ${CPPUNIT_LIBRARY})
     add_test(NAME test COMMAND rtorrent_test)
   endif()
