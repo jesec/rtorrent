@@ -68,6 +68,7 @@ cc_library(
         "//:macos": [
             "-lxml2",
             "-liconv",
+            "-lncurses",
         ],
         "//conditions:default": [
             "-lxmlrpc_server",
@@ -80,12 +81,13 @@ cc_library(
     deps = [
         "@curl",
         "@libtorrent//:torrent",
-        "@ncurses//:ncursesw",
     ] + select({
         "//:macos": [
             "@xmlrpc",
         ],
-        "//conditions:default": [],
+        "//conditions:default": [
+            "@ncurses//:ncursesw",
+        ],
     }),
 )
 
