@@ -35,9 +35,9 @@ schedule2 = watch_load, 11, 10, ((load.verbose, (cat, (cfg.watch), "load/*.torre
 # Drop to "$(cfg.watch)/start" to add torrent and start downloading
 schedule2 = watch_start, 10, 10, ((load.start_verbose, (cat, (cfg.watch), "start/*.torrent")))
 
-# Listening port for incoming peer traffic (fixed; you can also randomize it)
-network.port_range.set = 50000-50000
-network.port_random.set = no
+# Listening port for incoming peer traffic
+#network.port_range.set = 6881-6999
+#network.port_random.set = yes
 
 # Tracker-less torrent and UDP tracker support
 # Disable if privacy is paramount as DHT and PEX are vulnerable to passive sniffing
