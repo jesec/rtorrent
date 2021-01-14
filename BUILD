@@ -1,4 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("@rules_foreign_cc//tools/build_defs:configure.bzl", "configure_make")
 
 config_setting(
     name = "macos",
@@ -53,6 +54,28 @@ filegroup(
     srcs = ["include/buildinfo.h"] + glob(["include/**/*.h"]),
 )
 
+configure_make(
+    name = "xmlrpc",
+    configure_in_place = True,
+    configure_options = [
+        "--disable-wininet-client",
+        "--disable-curl-client",
+        "--disable-libwww-client",
+        "--disable-abyss-server",
+        "--disable-cgi-server",
+        "--disable-cplusplus",
+    ],
+    lib_source = "@xmlrpc//:all",
+    static_libraries = [
+        "libxmlrpc_server.a",
+        "libxmlrpc.a",
+        "libxmlrpc_xmlparse.a",
+        "libxmlrpc_xmltok.a",
+        "libxmlrpc_util.a",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "rtorrent_common",
     srcs = glob(
@@ -70,21 +93,14 @@ cc_library(
             "-liconv",
             "-lncurses",
         ],
-        "//conditions:default": [
-            "-lxmlrpc_server",
-            "-lxmlrpc",
-            "-lxmlrpc_util",
-            "-lxmlrpc_xmlparse",
-            "-lxmlrpc_xmltok",
-        ],
+        "//conditions:default": [],
     }),
     deps = [
         "@curl",
+        "xmlrpc",
         "@libtorrent//:torrent",
     ] + select({
-        "//:macos": [
-            "@xmlrpc",
-        ],
+        "//:macos": [],
         "//conditions:default": [
             "@ncurses//:ncursesw",
         ],

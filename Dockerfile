@@ -8,9 +8,9 @@ WORKDIR /root/rtorrent
 RUN apk --no-cache add \
     build-base \
     cmake \
+    coreutils \
     git \
-    linux-headers \
-    xmlrpc-c-dev
+    linux-headers
 
 # Install Bazel 3 from edge testing repository
 RUN apk --no-cache add \

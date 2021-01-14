@@ -75,7 +75,6 @@ Unmanaged dependencies:
 
 - GCC/Clang compiler toolchain and C/C++ development files (C++17 support required)
 - cmake (for build info generation)
-- libxmlrpc-c with development files (for XMLRPC support)
 - libcppunit with development files (optional, for unit tests)
 
 ```sh
@@ -87,7 +86,7 @@ sudo chmod +x /usr/local/bin/bazel
 
 # Install unmanaged dependencies and build tools
 # Use the package manager of your distribution
-sudo apt install build-essential cmake libc6-dev libxmlrpc-c++8-dev
+sudo apt install build-essential cmake libc6-dev
 
 # Clone repository
 git clone https://github.com/jesec/rtorrent.git
