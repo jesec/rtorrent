@@ -56,6 +56,12 @@ filegroup(
 
 configure_make(
     name = "xmlrpc",
+    configure_env_vars = select({
+        "//:macos": {
+            "AR": "",
+        },
+        "//conditions:default": {},
+    }),
     configure_in_place = True,
     configure_options = [
         "--disable-wininet-client",
@@ -68,7 +74,7 @@ configure_make(
     lib_source = "@xmlrpc//:all",
     make_commands = select({
         "//:macos": [
-            "AR= CFLAGS='-D_DARWIN_C_SOURCE -Dfinite=isfinite' make",
+            "CFLAGS='-D_DARWIN_C_SOURCE -Dfinite=isfinite' make",
             "make install",
         ],
         "//conditions:default": [
