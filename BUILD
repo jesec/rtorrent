@@ -1,10 +1,31 @@
+load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 load("@rules_foreign_cc//tools/build_defs:configure.bzl", "configure_make")
 
 config_setting(
-    name = "macos",
-    values = {"cpu": "darwin"},
+    name = "macos_x86_64",
+    values = {
+        "apple_platform_type": "macos",
+        "cpu": "darwin",
+    },
     visibility = ["//visibility:private"],
+)
+
+config_setting(
+    name = "macos_arm64",
+    values = {
+        "apple_platform_type": "macos",
+        "cpu": "darwin_arm64",
+    },
+    visibility = ["//visibility:private"],
+)
+
+selects.config_setting_group(
+    name = "macos",
+    match_any = [
+        ":macos_x86_64",
+        ":macos_arm64",
+    ],
 )
 
 config_setting(

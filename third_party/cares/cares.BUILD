@@ -1,17 +1,24 @@
 # Copied from https://github.com/grpc/grpc/tree/master/third_party/cares
 
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
+load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 config_setting(
-    name = "darwin",
-    values = {"cpu": "darwin"},
+    name = "macos_x86_64",
+    values = {
+        "apple_platform_type": "macos",
+        "cpu": "darwin",
+    },
     visibility = ["//visibility:private"],
 )
 
 config_setting(
-    name = "darwin_x86_64",
-    values = {"cpu": "darwin_x86_64"},
+    name = "macos_arm64",
+    values = {
+        "apple_platform_type": "macos",
+        "cpu": "darwin_arm64",
+    },
     visibility = ["//visibility:private"],
 )
 
@@ -95,6 +102,24 @@ config_setting(
     visibility = ["//visibility:private"],
 )
 
+selects.config_setting_group(
+    name = "darwin",
+    match_any = [
+        ":macos_x86_64",
+        ":macos_arm64",
+        ":ios_x86_64",
+        ":ios_armv7",
+        ":ios_armv7s",
+        ":ios_arm64",
+        ":tvos_x86_64",
+        ":tvos_arm64",
+        ":watchos_i386",
+        ":watchos_x86_64",
+        ":watchos_armv7k",
+        ":watchos_arm64_32",
+    ],
+)
+
 copy_file(
     name = "ares_build_h",
     src = "@rtorrent//third_party/cares:ares_build.h",
@@ -104,18 +129,7 @@ copy_file(
 copy_file(
     name = "ares_config_h",
     src = select({
-        ":ios_x86_64": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":ios_armv7": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":ios_armv7s": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":ios_arm64": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":tvos_x86_64": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":tvos_arm64": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":watchos_i386": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":watchos_x86_64": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":watchos_armv7k": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":watchos_arm64_32": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
         ":darwin": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":darwin_x86_64": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
         ":windows": "@rtorrent//third_party/cares:config_windows/ares_config.h",
         ":android": "@rtorrent//third_party/cares:config_android/ares_config.h",
         "//conditions:default": "@rtorrent//third_party/cares:config_linux/ares_config.h",
