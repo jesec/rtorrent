@@ -56,6 +56,12 @@ filegroup(
 
 configure_make(
     name = "xmlrpc",
+    configure_env_vars = select({
+        "//:macos": {
+            "CFLAGS": "-D_DARWIN_C_SOURCE -Dfinite=isfinite",
+        },
+        "//conditions:default": {},
+    }),
     configure_in_place = True,
     configure_options = [
         "--disable-wininet-client",
