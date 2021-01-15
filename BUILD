@@ -68,7 +68,7 @@ configure_make(
     lib_source = "@xmlrpc//:all",
     make_commands = select({
         "//:macos": [
-            "CFLAGS='-D_DARWIN_C_SOURCE -Dfinite=isfinite' make",
+            "AR= CFLAGS='-D_DARWIN_C_SOURCE -Dfinite=isfinite' make",
             "make install",
         ],
         "//conditions:default": [
