@@ -74,9 +74,8 @@ all_content = """filegroup(name = "all", srcs = glob(["**"]), visibility = ["//v
 http_archive(
     name = "xmlrpc",
     build_file_content = all_content,
-    sha256 = "06dcd87d9c88374559369ffbe83b3139cf41418c1a2d03f20e08808085f89fd0",
-    strip_prefix = "xmlrpc-c-1.51.06",
-    urls = ["https://downloads.sourceforge.net/project/xmlrpc-c/Xmlrpc-c%20Super%20Stable/1.51.06/xmlrpc-c-1.51.06.tgz"],
+    strip_prefix = "xmlrpc-c-code-r3117-advanced",
+    urls = ["https://sourceforge.net/code-snapshots/svn/x/xm/xmlrpc-c/code/xmlrpc-c-code-r3117-advanced.zip"],
 )
 
 # MacOS workarounds
