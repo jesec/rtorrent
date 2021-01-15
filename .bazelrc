@@ -20,6 +20,7 @@ build:msan --action_env=CXX=clang++
 build:msan --copt -fsanitize=memory
 build:msan --copt -fno-omit-frame-pointer
 build:msan --linkopt -fsanitize=memory
+build:msan --linkopt -fuse-ld=lld
 
 # Undefined Behavior sanitizer
 build:ubsan -c dbg
@@ -32,6 +33,7 @@ build:ubsan --linkopt -lubsan
 build:clang -c opt
 build:clang --action_env=CC=clang
 build:clang --action_env=CXX=clang++
+build:clang --linkopt -fuse-ld=lld
 
 # Use GCC
 build:gcc -c opt
