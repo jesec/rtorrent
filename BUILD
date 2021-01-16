@@ -40,7 +40,6 @@ COPTS = [
     "-Wall",
     "-Wextra",
     "-Wvla",
-    "-faligned-new",
 ] + select({
     "//:opt": [
         "-Ofast",
