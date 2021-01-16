@@ -25,7 +25,7 @@ parse_address_range(const torrent::Object::list_type&          args,
   torrent::utils::address_info* ai;
 
   ret = std::sscanf(
-    itr->as_string().c_str(), "%1023[^/]/%d%c", host, &prefixWidth, &dummy);
+    itr->as_string().c_str(), "%1023[^/]/%u%c", host, &prefixWidth, &dummy);
   if (ret < 1 || torrent::utils::address_info::get_address_info(
                    host, PF_INET, SOCK_STREAM, &ai) != 0)
     throw torrent::input_error("Could not resolve host.");
