@@ -60,7 +60,6 @@ protocol.encryption.set = allow_incoming,try_outgoing,enable_retry
 # Limits for file handle resources, this is optimized for
 # an `ulimit` of 1024 (a common default). You MUST leave
 # a ceiling of handles reserved for rTorrent's internal needs!
-network.http.max_open.set = 50
 network.max_open_files.set = 600
 network.max_open_sockets.set = 300
 
@@ -81,14 +80,36 @@ execute.nothrow = sh, -c, (cat, "echo >",\
 encoding.add = utf8
 system.umask.set = 0027
 system.cwd.set = (directory.default)
-network.http.capath.set = "/etc/ssl/certs"
-network.http.dns_cache_timeout.set = 25
-network.http.ssl_verify_peer.set = 1
-network.http.ssl_verify_host.set = 1
 schedule2 = monitor_diskspace, 15, 60, ((close_low_diskspace, 1000M))
 #pieces.hash.on_completion.set = no
 #view.sort_current = seeding, greater=d.ratio=
 #keys.layout.set = qwerty
+
+# HTTP and SSL
+network.http.max_open.set = 50
+network.http.dns_cache_timeout.set = 25
+
+# Path to the CA bundle. By default, rTorrent tries to detect from:
+#   $RTORRENT_CA_BUNDLE (highest priority)
+#   $CURL_CA_BUNDLE
+#   $SSL_CERT_FILE
+#   /etc/ssl/certs/ca-certificates.crt
+#   /etc/pki/tls/certs/ca-bundle.crt
+#   /usr/share/ssl/certs/ca-bundle.crt
+#   /usr/local/share/certs/ca-root-nss.crt
+#   /etc/ssl/cert.pem (lowest priority)
+#network.http.cacert.set = /etc/ssl/certs/ca-certificates.crt
+
+# Path to the certificate directory to verify the peer. The certificates
+# must be in PEM format, and the directory must have been processed using
+# the c_rehash utility supplied with openssl.
+#
+# For advanced users only, generally you should use network.http.cacert.set
+# to specify path to the bundle of certificates.
+#network.http.capath.set = "/etc/ssl/certs"
+
+#network.http.ssl_verify_peer.set = 1
+#network.http.ssl_verify_host.set = 1
 
 # Run the rTorrent process as a daemon in the background
 #system.daemon.set = true

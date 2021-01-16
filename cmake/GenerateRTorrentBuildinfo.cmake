@@ -22,6 +22,11 @@ if(USE_EXTRA_DEBUG)
   file(APPEND ${BUILDINFO_H} "#define RT_USE_EXTRA_DEBUG 1\n\n")
 endif()
 
+if(USE_RUNTIME_CA_DETECTION)
+  file(APPEND ${BUILDINFO_H} "/* Runtime detection of path to CA bundle */\n")
+  file(APPEND ${BUILDINFO_H} "#define RT_USE_RUNTIME_CA_DETECTION 1\n\n")
+endif()
+
 if(USE_XMLRPC)
   file(APPEND ${BUILDINFO_H} "/* Support for XMLRPC-C */\n")
   file(APPEND ${BUILDINFO_H} "#define HAVE_XMLRPC_C 1\n\n")

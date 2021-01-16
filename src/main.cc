@@ -490,9 +490,23 @@ main(int argc, char** argv) {
       CMD2_REDIRECT_GENERIC_NO_EXPORT("schedule_remove", "schedule_remove2");
     }
 
-#if LT_SLIM_VERSION != 1
-    if (rpc::call_command_value("method.use_deprecated")) {
-    }
+#ifdef RT_USE_RUNTIME_CA_DETECTION
+    std::function<void(const char*)> apply_cert = [](const char* caPath) {
+      if (caPath != nullptr && caPath[0] == '/' && access(caPath, F_OK) != -1) {
+        rpc::parse_command_single(rpc::make_target(),
+                                  "network.http.cacert.set = " +
+                                    std::string(caPath));
+      }
+    };
+
+    apply_cert(std::string("/etc/ssl/cert.pem").c_str());
+    apply_cert(std::string("/usr/local/share/certs/ca-root-nss.crt").c_str());
+    apply_cert(std::string("/usr/share/ssl/certs/ca-bundle.crt").c_str());
+    apply_cert(std::string("/etc/pki/tls/certs/ca-bundle.crt").c_str());
+    apply_cert(std::string("/etc/ssl/certs/ca-certificates.crt").c_str());
+    apply_cert(std::getenv("SSL_CERT_FILE"));
+    apply_cert(std::getenv("CURL_CA_BUNDLE"));
+    apply_cert(std::getenv("RTORRENT_CA_BUNDLE"));
 #endif
 
     std::queue<std::string>                         cmd1;
