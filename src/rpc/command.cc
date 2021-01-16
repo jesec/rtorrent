@@ -46,7 +46,7 @@ command_base_call(command_base*          rawCommand,
     rawCommand, target, args);
 }
 
-COMMAND_BASE_TEMPLATE_DEFINE(command_base_call);
+COMMAND_BASE_TEMPLATE_DEFINE(command_base_call)
 
 template<typename T>
 const torrent::Object
@@ -90,8 +90,8 @@ command_base_call_value_kb(command_base*          rawCommand,
   return command_base_call_value_base<T>(rawCommand, target, rawArgs, 0, 1024);
 }
 
-COMMAND_BASE_TEMPLATE_DEFINE(command_base_call_value);
-COMMAND_BASE_TEMPLATE_DEFINE(command_base_call_value_kb);
+COMMAND_BASE_TEMPLATE_DEFINE(command_base_call_value)
+COMMAND_BASE_TEMPLATE_DEFINE(command_base_call_value_kb)
 
 template<typename T>
 const torrent::Object
@@ -111,7 +111,7 @@ command_base_call_string(command_base*          rawCommand,
     rawCommand, target, arg.as_string());
 }
 
-COMMAND_BASE_TEMPLATE_DEFINE(command_base_call_string);
+COMMAND_BASE_TEMPLATE_DEFINE(command_base_call_string)
 
 template<typename T>
 const torrent::Object
@@ -135,6 +135,6 @@ command_base_call_list(command_base*          rawCommand,
     rawCommand, target, rawArgs.as_list());
 }
 
-COMMAND_BASE_TEMPLATE_DEFINE(command_base_call_list);
+COMMAND_BASE_TEMPLATE_DEFINE(command_base_call_list)
 
 }
