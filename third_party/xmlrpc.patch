@@ -1,0 +1,11 @@
+--- xmlrpc_config.h.in
++++ xmlrpc_config.h.in
+@@ -233,6 +233,8 @@
+ 
+ #if MSVCRT
+   #define XMLRPC_FINITE _finite
++#elif defined(__APPLE__)
++  #define XMLRPC_FINITE isfinite
+ #else
+   #define XMLRPC_FINITE finite
+ #endif
