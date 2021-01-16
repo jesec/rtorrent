@@ -2,6 +2,7 @@
 # Description:
 #   curl is a tool for talking to web servers.
 
+load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 
 licenses(["notice"])  # MIT/X derivative license
@@ -15,9 +16,29 @@ config_setting(
 )
 
 config_setting(
-    name = "osx",
-    values = {"cpu": "darwin"},
+    name = "macos_x86_64",
+    values = {
+        "apple_platform_type": "macos",
+        "cpu": "darwin",
+    },
     visibility = ["//visibility:private"],
+)
+
+config_setting(
+    name = "macos_arm64",
+    values = {
+        "apple_platform_type": "macos",
+        "cpu": "darwin_arm64",
+    },
+    visibility = ["//visibility:private"],
+)
+
+selects.config_setting_group(
+    name = "macos",
+    match_any = [
+        ":macos_x86_64",
+        ":macos_arm64",
+    ],
 )
 
 CURL_WIN_COPTS = [
@@ -267,7 +288,7 @@ cc_library(
         "lib/doh.h",
         "lib/doh.c",
     ] + select({
-        "//:osx": [
+        "//:macos": [
             "lib/vtls/sectransp.c",
         ],
         "//:windows": CURL_WIN_SRCS,
@@ -300,7 +321,7 @@ cc_library(
             "-Wno-string-plus-int",
         ],
     }) + select({
-        "//:osx": [
+        "//:macos": [
             "-fno-constant-cfstrings",
         ],
         "//:windows": [
@@ -314,7 +335,7 @@ cc_library(
     defines = ["CURL_STATICLIB"],
     includes = ["include"],
     linkopts = select({
-        "//:osx": [
+        "//:macos": [
             "-Wl,-framework",
             "-Wl,CoreFoundation",
             "-Wl,-framework",
