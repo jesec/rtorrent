@@ -5,6 +5,8 @@ build -c opt
 build:asan -c dbg
 build:asan --copt -fsanitize=address
 build:asan --copt -fno-omit-frame-pointer
+build:asan --copt -Wno-macro-redefined
+build:asan --copt -D_FORTIFY_SOURCE=0
 build:asan --linkopt -fsanitize=address
 
 # Thread sanitizer
