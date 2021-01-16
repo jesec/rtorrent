@@ -93,13 +93,13 @@ git clone https://github.com/jesec/rtorrent.git
 cd rtorrent
 
 # Build
-# To generate a fully static executable, use rtorrent.
-# To generate a shared executable, use rtorrent-shared.
-# Note that certain versions of glibc have bugs that make static executables unreliable.
-# If you do want fully static, reproducible, portable and stable executable, build with Dockerfile.
+# By default, the executable is self contained, yet it depends on C/C++ standard libraries of system.
+# To generate a fully static executable, use --features=fully_static_link argument.
+# Note that glibc have issues that make static executables unreliable.
+# If you want fully static, reproducible, portable and stable executable, build with Dockerfile.
 bazel build rtorrent
 
-# Binary available at bazel-bin/rtorrent (or bazel-bin/rtorrent-shared)
+# Binary available at bazel-bin/rtorrent
 ```
 
 ### CMake

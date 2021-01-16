@@ -24,7 +24,7 @@ COPY . ./
 # RUN git clone https://github.com/jesec/rtorrent .
 
 # Build rTorrent
-RUN bazel build rtorrent
+RUN bazel build rtorrent --features=fully_static_link
 
 # Now get the clean image
 FROM ${ALPINE_IMAGE} as rtorrent
