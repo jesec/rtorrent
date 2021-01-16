@@ -39,6 +39,7 @@ COPTS = [
     "-Werror",
     "-Wall",
     "-Wextra",
+    "-Wpedantic",
     "-Wvla",
 ] + select({
     "//:opt": [

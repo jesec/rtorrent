@@ -22,7 +22,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 # Compiler options - Common
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_compile_options("-Wall" "-Wextra")
+add_compile_options("-Wall" "-Wextra" "-Wpedantic")
 
 # Compiler options - Optimizations
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
