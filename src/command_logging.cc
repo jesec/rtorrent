@@ -140,7 +140,7 @@ log_vmmap_dump(const std::string& str) {
     fprintf(log_file,
             "%8p-%8p [%5llxk]\n",
             itr->ptr,
-            (char*)itr->ptr + itr->length,
+            (void*)((char*)itr->ptr + itr->length),
             (long long unsigned int)(itr->length / 1024));
   }
 
