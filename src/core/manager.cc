@@ -326,7 +326,7 @@ Manager::set_proxy_address(const std::string& addr) {
   int                           port;
   torrent::utils::address_info* ai;
 
-  char* buf = static_cast<char*>(calloc(sizeof(char), addr.length() + 1));
+  char* buf = static_cast<char*>(calloc(addr.length() + 1, sizeof(char)));
 
   int err = std::sscanf(addr.c_str(), "%[^:]:%i", buf, &port);
 
