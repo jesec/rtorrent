@@ -121,16 +121,15 @@ cc_library(
     ) + ["//:included_headers"],
     copts = COPTS,
     includes = ["include"],
-    linkopts = LINKOPTS + [
-        "-lpthread",
-        "-lstdc++",
-    ] + select({
+    linkopts = LINKOPTS + select({
         "//:macos": [
             "-lxml2",
             "-liconv",
             "-lncurses",
         ],
-        "//conditions:default": [],
+        "//conditions:default": [
+            "-lpthread",
+        ],
     }),
     deps = [
         "@curl",
