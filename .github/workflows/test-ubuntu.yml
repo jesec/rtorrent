@@ -80,13 +80,13 @@ jobs:
 
       - run: bazel test --config=clang -s rtorrent_test
 
-      - run: bazel build --config=clang -s rtorrent
-      - run: cp bazel-bin/rtorrent rtorrent
+      - run: bazel build --config=clang -s rtorrent-deb
+      - run: cp -L bazel-bin/rtorrent-deb.deb rtorrent.deb
 
       - uses: actions/upload-artifact@v2
         with:
-          name: rtorrent-linux
-          path: rtorrent
+          name: rtorrent-deb-glibc-amd64
+          path: rtorrent.deb
 
   end-to-end:
     needs: unit-bazel-clang
@@ -96,12 +96,11 @@ jobs:
       - name: Copy rTorrent built in previous job
         uses: actions/download-artifact@v2
         with:
-          name: rtorrent-linux
+          name: rtorrent-deb-glibc-amd64
 
-      - name: Install rTorrent to /usr/local/bin
+      - name: Install rTorrent
         run: |
-          sudo mv rtorrent /usr/local/bin/
-          sudo chmod +x /usr/local/bin/rtorrent
+          sudo dpkg -i rtorrent.deb
 
       - name: Checkout Flood
         run: |
