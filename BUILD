@@ -1,6 +1,7 @@
 load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 load("@rules_foreign_cc//tools/build_defs:configure.bzl", "configure_make")
+load("@rules_pkg//:pkg.bzl", "pkg_deb", "pkg_tar")
 
 config_setting(
     name = "macos_x86_64",
@@ -178,4 +179,53 @@ cc_test(
         ],
         "//conditions:default": [],
     }),
+)
+
+pkg_tar(
+    name = "rtorrent-bin",
+    srcs = ["//:rtorrent"],
+    mode = "0755",
+    package_dir = "/usr/bin",
+    strip_prefix = "/",
+)
+
+pkg_tar(
+    name = "rtorrent-cfg",
+    srcs = ["doc/rtorrent.rc"],
+    mode = "0644",
+    package_dir = "/etc/rtorrent",
+    strip_prefix = "/doc",
+)
+
+pkg_tar(
+    name = "rtorrent-service",
+    srcs = ["doc/rtorrent@.service"],
+    mode = "0644",
+    package_dir = "/etc/systemd/system",
+    strip_prefix = "/doc",
+)
+
+pkg_tar(
+    name = "rtorrent-deb-data",
+    extension = "tar.gz",
+    deps = [
+        ":rtorrent-bin",
+        ":rtorrent-cfg",
+        ":rtorrent-service",
+    ],
+)
+
+pkg_deb(
+    name = "rtorrent-deb",
+    architecture = "all",
+    conffiles = [
+        "/etc/rtorrent/rtorrent.rc",
+        "/etc/systemd/system/rtorrent@.service",
+    ],
+    data = ":rtorrent-deb-data",
+    description = "a stable and high-performance BitTorrent client",
+    homepage = "https://github.com/jesec/rtorrent",
+    maintainer = "Jesse Chan <jc@linux.com>",
+    package = "rtorrent",
+    version = "0.9.8-jc+master",
 )
