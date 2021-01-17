@@ -101,6 +101,7 @@ jobs:
       - name: Install rTorrent
         run: |
           sudo dpkg -i rtorrent.deb
+          rm rtorrent.deb
 
       - name: Checkout Flood
         run: |
