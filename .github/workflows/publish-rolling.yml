@@ -1,0 +1,69 @@
+name: Publish rolling build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  docker:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Tag rolling release
+        run: |
+          sed s/-jc+master/-jc+`date +%s`-`git rev-parse --short HEAD`/ BUILD
+
+      - name: Set up QEMU
+        run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Publish to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            jesec/rtorrent:master
+
+      - name: Extract built rTorrent artifacts from Docker image
+        run: |
+          docker buildx build --platform linux/amd64,linux/arm64 --target build -o type=tar . > ../out.tar
+          tar xvf ../out.tar linux_amd64/root/rtorrent/dist linux_arm64/root/rtorrent/dist
+
+      - name: Prepare distribution archive
+        run: |
+          mkdir dist_linux_amd64 dist_linux_arm64
+          cp doc/rtorrent.rc doc/rtorrent@.service linux_amd64/root/rtorrent/dist/rtorrent dist_linux_amd64/
+          cp doc/rtorrent.rc doc/rtorrent@.service linux_arm64/root/rtorrent/dist/rtorrent dist_linux_arm64/
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: rtorrent-linux-amd64
+          path: dist_linux_amd64/*
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: rtorrent-linux-arm64
+          path: dist_linux_arm64/*
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: rtorrent-deb-amd64
+          path: linux_amd64/root/rtorrent/dist/rtorrent-deb.deb
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: rtorrent-deb-arm64
+          path: linux_arm64/root/rtorrent/dist/rtorrent-deb.deb

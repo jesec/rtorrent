@@ -10,7 +10,9 @@ RUN apk --no-cache add \
     cmake \
     coreutils \
     git \
-    linux-headers
+    linux-headers \
+    python2 \
+    python3
 
 # Install Bazel 3 from edge testing repository
 RUN apk --no-cache add \
@@ -23,14 +25,19 @@ COPY . ./
 # # Checkout rTorrent sources from Github repository
 # RUN git clone https://github.com/jesec/rtorrent .
 
-# Build rTorrent
-RUN bazel build rtorrent --features=fully_static_link --verbose_failures
+# Build rTorrent packages
+RUN bazel build rtorrent-deb --features=fully_static_link --verbose_failures
+
+# Copy outputs
+RUN mkdir dist
+RUN cp -L bazel-bin/rtorrent dist/
+RUN cp -L bazel-bin/rtorrent-deb.deb dist/
 
 # Now get the clean image
 FROM ${ALPINE_IMAGE} as rtorrent
 
 # Install rTorrent built
-COPY --from=build /root/rtorrent/bazel-bin/rtorrent /usr/local/bin
+COPY --from=build /root/rtorrent/dist/rtorrent /usr/local/bin
 
 # Install runtime dependencies
 RUN apk --no-cache add \
