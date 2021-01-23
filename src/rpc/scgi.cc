@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
+#include <sys/stat.h>
 #include <sys/un.h>
+
 #include <torrent/connection_manager.h>
 #include <torrent/exceptions.h>
 #include <torrent/poll.h>
@@ -65,6 +67,9 @@ SCgi::open_named(const std::string& filename) {
 
   if (!get_fd().open_local())
     throw torrent::resource_error("Could not open socket for listening.");
+
+  // 700 permission by default
+  fchmod(get_fd().get_fd(), S_IRWXU);
 
   open(sa, offsetof(struct sockaddr_un, sun_path) + filename.size() + 1);
   m_path = filename;

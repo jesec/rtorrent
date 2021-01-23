@@ -116,7 +116,6 @@ network.http.dns_cache_timeout.set = 25
 
 # XML-RPC interface
 network.scgi.open_local = (cat,(cfg.basedir),rtorrent.sock)
-execute.nothrow = chmod,770,(cat,(cfg.basedir),rtorrent.sock)
 
 # Logging:
 #   Levels = critical error warn notice info debug
