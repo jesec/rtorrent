@@ -12,6 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: Tag release
+        run: |
+          release=`echo ${{ steps.get_version.outputs.VERSION }} | cut -d'-' -f2`
+          sed s/-jc+master/-jc-$release/ BUILD > BUILD.versioned
+          cat BUILD.versioned
+          mv BUILD.versioned BUILD
+
       - name: Set up QEMU
         run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
@@ -32,30 +43,17 @@ jobs:
           push: true
           tags: |
             jesec/rtorrent:latest
-            jesec/rtorrent:master
 
-      - name: Extract built rTorrent binaries from Docker images
+      - name: Extract built rTorrent artifacts from Docker image
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -o type=tar . > ../out.tar
-          tar xvf ../out.tar linux_amd64/usr/local/bin/rtorrent linux_arm64/usr/local/bin/rtorrent
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: rtorrent-static-linux-amd64
-          path: linux_amd64/usr/local/bin/rtorrent
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: rtorrent-static-linux-arm64
-          path: linux_arm64/usr/local/bin/rtorrent
+          docker buildx build --platform linux/amd64,linux/arm64 --target build -o type=tar . > ../out.tar
+          tar xvf ../out.tar linux_amd64/root/rtorrent/dist linux_arm64/root/rtorrent/dist
 
       - run: |
-          mv linux_amd64/usr/local/bin/rtorrent rtorrent-linux-amd64
-          mv linux_arm64/usr/local/bin/rtorrent rtorrent-linux-arm64
-
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+          cp -L linux_amd64/root/rtorrent/dist/rtorrent rtorrent-linux-amd64
+          cp -L linux_amd64/root/rtorrent/dist/rtorrent-deb.deb rtorrent-linux-amd64.deb
+          cp -L linux_arm64/root/rtorrent/dist/rtorrent rtorrent-linux-arm64
+          cp -L linux_arm64/root/rtorrent/dist/rtorrent-deb.deb rtorrent-linux-arm64.deb
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -65,6 +63,8 @@ jobs:
           name: ${{ steps.get_version.outputs.VERSION }}
           files: |
             rtorrent-linux-amd64
+            rtorrent-linux-amd64.deb
             rtorrent-linux-arm64
+            rtorrent-linux-arm64.deb
             doc/rtorrent.rc
             doc/rtorrent@.service

@@ -32,6 +32,8 @@ sudo systemctl enable rtorrent@download
 sudo systemctl start rtorrent@download
 ```
 
+Or [install with APT repository](https://deb.jesec.io/)
+
 Or [run with Docker](https://github.com/jesec/rtorrent#docker)
 
 Or [build from source](https://github.com/jesec/rtorrent#build)
