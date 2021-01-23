@@ -41,24 +41,35 @@ RUN cp -L bazel-bin/rtorrent dist/
 RUN cp -L bazel-bin/rtorrent-deb.deb dist/
 
 # Now get the clean image
-FROM ${ALPINE_IMAGE} as rtorrent
+FROM ${ALPINE_IMAGE} as build-sysroot
 
-# Install rTorrent built
-COPY --from=build /root/rtorrent/dist/rtorrent /usr/local/bin
+WORKDIR /root
 
-# Install runtime dependencies
+# Fetch runtime dependencies
 RUN apk --no-cache add \
+    binutils \
     ca-certificates \
     ncurses-terminfo-base
 
-# Copy default configuration file to /etc/rtorrent
-COPY --from=build /root/rtorrent/doc/rtorrent.rc /etc/rtorrent/
+# Install rTorrent and dependencies to new system root
+RUN mkdir -p /root/sysroot/etc/ssl/certs
+COPY --from=build /root/rtorrent/dist/rtorrent-deb.deb .
+RUN ar -xv rtorrent-deb.deb
+RUN tar xvf data.tar.* -C /root/sysroot/
+RUN cp -L /etc/ssl/certs/ca-certificates.crt /root/sysroot/etc/ssl/certs/ca-certificates.crt
+RUN cp -r /etc/terminfo /root/sysroot/etc/terminfo
 
-# Create "download" user
-RUN adduser -h /home/download -s /sbin/nologin --disabled-password --uid 1001 download
+# Create 1001:1001 user
+RUN mkdir -p /root/sysroot/home/download
+RUN chown 1001:1001 /root/sysroot/home/download
 
-# Run as "download" user
-USER download
+FROM scratch as rtorrent
+
+COPY --from=build-sysroot /root/sysroot /
+
+# Run as 1001:1001 user
+ENV HOME=/home/download
+USER 1001:1001
 
 # rTorrent
 ENTRYPOINT ["rtorrent"]
