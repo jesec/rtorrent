@@ -9,6 +9,11 @@ jobs:
   docker:
     runs-on: ubuntu-20.04
 
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ["arm64", "amd64"]
+
     steps:
       - uses: actions/checkout@v2
 
@@ -34,38 +39,31 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{ matrix.arch }}
           push: true
           tags: |
-            jesec/rtorrent:master
+            jesec/rtorrent:master-${{ matrix.arch }}
+
+      - name: Merge multi-arch Docker image manifests
+        run: docker buildx imagetools create -t jesec/rtorrent:master --append jesec/rtorrent:master-${{ matrix.arch }}
 
       - name: Extract built rTorrent artifacts from Docker image
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 --target build -o type=tar . > ../out.tar
-          tar xvf ../out.tar linux_amd64/root/rtorrent/dist linux_arm64/root/rtorrent/dist
+          docker buildx build --platform linux/${{ matrix.arch }} --target build -o type=tar . > ../out.tar
+          tar xvf ../out.tar root/rtorrent/dist
 
       - name: Prepare distribution archive
         run: |
-          mkdir dist_linux_amd64 dist_linux_arm64
-          cp doc/rtorrent.rc doc/rtorrent@.service linux_amd64/root/rtorrent/dist/rtorrent dist_linux_amd64/
-          cp doc/rtorrent.rc doc/rtorrent@.service linux_arm64/root/rtorrent/dist/rtorrent dist_linux_arm64/
+          mkdir dist
+          cp doc/rtorrent.rc doc/rtorrent@.service root/rtorrent/dist/rtorrent dist
+          cp doc/rtorrent.rc doc/rtorrent@.service root/rtorrent/dist/rtorrent dist
 
       - uses: actions/upload-artifact@v2
         with:
-          name: rtorrent-linux-amd64
-          path: dist_linux_amd64/*
+          name: rtorrent-linux-${{ matrix.arch }}
+          path: dist/*
 
       - uses: actions/upload-artifact@v2
         with:
-          name: rtorrent-linux-arm64
-          path: dist_linux_arm64/*
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: rtorrent-deb-amd64
-          path: linux_amd64/root/rtorrent/dist/rtorrent-deb.deb
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: rtorrent-deb-arm64
-          path: linux_arm64/root/rtorrent/dist/rtorrent-deb.deb
+          name: rtorrent-deb-${{ matrix.arch }}
+          path: root/rtorrent/dist/rtorrent-deb.deb
