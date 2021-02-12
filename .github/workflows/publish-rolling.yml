@@ -56,7 +56,6 @@ jobs:
         run: |
           mkdir dist
           cp doc/rtorrent.rc doc/rtorrent@.service root/rtorrent/dist/rtorrent dist
-          cp doc/rtorrent.rc doc/rtorrent@.service root/rtorrent/dist/rtorrent dist
 
       - uses: actions/upload-artifact@v2
         with:
