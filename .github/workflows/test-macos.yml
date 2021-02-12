@@ -10,7 +10,7 @@ on:
 
 jobs:
   unit-bazel:
-    runs-on: macos-11.0
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +33,7 @@ jobs:
 
   end-to-end:
     needs: unit-bazel
-    runs-on: macos-11.0
+    runs-on: macos-latest
 
     steps:
       - name: Copy rTorrent built in previous job
