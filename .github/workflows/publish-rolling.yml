@@ -7,12 +7,17 @@ on:
 
 jobs:
   docker:
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         arch: ["arm64", "amd64"]
+        include:
+          - arch: arm64
+            os: self-hosted-arm64
+          - arch: amd64
+            os: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
