@@ -56,7 +56,17 @@ Default configuration file is available at [doc/rtorrent.rc](https://github.com/
 
 You may modify the configuration file to fit your needs. Alternatively, use `-o`, as documented above, to override some configurations but keep using the loaded configuration file.
 
-rTorrent loads **a** configuration file from several locations:
+It is recommended to expand upon the default configuration if user-specific config files (usually placed to `$HOME/.rtorrent.rc`) are used:
+
+```
+## Import default configurations
+import = /etc/rtorrent/rtorrent.rc
+
+## Your configurations
+...
+```
+
+rTorrent tries to load **a** configuration file from several locations:
 
 - $XDG_CONFIG_HOME/rtorrent/rtorrent.rc (highest priority)
 - $HOME/.config/rtorrent/rtorrent.rc
@@ -154,7 +164,7 @@ Note that you have to expose BitTorrent port (e.g. `-p 50000:50000`) and map fol
 
 By default, rTorrent's files are located in `$HOME/.local/share/rtorrent`. Check [doc/rtorrent.rc](https://github.com/jesec/rtorrent/blob/master/doc/rtorrent.rc) to know more about the default configurations.
 
-To integrate with [Flood](https://flood.js.org), see [flood:Dockerfile.rtorrent](https://github.com/jesec/flood/blob/master/Dockerfile.rtorrent) and [discussions](https://github.com/jesec/flood/discussions/120).
+To integrate with [Flood](https://flood.js.org), see [discussions](https://github.com/jesec/flood/discussions/120).
 
 ## Donate to rTorrent development
 
