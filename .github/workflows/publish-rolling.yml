@@ -44,9 +44,6 @@ jobs:
           tags: |
             jesec/rtorrent:master-${{ matrix.arch }}
 
-      - name: Merge multi-arch Docker image manifests
-        run: docker buildx imagetools create -t jesec/rtorrent:master --append jesec/rtorrent:master-${{ matrix.arch }}
-
       - name: Extract built rTorrent artifacts from Docker image
         run: |
           docker buildx build --platform linux/${{ matrix.arch }} --target build -o type=tar . > ../out.tar
@@ -54,15 +51,32 @@ jobs:
 
       - name: Prepare distribution archive
         run: |
-          mkdir dist
-          cp doc/rtorrent.rc doc/rtorrent@.service root/rtorrent/dist/rtorrent dist
+          mkdir dist-${{ matrix.arch }}
+          cp doc/rtorrent.rc doc/rtorrent@.service root/rtorrent/dist/rtorrent dist-${{ matrix.arch }}
 
       - uses: actions/upload-artifact@v2
         with:
           name: rtorrent-linux-${{ matrix.arch }}
-          path: dist/*
+          path: dist-${{ matrix.arch }}/*
 
       - uses: actions/upload-artifact@v2
         with:
           name: rtorrent-deb-${{ matrix.arch }}
           path: root/rtorrent/dist/rtorrent-deb.deb
+
+  docker-manifest:
+    needs: docker
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Merge multi-arch Docker image manifests
+        run: docker buildx imagetools create -t jesec/rtorrent:master jesec/rtorrent:master-arm64 jesec/rtorrent:master-amd64
