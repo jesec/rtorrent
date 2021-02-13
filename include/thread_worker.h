@@ -6,7 +6,7 @@
 
 #include "thread_base.h"
 
-#include <torrent/buildinfo.h>
+#include <torrent/utils/cacheline.h>
 #include <torrent/utils/priority_queue_default.h>
 
 namespace rpc {

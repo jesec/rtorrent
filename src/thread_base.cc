@@ -8,9 +8,9 @@
 #include <cstring>
 #include <iostream>
 #include <signal.h>
-#include <torrent/buildinfo.h>
 #include <torrent/exceptions.h>
 #include <torrent/torrent.h>
+#include <torrent/utils/cacheline.h>
 #include <torrent/utils/error_number.h>
 #include <torrent/utils/log.h>
 #include <unistd.h>

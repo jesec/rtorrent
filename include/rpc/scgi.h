@@ -6,8 +6,8 @@
 
 #include <string>
 
-#include <torrent/buildinfo.h>
 #include <torrent/event.h>
+#include <torrent/utils/cacheline.h>
 
 #include "rpc/scgi_task.h"
 

@@ -7,8 +7,8 @@
 #include <cinttypes>
 #include <sys/types.h>
 
-#include <torrent/buildinfo.h>
 #include <torrent/torrent.h>
+#include <torrent/utils/cacheline.h>
 #include <torrent/utils/priority_queue_default.h>
 #include <torrent/utils/timer.h>
 
