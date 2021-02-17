@@ -233,7 +233,7 @@ cmd_file_append(const torrent::Object::list_type& args) {
   if (output == nullptr)
     throw torrent::input_error(
       "Could not append to file '" + args.front().as_string() +
-      "': " + torrent::utils::error_number::current().c_str());
+      "': " + torrent::utils::error_number::current().message());
 
   file_print_list(++args.begin(), args.end(), output, file_print_delim_space);
 

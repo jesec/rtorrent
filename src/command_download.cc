@@ -124,7 +124,7 @@ apply_d_change_link(core::Download*                   download,
       if (symlink(target.c_str(), link.c_str()) == -1) {
         lt_log_print(torrent::LOG_TORRENT_WARN,
                      "create_link failed: %s",
-                     torrent::utils::error_number::current().c_str());
+                     torrent::utils::error_number::current().message().c_str());
       }
       break;
 
@@ -136,7 +136,7 @@ apply_d_change_link(core::Download*                   download,
           unlink(link.c_str()) == -1) {
         lt_log_print(torrent::LOG_TORRENT_WARN,
                      "delete_link failed: %s",
-                     torrent::utils::error_number::current().c_str());
+                     torrent::utils::error_number::current().message().c_str());
       }
       break;
     }
@@ -158,7 +158,7 @@ apply_d_delete_tied(core::Download* download) {
   if (::unlink(torrent::utils::path_expand(tie).c_str()) == -1)
     control->core()->push_log_std(
       "Could not unlink tied file: " +
-      std::string(torrent::utils::error_number::current().c_str()));
+      torrent::utils::error_number::current().message());
 
   rpc::call_command(
     "d.tied_to_file.set", std::string(), rpc::make_target(download));
@@ -705,10 +705,10 @@ d_list_has(core::Download*        download,
   torrent::Object::list_type& list =
     download_get_variable(download, first_key, second_key).as_list();
 
-  return (int64_t)(
-    std::find_if(list.begin(), list.end(), [args](torrent::Object& o) {
-      return torrent::object_equal(args, o);
-    }) != list.end());
+  return (
+    int64_t)(std::find_if(list.begin(), list.end(), [args](torrent::Object& o) {
+               return torrent::object_equal(args, o);
+             }) != list.end());
 }
 
 torrent::Object
@@ -1044,7 +1044,8 @@ initialize_command_download() {
                            std::placeholders::_1,
                            std::placeholders::_2));
 
-  CMD2_DL_VAR_STRING_PUBLIC("d.connection_leech", "rtorrent", "connection_leech");
+  CMD2_DL_VAR_STRING_PUBLIC(
+    "d.connection_leech", "rtorrent", "connection_leech");
   CMD2_DL_VAR_STRING_PUBLIC("d.connection_seed", "rtorrent", "connection_seed");
 
   CMD2_DL("d.up.choke_heuristics",

@@ -136,7 +136,7 @@ ExecFile::execute(const char* file, char* const* argv, int flags) {
   do {
     wpid = waitpid(childPid, &status, 0);
   } while (wpid == -1 && torrent::utils::error_number::current().value() ==
-                           torrent::utils::error_number::e_intr);
+                           std::errc::interrupted);
 
   ThreadBase::acquire_global_lock();
 

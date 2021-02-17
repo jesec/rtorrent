@@ -232,9 +232,8 @@ Manager::listen_open() {
       return;
   }
 
-  throw torrent::input_error(
-    "Could not open/bind port for listening: " +
-    std::string(torrent::utils::error_number::current().c_str()));
+  throw torrent::input_error("Could not open/bind port for listening: " +
+                             torrent::utils::error_number::current().message());
 }
 
 std::string

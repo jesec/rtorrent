@@ -639,7 +639,9 @@ handle_sigbus(int signum, siginfo_t* sa, void*) {
   output << "Stack dump not enabled." << std::endl;
 #endif
   output << std::endl
-         << "Error: " << torrent::utils::error_number(sa->si_errno).c_str()
+         << "Error: "
+         << torrent::utils::error_number(static_cast<std::errc>(sa->si_errno))
+              .message()
          << std::endl;
 
   const char* signal_reason;

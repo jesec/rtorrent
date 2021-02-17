@@ -395,7 +395,7 @@ directory_watch_added(const torrent::Object::list_type& args) {
   if (!control->directory_events()->open())
     throw torrent::input_error(
       "Could not open inotify:" +
-      std::string(torrent::utils::error_number::current().c_str()));
+      torrent::utils::error_number::current().message());
 
   control->directory_events()->notify_on(
     path.c_str(),

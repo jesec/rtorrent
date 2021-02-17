@@ -43,7 +43,7 @@ SCgi::open_port(void* sa, unsigned int length, bool dontRoute) {
   if (!get_fd().open_stream() || (dontRoute && !get_fd().set_dont_route(true)))
     throw torrent::resource_error(
       "Could not open socket for listening: " +
-      std::string(torrent::utils::error_number::current().c_str()));
+      torrent::utils::error_number::current().message());
 
   open(sa, length);
 }
@@ -84,7 +84,7 @@ SCgi::open(void* sa, unsigned int length) {
         !get_fd().listen(max_tasks))
       throw torrent::resource_error(
         "Could not prepare socket for listening: " +
-        std::string(torrent::utils::error_number::current().c_str()));
+        torrent::utils::error_number::current().message());
 
     torrent::connection_manager()->inc_socket_count();
 

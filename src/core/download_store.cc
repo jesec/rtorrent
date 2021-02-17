@@ -40,7 +40,7 @@ DownloadStore::enable(bool lock) {
     if (torrent::utils::error_number::current().is_bad_path())
       throw torrent::input_error(
         "Could not lock session directory: \"" + m_path + "\", " +
-        torrent::utils::error_number::current().c_str());
+        torrent::utils::error_number::current().message());
     else
       throw torrent::input_error("Could not lock session directory: \"" +
                                  m_path + "\", held by \"" +
