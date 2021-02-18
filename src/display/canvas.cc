@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
+#include <iostream>
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
@@ -14,6 +15,7 @@
 namespace display {
 
 bool Canvas::m_isInitialized = false;
+bool hasBeenInitialized      = false;
 
 Canvas::Canvas(int x, int y, int width, int height) {
   if (!m_isInitialized) {
@@ -84,12 +86,20 @@ Canvas::initialize() {
   bool isDaemon = rpc::call_command_value("system.daemon");
 
   if (!isDaemon) {
+    atexit([]() {
+      if (!hasBeenInitialized) {
+        std::cerr << "Forgot to enable daemon mode?" << std::endl;
+        std::cerr << "To enable it, use \"-o system.daemon.set=true\"."
+                  << std::endl;
+      }
+    });
     initscr();
     raw();
     noecho();
     nodelay(stdscr, TRUE);
     keypad(stdscr, TRUE);
     curs_set(0);
+    hasBeenInitialized = true;
     m_isInitialized    = true;
   }
 }
