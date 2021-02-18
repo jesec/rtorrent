@@ -7,79 +7,79 @@
 namespace rpc {
 
 // template <> struct target_type_id<command_base::generic_slot>       { static
-// const int value = command_base::target_generic; };
+// constexpr int value = command_base::target_generic; };
 template<>
 struct target_type_id<command_base::cleaned_slot> {
-  static const int value = command_base::target_generic;
+  static constexpr int value = command_base::target_generic;
 };
 template<>
 struct target_type_id<command_base::any_slot> {
-  static const int value = command_base::target_any;
+  static constexpr int value = command_base::target_any;
 };
 template<>
 struct target_type_id<command_base::download_slot> {
-  static const int value = command_base::target_download;
+  static constexpr int value = command_base::target_download;
 };
 template<>
 struct target_type_id<command_base::peer_slot> {
-  static const int value = command_base::target_peer;
+  static constexpr int value = command_base::target_peer;
 };
 template<>
 struct target_type_id<command_base::tracker_slot> {
-  static const int value = command_base::target_tracker;
+  static constexpr int value = command_base::target_tracker;
 };
 template<>
 struct target_type_id<command_base::file_slot> {
-  static const int value = command_base::target_file;
+  static constexpr int value = command_base::target_file;
 };
 template<>
 struct target_type_id<command_base::file_itr_slot> {
-  static const int value = command_base::target_file_itr;
+  static constexpr int value = command_base::target_file_itr;
 };
 
 template<>
 struct target_type_id<command_base::download_pair_slot> {
-  static const int value = command_base::target_download_pair;
+  static constexpr int value = command_base::target_download_pair;
 };
 
 template<>
 struct target_type_id<> {
-  static const int value = command_base::target_generic;
+  static constexpr int value = command_base::target_generic;
 };
 template<>
 struct target_type_id<target_type> {
-  static const int value       = command_base::target_any;
-  static const int proper_type = 1;
+  static constexpr int value       = command_base::target_any;
+  static constexpr int proper_type = 1;
 };
 template<>
 struct target_type_id<core::Download*> {
-  static const int value       = command_base::target_download;
-  static const int proper_type = 1;
+  static constexpr int value       = command_base::target_download;
+  static constexpr int proper_type = 1;
 };
 template<>
 struct target_type_id<torrent::Peer*> {
-  static const int value       = command_base::target_peer;
-  static const int proper_type = 1;
+  static constexpr int value       = command_base::target_peer;
+  static constexpr int proper_type = 1;
 };
 template<>
 struct target_type_id<torrent::Tracker*> {
-  static const int value       = command_base::target_tracker;
-  static const int proper_type = 1;
+  static constexpr int value       = command_base::target_tracker;
+  static constexpr int proper_type = 1;
 };
 template<>
 struct target_type_id<torrent::File*> {
-  static const int value       = command_base::target_file;
-  static const int proper_type = 1;
+  static constexpr int value       = command_base::target_file;
+  static constexpr int proper_type = 1;
 };
 template<>
 struct target_type_id<torrent::FileListIterator*> {
-  static const int value       = command_base::target_file_itr;
-  static const int proper_type = 1;
+  static constexpr int value       = command_base::target_file_itr;
+  static constexpr int proper_type = 1;
 };
 
 template<>
 struct target_type_id<core::Download*, core::Download*> {
-  static const int value = command_base::target_download_pair;
+  static constexpr int value = command_base::target_download_pair;
 };
 
 template<>

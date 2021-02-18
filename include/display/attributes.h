@@ -27,13 +27,13 @@ namespace display {
 
 class Attributes {
 public:
-  static const int a_invalid = ~int();
-  static const int a_normal  = A_NORMAL;
-  static const int a_bold    = A_BOLD;
-  static const int a_reverse = A_REVERSE;
+  static constexpr int a_invalid = ~int();
+  static constexpr int a_normal  = A_NORMAL;
+  static constexpr int a_bold    = A_BOLD;
+  static constexpr int a_reverse = A_REVERSE;
 
-  static const int color_invalid = ~int();
-  static const int color_default = 0;
+  static constexpr int color_invalid = ~int();
+  static constexpr int color_default = 0;
 
   Attributes() {}
   Attributes(const char* pos, int attr, int col)

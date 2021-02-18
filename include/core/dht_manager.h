@@ -35,13 +35,13 @@ public:
   }
 
 private:
-  static const int dht_disable = 0;
-  static const int dht_off     = 1;
-  static const int dht_auto    = 2;
-  static const int dht_on      = 3;
+  static constexpr int dht_disable = 0;
+  static constexpr int dht_off     = 1;
+  static constexpr int dht_auto    = 2;
+  static constexpr int dht_on      = 3;
 
-  static const int   dht_settings_num = 4;
-  static const char* dht_settings[dht_settings_num];
+  static constexpr int dht_settings_num = 4;
+  static const char*   dht_settings[dht_settings_num];
 
   void update();
   bool log_statistics(bool force);

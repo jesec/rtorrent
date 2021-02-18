@@ -10,12 +10,12 @@
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TestParseOptions);
 
-static const int flag_1 = 1 << 0;
-static const int flag_2 = 1 << 1;
-static const int flag_3 = 1 << 2;
-static const int flag_4 = 1 << 3;
-static const int flag_5 = 1 << 4;
-static const int flag_6 = 1 << 5;
+static constexpr int flag_1 = 1 << 0;
+static constexpr int flag_2 = 1 << 1;
+static constexpr int flag_3 = 1 << 2;
+static constexpr int flag_4 = 1 << 3;
+static constexpr int flag_5 = 1 << 4;
+static constexpr int flag_6 = 1 << 5;
 
 static std::vector<std::pair<const char*, int>> flag_list = {
   { "foo", flag_1 },          { "bar", flag_2 },      { "baz", flag_3 },

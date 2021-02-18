@@ -8,7 +8,7 @@ class CommandMapTest : public CppUnit::TestFixture {
   CPPUNIT_TEST_SUITE_END();
 
 public:
-  static const int cmd_size = 256;
+  static constexpr int cmd_size = 256;
 
   void setUp() {
     m_commandItr = m_commands;

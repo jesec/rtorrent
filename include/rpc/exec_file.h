@@ -10,13 +10,13 @@ namespace rpc {
 
 class ExecFile {
 public:
-  static const unsigned int max_args    = 128;
-  static const unsigned int buffer_size = 4096;
+  static constexpr unsigned int max_args    = 128;
+  static constexpr unsigned int buffer_size = 4096;
 
-  static const int flag_expand_tilde = 0x1;
-  static const int flag_throw        = 0x2;
-  static const int flag_capture      = 0x4;
-  static const int flag_background   = 0x8;
+  static constexpr int flag_expand_tilde = 0x1;
+  static constexpr int flag_throw        = 0x2;
+  static constexpr int flag_capture      = 0x4;
+  static constexpr int flag_background   = 0x8;
 
   ExecFile()
     : m_logFd(-1) {}

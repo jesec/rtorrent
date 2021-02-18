@@ -124,17 +124,17 @@ public:
                                                       core::Download*,
                                                       const torrent::Object&);
 
-  static const int target_generic  = 0;
-  static const int target_any      = 1;
-  static const int target_download = 2;
-  static const int target_peer     = 3;
-  static const int target_tracker  = 4;
-  static const int target_file     = 5;
-  static const int target_file_itr = 6;
+  static constexpr int target_generic  = 0;
+  static constexpr int target_any      = 1;
+  static constexpr int target_download = 2;
+  static constexpr int target_peer     = 3;
+  static constexpr int target_tracker  = 4;
+  static constexpr int target_file     = 5;
+  static constexpr int target_file_itr = 6;
 
-  static const int target_download_pair = 7;
+  static constexpr int target_download_pair = 7;
 
-  static const unsigned int max_arguments = 10;
+  static constexpr unsigned int max_arguments = 10;
 
   struct stack_type {
     torrent::Object* begin() {
@@ -298,31 +298,31 @@ command_base::_call(command_base* cmd, target_type target, Args args) {
                                                                                \
   template<>                                                                   \
   struct command_base_is_valid<func_type<target_type>::type> {                 \
-    static const int value = 1;                                                \
+    static constexpr int value = 1;                                            \
   };                                                                           \
   template<>                                                                   \
   struct command_base_is_valid<func_type<core::Download*>::type> {             \
-    static const int value = 1;                                                \
+    static constexpr int value = 1;                                            \
   };                                                                           \
   template<>                                                                   \
   struct command_base_is_valid<func_type<torrent::Peer*>::type> {              \
-    static const int value = 1;                                                \
+    static constexpr int value = 1;                                            \
   };                                                                           \
   template<>                                                                   \
   struct command_base_is_valid<func_type<torrent::Tracker*>::type> {           \
-    static const int value = 1;                                                \
+    static constexpr int value = 1;                                            \
   };                                                                           \
   template<>                                                                   \
   struct command_base_is_valid<func_type<torrent::File*>::type> {              \
-    static const int value = 1;                                                \
+    static constexpr int value = 1;                                            \
   };                                                                           \
   template<>                                                                   \
   struct command_base_is_valid<func_type<torrent::FileListIterator*>::type> {  \
-    static const int value = 1;                                                \
+    static constexpr int value = 1;                                            \
   };
 
 //  template <typename Q> struct command_base_is_valid<typename
-//  func_type<Q>::type > { static const int value = 1; };
+//  func_type<Q>::type > { static constexpr int value = 1; };
 
 COMMAND_BASE_TEMPLATE_TYPE(command_function,
                            torrent::Object(T, const torrent::Object&));
@@ -343,32 +343,32 @@ COMMAND_BASE_TEMPLATE_TYPE(command_list_function,
                                                                                \
   template<>                                                                   \
   struct command_base_is_type<func_name<target_type>> {                        \
-    static const int                     value = 1;                            \
+    static constexpr int                 value = 1;                            \
     typedef func_type<target_type>::type type;                                 \
   };                                                                           \
   template<>                                                                   \
   struct command_base_is_type<func_name<core::Download*>> {                    \
-    static const int                         value = 1;                        \
+    static constexpr int                     value = 1;                        \
     typedef func_type<core::Download*>::type type;                             \
   };                                                                           \
   template<>                                                                   \
   struct command_base_is_type<func_name<torrent::Peer*>> {                     \
-    static const int                        value = 1;                         \
+    static constexpr int                    value = 1;                         \
     typedef func_type<torrent::Peer*>::type type;                              \
   };                                                                           \
   template<>                                                                   \
   struct command_base_is_type<func_name<torrent::Tracker*>> {                  \
-    static const int                           value = 1;                      \
+    static constexpr int                       value = 1;                      \
     typedef func_type<torrent::Tracker*>::type type;                           \
   };                                                                           \
   template<>                                                                   \
   struct command_base_is_type<func_name<torrent::File*>> {                     \
-    static const int                        value = 1;                         \
+    static constexpr int                    value = 1;                         \
     typedef func_type<torrent::File*>::type type;                              \
   };                                                                           \
   template<>                                                                   \
   struct command_base_is_type<func_name<torrent::FileListIterator*>> {         \
-    static const int                                    value = 1;             \
+    static constexpr int                                value = 1;             \
     typedef func_type<torrent::FileListIterator*>::type type;                  \
   };
 

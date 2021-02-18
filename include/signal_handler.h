@@ -15,10 +15,10 @@ public:
   typedef void (*handler_slot)(int, siginfo_t*, void*);
 
 #ifdef NSIG
-  static const unsigned int HIGHEST_SIGNAL = NSIG;
+  static constexpr unsigned int HIGHEST_SIGNAL = NSIG;
 #else
   // Let's be on the safe side.
-  static const unsigned int HIGHEST_SIGNAL = 32;
+  static constexpr unsigned int HIGHEST_SIGNAL = 32;
 #endif
 
   static void set_default(unsigned int signum);

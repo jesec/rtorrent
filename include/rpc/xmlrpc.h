@@ -31,18 +31,18 @@ public:
                                                      slot_peer;
   typedef std::function<bool(const char*, uint32_t)> slot_write;
 
-  static const int dialect_generic = 0;
-  static const int dialect_i8      = 1;
-  static const int dialect_apache  = 2;
+  static constexpr int dialect_generic = 0;
+  static constexpr int dialect_i8      = 1;
+  static constexpr int dialect_apache  = 2;
 
   // These need to match CommandMap type values.
-  static const int call_generic  = 0;
-  static const int call_any      = 1;
-  static const int call_download = 2;
-  static const int call_peer     = 3;
-  static const int call_tracker  = 4;
-  static const int call_file     = 5;
-  static const int call_file_itr = 6;
+  static constexpr int call_generic  = 0;
+  static constexpr int call_any      = 1;
+  static constexpr int call_download = 2;
+  static constexpr int call_peer     = 3;
+  static constexpr int call_tracker  = 4;
+  static constexpr int call_file     = 5;
+  static constexpr int call_file_itr = 6;
 
   XmlRpc()
     : m_env(nullptr)

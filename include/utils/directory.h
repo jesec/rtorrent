@@ -44,10 +44,10 @@ public:
 
   using base_type::erase;
 
-  static const uint32_t buffer_size = 64 * 1024;
+  static constexpr uint32_t buffer_size = 64 * 1024;
 
-  static const int update_sort     = 0x1;
-  static const int update_hide_dot = 0x2;
+  static constexpr int update_sort     = 0x1;
+  static constexpr int update_hide_dot = 0x2;
 
   Directory() {}
   Directory(const std::string& path)

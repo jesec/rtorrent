@@ -21,7 +21,7 @@ class lt_cacheline_aligned SCgi : public torrent::Event {
 public:
   typedef std::function<bool(const char*, uint32_t)> slot_write;
 
-  static const int max_tasks = 100;
+  static constexpr int max_tasks = 100;
 
   // Global lock:
   SCgi()

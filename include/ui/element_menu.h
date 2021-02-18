@@ -40,7 +40,7 @@ public:
   using base_type::empty;
   using base_type::size;
 
-  static const size_type entry_invalid = ~size_type();
+  static constexpr size_type entry_invalid = ~size_type();
 
   ElementMenu();
   ~ElementMenu();

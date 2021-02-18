@@ -18,7 +18,7 @@ class Download;
 
 class DownloadStore {
 public:
-  static const int flag_skip_static = 0x1;
+  static constexpr int flag_skip_static = 0x1;
 
   bool is_enabled() {
     return m_lockfile.is_locked();

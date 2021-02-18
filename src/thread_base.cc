@@ -24,7 +24,7 @@ public:
   typedef ThreadBase::thread_base_func  value_type;
   typedef ThreadBase::thread_base_func* iterator;
 
-  static const unsigned int max_size = 32;
+  static constexpr unsigned int max_size = 32;
 
   thread_queue_hack() {
     std::memset(this, 0, sizeof(thread_queue_hack));

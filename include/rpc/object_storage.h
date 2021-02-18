@@ -62,22 +62,22 @@ public:
   using base_type::erase;
   using base_type::find;
 
-  static const unsigned int flag_generic_type  = 0x1;
-  static const unsigned int flag_bool_type     = 0x2;
-  static const unsigned int flag_value_type    = 0x4;
-  static const unsigned int flag_string_type   = 0x8;
-  static const unsigned int flag_list_type     = 0x10;
-  static const unsigned int flag_function_type = 0x20;
-  static const unsigned int flag_multi_type    = 0x40;
+  static constexpr unsigned int flag_generic_type  = 0x1;
+  static constexpr unsigned int flag_bool_type     = 0x2;
+  static constexpr unsigned int flag_value_type    = 0x4;
+  static constexpr unsigned int flag_string_type   = 0x8;
+  static constexpr unsigned int flag_list_type     = 0x10;
+  static constexpr unsigned int flag_function_type = 0x20;
+  static constexpr unsigned int flag_multi_type    = 0x40;
 
-  static const unsigned int mask_type = 0xff;
+  static constexpr unsigned int mask_type = 0xff;
 
-  static const unsigned int flag_constant = 0x100;
-  static const unsigned int flag_static   = 0x200;
-  static const unsigned int flag_private  = 0x400;
-  static const unsigned int flag_rlookup  = 0x800;
+  static constexpr unsigned int flag_constant = 0x100;
+  static constexpr unsigned int flag_static   = 0x200;
+  static constexpr unsigned int flag_private  = 0x400;
+  static constexpr unsigned int flag_rlookup  = 0x800;
 
-  static const size_t key_size = key_type::max_size;
+  static constexpr size_t key_size = key_type::max_size;
 
   local_iterator find_local(const torrent::raw_string& key);
   local_iterator find_local_const(const torrent::raw_string& key,

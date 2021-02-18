@@ -16,9 +16,9 @@
 #include "control.h"
 #include "globals.h"
 
-static const int log_flag_use_gz      = 0x1;
-static const int log_flag_append_pid  = 0x2;
-static const int log_flag_append_file = 0x4;
+static constexpr int log_flag_use_gz      = 0x1;
+static constexpr int log_flag_append_pid  = 0x2;
+static constexpr int log_flag_append_file = 0x4;
 
 void
 log_add_group_output_str(const char* group_name, const char* output_id) {

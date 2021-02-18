@@ -188,8 +188,8 @@ group_insert(const torrent::Object::list_type& args) {
   return name;
 }
 
-static const int file_print_use_space   = 0x1;
-static const int file_print_delim_space = 0x2;
+static constexpr int file_print_use_space   = 0x1;
+static constexpr int file_print_delim_space = 0x2;
 
 void
 file_print_list(torrent::Object::list_const_iterator first,

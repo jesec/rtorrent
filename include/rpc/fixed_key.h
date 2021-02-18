@@ -19,7 +19,7 @@ public:
   typedef const char* const_iterator;
   typedef uint32_t    size_type;
 
-  static const size_type max_size = MaxSize - 1;
+  static constexpr size_type max_size = MaxSize - 1;
 
   fixed_key_type()
     : m_size(0) {

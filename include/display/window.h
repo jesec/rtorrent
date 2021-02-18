@@ -24,14 +24,14 @@ public:
   typedef std::function<void(Window*)>                        SlotWindow;
   typedef std::function<void(Window*, torrent::utils::timer)> SlotTimer;
 
-  static const int flag_active    = (1 << 0);
-  static const int flag_offscreen = (1 << 1);
-  static const int flag_focused   = (1 << 2);
-  static const int flag_left      = (1 << 3);
-  static const int flag_bottom    = (1 << 4);
+  static constexpr int flag_active    = (1 << 0);
+  static constexpr int flag_offscreen = (1 << 1);
+  static constexpr int flag_focused   = (1 << 2);
+  static constexpr int flag_left      = (1 << 3);
+  static constexpr int flag_bottom    = (1 << 4);
 
-  static const extent_type extent_static = extent_type();
-  static const extent_type extent_full   = ~extent_type();
+  static constexpr extent_type extent_static = extent_type();
+  static constexpr extent_type extent_full   = ~extent_type();
 
   Window(Canvas*     canvas,
          int         flags,

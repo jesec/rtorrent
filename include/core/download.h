@@ -30,10 +30,10 @@ public:
   typedef torrent::ConnectionList       connection_list_type;
   typedef download_type::ConnectionType connection_type;
 
-  static const int variable_hashing_stopped = 0;
-  static const int variable_hashing_initial = 1;
-  static const int variable_hashing_last    = 2;
-  static const int variable_hashing_rehash  = 3;
+  static constexpr int variable_hashing_stopped = 0;
+  static constexpr int variable_hashing_initial = 1;
+  static constexpr int variable_hashing_last    = 2;
+  static constexpr int variable_hashing_rehash  = 3;
 
   Download(download_type d);
   ~Download();

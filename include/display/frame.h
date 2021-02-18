@@ -44,7 +44,7 @@ public:
 
   typedef std::pair<Frame*, bounds_type> dynamic_type;
 
-  static const size_type max_size = 5;
+  static constexpr size_type max_size = 5;
 
   Frame();
 

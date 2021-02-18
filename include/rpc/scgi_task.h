@@ -16,9 +16,9 @@ class SCgi;
 
 class SCgiTask : public torrent::Event {
 public:
-  static const unsigned int default_buffer_size = 2047;
-  static const int          max_header_size     = 2000;
-  static const int          max_content_size    = (2 << 23);
+  static constexpr unsigned int default_buffer_size = 2047;
+  static constexpr int          max_header_size     = 2000;
+  static constexpr int          max_content_size    = (2 << 23);
 
   SCgiTask() {
     m_fileDesc = -1;

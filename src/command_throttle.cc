@@ -103,10 +103,10 @@ apply_throttle(const torrent::Object::list_type& args, bool up) {
   return torrent::Object();
 }
 
-static const int throttle_info_up   = (1 << 0);
-static const int throttle_info_down = (1 << 1);
-static const int throttle_info_max  = (1 << 2);
-static const int throttle_info_rate = (1 << 3);
+static constexpr int throttle_info_up   = (1 << 0);
+static constexpr int throttle_info_down = (1 << 1);
+static constexpr int throttle_info_max  = (1 << 2);
+static constexpr int throttle_info_rate = (1 << 3);
 
 torrent::Object
 retrieve_throttle_info(const torrent::Object::string_type& name, int flags) {

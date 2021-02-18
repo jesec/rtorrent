@@ -16,7 +16,7 @@ class TextElement {
 public:
   typedef uint32_t extent_type;
 
-  static const extent_type extent_full = ~extent_type();
+  static constexpr extent_type extent_full = ~extent_type();
 
   TextElement() {}
   virtual ~TextElement() {}

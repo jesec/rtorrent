@@ -14,11 +14,11 @@ namespace display {
 
 class TextElementStringBase : public TextElement {
 public:
-  static const int flag_normal      = 0;
-  static const int flag_escape_hex  = (1 << 0);
-  static const int flag_escape_html = (1 << 1);
+  static constexpr int flag_normal      = 0;
+  static constexpr int flag_escape_hex  = (1 << 0);
+  static constexpr int flag_escape_html = (1 << 1);
 
-  static const int flag_fixed_width = (1 << 8);
+  static constexpr int flag_fixed_width = (1 << 8);
 
   int flags() const {
     return m_flags;
@@ -171,11 +171,11 @@ text_element_string_slot(
 
 class TextElementCommand : public TextElement {
 public:
-  static const int flag_normal      = 0;
-  static const int flag_escape_hex  = (1 << 0);
-  static const int flag_escape_html = (1 << 1);
+  static constexpr int flag_normal      = 0;
+  static constexpr int flag_escape_hex  = (1 << 0);
+  static constexpr int flag_escape_html = (1 << 1);
 
-  static const int flag_fixed_width = (1 << 8);
+  static constexpr int flag_fixed_width = (1 << 8);
 
   TextElementCommand(const char* command,
                      int         flags,
