@@ -123,7 +123,7 @@ You have to install dependencies manually to system or let CMake know where to f
 Dependencies:
 
 - GCC/Clang compiler toolchain and C/C++ development files (C++17 support required)
-- libtorrent with development files (core dependency, matching version required)
+- [libtorrent](https://github.com/jesec/libtorrent) with development files (core dependency, matching version required)
 - libcurl with development files
 - libncurses/libncursesw with development files (for terminal UI)
 - libxmlrpc-c with development files (optional if USE_XMLRPC=OFF, for XMLRPC support)
