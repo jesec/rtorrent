@@ -93,7 +93,7 @@ Control::initialize() {
 
   m_ui->init(this);
 
-  if (!display::Canvas::daemon()) {
+  if (display::Canvas::isInitialized()) {
     m_inputStdin->insert(torrent::main_thread()->poll());
   }
 }
@@ -105,7 +105,7 @@ Control::cleanup() {
 
   priority_queue_erase(&taskScheduler, &m_taskShutdown);
 
-  if (!display::Canvas::daemon()) {
+  if (display::Canvas::isInitialized()) {
     m_inputStdin->remove(torrent::main_thread()->poll());
   }
 

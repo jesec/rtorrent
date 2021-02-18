@@ -3,8 +3,9 @@
 
 #include <sys/ioctl.h>
 #include <termios.h>
-#include <torrent/exceptions.h>
 #include <unistd.h>
+
+#include <torrent/exceptions.h>
 
 #include "rpc/parse_commands.h"
 
@@ -13,23 +14,26 @@
 namespace display {
 
 bool Canvas::m_isInitialized = false;
-bool Canvas::m_isDaemon      = false;
 
 Canvas::Canvas(int x, int y, int width, int height) {
-  if (!m_isDaemon) {
-    m_window = newwin(height, width, y, x);
-
-    if (m_window == nullptr)
-      throw torrent::internal_error("Could not allocate ncurses canvas.");
+  if (!m_isInitialized) {
+    return;
   }
+
+  m_window = newwin(height, width, y, x);
+
+  if (m_window == nullptr)
+    throw torrent::internal_error("Could not allocate ncurses canvas.");
 }
 
 void
 Canvas::resize(int x, int y, int w, int h) {
-  if (!m_isDaemon) {
-    wresize(m_window, h, w);
-    mvwin(m_window, y, x);
+  if (!m_isInitialized) {
+    return;
   }
+
+  wresize(m_window, h, w);
+  mvwin(m_window, y, x);
 }
 
 void
@@ -38,80 +42,83 @@ Canvas::print_attributes(unsigned int           x,
                          const char*            first,
                          const char*            last,
                          const attributes_list* attributes) {
-  if (!m_isDaemon) {
-    move(x, y);
+  if (!m_isInitialized) {
+    return;
+  }
 
-    attr_t org_attr;
-    short  org_pair;
-    wattr_get(m_window, &org_attr, &org_pair, nullptr);
+  move(x, y);
 
-    attributes_list::const_iterator attrItr = attributes->begin();
-    wattr_set(
-      m_window, Attributes::a_normal, Attributes::color_default, nullptr);
+  attr_t org_attr;
+  short  org_pair;
+  wattr_get(m_window, &org_attr, &org_pair, nullptr);
 
-    while (first != last) {
-      const char* next = last;
+  attributes_list::const_iterator attrItr = attributes->begin();
+  wattr_set(m_window, Attributes::a_normal, Attributes::color_default, nullptr);
 
-      if (attrItr != attributes->end()) {
-        next = attrItr->position();
+  while (first != last) {
+    const char* next = last;
 
-        if (first >= next) {
-          wattr_set(
-            m_window, attrItr->attributes(), attrItr->colors(), nullptr);
-          ++attrItr;
-        }
+    if (attrItr != attributes->end()) {
+      next = attrItr->position();
+
+      if (first >= next) {
+        wattr_set(m_window, attrItr->attributes(), attrItr->colors(), nullptr);
+        ++attrItr;
       }
-
-      print("%.*s", next - first, first);
-      first = next;
     }
 
-    // Reset the color.
-    wattr_set(m_window, org_attr, org_pair, nullptr);
+    print("%.*s", next - first, first);
+    first = next;
   }
+
+  // Reset the color.
+  wattr_set(m_window, org_attr, org_pair, nullptr);
 }
 
 void
 Canvas::initialize() {
-  if (m_isInitialized)
+  if (m_isInitialized) {
     return;
+  }
 
-  m_isDaemon = rpc::call_command_value("system.daemon");
+  bool isDaemon = rpc::call_command_value("system.daemon");
 
-  m_isInitialized = true;
-
-  if (!m_isDaemon) {
+  if (!isDaemon) {
     initscr();
     raw();
     noecho();
     nodelay(stdscr, TRUE);
     keypad(stdscr, TRUE);
     curs_set(0);
+    m_isInitialized    = true;
   }
 }
 
 void
 Canvas::cleanup() {
-  if (!m_isInitialized)
+  if (!m_isInitialized) {
     return;
+  }
 
   m_isInitialized = false;
 
-  if (!m_isDaemon) {
-    noraw();
-    endwin();
-  }
+  noraw();
+  endwin();
 }
 
 std::pair<int, int>
 Canvas::term_size() {
+  if (!m_isInitialized) {
+    return std::pair<int, int>(80, 24);
+  }
+
   struct winsize ws;
 
-  if (!m_isDaemon) {
-    if (ioctl(STDIN_FILENO, TIOCGWINSZ, &ws) == 0)
-      return std::pair<int, int>(ws.ws_col, ws.ws_row);
+  if (ioctl(STDIN_FILENO, TIOCGWINSZ, &ws) == 0) {
+    return std::pair<int, int>(ws.ws_col, ws.ws_row);
+  } else {
+    return std::pair<int, int>(80, 24);
   }
-  return std::pair<int, int>(80, 24);
 }
 
 }
