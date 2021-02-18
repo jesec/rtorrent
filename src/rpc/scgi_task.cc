@@ -24,14 +24,16 @@
 
 namespace rpc {
 
-// If bufferSize is zero then memcpy won't do anything.
 inline void
 SCgiTask::realloc_buffer(uint32_t    size,
                          const char* buffer,
                          uint32_t    bufferSize) {
   char* tmp = torrent::utils::cacheline_allocator<char>::alloc_size(size);
 
-  std::memcpy(tmp, buffer, bufferSize);
+  if (buffer != nullptr && bufferSize > 0) {
+    std::memcpy(tmp, buffer, bufferSize);
+  }
+
   ::free(m_buffer);
   m_buffer = tmp;
 }
@@ -208,9 +210,8 @@ SCgiTask::receive_write(const char* buffer, uint32_t length) {
     throw torrent::internal_error(
       "SCgiTask::receive_write(...) received bad input.");
 
-  // Need to cast due to a bug in MacOSX gcc-4.0.1.
-  if (length + 256 > std::max(m_bufferSize, (unsigned int)default_buffer_size))
-    realloc_buffer(length + 256, nullptr, 0);
+  if (length + 256 > std::max(m_bufferSize, default_buffer_size))
+    realloc_buffer(length + 256);
 
   // Who ever bothers to check the return value?
   int headerSize = sprintf(

@@ -46,8 +46,8 @@ public:
 
 private:
   inline void realloc_buffer(uint32_t    size,
-                             const char* buffer,
-                             uint32_t    bufferSize);
+                             const char* buffer     = nullptr,
+                             uint32_t    bufferSize = 0);
 
   SCgi* m_parent;
 
