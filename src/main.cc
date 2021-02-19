@@ -202,10 +202,13 @@ main(int argc, char** argv) {
 
     control = new Control;
 
-    unsigned int random_seed =
-      cachedTime.seconds() ^ cachedTime.usec() ^ (getpid() << 16) ^ getppid();
+    unsigned long random_seed = cachedTime.seconds();
+    random_seed ^= cachedTime.usec();
+    random_seed ^= cachedTime.seconds();
+    random_seed ^= static_cast<unsigned long>(getpid()) << 16;
+    random_seed ^= getppid();
 
-    srandom(random_seed);
+    srandom(*((unsigned int*)(&random_seed)));
     srand48(random_seed);
 
     SignalHandler::set_ignore(SIGPIPE);
