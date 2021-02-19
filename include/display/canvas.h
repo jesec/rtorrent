@@ -62,41 +62,53 @@ public:
   }
 
   unsigned int get_x() {
-    int x, y;
     if (m_isInitialized) {
+      int                  x;
+      [[maybe_unused]] int y;
+
       getyx(m_window, y, x);
+
+      return x;
     } else {
-      x = 1;
+      return 1;
     }
-    return x;
   }
   unsigned int get_y() {
-    int x, y;
     if (m_isInitialized) {
+      [[maybe_unused]] int x;
+      int                  y;
+
       getyx(m_window, y, x);
+
+      return y;
     } else {
-      y = 1;
+      return 1;
     }
-    return y;
   }
 
   unsigned int width() {
-    int x, y;
     if (m_isInitialized) {
+      int                  x;
+      [[maybe_unused]] int y;
+
       getmaxyx(m_window, y, x);
+
+      return x;
     } else {
-      x = 80;
+      return 80;
     }
-    return x;
   }
   unsigned int height() {
-    int x, y;
     if (m_isInitialized) {
+      [[maybe_unused]] int x;
+      int                  y;
+
       getmaxyx(m_window, y, x);
+
+      return y;
     } else {
-      y = 24;
+      return 24;
     }
-    return y;
   }
 
   void move(unsigned int x, unsigned int y) {
@@ -187,22 +199,28 @@ public:
   static void cleanup();
 
   static int get_screen_width() {
-    int x, y;
     if (m_isInitialized) {
+      int                  x;
+      [[maybe_unused]] int y;
+
       getmaxyx(stdscr, y, x);
+
+      return x;
     } else {
-      x = 80;
+      return 80;
     }
-    return x;
   }
   static int get_screen_height() {
-    int x, y;
     if (m_isInitialized) {
+      [[maybe_unused]] int x;
+      int                  y;
+
       getmaxyx(stdscr, y, x);
+
+      return y;
     } else {
-      y = 24;
+      return 24;
     }
-    return y;
   }
 
   static std::pair<int, int> term_size();

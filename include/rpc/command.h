@@ -325,15 +325,15 @@ command_base::_call(command_base* cmd, target_type target, Args args) {
 //  func_type<Q>::type > { static constexpr int value = 1; };
 
 COMMAND_BASE_TEMPLATE_TYPE(command_function,
-                           torrent::Object(T, const torrent::Object&));
+                           torrent::Object(T, const torrent::Object&))
 COMMAND_BASE_TEMPLATE_TYPE(command_value_function,
                            torrent::Object(T,
-                                           const torrent::Object::value_type&));
+                                           const torrent::Object::value_type&))
 COMMAND_BASE_TEMPLATE_TYPE(command_string_function,
-                           torrent::Object(T, const std::string&));
+                           torrent::Object(T, const std::string&))
 COMMAND_BASE_TEMPLATE_TYPE(command_list_function,
                            torrent::Object(T,
-                                           const torrent::Object::list_type&));
+                                           const torrent::Object::list_type&))
 
 #define COMMAND_BASE_TEMPLATE_CALL(func_name, func_type)                       \
   template<typename T>                                                         \
@@ -372,11 +372,11 @@ COMMAND_BASE_TEMPLATE_TYPE(command_list_function,
     typedef func_type<torrent::FileListIterator*>::type type;                  \
   };
 
-COMMAND_BASE_TEMPLATE_CALL(command_base_call, command_function);
-COMMAND_BASE_TEMPLATE_CALL(command_base_call_value, command_value_function);
-COMMAND_BASE_TEMPLATE_CALL(command_base_call_value_kb, command_value_function);
-COMMAND_BASE_TEMPLATE_CALL(command_base_call_string, command_string_function);
-COMMAND_BASE_TEMPLATE_CALL(command_base_call_list, command_list_function);
+COMMAND_BASE_TEMPLATE_CALL(command_base_call, command_function)
+COMMAND_BASE_TEMPLATE_CALL(command_base_call_value, command_value_function)
+COMMAND_BASE_TEMPLATE_CALL(command_base_call_value_kb, command_value_function)
+COMMAND_BASE_TEMPLATE_CALL(command_base_call_string, command_string_function)
+COMMAND_BASE_TEMPLATE_CALL(command_base_call_list, command_list_function)
 
 }
 
