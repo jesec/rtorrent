@@ -309,7 +309,7 @@ d_multicall(const torrent::Object::list_type& args) {
   // parsing and searching command map for every single call.
   unsigned int     dlist_size = (*viewItr)->size_visible();
   core::Download** dlist =
-    static_cast<core::Download**>(malloc(sizeof(core::Download) * dlist_size));
+    static_cast<core::Download**>(malloc(sizeof(core::Download*) * dlist_size));
 
   std::copy((*viewItr)->begin_visible(), (*viewItr)->end_visible(), dlist);
 
@@ -330,6 +330,8 @@ d_multicall(const torrent::Object::list_type& args) {
                       .first);
     }
   }
+
+  free(dlist);
 
   return resultRaw;
 }
