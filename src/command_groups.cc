@@ -433,3 +433,15 @@ initialize_command_groups() {
     "choke_group.down.heuristics.set",
     std::bind(&apply_cg_heuristics_set, std::placeholders::_2, false));
 }
+
+void
+cleanup_command_groups() {
+#if USE_CHOKE_GROUP
+#else
+  while (!cg_list_hack.empty()) {
+    auto cg = cg_list_hack.back();
+    delete cg;
+    cg_list_hack.pop_back();
+  }
+#endif
+}

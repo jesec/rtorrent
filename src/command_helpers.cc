@@ -53,3 +53,11 @@ initialize_commands() {
   initialize_command_tracker();
   initialize_command_scheduler();
 }
+
+void
+cleanup_command_groups();
+
+void
+cleanup_commands() {
+  cleanup_command_groups();
+}

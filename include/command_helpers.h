@@ -11,6 +11,9 @@
 void
 initialize_commands();
 
+void
+cleanup_commands();
+
 //
 // New std::function based command_base helper functions:
 //

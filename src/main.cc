@@ -614,6 +614,8 @@ main(int argc, char** argv) {
     return -1;
   }
 
+  cleanup_commands();
+
   torrent::log_cleanup();
 
   delete control;
