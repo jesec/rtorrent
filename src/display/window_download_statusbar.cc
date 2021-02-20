@@ -29,8 +29,14 @@ WindowDownloadStatusbar::redraw() {
 
   m_canvas->erase();
 
-  char* buffer = static_cast<char*>(calloc(m_canvas->width(), sizeof(char)));
-  char* last   = buffer + m_canvas->width() - 2;
+  const auto height = m_canvas->height();
+  const auto width  = m_canvas->width();
+  if (height < 3 || width < 18) {
+    return;
+  }
+
+  char* buffer = static_cast<char*>(calloc(width, sizeof(char)));
+  char* last   = buffer + width - 2;
 
   print_download_info_full(buffer, last, m_download);
   m_canvas->print(0, 0, "%s", buffer);

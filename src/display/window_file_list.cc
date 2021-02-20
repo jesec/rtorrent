@@ -90,14 +90,17 @@ WindowFileList::redraw() {
 
   torrent::FileList* fl = m_element->download()->download()->file_list();
 
-  if (fl->size_files() == 0 || m_canvas->height() < 2)
+  const auto height = m_canvas->height();
+  const auto width  = m_canvas->width();
+  if (fl->size_files() == 0 || height < 3 || width < 18) {
     return;
+  }
 
-  std::vector<iterator> entries(m_canvas->height() - 1);
+  std::vector<iterator> entries(height - 1);
 
   unsigned int last = 0;
 
-  for (iterator itr = m_element->selected(); last != m_canvas->height() - 1;) {
+  for (iterator itr = m_element->selected(); last != height - 1;) {
     if (m_element->is_collapsed())
       itr.forward_current_depth();
     else
@@ -109,10 +112,10 @@ WindowFileList::redraw() {
       break;
   }
 
-  unsigned int first = m_canvas->height() - 1;
+  unsigned int first = height - 1;
 
   for (iterator itr = m_element->selected();
-       first >= last || first > (m_canvas->height() - 1) / 2;) {
+       first >= last || first > (height - 1) / 2;) {
     entries[--first] = itr;
 
     if (itr == iterator(fl->begin()))
@@ -125,11 +128,11 @@ WindowFileList::redraw() {
   }
 
   unsigned int pos           = 0;
-  int          filenameWidth = m_canvas->width() - 16;
+  int          filenameWidth = width - 16;
 
   m_canvas->print(0, pos++, "Cmp Pri  Size   Filename");
 
-  while (pos != m_canvas->height()) {
+  while (pos != height) {
     iterator itr = entries[first];
 
     if (itr == iterator(fl->end()))
@@ -213,7 +216,7 @@ WindowFileList::redraw() {
     m_canvas->set_default_attributes(A_NORMAL);
 
     pos++;
-    first = (first + 1) % (m_canvas->height() - 1);
+    first = (first + 1) % (height - 1);
   }
 }
 

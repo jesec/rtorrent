@@ -27,6 +27,12 @@ WindowTrackerList::redraw() {
     (cachedTime + torrent::utils::timer::from_seconds(10)).round_seconds());
   m_canvas->erase();
 
+  const auto height = m_canvas->height();
+  const auto width  = m_canvas->width();
+  if (height < 3 || width < 10) {
+    return;
+  }
+
   unsigned int                pos = 0;
   torrent::TrackerList*       tl  = m_download->tracker_list();
   torrent::TrackerController* tc  = m_download->tracker_controller();
@@ -46,7 +52,7 @@ WindowTrackerList::redraw() {
   typedef std::pair<unsigned int, unsigned int> Range;
 
   Range range = torrent::utils::advance_bidirectional<unsigned int>(
-    0, *m_focus, tl->size(), (m_canvas->height() - 1) / 2);
+    0, *m_focus, tl->size(), (height - 1) / 2);
   unsigned int group = tl->at(range.first)->group();
 
   while (range.first != range.second) {
@@ -57,7 +63,7 @@ WindowTrackerList::redraw() {
 
     m_canvas->print(4, pos++, "%s", tracker->url().c_str());
 
-    if (pos < m_canvas->height()) {
+    if (pos < height) {
       const char* state;
 
       if (tracker->is_busy_not_scrape())
@@ -87,16 +93,10 @@ WindowTrackerList::redraw() {
     }
 
     if (range.first == *m_focus) {
-      m_canvas->set_attr(4,
-                         pos - 2,
-                         m_canvas->width(),
-                         is_focused() ? A_REVERSE : A_BOLD,
-                         COLOR_PAIR(0));
-      m_canvas->set_attr(4,
-                         pos - 1,
-                         m_canvas->width(),
-                         is_focused() ? A_REVERSE : A_BOLD,
-                         COLOR_PAIR(0));
+      m_canvas->set_attr(
+        4, pos - 2, width, is_focused() ? A_REVERSE : A_BOLD, COLOR_PAIR(0));
+      m_canvas->set_attr(
+        4, pos - 1, width, is_focused() ? A_REVERSE : A_BOLD, COLOR_PAIR(0));
     }
 
     if (tracker->is_busy()) {
@@ -108,8 +108,7 @@ WindowTrackerList::redraw() {
 
     // If we're at the end of the range, check if we can
     // show one more line for the following tracker.
-    if (range.first == range.second && pos < m_canvas->height() &&
-        range.first < tl->size())
+    if (range.first == range.second && pos < height && range.first < tl->size())
       range.second++;
   }
 }

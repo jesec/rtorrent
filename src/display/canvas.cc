@@ -119,7 +119,7 @@ Canvas::cleanup() {
 std::pair<int, int>
 Canvas::term_size() {
   if (!m_isInitialized) {
-    return std::pair<int, int>(80, 24);
+    return std::pair<int, int>(0, 0);
   }
 
   struct winsize ws;
@@ -127,7 +127,7 @@ Canvas::term_size() {
   if (ioctl(STDIN_FILENO, TIOCGWINSZ, &ws) == 0) {
     return std::pair<int, int>(ws.ws_col, ws.ws_row);
   } else {
-    return std::pair<int, int>(80, 24);
+    return std::pair<int, int>(0, 0);
   }
 }
 

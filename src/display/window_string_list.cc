@@ -19,29 +19,30 @@ WindowStringList::redraw() {
 
   size_t ypos  = 0;
   size_t xpos  = 1;
-  size_t width = 0;
+  size_t count = 0;
 
   iterator itr = m_first;
 
+  const auto height = m_canvas->height();
+  const auto width  = m_canvas->width();
+
   while (itr != m_last) {
-
-    if (ypos == (size_t)m_canvas->height()) {
+    if (ypos == height) {
       ypos = 0;
-      xpos += width + 2;
+      xpos += count + 2;
 
-      if (xpos + 20 >= (size_t)m_canvas->width())
+      if (xpos + 20 >= width)
         break;
 
-      width = 0;
+      count = 0;
     }
 
-    width = std::max(itr->size(), width);
+    count = std::max(itr->size(), count);
 
-    if (xpos + itr->size() <= (size_t)m_canvas->width())
+    if (xpos + itr->size() <= width)
       m_canvas->print(xpos, ypos++, "%s", itr->c_str());
     else
-      m_canvas->print(
-        xpos, ypos++, "%s", itr->substr(0, m_canvas->width() - xpos).c_str());
+      m_canvas->print(xpos, ypos++, "%s", itr->substr(0, width - xpos).c_str());
 
     ++itr;
   }

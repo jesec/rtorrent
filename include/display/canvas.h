@@ -62,53 +62,45 @@ public:
   }
 
   unsigned int get_x() {
+    int                  x = 1;
+    [[maybe_unused]] int y;
+
     if (m_isInitialized) {
-      int                  x;
-      [[maybe_unused]] int y;
-
       getyx(m_window, y, x);
-
-      return x;
-    } else {
-      return 1;
     }
+
+    return x;
   }
   unsigned int get_y() {
+    [[maybe_unused]] int x;
+    int                  y = 1;
+
     if (m_isInitialized) {
-      [[maybe_unused]] int x;
-      int                  y;
-
       getyx(m_window, y, x);
-
-      return y;
-    } else {
-      return 1;
     }
+
+    return y;
   }
 
   unsigned int width() {
+    int                  x = 0;
+    [[maybe_unused]] int y;
+
     if (m_isInitialized) {
-      int                  x;
-      [[maybe_unused]] int y;
-
       getmaxyx(m_window, y, x);
-
-      return x;
-    } else {
-      return 80;
     }
+
+    return x;
   }
   unsigned int height() {
+    [[maybe_unused]] int x;
+    int                  y = 0;
+
     if (m_isInitialized) {
-      [[maybe_unused]] int x;
-      int                  y;
-
       getmaxyx(m_window, y, x);
-
-      return y;
-    } else {
-      return 24;
     }
+
+    return y;
   }
 
   void move(unsigned int x, unsigned int y) {
@@ -199,28 +191,24 @@ public:
   static void cleanup();
 
   static int get_screen_width() {
+    int                  x = 0;
+    [[maybe_unused]] int y;
+
     if (m_isInitialized) {
-      int                  x;
-      [[maybe_unused]] int y;
-
       getmaxyx(stdscr, y, x);
-
-      return x;
-    } else {
-      return 80;
     }
+
+    return x;
   }
   static int get_screen_height() {
+    [[maybe_unused]] int x;
+    int                  y = 0;
+
     if (m_isInitialized) {
-      [[maybe_unused]] int x;
-      int                  y;
-
       getmaxyx(stdscr, y, x);
-
-      return y;
-    } else {
-      return 24;
     }
+
+    return y;
   }
 
   static std::pair<int, int> term_size();
@@ -246,9 +234,8 @@ private:
 
 inline void
 Canvas::print(const char* str, ...) {
-  va_list arglist;
-
   if (m_isInitialized) {
+    va_list arglist;
     va_start(arglist, str);
     vw_printw(m_window, const_cast<char*>(str), arglist);
     va_end(arglist);
@@ -257,9 +244,8 @@ Canvas::print(const char* str, ...) {
 
 inline void
 Canvas::print(unsigned int x, unsigned int y, const char* str, ...) {
-  va_list arglist;
-
   if (m_isInitialized) {
+    va_list arglist;
     va_start(arglist, str);
     wmove(m_window, y, x);
     vw_printw(m_window, const_cast<char*>(str), arglist);

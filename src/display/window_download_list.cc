@@ -48,6 +48,12 @@ WindowDownloadList::redraw() {
   if (m_view == nullptr)
     return;
 
+  const auto width  = m_canvas->width();
+  const auto height = m_canvas->height();
+  if (m_view->empty_visible() || width < 5 || height < 2) {
+    return;
+  }
+
   m_canvas->print(0,
                   0,
                   "%s",
@@ -56,22 +62,14 @@ WindowDownloadList::redraw() {
                    "]")
                     .c_str());
 
-  if (m_view->empty_visible() || m_canvas->width() < 5 ||
-      m_canvas->height() < 2)
-    return;
-
   // show "X of Y"
-  if (m_canvas->width() > 16 + 8 + m_view->name().length()) {
+  if (width > 16 + 8 + m_view->name().length()) {
     int item_idx = m_view->focus() - m_view->begin_visible();
     if (item_idx == int(m_view->size()))
-      m_canvas->print(
-        m_canvas->width() - 16, 0, "[ none of %-5d]", m_view->size());
+      m_canvas->print(width - 16, 0, "[ none of %-5d]", m_view->size());
     else
-      m_canvas->print(m_canvas->width() - 16,
-                      0,
-                      "[%5d of %-5d]",
-                      item_idx + 1,
-                      m_view->size());
+      m_canvas->print(
+        width - 16, 0, "[%5d of %-5d]", item_idx + 1, m_view->size());
   }
 
   int               layout_height;
@@ -95,7 +93,7 @@ WindowDownloadList::redraw() {
     m_view->focus() != m_view->end_visible() ? m_view->focus()
                                              : m_view->begin_visible(),
     m_view->end_visible(),
-    m_canvas->height() / layout_height);
+    height / layout_height);
 
   // Make sure we properly fill out the last lines so it looks like
   // there are more torrents, yet don't hide it if we got the last one
@@ -103,10 +101,9 @@ WindowDownloadList::redraw() {
   if (range.second != m_view->end_visible())
     ++range.second;
 
-  int   pos = 1;
-  char* buffer =
-    static_cast<char*>(calloc(m_canvas->width() + 1, sizeof(char)));
-  char* last = buffer + m_canvas->width() - 2 + 1;
+  int   pos    = 1;
+  char* buffer = static_cast<char*>(calloc(width + 1, sizeof(char)));
+  char* last   = buffer + width - 2 + 1;
 
   // Add a proper 'column info' method.
   if (layout_name == "compact") {

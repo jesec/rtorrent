@@ -46,7 +46,8 @@ WindowHttpQueue::redraw() {
   unsigned int        pos = 10;
   Container::iterator itr = m_container.begin();
 
-  while (itr != m_container.end() && pos + 20 < m_canvas->width()) {
+  const auto width = m_canvas->width();
+  while (itr != m_container.end() && pos + 20 < width) {
     if (itr->m_http == nullptr)
       m_canvas->print(pos, 0, "%s done", itr->m_name.c_str());
 

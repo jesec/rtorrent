@@ -29,8 +29,11 @@ WindowDownloadChunksSeen::redraw() {
     (cachedTime + torrent::utils::timer::from_seconds(10)).round_seconds());
   m_canvas->erase();
 
-  if (m_canvas->height() < 3 || m_canvas->width() < 18)
+  const auto height = m_canvas->height();
+  const auto width  = m_canvas->width();
+  if (height < 3 || width < 18) {
     return;
+  }
 
   m_canvas->print(2,
                   0,
@@ -82,7 +85,7 @@ WindowDownloadChunksSeen::redraw() {
          (uint32_t)(chunk - seen) > (*itrTransfer)->index())
     itrTransfer++;
 
-  for (unsigned int y = 1; y < m_canvas->height() && chunk < last; ++y) {
+  for (unsigned int y = 1; y < height && chunk < last; ++y) {
     m_canvas->print(0, y, "%5u ", (int)(chunk - seen));
 
     while (chunk < last) {
@@ -110,7 +113,7 @@ WindowDownloadChunksSeen::redraw() {
       chunk++;
 
       if ((chunk - seen) % 10 == 0) {
-        if (m_canvas->get_x() + 12 > m_canvas->width())
+        if (m_canvas->get_x() + 12 > width)
           break;
 
         m_canvas->print_char(' ');

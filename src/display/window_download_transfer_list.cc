@@ -26,8 +26,11 @@ WindowDownloadTransferList::redraw() {
     (cachedTime + torrent::utils::timer::from_seconds(1)).round_seconds());
   m_canvas->erase();
 
-  if (m_canvas->height() < 3 || m_canvas->width() < 18)
+  const auto height = m_canvas->height();
+  const auto width  = m_canvas->width();
+  if (height < 3 || width < 18) {
     return;
+  }
 
   const torrent::TransferList* transfers =
     m_download->download()->transfer_list();
@@ -40,8 +43,7 @@ WindowDownloadTransferList::redraw() {
   // is just something i threw in there, someone really should
   // prettify this. (This is a very subtle hint)
 
-  for (unsigned int y = 1; y < m_canvas->height() && itr != transfers->end();
-       ++y, ++itr) {
+  for (unsigned int y = 1; y < height && itr != transfers->end(); ++y, ++itr) {
     m_canvas->print(0,
                     y,
                     "%5u [P: %u F: %u]",
@@ -54,8 +56,8 @@ WindowDownloadTransferList::redraw() {
                                             bLast = (*itr)->end();
          bItr != bLast;
          ++bItr) {
-      if (m_canvas->get_x() >= m_canvas->width() - 1) {
-        if (++y >= m_canvas->height())
+      if (m_canvas->get_x() >= width - 1) {
+        if (++y >= height)
           break;
 
         m_canvas->move(17, y);

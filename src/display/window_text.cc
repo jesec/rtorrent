@@ -55,21 +55,23 @@ WindowText::redraw() {
 
   m_canvas->erase();
 
+  const auto height = m_canvas->height();
+  const auto width  = m_canvas->width();
+  if (height < 1 || width < 2) {
+    return;
+  }
+
   unsigned int position = 0;
 
-  if (m_canvas->height() == 0)
-    return;
-
   if (m_errorHandler != nullptr && m_target.second == nullptr) {
-    char* buffer =
-      static_cast<char*>(calloc(m_canvas->width() + 1, sizeof(char)));
+    char* buffer = static_cast<char*>(calloc(width + 1, sizeof(char)));
 
     Canvas::attributes_list attributes;
     attributes.push_back(
       Attributes(buffer, Attributes::a_normal, Attributes::color_default));
 
-    char* last = m_errorHandler->print(
-      buffer, buffer + m_canvas->width(), &attributes, m_target);
+    char* last =
+      m_errorHandler->print(buffer, buffer + width, &attributes, m_target);
 
     m_canvas->print_attributes(0, position, buffer, last, &attributes);
 
@@ -77,20 +79,18 @@ WindowText::redraw() {
     return;
   }
 
-  for (iterator itr = begin(); itr != end() && position < m_canvas->height();
+  for (iterator itr = begin(); itr != end() && position < height;
        ++itr, ++position) {
     if (*itr == nullptr)
       continue;
 
-    char* buffer =
-      static_cast<char*>(calloc(m_canvas->width() + 1, sizeof(char)));
+    char* buffer = static_cast<char*>(calloc(width + 1, sizeof(char)));
 
     Canvas::attributes_list attributes;
     attributes.push_back(
       Attributes(buffer, Attributes::a_normal, Attributes::color_default));
 
-    char* last =
-      (*itr)->print(buffer, buffer + m_canvas->width(), &attributes, m_target);
+    char* last = (*itr)->print(buffer, buffer + width, &attributes, m_target);
 
     m_canvas->print_attributes(0, position, buffer, last, &attributes);
 

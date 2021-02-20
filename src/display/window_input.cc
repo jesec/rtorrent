@@ -17,9 +17,10 @@ WindowInput::redraw() {
                   m_title.c_str(),
                   m_input != nullptr ? m_input->c_str() : "<NULL>");
 
-  if (m_focus)
+  if (m_focus && m_input != nullptr) {
     m_canvas->set_attr(
       m_input->get_pos() + 2 + m_title.size(), 0, 1, A_REVERSE, COLOR_PAIR(0));
+  }
 }
 
 }
