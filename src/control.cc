@@ -36,12 +36,7 @@ Control::Control()
 
   m_commandScheduler(new rpc::CommandScheduler())
   , m_objectStorage(new rpc::object_storage())
-  , m_directory_events(new torrent::directory_events())
-  ,
-
-  m_tick(0)
-  , m_shutdownReceived(false)
-  , m_shutdownQuick(false) {
+  , m_directory_events(new torrent::directory_events()) {
 
   m_core        = new core::Manager();
   m_viewManager = new core::ViewManager();

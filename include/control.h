@@ -120,6 +120,8 @@ private:
   Control(const Control&);
   void operator=(const Control&);
 
+  bool m_shutdownReceived lt_cacheline_aligned{ false };
+
   core::Manager*     m_core;
   core::ViewManager* m_viewManager;
   core::DhtManager*  m_dhtManager;
@@ -129,19 +131,17 @@ private:
   input::Manager*    m_input;
   input::InputEvent* m_inputStdin;
 
+  bool m_shutdownQuick lt_cacheline_aligned{ false };
+
   rpc::CommandScheduler*     m_commandScheduler;
   rpc::object_storage*       m_objectStorage;
   torrent::directory_events* m_directory_events;
 
-  uint64_t m_tick;
+  uint64_t m_tick{ 0 };
 
-  mode_t      m_umask;
   std::string m_workingDirectory;
 
   torrent::utils::priority_item m_taskShutdown;
-
-  bool m_shutdownReceived lt_cacheline_aligned;
-  bool m_shutdownQuick    lt_cacheline_aligned;
 };
 
 #endif
