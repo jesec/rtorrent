@@ -72,6 +72,9 @@ SCgi::open_named(const std::string& filename) {
   fchmod(get_fd().get_fd(), S_IRWXU);
 
   open(sa, offsetof(struct sockaddr_un, sun_path) + filename.size() + 1);
+
+  free(buffer);
+
   m_path = filename;
 }
 
