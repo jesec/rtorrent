@@ -144,47 +144,6 @@ group_insert(const torrent::Object::list_type& args) {
                                              "value",
                                              (int64_t)20 << 20));
 
-  if (rpc::call_command_value("method.use_intermediate") == 1) {
-    // Deprecated in 0.7.0:
-
-    CMD2_REDIRECT_GENERIC_STR("group." + name + ".view",
-                              "group2." + name + ".view");
-    CMD2_REDIRECT_GENERIC_STR("group." + name + ".view.set",
-                              "group2." + name + ".view.set");
-    CMD2_REDIRECT_GENERIC_STR("group." + name + ".ratio.min",
-                              "group2." + name + ".ratio.min");
-    CMD2_REDIRECT_GENERIC_STR("group." + name + ".ratio.min.set",
-                              "group2." + name + ".ratio.min.set");
-    CMD2_REDIRECT_GENERIC_STR("group." + name + ".ratio.max",
-                              "group2." + name + ".ratio.max");
-    CMD2_REDIRECT_GENERIC_STR("group." + name + ".ratio.max.set",
-                              "group2." + name + ".ratio.max.set");
-    CMD2_REDIRECT_GENERIC_STR("group." + name + ".ratio.upload",
-                              "group2." + name + ".ratio.upload");
-    CMD2_REDIRECT_GENERIC_STR("group." + name + ".ratio.upload.set",
-                              "group2." + name + ".ratio.upload.set");
-  }
-  if (rpc::call_command_value("method.use_intermediate") == 2) {
-    // Deprecated in 0.7.0:
-
-    CMD2_REDIRECT_GENERIC_STR_NO_EXPORT("group." + name + ".view",
-                                        "group2." + name + ".view");
-    CMD2_REDIRECT_GENERIC_STR_NO_EXPORT("group." + name + ".view.set",
-                                        "group2." + name + ".view.set");
-    CMD2_REDIRECT_GENERIC_STR_NO_EXPORT("group." + name + ".ratio.min",
-                                        "group2." + name + ".ratio.min");
-    CMD2_REDIRECT_GENERIC_STR_NO_EXPORT("group." + name + ".ratio.min.set",
-                                        "group2." + name + ".ratio.min.set");
-    CMD2_REDIRECT_GENERIC_STR_NO_EXPORT("group." + name + ".ratio.max",
-                                        "group2." + name + ".ratio.max");
-    CMD2_REDIRECT_GENERIC_STR_NO_EXPORT("group." + name + ".ratio.max.set",
-                                        "group2." + name + ".ratio.max.set");
-    CMD2_REDIRECT_GENERIC_STR_NO_EXPORT("group." + name + ".ratio.upload",
-                                        "group2." + name + ".ratio.upload");
-    CMD2_REDIRECT_GENERIC_STR_NO_EXPORT("group." + name + ".ratio.upload.set",
-                                        "group2." + name + ".ratio.upload.set");
-  }
-
   return name;
 }
 
