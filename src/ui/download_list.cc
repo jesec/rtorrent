@@ -250,6 +250,7 @@ DownloadList::receive_view_input(Input type) {
         if (current_view()->name() == torrent::utils::trim(view_name_var)) {
           control->core()->push_log_std("View '" + current_view()->name() +
                                         "' can't be filtered.");
+          delete input;
           return;
         }
       }
@@ -258,6 +259,7 @@ DownloadList::receive_view_input(Input type) {
     } break;
 
     default:
+      delete input;
       throw torrent::internal_error(
         "DownloadList::receive_view_input(...) Invalid input type.");
   }
