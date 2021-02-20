@@ -21,6 +21,10 @@ namespace rpc {
 
 #ifdef HAVE_XMLRPC_C
 
+#ifndef XMLRPC_HAVE_I8
+static_assert(false, "XMLRPC is too old");
+#endif
+
 class xmlrpc_error : public torrent::base_error {
 public:
   xmlrpc_error(xmlrpc_env* env)
@@ -52,10 +56,14 @@ xmlrpc_to_object(xmlrpc_env*       env,
 inline torrent::Object
 xmlrpc_list_entry_to_object(xmlrpc_env* env, xmlrpc_value* src, int index) {
   xmlrpc_value* tmp;
+
+  // reference may be incremented
   xmlrpc_array_read_item(env, src, index, &tmp);
 
-  if (env->fault_occurred)
+  if (env->fault_occurred) {
+    // when fault_occurred, reference is not incremented
     throw xmlrpc_error(env);
+  }
 
   torrent::Object obj = xmlrpc_to_object(env, tmp);
   xmlrpc_DECREF(tmp);
@@ -66,10 +74,14 @@ xmlrpc_list_entry_to_object(xmlrpc_env* env, xmlrpc_value* src, int index) {
 int64_t
 xmlrpc_list_entry_to_value(xmlrpc_env* env, xmlrpc_value* src, int index) {
   xmlrpc_value* tmp;
+
+  // reference may be incremented
   xmlrpc_array_read_item(env, src, index, &tmp);
 
-  if (env->fault_occurred)
+  if (env->fault_occurred) {
+    // when fault_occurred, reference is not incremented
     throw xmlrpc_error(env);
+  }
 
   switch (xmlrpc_value_type(tmp)) {
     case XMLRPC_TYPE_INT:
@@ -78,28 +90,35 @@ xmlrpc_list_entry_to_value(xmlrpc_env* env, xmlrpc_value* src, int index) {
       xmlrpc_DECREF(tmp);
       return v;
 
-#ifdef XMLRPC_HAVE_I8
     case XMLRPC_TYPE_I8:
       xmlrpc_int64 v2;
       xmlrpc_read_i8(env, tmp, &v2);
       xmlrpc_DECREF(tmp);
       return v2;
-#endif
 
     case XMLRPC_TYPE_STRING: {
       const char* str;
+
+      // memory may be allocated
       xmlrpc_read_string(env, tmp, &str);
 
-      if (env->fault_occurred)
+      if (env->fault_occurred) {
+        // when fault_occurred, memory is not allocated
+        xmlrpc_DECREF(tmp);
         throw xmlrpc_error(env);
+      }
 
       const char* end = str;
       int64_t     v3  = ::strtoll(str, (char**)&end, 0);
 
-      ::free((void*)str);
-
-      if (*str == '\0' || *end != '\0')
+      if (*str == '\0' || *end != '\0') {
+        ::free((void*)str);
+        xmlrpc_DECREF(tmp);
         throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Invalid index.");
+      }
+
+      ::free((void*)str);
+      xmlrpc_DECREF(tmp);
 
       return v3;
     }
@@ -119,10 +138,14 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
   switch (xmlrpc_value_type(value)) {
     case XMLRPC_TYPE_STRING: {
       const char* str;
+
+      // memory may be allocated
       xmlrpc_read_string(env, value, &str);
 
-      if (env->fault_occurred)
+      if (env->fault_occurred) {
+        // when fault_occurred, memory is not allocated
         throw xmlrpc_error(env);
+      }
 
       if (std::strlen(str) == 0) {
         // When specifying void, we require a zero-length string.
@@ -161,8 +184,10 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
         case 'f':
           index = ::strtol(str + 42, (char**)&end_ptr, 0);
 
-          if (*str == '\0' || *end_ptr != '\0')
+          if (*str == '\0' || *end_ptr != '\0') {
+            ::free((void*)str);
             throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Invalid index.");
+          }
 
           target = rpc::make_target(XmlRpc::call_file,
                                     xmlrpc.slot_find_file()(download, index));
@@ -171,8 +196,10 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
         case 't':
           index = ::strtol(str + 42, (char**)&end_ptr, 0);
 
-          if (*str == '\0' || *end_ptr != '\0')
+          if (*str == '\0' || *end_ptr != '\0') {
+            ::free((void*)str);
             throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Invalid index.");
+          }
 
           target = rpc::make_target(
             XmlRpc::call_tracker, xmlrpc.slot_find_tracker()(download, index));
@@ -183,8 +210,10 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
           const char*         hash_end =
             torrent::hash_string_from_hex_c_str(str + 42, hash);
 
-          if (hash_end == end_ptr || *hash_end != '\0')
+          if (hash_end == end_ptr || *hash_end != '\0') {
+            ::free((void*)str);
             throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Not a hash string.");
+          }
 
           target = rpc::make_target(XmlRpc::call_peer,
                                     xmlrpc.slot_find_peer()(download, hash));
@@ -244,13 +273,11 @@ xmlrpc_to_object(xmlrpc_env*       env,
 
       return torrent::Object((int64_t)v);
 
-#ifdef XMLRPC_HAVE_I8
     case XMLRPC_TYPE_I8:
       xmlrpc_int64 v2;
       xmlrpc_read_i8(env, value, &v2);
 
       return torrent::Object((int64_t)v2);
-#endif
 
       //     case XMLRPC_TYPE_BOOL:
       //     case XMLRPC_TYPE_DOUBLE:
@@ -268,15 +295,21 @@ xmlrpc_to_object(xmlrpc_env*       env,
 
       } else {
         const char* valueString;
+
+        // memory may be allocated
         xmlrpc_read_string(env, value, &valueString);
 
-        if (env->fault_occurred)
+        if (env->fault_occurred) {
+          // when fault_occurred, memory is not allocated
           throw xmlrpc_error(env);
+        }
 
         torrent::Object result = torrent::Object(std::string(valueString));
 
         // Urgh, seriously?
+        // yes, std::string() above already copied it
         ::free((void*)valueString);
+
         return result;
       }
 
@@ -284,17 +317,20 @@ xmlrpc_to_object(xmlrpc_env*       env,
       size_t      valueSize;
       const char* valueString;
 
+      // memory may be allocated
       xmlrpc_read_base64(
         env, value, &valueSize, (const unsigned char**)&valueString);
 
-      if (env->fault_occurred)
+      if (env->fault_occurred) {
+        // when fault_occurred, memory is not allocated
         throw xmlrpc_error(env);
+      }
 
       torrent::Object result =
         torrent::Object(std::string(valueString, valueSize));
 
-      // Urgh, seriously?
       ::free((void*)valueString);
+
       return result;
     }
 
@@ -310,10 +346,14 @@ xmlrpc_to_object(xmlrpc_env*       env,
           throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Too few arguments.");
 
         xmlrpc_value* tmp;
+
+        // reference may be incremented
         xmlrpc_array_read_item(env, value, current++, &tmp);
 
-        if (env->fault_occurred)
+        if (env->fault_occurred) {
+          // when fault_occurred, reference is not incremented
           throw xmlrpc_error(env);
+        }
 
         *target = xmlrpc_to_target(env, tmp);
         xmlrpc_DECREF(tmp);
@@ -369,30 +409,13 @@ xmlrpc_value*
 object_to_xmlrpc(xmlrpc_env* env, const torrent::Object& object) {
   switch (object.type()) {
     case torrent::Object::TYPE_VALUE:
-
-#ifdef XMLRPC_HAVE_I8
       if (xmlrpc.dialect() != XmlRpc::dialect_generic)
         return xmlrpc_i8_new(env, object.as_value());
 
       [[fallthrough]];
-#else
-      return xmlrpc_int_new(env, object.as_value());
-#endif
-
     case torrent::Object::TYPE_STRING: {
-#ifdef XMLRPC_HAVE_I8
       // The versions that support I8 do implicit utf-8 validation.
       xmlrpc_value* result = xmlrpc_string_new(env, object.as_string().c_str());
-#else
-      // In older versions, xmlrpc-c doesn't validate the utf-8 encoding itself.
-      xmlrpc_validate_utf8(
-        env, object.as_string().c_str(), object.as_string().length());
-
-      xmlrpc_value* result =
-        env->fault_occurred
-          ? NULL
-          : xmlrpc_string_new(env, object.as_string().c_str());
-#endif
 
       if (env->fault_occurred) {
         xmlrpc_env_clean(env);
@@ -523,10 +546,6 @@ xmlrpc_call_command(xmlrpc_env* env, xmlrpc_value* args, void* voidServerInfo) {
 
 void
 XmlRpc::initialize() {
-#ifndef XMLRPC_HAVE_I8
-  m_dialect = dialect_generic;
-#endif
-
   m_env = new xmlrpc_env;
 
   xmlrpc_env_init((xmlrpc_env*)m_env);
@@ -595,7 +614,6 @@ XmlRpc::set_dialect(int dialect) {
     case dialect_generic:
       break;
 
-#ifdef XMLRPC_HAVE_I8
     case dialect_i8:
       xmlrpc_registry_set_dialect(
         &localEnv, (xmlrpc_registry*)m_registry, xmlrpc_dialect_i8);
@@ -605,7 +623,6 @@ XmlRpc::set_dialect(int dialect) {
       xmlrpc_registry_set_dialect(
         &localEnv, (xmlrpc_registry*)m_registry, xmlrpc_dialect_apache);
       break;
-#endif
 
     default:
       xmlrpc_env_clean(&localEnv);
