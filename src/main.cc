@@ -9,6 +9,7 @@
 #include <inttypes.h>
 #include <iostream>
 #include <queue>
+#include <random>
 #include <sstream>
 #include <string>
 #include <torrent/buildinfo.h>
@@ -202,14 +203,17 @@ main(int argc, char** argv) {
 
     control = new Control;
 
-    unsigned long random_seed = cachedTime.seconds();
-    random_seed ^= cachedTime.usec();
-    random_seed ^= cachedTime.seconds();
-    random_seed ^= static_cast<unsigned long>(getpid()) << 16;
-    random_seed ^= getppid();
+    // Seed RNG
+    std::random_device rd;
+    std::mt19937       mt(rd());
 
-    srandom(*((unsigned int*)(&random_seed)));
-    srand48(random_seed);
+    uint uint_seed = std::uniform_int_distribution<uint>(
+      std::numeric_limits<uint>::min(), std::numeric_limits<uint>::max())(mt);
+    long long_seed = std::uniform_int_distribution<long>(
+      std::numeric_limits<long>::min(), std::numeric_limits<long>::max())(mt);
+
+    srandom(uint_seed);
+    srand48(long_seed);
 
     SignalHandler::set_ignore(SIGPIPE);
     SignalHandler::set_handler(
@@ -558,7 +562,8 @@ main(int argc, char** argv) {
       cmd2.pop();
     }
 
-    LT_LOG("seeded srandom and srand48 (seed:%u)", random_seed);
+    LT_LOG(
+      "seeded srandom (seed:%u) and srand48 (seed:%l)", uint_seed, long_seed);
 
     control->initialize();
     control->ui()->load_input_history();
