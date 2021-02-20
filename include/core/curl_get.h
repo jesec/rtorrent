@@ -15,7 +15,7 @@ namespace core {
 
 class CurlStack;
 
-class CurlGet : public torrent::Http {
+class CurlGet final : public torrent::Http {
 public:
   friend class CurlStack;
 
