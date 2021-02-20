@@ -13,7 +13,7 @@ namespace input {
 
 class InputEvent : public torrent::Event {
 public:
-  typedef std::function<void(int)> slot_int;
+  using slot_int = std::function<void(int)>;
 
   InputEvent(int fd) {
     m_fileDesc = fd;
@@ -22,9 +22,9 @@ public:
   void insert(torrent::Poll* p);
   void remove(torrent::Poll* p);
 
-  void event_read();
-  void event_write();
-  void event_error();
+  void event_read() override;
+  void event_write() override;
+  void event_error() override;
 
   void slot_pressed(slot_int s) {
     m_slotPressed = s;

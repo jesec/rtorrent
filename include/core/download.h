@@ -22,13 +22,13 @@ namespace core {
 
 class Download {
 public:
-  typedef torrent::Download             download_type;
-  typedef torrent::FileList             file_list_type;
-  typedef torrent::PeerList             peer_list_type;
-  typedef torrent::TrackerList          tracker_list_type;
-  typedef torrent::TrackerController    tracker_controller_type;
-  typedef torrent::ConnectionList       connection_list_type;
-  typedef download_type::ConnectionType connection_type;
+  using download_type           = torrent::Download;
+  using file_list_type          = torrent::FileList;
+  using peer_list_type          = torrent::PeerList;
+  using tracker_list_type       = torrent::TrackerList;
+  using tracker_controller_type = torrent::TrackerController;
+  using connection_list_type    = torrent::ConnectionList;
+  using connection_type         = download_type::ConnectionType;
 
   static constexpr int variable_hashing_stopped = 0;
   static constexpr int variable_hashing_initial = 1;

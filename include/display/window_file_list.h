@@ -20,12 +20,12 @@ namespace display {
 
 class WindowFileList : public Window {
 public:
-  typedef torrent::FileListIterator             iterator;
-  typedef torrent::file_list_collapsed_iterator collapsed_iterator;
+  using iterator           = torrent::FileListIterator;
+  using collapsed_iterator = torrent::file_list_collapsed_iterator;
 
   WindowFileList(const ui::ElementFileList* element);
 
-  virtual void redraw();
+  void redraw() override;
 
 private:
   int done_percentage(torrent::File* e);

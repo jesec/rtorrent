@@ -26,23 +26,23 @@ namespace rpc {
 
 template<typename Target>
 struct target_wrapper {
-  typedef Target target_type;
-  typedef Target cleaned_type;
+  using target_type  = Target;
+  using cleaned_type = Target;
 };
 
 template<>
 struct target_wrapper<void> {
   struct no_type {};
 
-  typedef void     target_type;
-  typedef no_type* cleaned_type;
+  using target_type  = void;
+  using cleaned_type = no_type*;
 };
 
 // Since c++0x isn't out yet...
 template<typename T1, typename T2, typename T3>
 struct rt_triple : private std::pair<T1, T2> {
-  typedef std::pair<T1, T2> base_type;
-  typedef T3                third_type;
+  using base_type  = std::pair<T1, T2>;
+  using third_type = T3;
 
   using base_type::first;
   using base_type::second;
@@ -71,15 +71,14 @@ struct rt_triple : private std::pair<T1, T2> {
 // Since it gets used so many places we might as well put it in the
 // rpc namespace.
 // typedef std::pair<int, void*> target_type;
-typedef rt_triple<int, void*, void*> target_type;
+using target_type = rt_triple<int, void*, void*>;
 
 class command_base;
 
-typedef const torrent::Object (*command_base_call_type)(command_base*,
-                                                        target_type,
-                                                        const torrent::Object&);
-typedef std::function<torrent::Object(target_type, const torrent::Object&)>
-  base_function;
+using command_base_call_type =
+  const torrent::Object (*)(command_base*, target_type, const torrent::Object&);
+using base_function =
+  std::function<torrent::Object(target_type, const torrent::Object&)>;
 
 template<typename tmpl>
 struct command_base_is_valid {};
@@ -88,41 +87,40 @@ struct command_base_is_type {};
 
 class command_base {
 public:
-  typedef torrent::Object::value_type  value_type;
-  typedef torrent::Object::string_type string_type;
-  typedef torrent::Object::list_type   list_type;
-  typedef torrent::Object::map_type    map_type;
-  typedef torrent::Object::key_type    key_type;
+  using value_type  = torrent::Object::value_type;
+  using string_type = torrent::Object::string_type;
+  using list_type   = torrent::Object::list_type;
+  using map_type    = torrent::Object::map_type;
+  using key_type    = torrent::Object::key_type;
 
-  typedef const torrent::Object (*generic_slot)(command_base*,
-                                                const torrent::Object&);
-  typedef const torrent::Object (*cleaned_slot)(
-    command_base*,
-    target_wrapper<void>::cleaned_type,
-    const torrent::Object&);
-  typedef const torrent::Object (*any_slot)(command_base*,
-                                            target_type,
-                                            const torrent::Object&);
-  typedef const torrent::Object (*download_slot)(command_base*,
-                                                 core::Download*,
+  using generic_slot = const torrent::Object (*)(command_base*,
                                                  const torrent::Object&);
-  typedef const torrent::Object (*file_slot)(command_base*,
-                                             torrent::File*,
+  using cleaned_slot =
+    const torrent::Object (*)(command_base*,
+                              target_wrapper<void>::cleaned_type,
+                              const torrent::Object&);
+  using any_slot           = const torrent::Object (*)(command_base*,
+                                             target_type,
                                              const torrent::Object&);
-  typedef const torrent::Object (*file_itr_slot)(command_base*,
-                                                 torrent::FileListIterator*,
+  using download_slot      = const torrent::Object (*)(command_base*,
+                                                  core::Download*,
+                                                  const torrent::Object&);
+  using file_slot          = const torrent::Object (*)(command_base*,
+                                              torrent::File*,
+                                              const torrent::Object&);
+  using file_itr_slot      = const torrent::Object (*)(command_base*,
+                                                  torrent::FileListIterator*,
+                                                  const torrent::Object&);
+  using peer_slot          = const torrent::Object (*)(command_base*,
+                                              torrent::Peer*,
+                                              const torrent::Object&);
+  using tracker_slot       = const torrent::Object (*)(command_base*,
+                                                 torrent::Tracker*,
                                                  const torrent::Object&);
-  typedef const torrent::Object (*peer_slot)(command_base*,
-                                             torrent::Peer*,
-                                             const torrent::Object&);
-  typedef const torrent::Object (*tracker_slot)(command_base*,
-                                                torrent::Tracker*,
-                                                const torrent::Object&);
-
-  typedef const torrent::Object (*download_pair_slot)(command_base*,
-                                                      core::Download*,
-                                                      core::Download*,
-                                                      const torrent::Object&);
+  using download_pair_slot = const torrent::Object (*)(command_base*,
+                                                       core::Download*,
+                                                       core::Download*,
+                                                       const torrent::Object&);
 
   static constexpr int target_generic  = 0;
   static constexpr int target_any      = 1;

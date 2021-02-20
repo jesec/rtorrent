@@ -10,10 +10,10 @@ class CommandMapTest : public CppUnit::TestFixture {
 public:
   static constexpr int cmd_size = 256;
 
-  void setUp() {
+  void setUp() override {
     m_commandItr = m_commands;
   }
-  void tearDown() {}
+  void tearDown() override {}
 
   void test_basics();
 

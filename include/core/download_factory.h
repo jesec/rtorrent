@@ -22,8 +22,8 @@ class Manager;
 
 class DownloadFactory {
 public:
-  typedef std::function<void()>    slot_void;
-  typedef std::vector<std::string> command_list_type;
+  using slot_void         = std::function<void()>;
+  using command_list_type = std::vector<std::string>;
 
   // Do not destroy this object while it is in a HttpQueue.
   DownloadFactory(Manager* m);

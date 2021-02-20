@@ -33,12 +33,7 @@ struct command_map_data_type {
     , m_parm(parm)
     , m_doc(doc) {}
 
-  command_map_data_type(const command_map_data_type& src)
-    : m_variable(src.m_variable)
-    , m_anySlot(src.m_anySlot)
-    , m_flags(src.m_flags)
-    , m_parm(src.m_parm)
-    , m_doc(src.m_doc) {}
+  command_map_data_type(const command_map_data_type& src) = default;
 
   command_base           m_variable;
   command_base::any_slot m_anySlot;
@@ -52,11 +47,11 @@ struct command_map_data_type {
 class CommandMap
   : public std::map<const char*, command_map_data_type, command_map_comp> {
 public:
-  typedef std::map<const char*, command_map_data_type, command_map_comp>
-    base_type;
+  using base_type =
+    std::map<const char*, command_map_data_type, command_map_comp>;
 
-  typedef torrent::Object         mapped_type;
-  typedef mapped_type::value_type mapped_value_type;
+  using mapped_type       = torrent::Object;
+  using mapped_value_type = mapped_type::value_type;
 
   using base_type::const_iterator;
   using base_type::iterator;
@@ -78,8 +73,10 @@ public:
   static constexpr int flag_file_target    = 0x200;
   static constexpr int flag_tracker_target = 0x400;
 
-  CommandMap() {}
+  CommandMap() = default;
   ~CommandMap();
+  CommandMap(const CommandMap&) = delete;
+  void operator=(const CommandMap&) = delete;
 
   bool has(const char* key) const {
     return base_type::find(key) != base_type::end();
@@ -157,10 +154,6 @@ public:
     return call_command(
       key, arg, target_type((int)command_base::target_file, file));
   }
-
-private:
-  CommandMap(const CommandMap&);
-  void operator=(const CommandMap&);
 };
 
 inline target_type

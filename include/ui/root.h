@@ -27,18 +27,18 @@ namespace ui {
 
 class DownloadList;
 
-typedef std::vector<std::string> ThrottleNameList;
+using ThrottleNameList = std::vector<std::string>;
 
 class Root {
 public:
-  typedef display::WindowTitle     WTitle;
-  typedef display::WindowHttpQueue WHttpQueue;
-  typedef display::WindowInput     WInput;
-  typedef display::WindowStatusbar WStatusbar;
+  using WTitle     = display::WindowTitle;
+  using WHttpQueue = display::WindowHttpQueue;
+  using WInput     = display::WindowInput;
+  using WStatusbar = display::WindowStatusbar;
 
-  typedef std::map<int, int>                  InputHistoryPointers;
-  typedef std::vector<std::string>            InputHistoryCategory;
-  typedef std::map<int, InputHistoryCategory> InputHistory;
+  using InputHistoryPointers = std::map<int, int>;
+  using InputHistoryCategory = std::vector<std::string>;
+  using InputHistory         = std::map<int, InputHistoryCategory>;
 
   Root();
 
@@ -109,19 +109,19 @@ public:
 private:
   void setup_keys();
 
-  Control*      m_control;
-  DownloadList* m_downloadList;
+  Control*      m_control{ nullptr };
+  DownloadList* m_downloadList{ nullptr };
 
-  WTitle*     m_windowTitle;
-  WHttpQueue* m_windowHttpQueue;
-  WInput*     m_windowInput;
-  WStatusbar* m_windowStatusbar;
+  WTitle*     m_windowTitle{ nullptr };
+  WHttpQueue* m_windowHttpQueue{ nullptr };
+  WInput*     m_windowInput{ nullptr };
+  WStatusbar* m_windowStatusbar{ nullptr };
 
   input::Bindings m_bindings;
 
-  int                  m_input_history_length;
-  std::string          m_input_history_last_input;
-  int                  m_input_history_pointer_get;
+  int                  m_input_history_length{ 99 };
+  std::string          m_input_history_last_input{ "" };
+  int                  m_input_history_pointer_get{ 0 };
   InputHistory         m_input_history;
   InputHistoryPointers m_input_history_pointers;
 

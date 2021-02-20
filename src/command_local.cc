@@ -30,8 +30,8 @@
 #include "control.h"
 #include "globals.h"
 
-typedef torrent::ChunkManager CM_t;
-typedef torrent::FileManager  FM_t;
+using CM_t = torrent::ChunkManager;
+using FM_t = torrent::FileManager;
 
 torrent::Object
 apply_pieces_stats_total_size() {

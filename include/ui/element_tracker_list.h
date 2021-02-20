@@ -17,12 +17,12 @@ namespace ui {
 
 class ElementTrackerList : public ElementBase {
 public:
-  typedef display::WindowTrackerList WTrackerList;
+  using WTrackerList = display::WindowTrackerList;
 
   ElementTrackerList(core::Download* d);
 
-  void activate(display::Frame* frame, bool focus = true);
-  void disable();
+  void activate(display::Frame* frame, bool focus = true) override;
+  void disable() override;
 
   display::Window* window();
 

@@ -19,13 +19,13 @@ struct text_element_wrapper;
 
 class ElementText : public ElementBase {
 public:
-  typedef display::WindowText WindowText;
+  using WindowText = display::WindowText;
 
-  typedef uint32_t size_type;
-  typedef uint32_t extent_type;
+  using size_type   = uint32_t;
+  using extent_type = uint32_t;
 
   ElementText(rpc::target_type target);
-  ~ElementText();
+  ~ElementText() override;
 
   rpc::target_type target() const {
     return m_window->target();
@@ -43,8 +43,8 @@ public:
     m_window->mark_dirty();
   }
 
-  void activate(display::Frame* frame, bool focus = false);
-  void disable();
+  void activate(display::Frame* frame, bool focus = false) override;
+  void disable() override;
 
   void mark_dirty() {
     m_window->mark_dirty();

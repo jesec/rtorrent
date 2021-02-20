@@ -24,17 +24,16 @@ struct object_storage_node {
   char            flags;
 };
 
-typedef std::
-  unordered_map<fixed_key_type<64>, object_storage_node, hash_fixed_key_type>
-    object_storage_base_type;
+using object_storage_base_type = std::
+  unordered_map<fixed_key_type<64>, object_storage_node, hash_fixed_key_type>;
 
 class object_storage : private object_storage_base_type {
 public:
   // Should really change rlookup_type into a set with pair values.
-  typedef object_storage_base_type base_type;
-  typedef std::map<std::string,
-                   torrent::utils::unordered_vector<base_type::value_type*>>
-    rlookup_type;
+  using base_type = object_storage_base_type;
+  using rlookup_type =
+    std::map<std::string,
+             torrent::utils::unordered_vector<base_type::value_type*>>;
 
   using base_type::const_iterator;
   using base_type::const_local_iterator;
@@ -43,8 +42,8 @@ public:
   using base_type::local_iterator;
   using base_type::value_type;
 
-  typedef rlookup_type::iterator              rlookup_iterator;
-  typedef rlookup_type::mapped_type::iterator rlookup_mapped_iterator;
+  using rlookup_iterator        = rlookup_type::iterator;
+  using rlookup_mapped_iterator = rlookup_type::mapped_type::iterator;
 
   using base_type::begin;
   using base_type::bucket;

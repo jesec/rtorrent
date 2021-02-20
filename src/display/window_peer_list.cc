@@ -60,7 +60,7 @@ WindowPeerList::redraw() {
   if (m_list->empty())
     return;
 
-  typedef std::pair<PList::iterator, PList::iterator> Range;
+  using Range = std::pair<PList::iterator, PList::iterator>;
 
   Range range = torrent::utils::advance_bidirectional(
     m_list->begin(),

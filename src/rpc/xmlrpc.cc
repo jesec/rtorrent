@@ -33,12 +33,12 @@ public:
   xmlrpc_error(int type, const char* msg)
     : m_type(type)
     , m_msg(msg) {}
-  virtual ~xmlrpc_error() noexcept {}
+  ~xmlrpc_error() override = default;
 
   virtual int type() const noexcept {
     return m_type;
   }
-  virtual const char* what() const noexcept {
+  const char* what() const noexcept override {
     return m_msg;
   }
 

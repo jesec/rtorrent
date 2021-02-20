@@ -27,17 +27,7 @@
 
 namespace ui {
 
-Root::Root()
-  : m_control(nullptr)
-  , m_downloadList(nullptr)
-  , m_windowTitle(nullptr)
-  , m_windowHttpQueue(nullptr)
-  , m_windowInput(nullptr)
-  , m_windowStatusbar(nullptr)
-  , m_input_history_length(99)
-  , m_input_history_last_input("")
-  , m_input_history_pointer_get(0) {
-
+Root::Root() {
   // Initialise prefilled m_input_history and m_input_history_pointers objects.
   for (int type = ui::DownloadList::INPUT_LOAD_DEFAULT;
        type != ui::DownloadList::INPUT_EOI;

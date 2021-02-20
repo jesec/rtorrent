@@ -18,15 +18,14 @@ class CommandSchedulerItem;
 
 class CommandScheduler : public std::vector<CommandSchedulerItem*> {
 public:
-  typedef std::function<void(const std::string&)> SlotString;
-  typedef std::pair<int, int>                     Time;
-  typedef std::vector<CommandSchedulerItem*>      base_type;
+  using SlotString = std::function<void(const std::string&)>;
+  using Time       = std::pair<int, int>;
+  using base_type  = std::vector<CommandSchedulerItem*>;
 
   using base_type::begin;
   using base_type::end;
   using base_type::value_type;
 
-  CommandScheduler() {}
   ~CommandScheduler();
 
   void set_slot_error_message(SlotString s) {

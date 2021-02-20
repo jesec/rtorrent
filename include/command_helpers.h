@@ -288,7 +288,7 @@ struct object_convert_type<Functor, void> {
 
   template<typename Signature>
   struct result {
-    typedef torrent::Object type;
+    using type = torrent::Object;
   };
 
   object_convert_type(Functor s)

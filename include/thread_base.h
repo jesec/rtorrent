@@ -18,11 +18,11 @@ class thread_queue_hack;
 
 class ThreadBase : public torrent::thread_base {
 public:
-  typedef torrent::utils::priority_queue_default priority_queue;
-  typedef void (*thread_base_func)(ThreadBase*);
+  using priority_queue   = torrent::utils::priority_queue_default;
+  using thread_base_func = void (*)(ThreadBase*);
 
   ThreadBase();
-  virtual ~ThreadBase() noexcept(true);
+  ~ThreadBase() override;
 
   priority_queue& task_scheduler() {
     return m_taskScheduler;
@@ -37,10 +37,10 @@ public:
   void queue_item(thread_base_func newFunc);
 
 protected:
-  int64_t next_timeout_usec();
+  int64_t next_timeout_usec() override;
 
-  void         call_queued_items();
-  virtual void call_events();
+  void call_queued_items();
+  void call_events() override;
 
   // TODO: Add thread name.
 

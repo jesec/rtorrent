@@ -12,15 +12,6 @@
 
 namespace display {
 
-Frame::Frame()
-  : m_type(TYPE_NONE)
-  ,
-
-  m_positionX(0)
-  , m_positionY(0)
-  , m_width(0)
-  , m_height(0) {}
-
 bool
 Frame::is_width_dynamic() const {
   switch (m_type) {
@@ -369,7 +360,7 @@ Frame::balance_row(uint32_t x, uint32_t y, uint32_t, uint32_t height) {
   std::stable_sort(
     dynamicFrames,
     dynamicFrames + dynamicSize,
-    std::bind(std::greater<extent_type>(),
+    std::bind(std::greater<>(),
               std::bind(&dynamic_min_height, std::placeholders::_1),
               std::bind(&dynamic_min_height, std::placeholders::_2)));
 
@@ -454,7 +445,7 @@ Frame::balance_column(uint32_t x, uint32_t y, uint32_t width, uint32_t) {
   std::stable_sort(
     dynamicFrames,
     dynamicFrames + dynamicSize,
-    std::bind(std::greater<extent_type>(),
+    std::bind(std::greater<>(),
               std::bind(&dynamic_min_width, std::placeholders::_1),
               std::bind(&dynamic_min_width, std::placeholders::_2)));
 

@@ -13,10 +13,10 @@ namespace display {
 
 class WindowStringList : public Window {
 public:
-  typedef std::list<std::string>::iterator iterator;
+  using iterator = std::list<std::string>::iterator;
 
   WindowStringList();
-  ~WindowStringList();
+  ~WindowStringList() override = default;
 
   iterator get_draw_end() {
     return m_drawEnd;
@@ -27,7 +27,7 @@ public:
     m_last              = last;
   }
 
-  virtual void redraw();
+  void redraw() override;
 
 private:
   iterator m_first;

@@ -18,12 +18,12 @@ namespace ui {
 
 class ElementDownloadList : public ElementBase {
 public:
-  typedef display::WindowDownloadList WDownloadList;
+  using WDownloadList = display::WindowDownloadList;
 
   ElementDownloadList();
 
-  void activate(display::Frame* frame, bool focus = true);
-  void disable();
+  void activate(display::Frame* frame, bool focus = true) override;
+  void disable() override;
 
   core::View* view() {
     return m_view;
@@ -48,8 +48,8 @@ public:
   void toggle_layout();
 
 private:
-  WDownloadList* m_window;
-  core::View*    m_view;
+  WDownloadList* m_window{ nullptr };
+  core::View*    m_view{ nullptr };
 };
 
 }

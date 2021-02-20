@@ -19,13 +19,11 @@ namespace ui {
 
 class ElementStringList : public ElementBase {
 public:
-  typedef display::WindowStringList WStringList;
-  typedef std::list<std::string>    List;
+  using WStringList = display::WindowStringList;
+  using List        = std::list<std::string>;
 
-  ElementStringList();
-
-  void activate(display::Frame* frame, bool focus = true);
-  void disable();
+  void activate(display::Frame* frame, bool focus = true) override;
+  void disable() override;
 
   display::Window* window() {
     return m_window;
@@ -73,7 +71,7 @@ public:
   void next_screen();
 
 private:
-  WStringList* m_window;
+  WStringList* m_window{ nullptr };
   List         m_list;
 };
 

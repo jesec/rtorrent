@@ -49,7 +49,7 @@ WindowTrackerList::redraw() {
   if (tl->size() == 0 || *m_focus >= tl->size())
     return;
 
-  typedef std::pair<unsigned int, unsigned int> Range;
+  using Range = std::pair<unsigned int, unsigned int>;
 
   Range range = torrent::utils::advance_bidirectional<unsigned int>(
     0, *m_focus, tl->size(), (height - 1) / 2);

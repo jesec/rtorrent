@@ -25,22 +25,21 @@ class RangeMap
                      typename Alloc::template rebind<
                        std::pair<const Key, std::pair<Key, T>>>::other> {
 
-  typedef std::map<Key,
-                   std::pair<Key, T>,
-                   Compare,
-                   typename Alloc::template rebind<
-                     std::pair<const Key, std::pair<Key, T>>>::other>
-    base_type;
+  using base_type = std::map<Key,
+                             std::pair<Key, T>,
+                             Compare,
+                             typename Alloc::template rebind<
+                               std::pair<const Key, std::pair<Key, T>>>::other>;
 
 public:
-  RangeMap() {}
+  RangeMap() = default;
   RangeMap(const Compare& c)
     : base_type(c) {}
 
-  typedef typename base_type::iterator               iterator;
-  typedef typename base_type::reverse_iterator       reverse_iterator;
-  typedef typename base_type::const_iterator         const_iterator;
-  typedef typename base_type::const_reverse_iterator const_reverse_iterator;
+  using iterator               = typename base_type::iterator;
+  using reverse_iterator       = typename base_type::reverse_iterator;
+  using const_iterator         = typename base_type::const_iterator;
+  using const_reverse_iterator = typename base_type::const_reverse_iterator;
 
   // using typename base_type::const_iterator;
   // using typename base_type::const_reverse_iterator;

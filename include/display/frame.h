@@ -12,13 +12,13 @@ class Window;
 
 class Frame {
 public:
-  typedef uint32_t extent_type;
-  typedef uint32_t size_type;
+  using extent_type = uint32_t;
+  using size_type   = uint32_t;
 
   enum Type { TYPE_NONE, TYPE_WINDOW, TYPE_ROW, TYPE_COLUMN };
 
   struct bounds_type {
-    bounds_type() {}
+    bounds_type() = default;
     bounds_type(extent_type minW,
                 extent_type minH,
                 extent_type maxW,
@@ -42,11 +42,9 @@ public:
     extent_type maxHeight;
   };
 
-  typedef std::pair<Frame*, bounds_type> dynamic_type;
+  using dynamic_type = std::pair<Frame*, bounds_type>;
 
   static constexpr size_type max_size = 5;
-
-  Frame();
 
   bool is_width_dynamic() const;
   bool is_height_dynamic() const;
@@ -113,12 +111,12 @@ private:
                              uint32_t width,
                              uint32_t height);
 
-  Type m_type;
+  Type m_type{ TYPE_NONE };
 
-  uint32_t m_positionX;
-  uint32_t m_positionY;
-  uint32_t m_width;
-  uint32_t m_height;
+  uint32_t m_positionX{ 0 };
+  uint32_t m_positionY{ 0 };
+  uint32_t m_width{ 0 };
+  uint32_t m_height{ 0 };
 
   union {
     Window* m_window;

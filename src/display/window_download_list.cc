@@ -15,8 +15,7 @@
 namespace display {
 
 WindowDownloadList::WindowDownloadList()
-  : Window(new Canvas, 0, 120, 1, extent_full, extent_full)
-  , m_view(nullptr) {}
+  : Window(new Canvas, 0, 120, 1, extent_full, extent_full) {}
 
 WindowDownloadList::~WindowDownloadList() {
   if (m_view != nullptr)
@@ -86,7 +85,7 @@ WindowDownloadList::redraw() {
     return;
   }
 
-  typedef std::pair<core::View::iterator, core::View::iterator> Range;
+  using Range = std::pair<core::View::iterator, core::View::iterator>;
 
   Range range = torrent::utils::advance_bidirectional(
     m_view->begin_visible(),

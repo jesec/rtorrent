@@ -17,9 +17,7 @@ namespace display {
 class WindowInput : public Window {
 public:
   WindowInput()
-    : Window(new Canvas, 0, 0, 1, extent_full, 1)
-    , m_input(nullptr)
-    , m_focus(false) {}
+    : Window(new Canvas, 0, 0, 1, extent_full, 1) {}
 
   input::TextInput* input() {
     return m_input;
@@ -44,13 +42,13 @@ public:
       mark_dirty();
   }
 
-  virtual void redraw();
+  void redraw() override;
 
 private:
-  input::TextInput* m_input;
+  input::TextInput* m_input{ nullptr };
   std::string       m_title;
 
-  bool m_focus;
+  bool m_focus{ false };
 };
 
 }

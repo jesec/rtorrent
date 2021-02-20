@@ -13,16 +13,16 @@ namespace utils {
 template<typename Base>
 class ListFocus {
 public:
-  typedef Base                  base_type;
-  typedef std::function<void()> slot_void;
-  typedef std::list<slot_void>  signal_void;
+  using base_type   = Base;
+  using slot_void   = std::function<void()>;
+  using signal_void = std::list<slot_void>;
 
-  typedef typename base_type::iterator               iterator;
-  typedef typename base_type::const_iterator         const_iterator;
-  typedef typename base_type::reverse_iterator       reverse_iterator;
-  typedef typename base_type::const_reverse_iterator const_reverse_iterator;
+  using iterator               = typename base_type::iterator;
+  using const_iterator         = typename base_type::const_iterator;
+  using reverse_iterator       = typename base_type::reverse_iterator;
+  using const_reverse_iterator = typename base_type::const_reverse_iterator;
 
-  typedef typename base_type::value_type value_type;
+  using value_type = typename base_type::value_type;
 
   ListFocus(base_type* b = NULL)
     : m_base(b) {

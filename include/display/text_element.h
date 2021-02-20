@@ -14,12 +14,14 @@ namespace display {
 
 class TextElement {
 public:
-  typedef uint32_t extent_type;
+  using extent_type = uint32_t;
 
   static constexpr extent_type extent_full = ~extent_type();
 
-  TextElement() {}
-  virtual ~TextElement() {}
+  TextElement()                   = default;
+  virtual ~TextElement()          = default;
+  TextElement(const TextElement&) = delete;
+  void operator=(const TextElement&) = delete;
 
   // The last element must point to a valid memory location into which
   // the caller must write a '\0' to terminate the c string. The
@@ -33,10 +35,6 @@ public:
 
   static void push_attribute(Canvas::attributes_list* attributes,
                              Attributes               value);
-
-private:
-  TextElement(const TextElement&);
-  void operator=(const TextElement&);
 };
 
 }

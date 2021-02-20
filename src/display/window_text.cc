@@ -13,9 +13,7 @@ namespace display {
 WindowText::WindowText(rpc::target_type target, extent_type margin)
   : Window(new Canvas, 0, 0, 0, extent_static, extent_static)
   , m_target(target)
-  , m_errorHandler(nullptr)
-  , m_margin(margin)
-  , m_interval(0) {}
+  , m_margin(margin) {}
 
 void
 WindowText::clear() {

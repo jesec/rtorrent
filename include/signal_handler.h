@@ -9,10 +9,10 @@
 
 class SignalHandler {
 public:
-  typedef std::function<void()> slot_void;
+  using slot_void = std::function<void()>;
 
   // typedef void (*handler_slot)(int, siginfo_t *info, ucontext_t *uap);
-  typedef void (*handler_slot)(int, siginfo_t*, void*);
+  using handler_slot = void (*)(int, siginfo_t*, void*);
 
 #ifdef NSIG
   static constexpr unsigned int HIGHEST_SIGNAL = NSIG;

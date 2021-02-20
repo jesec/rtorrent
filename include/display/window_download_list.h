@@ -12,17 +12,17 @@ namespace display {
 
 class WindowDownloadList : public Window {
 public:
-  typedef core::View::signal_void::iterator signal_void_itr;
+  using signal_void_itr = core::View::signal_void::iterator;
 
   WindowDownloadList();
-  ~WindowDownloadList();
+  ~WindowDownloadList() override;
 
-  virtual void redraw();
+  void redraw() override;
 
   void set_view(core::View* l);
 
 private:
-  core::View* m_view;
+  core::View* m_view{ nullptr };
 
   signal_void_itr m_changed_itr;
 };

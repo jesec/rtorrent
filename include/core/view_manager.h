@@ -13,8 +13,8 @@ namespace core {
 
 class ViewManager : public torrent::utils::unordered_vector<View*> {
 public:
-  typedef torrent::utils::unordered_vector<View*> base_type;
-  typedef std::list<std::string>                  filter_args;
+  using base_type   = torrent::utils::unordered_vector<View*>;
+  using filter_args = std::list<std::string>;
 
   using base_type::const_iterator;
   using base_type::const_reverse_iterator;
@@ -31,7 +31,6 @@ public:
   using base_type::empty;
   using base_type::size;
 
-  ViewManager() {}
   ~ViewManager() {
     clear();
   }

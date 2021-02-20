@@ -34,10 +34,10 @@ public:
     m_attributes = a;
   }
 
-  virtual char* print(char*                    first,
-                      char*                    last,
-                      Canvas::attributes_list* attributes,
-                      rpc::target_type         target);
+  char* print(char*                    first,
+              char*                    last,
+              Canvas::attributes_list* attributes,
+              rpc::target_type         target) override;
 
 protected:
   virtual char* copy_string(char*            first,
@@ -65,12 +65,12 @@ public:
     m_string = s;
   }
 
-  virtual extent_type max_length() {
+  extent_type max_length() override {
     return m_string.size();
   }
 
 private:
-  virtual char* copy_string(char* first, char* last, rpc::target_type target);
+  char* copy_string(char* first, char* last, rpc::target_type target) override;
 
   std::string m_string;
 };
@@ -86,12 +86,12 @@ public:
     m_attributes = attributes;
   }
 
-  virtual extent_type max_length() {
+  extent_type max_length() override {
     return m_length;
   }
 
 private:
-  virtual char* copy_string(char* first, char* last, rpc::target_type target);
+  char* copy_string(char* first, char* last, rpc::target_type target) override;
 
   extent_type m_length;
   const char* m_string;
@@ -100,8 +100,8 @@ private:
 template<typename slot_type>
 class TextElementStringSlot : public TextElementStringBase {
 public:
-  typedef typename slot_type::argument_type arg1_type;
-  typedef typename slot_type::result_type   result_type;
+  using arg1_type   = typename slot_type::argument_type;
+  using result_type = typename slot_type::result_type;
 
   TextElementStringSlot(const slot_type& slot,
                         int              flags,
@@ -113,12 +113,12 @@ public:
     m_attributes = attributes;
   }
 
-  virtual extent_type max_length() {
+  extent_type max_length() override {
     return m_length;
   }
 
 private:
-  virtual char* copy_string(char* first, char* last, rpc::target_type target) {
+  char* copy_string(char* first, char* last, rpc::target_type target) override {
     if (target.second == nullptr)
       return first;
 
@@ -201,12 +201,12 @@ public:
     m_attributes = a;
   }
 
-  virtual char* print(char*                    first,
-                      char*                    last,
-                      Canvas::attributes_list* attributes,
-                      rpc::target_type         target);
+  char* print(char*                    first,
+              char*                    last,
+              Canvas::attributes_list* attributes,
+              rpc::target_type         target) override;
 
-  virtual extent_type max_length() {
+  extent_type max_length() override {
     return m_length;
   }
 

@@ -12,12 +12,12 @@ namespace display {
 
 class WindowLog : public Window {
 public:
-  typedef torrent::log_buffer::const_iterator iterator;
+  using iterator = torrent::log_buffer::const_iterator;
 
   WindowLog(torrent::log_buffer* l);
-  ~WindowLog();
+  ~WindowLog() override;
 
-  virtual void redraw();
+  void redraw() override;
 
   void receive_update();
 

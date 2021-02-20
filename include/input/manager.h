@@ -13,7 +13,7 @@ class TextInput;
 
 class Manager : private std::vector<Bindings*> {
 public:
-  typedef std::vector<Bindings*> Base;
+  using Base = std::vector<Bindings*>;
 
   using Base::const_iterator;
   using Base::const_reverse_iterator;
@@ -27,9 +27,6 @@ public:
 
   using Base::push_back;
 
-  Manager()
-    : m_textInput(nullptr) {}
-
   void erase(Bindings* b);
 
   void pressed(int key);
@@ -39,7 +36,7 @@ public:
   }
 
 private:
-  TextInput* m_textInput;
+  TextInput* m_textInput{ nullptr };
 };
 
 }

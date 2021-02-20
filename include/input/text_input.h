@@ -12,8 +12,8 @@ namespace input {
 
 class TextInput : private std::string {
 public:
-  typedef std::string           Base;
-  typedef std::function<void()> slot_void;
+  using Base      = std::string;
+  using slot_void = std::function<void()>;
 
   using Base::c_str;
   using Base::empty;
@@ -21,9 +21,7 @@ public:
   using Base::size;
   using Base::size_type;
 
-  TextInput()
-    : m_pos(0) {}
-  virtual ~TextInput() {}
+  virtual ~TextInput() = default;
 
   size_type get_pos() {
     return m_pos;
@@ -56,7 +54,7 @@ public:
   }
 
 private:
-  size_type m_pos;
+  size_type m_pos{ 0 };
 
   slot_void m_slot_dirty;
 

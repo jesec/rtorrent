@@ -24,7 +24,7 @@ class Download;
 
 class DownloadList : private std::list<Download*> {
 public:
-  typedef std::list<Download*> base_type;
+  using base_type = std::list<Download*>;
 
   using base_type::const_iterator;
   using base_type::const_reverse_iterator;
@@ -41,7 +41,9 @@ public:
   using base_type::empty;
   using base_type::size;
 
-  DownloadList() {}
+  DownloadList()                    = default;
+  DownloadList(const DownloadList&) = delete;
+  void operator=(const DownloadList&) = delete;
 
   void clear();
 
@@ -134,9 +136,6 @@ public:
   // after a shutdown.
 
 private:
-  DownloadList(const DownloadList&);
-  void operator=(const DownloadList&);
-
   void hash_done(Download* d);
   void hash_queue(Download* d, int type);
 

@@ -35,7 +35,6 @@ public:
   static constexpr int color_invalid = ~int();
   static constexpr int color_default = 0;
 
-  Attributes() {}
   Attributes(const char* pos, int attr, int col)
     : m_position(pos)
     , m_attributes(attr)

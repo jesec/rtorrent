@@ -18,9 +18,6 @@ public:
   static constexpr int flag_capture      = 0x4;
   static constexpr int flag_background   = 0x8;
 
-  ExecFile()
-    : m_logFd(-1) {}
-
   int log_fd() const {
     return m_logFd;
   }
@@ -33,7 +30,7 @@ public:
   torrent::Object execute_object(const torrent::Object& rawArgs, int flags);
 
 private:
-  int         m_logFd;
+  int         m_logFd{ -1 };
   std::string m_capture;
 };
 

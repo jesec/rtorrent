@@ -34,7 +34,7 @@ public:
 private:
   void schedule_update(uint32_t minInterval);
 
-  bool                  m_forceRedraw;
+  bool                  m_forceRedraw{ false };
   torrent::utils::timer m_timeLastUpdate;
 
   torrent::utils::priority_queue_default m_scheduler;

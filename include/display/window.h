@@ -18,11 +18,11 @@ class Manager;
 
 class Window {
 public:
-  typedef uint32_t extent_type;
+  using extent_type = uint32_t;
 
-  typedef std::function<void()>                               Slot;
-  typedef std::function<void(Window*)>                        SlotWindow;
-  typedef std::function<void(Window*, torrent::utils::timer)> SlotTimer;
+  using Slot       = std::function<void()>;
+  using SlotWindow = std::function<void(Window*)>;
+  using SlotTimer  = std::function<void(Window*, torrent::utils::timer)>;
 
   static constexpr int flag_active    = (1 << 0);
   static constexpr int flag_offscreen = (1 << 1);

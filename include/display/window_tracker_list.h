@@ -16,7 +16,7 @@ class WindowTrackerList : public Window {
 public:
   WindowTrackerList(core::Download* d, unsigned int* focus);
 
-  virtual void redraw();
+  void redraw() override;
 
 private:
   core::Download* m_download;

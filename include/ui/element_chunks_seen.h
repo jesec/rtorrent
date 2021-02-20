@@ -17,12 +17,12 @@ namespace ui {
 
 class ElementChunksSeen : public ElementBase {
 public:
-  typedef display::WindowDownloadChunksSeen WChunksSeen;
+  using WChunksSeen = display::WindowDownloadChunksSeen;
 
   ElementChunksSeen(core::Download* d);
 
-  void activate(display::Frame* frame, bool focus = true);
-  void disable();
+  void activate(display::Frame* frame, bool focus = true) override;
+  void disable() override;
 
   display::Window* window();
 

@@ -39,10 +39,10 @@ public:
     m_attributes = a;
   }
 
-  virtual char* print(char*                    first,
-                      char*                    last,
-                      Canvas::attributes_list* attributes,
-                      rpc::target_type         target);
+  char* print(char*                    first,
+              char*                    last,
+              Canvas::attributes_list* attributes,
+              rpc::target_type         target) override;
 
 protected:
   virtual int64_t value(void* object) = 0;
@@ -68,12 +68,12 @@ public:
     m_value = v;
   }
 
-  virtual extent_type max_length() {
+  extent_type max_length() override {
     return 12;
   }
 
 private:
-  virtual int64_t value(void*) {
+  int64_t value(void*) override {
     return m_value;
   }
 
@@ -83,7 +83,7 @@ private:
 template<typename slot_type>
 class TextElementValueSlot0 : public TextElementValueBase {
 public:
-  typedef typename slot_type::result_type result_type;
+  using result_type = typename slot_type::result_type;
 
   TextElementValueSlot0(const slot_type& slot,
                         int              flags      = flag_normal,
@@ -93,12 +93,12 @@ public:
     m_attributes = attributes;
   }
 
-  virtual extent_type max_length() {
+  extent_type max_length() override {
     return 12;
   }
 
 private:
-  virtual int64_t value(void*) {
+  int64_t value(void*) override {
     return m_slot();
   }
 
@@ -108,8 +108,8 @@ private:
 template<typename slot_type>
 class TextElementValueSlot : public TextElementValueBase {
 public:
-  typedef typename slot_type::argument_type arg1_type;
-  typedef typename slot_type::result_type   result_type;
+  using arg1_type   = typename slot_type::argument_type;
+  using result_type = typename slot_type::result_type;
 
   TextElementValueSlot(const slot_type& slot,
                        int              flags      = flag_normal,
@@ -119,12 +119,12 @@ public:
     m_attributes = attributes;
   }
 
-  virtual extent_type max_length() {
+  extent_type max_length() override {
     return 12;
   }
 
 private:
-  virtual int64_t value(void* object) {
+  int64_t value(void* object) override {
     if (object == nullptr)
       return 0;
 

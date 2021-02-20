@@ -17,10 +17,7 @@ namespace utils {
 
 class Lockfile {
 public:
-  typedef std::pair<std::string, pid_t> process_type;
-
-  Lockfile()
-    : m_locked(false) {}
+  using process_type = std::pair<std::string, pid_t>;
 
   bool is_locked() const {
     return m_locked;
@@ -44,7 +41,7 @@ public:
 
 private:
   std::string m_path;
-  bool        m_locked;
+  bool        m_locked{ false };
 };
 
 }

@@ -28,11 +28,11 @@ public:
     char                             m_id;
   };
 
-  typedef std::vector<assigned_type> assigned_vector;
+  using assigned_vector = std::vector<assigned_type>;
 
   WindowDownloadTransferList(core::Download* d, unsigned int* focus);
 
-  virtual void redraw();
+  void redraw() override;
 
   unsigned int rows() const;
   unsigned int max_focus() const {

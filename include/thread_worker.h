@@ -18,14 +18,13 @@ class SCgi;
 
 class lt_cacheline_aligned ThreadWorker : public ThreadBase {
 public:
-  ThreadWorker();
-  ~ThreadWorker();
+  ~ThreadWorker() override;
 
-  const char* name() const {
+  const char* name() const override {
     return "rtorrent scgi";
   }
 
-  virtual void init_thread();
+  void init_thread() override;
 
   rpc::SCgi* scgi() {
     return m_safe.scgi;
@@ -43,10 +42,7 @@ private:
   void change_xmlrpc_log();
 
   struct lt_cacheline_aligned safe_type {
-    safe_type()
-      : scgi(nullptr) {}
-
-    rpc::SCgi* scgi;
+    rpc::SCgi* scgi{ nullptr };
   };
 
   safe_type m_safe;

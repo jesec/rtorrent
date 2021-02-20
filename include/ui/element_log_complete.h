@@ -18,12 +18,12 @@ namespace ui {
 
 class ElementLogComplete : public ElementBase {
 public:
-  typedef display::WindowLogComplete WLogComplete;
+  using WLogComplete = display::WindowLogComplete;
 
   ElementLogComplete(torrent::log_buffer* l);
 
-  void activate(display::Frame* frame, bool focus = true);
-  void disable();
+  void activate(display::Frame* frame, bool focus = true) override;
+  void disable() override;
 
   display::Window* window();
 

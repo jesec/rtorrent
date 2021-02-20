@@ -14,15 +14,14 @@ namespace rpc {
 template<size_t MaxSize>
 class fixed_key_type {
 public:
-  typedef char        value_type;
-  typedef const char* iterator;
-  typedef const char* const_iterator;
-  typedef uint32_t    size_type;
+  using value_type     = char;
+  using iterator       = const char*;
+  using const_iterator = const char*;
+  using size_type      = uint32_t;
 
   static constexpr size_type max_size = MaxSize - 1;
 
-  fixed_key_type()
-    : m_size(0) {
+  fixed_key_type() {
     m_data[0] = '\0';
   }
   fixed_key_type(const fixed_key_type& k)
@@ -97,7 +96,7 @@ public:
   }
 
 private:
-  size_type m_size;
+  size_type m_size{ 0 };
   char      m_data[max_size];
 };
 

@@ -23,7 +23,7 @@ public:
     mark_dirty();
   }
 
-  virtual void redraw();
+  void redraw() override;
 
 private:
   std::string m_title;

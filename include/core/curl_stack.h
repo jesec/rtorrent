@@ -26,7 +26,7 @@ class CurlStack : std::deque<CurlGet*> {
 public:
   friend class CurlGet;
 
-  typedef std::deque<CurlGet*> base_type;
+  using base_type = std::deque<CurlGet*>;
 
   using base_type::const_iterator;
   using base_type::const_reverse_iterator;
@@ -47,6 +47,8 @@ public:
 
   CurlStack();
   ~CurlStack();
+  CurlStack(const CurlStack&) = delete;
+  void operator=(const CurlStack&) = delete;
 
   CurlGet*    new_object();
   CurlSocket* new_socket(int fd);
@@ -127,17 +129,14 @@ protected:
   void remove_get(CurlGet* get);
 
 private:
-  CurlStack(const CurlStack&);
-  void operator=(const CurlStack&);
-
   void receive_timeout();
 
   bool process_done_handle();
 
   void* m_handle;
 
-  unsigned int m_active;
-  unsigned int m_maxActive;
+  unsigned int m_active{ 0 };
+  unsigned int m_maxActive{ 32 };
 
   torrent::utils::priority_item m_taskTimeout;
 
@@ -147,9 +146,9 @@ private:
   std::string m_httpCaPath;
   std::string m_httpCaCert;
 
-  bool m_ssl_verify_host;
-  bool m_ssl_verify_peer;
-  long m_dns_timeout;
+  bool m_ssl_verify_host{ true };
+  bool m_ssl_verify_peer{ true };
+  long m_dns_timeout{ 60 };
 };
 
 }

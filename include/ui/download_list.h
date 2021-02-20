@@ -34,21 +34,21 @@ class Download;
 
 class DownloadList : public ElementBase {
 public:
-  typedef display::WindowDownloadList WList;
-  typedef display::WindowLog          WLog;
-  typedef display::WindowLogComplete  WLogComplete;
+  using WList        = display::WindowDownloadList;
+  using WLog         = display::WindowLog;
+  using WLogComplete = display::WindowLogComplete;
 
-  typedef std::function<void(const std::string&)> slot_string;
+  using slot_string = std::function<void(const std::string&)>;
 
-  typedef enum {
+  using Display = enum {
     DISPLAY_DOWNLOAD,
     DISPLAY_DOWNLOAD_LIST,
     DISPLAY_LOG,
     DISPLAY_STRING_LIST,
     DISPLAY_MAX_SIZE
-  } Display;
+  };
 
-  typedef enum {
+  using Input = enum {
     INPUT_NONE,
     INPUT_LOAD_DEFAULT,
     INPUT_LOAD_MODIFIED,
@@ -56,13 +56,13 @@ public:
     INPUT_COMMAND,
     INPUT_FILTER,
     INPUT_EOI
-  } Input;
+  };
 
   DownloadList();
-  ~DownloadList();
+  ~DownloadList() override;
 
-  void activate(display::Frame* frame, bool focus = true);
-  void disable();
+  void activate(display::Frame* frame, bool focus = true) override;
+  void disable() override;
 
   void activate_display(Display d);
 
@@ -85,7 +85,7 @@ private:
   void setup_keys();
   void setup_input();
 
-  Display m_state;
+  Display m_state{ DISPLAY_MAX_SIZE };
 
   ElementBase* m_uiArray[DISPLAY_MAX_SIZE];
   WLog*        m_windowLog;

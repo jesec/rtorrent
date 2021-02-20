@@ -15,13 +15,13 @@ class WindowText
   : public Window
   , public std::vector<TextElement*> {
 public:
-  typedef std::vector<TextElement*> base_type;
+  using base_type = std::vector<TextElement*>;
 
-  typedef base_type::value_type       value_type;
-  typedef base_type::reference        reference;
-  typedef base_type::iterator         iterator;
-  typedef base_type::const_iterator   const_iterator;
-  typedef base_type::reverse_iterator reverse_iterator;
+  using value_type       = base_type::value_type;
+  using reference        = base_type::reference;
+  using iterator         = base_type::iterator;
+  using const_iterator   = base_type::const_iterator;
+  using reverse_iterator = base_type::reverse_iterator;
 
   using base_type::empty;
   using base_type::size;
@@ -33,7 +33,7 @@ public:
 
   WindowText(rpc::target_type target = rpc::make_target(),
              extent_type      margin = 0);
-  ~WindowText() {
+  ~WindowText() override {
     clear();
   }
 
@@ -61,14 +61,14 @@ public:
     m_errorHandler = element;
   }
 
-  virtual void redraw();
+  void redraw() override;
 
 private:
   rpc::target_type m_target;
-  TextElement*     m_errorHandler;
+  TextElement*     m_errorHandler{ nullptr };
 
   extent_type m_margin;
-  uint32_t    m_interval;
+  uint32_t    m_interval{ 0 };
 };
 
 }

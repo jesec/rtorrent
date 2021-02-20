@@ -13,13 +13,7 @@
 namespace core {
 
 CurlStack::CurlStack()
-  : m_handle((void*)curl_multi_init())
-  , m_active(0)
-  , m_maxActive(32)
-  , m_ssl_verify_host(true)
-  , m_ssl_verify_peer(true)
-  , m_dns_timeout(60) {
-
+  : m_handle((void*)curl_multi_init()) {
   m_taskTimeout.slot() = std::bind(&CurlStack::receive_timeout, this);
 
   curl_multi_setopt((CURLM*)m_handle, CURLMOPT_TIMERDATA, this);

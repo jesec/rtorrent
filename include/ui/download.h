@@ -23,11 +23,11 @@ namespace ui {
 
 class Download : public ElementBase {
 public:
-  typedef display::WindowDownloadStatusbar WDownloadStatus;
+  using WDownloadStatus = display::WindowDownloadStatusbar;
 
-  typedef std::list<torrent::Peer> PList;
+  using PList = std::list<torrent::Peer>;
 
-  typedef enum {
+  using Display = enum {
     DISPLAY_MENU,
     DISPLAY_PEER_LIST,
     DISPLAY_INFO,
@@ -36,13 +36,15 @@ public:
     DISPLAY_CHUNKS_SEEN,
     DISPLAY_TRANSFER_LIST,
     DISPLAY_MAX_SIZE
-  } Display;
+  };
 
   Download(core::Download* d);
-  ~Download();
+  ~Download() override;
+  Download(const Download&) = delete;
+  void operator=(const Download&) = delete;
 
-  void activate(display::Frame* frame, bool focus = true);
-  void disable();
+  void activate(display::Frame* frame, bool focus = true) override;
+  void disable() override;
 
   void activate_display(Display d, bool focusDisplay);
 
@@ -67,9 +69,6 @@ public:
   };
 
 private:
-  Download(const Download&);
-  void operator=(const Download&);
-
   inline ElementBase* create_menu();
   inline ElementBase* create_info();
 

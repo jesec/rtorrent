@@ -11,9 +11,6 @@
 
 namespace ui {
 
-ElementStringList::ElementStringList()
-  : m_window(nullptr) {}
-
 void
 ElementStringList::activate(display::Frame* frame, bool) {
   if (is_active())

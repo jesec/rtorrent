@@ -19,16 +19,14 @@ namespace rpc {
 
 class lt_cacheline_aligned SCgi : public torrent::Event {
 public:
-  typedef std::function<bool(const char*, uint32_t)> slot_write;
+  using slot_write = std::function<bool(const char*, uint32_t)>;
 
   static constexpr int max_tasks = 100;
 
   // Global lock:
-  SCgi()
-    : m_logFd(-1) {}
-  virtual ~SCgi();
+  ~SCgi() override;
 
-  const char* type_name() const {
+  const char* type_name() const override {
     return "scgi";
   }
 
@@ -50,9 +48,9 @@ public:
   }
 
   // Thread local:
-  virtual void event_read();
-  virtual void event_write();
-  virtual void event_error();
+  void event_read() override;
+  void event_write() override;
+  void event_error() override;
 
   bool receive_call(SCgiTask* task, const char* buffer, uint32_t length);
 
@@ -64,7 +62,7 @@ private:
   void open(void* sa, unsigned int length);
 
   std::string m_path;
-  int         m_logFd;
+  int         m_logFd{ -1 };
   SCgiTask    m_task[max_tasks];
 };
 

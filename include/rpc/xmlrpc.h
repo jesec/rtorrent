@@ -22,14 +22,13 @@ namespace rpc {
 
 class XmlRpc {
 public:
-  typedef std::function<core::Download*(const char*)> slot_download;
-  typedef std::function<torrent::File*(core::Download*, uint32_t)> slot_file;
-  typedef std::function<torrent::Tracker*(core::Download*, uint32_t)>
-    slot_tracker;
-  typedef std::function<torrent::Peer*(core::Download*,
-                                       const torrent::HashString&)>
-                                                     slot_peer;
-  typedef std::function<bool(const char*, uint32_t)> slot_write;
+  using slot_download = std::function<core::Download*(const char*)>;
+  using slot_file = std::function<torrent::File*(core::Download*, uint32_t)>;
+  using slot_tracker =
+    std::function<torrent::Tracker*(core::Download*, uint32_t)>;
+  using slot_peer =
+    std::function<torrent::Peer*(core::Download*, const torrent::HashString&)>;
+  using slot_write = std::function<bool(const char*, uint32_t)>;
 
   static constexpr int dialect_generic = 0;
   static constexpr int dialect_i8      = 1;
@@ -43,11 +42,6 @@ public:
   static constexpr int call_tracker  = 4;
   static constexpr int call_file     = 5;
   static constexpr int call_file_itr = 6;
-
-  XmlRpc()
-    : m_env(nullptr)
-    , m_registry(nullptr)
-    , m_dialect(dialect_i8) {}
 
   bool is_valid() const {
     return m_env != nullptr;
@@ -82,10 +76,10 @@ public:
   static void    set_size_limit(uint64_t size);
 
 private:
-  void* m_env;
-  void* m_registry;
+  void* m_env{ nullptr };
+  void* m_registry{ nullptr };
 
-  int m_dialect;
+  int m_dialect{ dialect_i8 };
 
   slot_download m_slotFindDownload;
   slot_file     m_slotFindFile;

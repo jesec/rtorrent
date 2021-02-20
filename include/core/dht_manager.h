@@ -11,9 +11,7 @@ namespace core {
 
 class DhtManager {
 public:
-  DhtManager()
-    : m_warned(false)
-    , m_start(dht_off) {}
+  DhtManager() = default;
   ~DhtManager();
 
   void            load_dht_cache();
@@ -55,9 +53,9 @@ private:
 
   torrent::utils::priority_item m_updateTimeout;
   torrent::utils::priority_item m_stopTimeout;
-  bool                          m_warned;
+  bool                          m_warned{ false };
 
-  int         m_start;
+  int         m_start{ dht_off };
   std::string m_throttleName;
 };
 

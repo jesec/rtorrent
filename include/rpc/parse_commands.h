@@ -22,7 +22,7 @@ extern CommandMap commands;
 extern XmlRpc     xmlrpc;
 extern ExecFile   execFile;
 
-typedef std::pair<torrent::Object, const char*> parse_command_type;
+using parse_command_type = std::pair<torrent::Object, const char*>;
 
 // The generic parse command function, used by the rest. At some point
 // the 'download' parameter should be replaced by a more generic one.

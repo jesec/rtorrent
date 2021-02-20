@@ -15,17 +15,17 @@ class ElementText;
 
 class ElementPeerList : public ElementBase {
 public:
-  typedef std::list<torrent::Peer*> PList;
+  using PList = std::list<torrent::Peer*>;
 
-  typedef torrent::ConnectionList::signal_peer_type::iterator signal_connection;
+  using signal_connection = torrent::ConnectionList::signal_peer_type::iterator;
 
-  typedef enum { DISPLAY_LIST, DISPLAY_INFO, DISPLAY_MAX_SIZE } Display;
+  using Display = enum { DISPLAY_LIST, DISPLAY_INFO, DISPLAY_MAX_SIZE };
 
   ElementPeerList(core::Download* d);
-  ~ElementPeerList();
+  ~ElementPeerList() override;
 
-  void activate(display::Frame* frame, bool focus = true);
-  void disable();
+  void activate(display::Frame* frame, bool focus = true) override;
+  void disable() override;
 
   void activate_display(Display display);
 

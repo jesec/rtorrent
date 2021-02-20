@@ -14,8 +14,6 @@ WindowLogComplete::WindowLogComplete(torrent::log_buffer* l)
   : Window(new Canvas, 0, 30, 1, extent_full, extent_full)
   , m_log(l) {}
 
-WindowLogComplete::~WindowLogComplete() {}
-
 WindowLogComplete::iterator
 WindowLogComplete::find_older() {
   return m_log->find_older(cachedTime.seconds() - 60);

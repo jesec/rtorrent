@@ -12,10 +12,10 @@
 
 class OptionParser {
 public:
-  typedef std::function<void(const std::string&)> slot_string;
-  typedef std::function<void(const std::string&, const std::string&)>
-                                        slot_string_pair;
-  typedef std::function<void(int, int)> slot_int_pair;
+  using slot_string = std::function<void(const std::string&)>;
+  using slot_string_pair =
+    std::function<void(const std::string&, const std::string&)>;
+  using slot_int_pair = std::function<void(int, int)>;
 
   void insert_flag(char c, slot_string s);
   void insert_option(char c, slot_string s);
@@ -40,7 +40,7 @@ private:
     bool        m_useOption;
   };
 
-  typedef std::map<char, Node> Container;
+  using Container = std::map<char, Node>;
 
   Container m_container;
 };

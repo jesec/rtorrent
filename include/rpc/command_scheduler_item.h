@@ -14,12 +14,14 @@ namespace rpc {
 
 class CommandSchedulerItem {
 public:
-  typedef std::function<void()> slot_void;
+  using slot_void = std::function<void()>;
 
   CommandSchedulerItem(const std::string& key)
     : m_key(key)
     , m_interval(0) {}
   ~CommandSchedulerItem();
+  CommandSchedulerItem(const CommandSchedulerItem&) = delete;
+  void operator=(const CommandSchedulerItem&) = delete;
 
   bool is_queued() const {
     return m_task.is_queued();
@@ -53,9 +55,6 @@ public:
   }
 
 private:
-  CommandSchedulerItem(const CommandSchedulerItem&);
-  void operator=(const CommandSchedulerItem&);
-
   std::string     m_key;
   torrent::Object m_command;
 

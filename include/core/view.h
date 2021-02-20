@@ -31,9 +31,9 @@ class Download;
 
 class View : private std::vector<Download*> {
 public:
-  typedef std::vector<Download*> base_type;
-  typedef std::function<void()>  slot_void;
-  typedef std::list<slot_void>   signal_void;
+  using base_type   = std::vector<Download*>;
+  using slot_void   = std::function<void()>;
+  using signal_void = std::list<slot_void>;
 
   using base_type::const_iterator;
   using base_type::const_reverse_iterator;
@@ -42,8 +42,10 @@ public:
 
   using base_type::size_type;
 
-  View() {}
+  View() = default;
   ~View();
+  View(const View&) = delete;
+  void operator=(const View&) = delete;
 
   void initialize(const std::string& name);
 
@@ -179,9 +181,6 @@ public:
   }
 
 private:
-  View(const View&);
-  void operator=(const View&);
-
   void push_back(Download* d) {
     base_type::push_back(d);
   }

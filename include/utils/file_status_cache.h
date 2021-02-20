@@ -16,7 +16,7 @@ struct file_status {
 
 class FileStatusCache : public std::map<std::string, file_status> {
 public:
-  typedef std::map<std::string, file_status> base_type;
+  using base_type = std::map<std::string, file_status>;
 
   using base_type::const_iterator;
   using base_type::const_reverse_iterator;

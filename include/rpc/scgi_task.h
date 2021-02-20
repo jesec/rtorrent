@@ -34,9 +34,9 @@ public:
   void open(SCgi* parent, int fd);
   void close();
 
-  virtual void event_read();
-  virtual void event_write();
-  virtual void event_error();
+  void event_read() override;
+  void event_write() override;
+  void event_error() override;
 
   bool receive_write(const char* buffer, uint32_t length);
 

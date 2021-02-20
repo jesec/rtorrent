@@ -17,12 +17,12 @@ namespace display {
 
 class WindowHttpQueue : public Window {
 public:
-  typedef std::function<void(core::CurlGet*)> slot_curl_get;
-  typedef std::list<slot_curl_get>            signal_curl_get;
+  using slot_curl_get   = std::function<void(core::CurlGet*)>;
+  using signal_curl_get = std::list<slot_curl_get>;
 
   WindowHttpQueue(core::HttpQueue* q);
 
-  virtual void redraw();
+  void redraw() override;
 
 private:
   struct Node {
@@ -39,7 +39,7 @@ private:
     torrent::utils::timer m_timer;
   };
 
-  typedef std::list<Node> Container;
+  using Container = std::list<Node>;
 
   void cleanup_list();
 

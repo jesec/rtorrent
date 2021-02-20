@@ -13,7 +13,7 @@ ObjectStorageTest::test_basics() {
     "test_1", torrent::Object("a"), rpc::object_storage::flag_string_type);
 
   CPPUNIT_ASSERT(itr != m_storage.end());
-  CPPUNIT_ASSERT(&*itr != NULL);
+  CPPUNIT_ASSERT(&*itr != nullptr);
   CPPUNIT_ASSERT(itr->first.size() == 6 &&
                  std::strcmp(itr->first.data(), "test_1") == 0);
   CPPUNIT_ASSERT(itr->second.object.is_string() &&

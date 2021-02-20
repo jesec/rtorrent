@@ -20,15 +20,15 @@ class ElementText;
 
 class ElementFileList : public ElementBase {
 public:
-  typedef display::WindowFileList   WFileList;
-  typedef torrent::FileListIterator iterator;
+  using WFileList = display::WindowFileList;
+  using iterator  = torrent::FileListIterator;
 
-  typedef enum { DISPLAY_LIST, DISPLAY_INFO, DISPLAY_MAX_SIZE } Display;
+  using Display = enum { DISPLAY_LIST, DISPLAY_INFO, DISPLAY_MAX_SIZE };
 
   ElementFileList(core::Download* d);
 
-  void activate(display::Frame* frame, bool focus = true);
-  void disable();
+  void activate(display::Frame* frame, bool focus = true) override;
+  void disable() override;
 
   void activate_display(Display display);
 

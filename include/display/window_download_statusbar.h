@@ -16,7 +16,7 @@ class WindowDownloadStatusbar : public Window {
 public:
   WindowDownloadStatusbar(core::Download* d);
 
-  virtual void redraw();
+  void redraw() override;
 
 private:
   core::Download* m_download;

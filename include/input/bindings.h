@@ -13,8 +13,8 @@ namespace input {
 
 class Bindings : private std::map<int, std::function<void()>> {
 public:
-  typedef std::function<void()>    slot_void;
-  typedef std::map<int, slot_void> base_type;
+  using slot_void = std::function<void()>;
+  using base_type = std::map<int, slot_void>;
 
   using base_type::const_iterator;
   using base_type::const_reverse_iterator;
@@ -31,9 +31,6 @@ public:
 
   using base_type::operator[];
 
-  Bindings()
-    : m_enabled(true) {}
-
   void enable() {
     m_enabled = true;
   }
@@ -48,7 +45,7 @@ public:
   }
 
 private:
-  bool m_enabled;
+  bool m_enabled{ true };
 };
 
 }

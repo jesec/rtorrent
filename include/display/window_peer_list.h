@@ -17,11 +17,11 @@ namespace display {
 
 class WindowPeerList : public Window {
 public:
-  typedef std::list<torrent::Peer*> PList;
+  using PList = std::list<torrent::Peer*>;
 
   WindowPeerList(core::Download* d, PList* l, PList::iterator* f);
 
-  virtual void redraw();
+  void redraw() override;
 
 private:
   int done_percentage(torrent::Peer* p);

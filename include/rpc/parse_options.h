@@ -14,8 +14,8 @@ namespace rpc {
 // If a flag returned by the functor is negative it is treated as a
 // negation of the flag.
 
-typedef std::function<int(const std::string&)>   parse_option_flag_type;
-typedef std::function<const char*(unsigned int)> parse_option_rflag_type;
+using parse_option_flag_type  = std::function<int(const std::string&)>;
+using parse_option_rflag_type = std::function<const char*(unsigned int)>;
 
 int
 parse_option_flag(const std::string& option, parse_option_flag_type ftor);

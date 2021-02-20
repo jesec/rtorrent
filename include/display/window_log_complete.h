@@ -12,12 +12,12 @@ namespace display {
 
 class WindowLogComplete : public Window {
 public:
-  typedef torrent::log_buffer::const_iterator iterator;
+  using iterator = torrent::log_buffer::const_iterator;
 
   WindowLogComplete(torrent::log_buffer* l);
-  ~WindowLogComplete();
+  ~WindowLogComplete() override = default;
 
-  virtual void redraw();
+  void redraw() override;
 
 private:
   inline iterator find_older();

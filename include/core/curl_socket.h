@@ -18,9 +18,11 @@ public:
     : m_stack(stack) {
     m_fileDesc = fd;
   }
-  ~CurlSocket();
+  ~CurlSocket() override;
+  CurlSocket(const CurlSocket&) = delete;
+  void operator=(const CurlSocket&) = delete;
 
-  const char* type_name() const {
+  const char* type_name() const override {
     return "curl";
   }
 
@@ -33,12 +35,9 @@ public:
                             void*         socketp);
 
 private:
-  CurlSocket(const CurlSocket&);
-  void operator=(const CurlSocket&);
-
-  virtual void event_read();
-  virtual void event_write();
-  virtual void event_error();
+  void event_read() override;
+  void event_write() override;
+  void event_error() override;
 
   CurlStack* m_stack;
 };

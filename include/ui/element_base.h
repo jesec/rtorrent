@@ -15,12 +15,9 @@ namespace ui {
 
 class ElementBase {
 public:
-  typedef std::function<void()> slot_type;
+  using slot_type = std::function<void()>;
 
-  ElementBase()
-    : m_frame(nullptr)
-    , m_focus(false) {}
-  virtual ~ElementBase() {}
+  virtual ~ElementBase() = default;
 
   bool is_active() const {
     return m_frame != nullptr;
@@ -40,8 +37,8 @@ public:
   void mark_dirty();
 
 protected:
-  display::Frame* m_frame;
-  bool            m_focus;
+  display::Frame* m_frame{ nullptr };
+  bool            m_focus{ false };
 
   input::Bindings m_bindings;
   slot_type       m_slot_exit;

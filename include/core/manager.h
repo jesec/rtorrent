@@ -26,14 +26,14 @@ namespace core {
 class DownloadStore;
 class HttpQueue;
 
-typedef std::map<std::string, torrent::ThrottlePair> ThrottleMap;
+using ThrottleMap = std::map<std::string, torrent::ThrottlePair>;
 
 class View;
 
 class Manager {
 public:
-  typedef DownloadList::iterator DListItr;
-  typedef utils::FileStatusCache FileStatusCache;
+  using DListItr        = DownloadList::iterator;
+  using FileStatusCache = utils::FileStatusCache;
 
   // typedef std::function<void (DownloadList::iterator)> slot_ready;
   // typedef std::function<void ()>                       slot_void;
@@ -121,7 +121,7 @@ public:
   static constexpr int create_quiet    = 0x4;
   static constexpr int create_raw_data = 0x8;
 
-  typedef std::vector<std::string> command_list_type;
+  using command_list_type = std::vector<std::string>;
 
   // Temporary, find a better place for this.
   void try_create_download(const std::string&       uri,
@@ -135,7 +135,7 @@ public:
                                               const std::string& metafile);
 
 private:
-  typedef RangeMap<uint32_t, torrent::ThrottlePair> AddressThrottleMap;
+  using AddressThrottleMap = RangeMap<uint32_t, torrent::ThrottlePair>;
 
   void create_http(const std::string& uri);
   void create_final(std::istream* s);
@@ -151,7 +151,7 @@ private:
   HttpQueue*       m_httpQueue;
   CurlStack*       m_httpStack;
 
-  View* m_hashingView;
+  View* m_hashingView{ nullptr };
 
   ThrottleMap        m_throttles;
   AddressThrottleMap m_addressThrottles;

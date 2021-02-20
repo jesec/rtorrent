@@ -31,9 +31,7 @@
 
 namespace ui {
 
-DownloadList::DownloadList()
-  : m_state(DISPLAY_MAX_SIZE) {
-
+DownloadList::DownloadList() {
   m_uiArray[DISPLAY_DOWNLOAD]      = nullptr;
   m_uiArray[DISPLAY_DOWNLOAD_LIST] = new ElementDownloadList();
   m_uiArray[DISPLAY_LOG] =

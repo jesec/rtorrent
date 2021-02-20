@@ -12,13 +12,13 @@ class TextElementList
   : public TextElement
   , public std::vector<TextElement*> {
 public:
-  typedef std::vector<TextElement*> base_type;
+  using base_type = std::vector<TextElement*>;
 
-  typedef base_type::value_type       value_type;
-  typedef base_type::reference        reference;
-  typedef base_type::iterator         iterator;
-  typedef base_type::const_iterator   const_iterator;
-  typedef base_type::reverse_iterator reverse_iterator;
+  using value_type       = base_type::value_type;
+  using reference        = base_type::reference;
+  using iterator         = base_type::iterator;
+  using const_iterator   = base_type::const_iterator;
+  using reverse_iterator = base_type::reverse_iterator;
 
   using base_type::empty;
   using base_type::size;
@@ -30,10 +30,7 @@ public:
 
   using base_type::push_back;
 
-  TextElementList()
-    : m_column(0)
-    , m_columnWidth(nullptr) {}
-  virtual ~TextElementList() {
+  ~TextElementList() override {
     clear();
   }
 
@@ -46,16 +43,16 @@ public:
     m_columnWidth = width;
   }
 
-  virtual char* print(char*                    first,
-                      char*                    last,
-                      Canvas::attributes_list* attributes,
-                      rpc::target_type         target);
+  char* print(char*                    first,
+              char*                    last,
+              Canvas::attributes_list* attributes,
+              rpc::target_type         target) override;
 
-  virtual extent_type max_length();
+  extent_type max_length() override;
 
 private:
-  unsigned int m_column;
-  extent_type* m_columnWidth;
+  unsigned int m_column{ 0 };
+  extent_type* m_columnWidth{ nullptr };
 };
 
 }

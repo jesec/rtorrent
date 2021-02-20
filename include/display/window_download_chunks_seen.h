@@ -18,7 +18,7 @@ class WindowDownloadChunksSeen : public Window {
 public:
   WindowDownloadChunksSeen(core::Download* d, unsigned int* focus);
 
-  virtual void redraw();
+  void redraw() override;
 
   unsigned int rows() const;
   unsigned int chunks_per_row() const {

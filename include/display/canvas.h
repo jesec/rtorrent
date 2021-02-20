@@ -13,7 +13,7 @@ namespace display {
 
 class Canvas {
 public:
-  typedef std::vector<Attributes> attributes_list;
+  using attributes_list = std::vector<Attributes>;
 
   Canvas(int x = 0, int y = 0, int width = 0, int height = 0);
   ~Canvas() {
@@ -21,6 +21,8 @@ public:
       delwin(m_window);
     }
   }
+  Canvas(const Canvas&) = delete;
+  void operator=(const Canvas&) = delete;
 
   void refresh() {
     if (m_isInitialized) {
@@ -224,9 +226,6 @@ public:
   }
 
 private:
-  Canvas(const Canvas&);
-  void operator=(const Canvas&);
-
   static bool m_isInitialized;
 
   WINDOW* m_window;

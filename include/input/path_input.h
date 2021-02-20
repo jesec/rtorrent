@@ -14,16 +14,15 @@ namespace input {
 
 class PathInput : public TextInput {
 public:
-  typedef utils::Directory::iterator              directory_itr;
-  typedef std::pair<directory_itr, directory_itr> range_type;
+  using directory_itr = utils::Directory::iterator;
+  using range_type    = std::pair<directory_itr, directory_itr>;
 
-  typedef std::function<void()>                             slot_void;
-  typedef std::function<void(directory_itr, directory_itr)> slot_itr_itr;
-  typedef std::list<slot_void>                              signal_void;
-  typedef std::list<slot_itr_itr>                           signal_itr_itr;
+  using slot_void      = std::function<void()>;
+  using slot_itr_itr   = std::function<void(directory_itr, directory_itr)>;
+  using signal_void    = std::list<slot_void>;
+  using signal_itr_itr = std::list<slot_itr_itr>;
 
-  PathInput();
-  virtual ~PathInput() {}
+  ~PathInput() override = default;
 
   signal_void& signal_show_next() {
     return m_signal_show_next;
@@ -32,7 +31,7 @@ public:
     return m_signal_show_range;
   }
 
-  virtual bool pressed(int key);
+  bool pressed(int key) override;
 
 private:
   void receive_do_complete();
@@ -40,7 +39,7 @@ private:
   size_type  find_last_delim();
   range_type find_incomplete(utils::Directory& d, const std::string& f);
 
-  bool m_showNext;
+  bool m_showNext{ false };
 
   signal_void    m_signal_show_next;
   signal_itr_itr m_signal_show_range;

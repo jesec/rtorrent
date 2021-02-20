@@ -12,9 +12,7 @@
 
 namespace display {
 
-Manager::Manager()
-  : m_forceRedraw(false) {
-
+Manager::Manager() {
   m_taskUpdate.slot() = std::bind(&Manager::receive_update, this);
 }
 

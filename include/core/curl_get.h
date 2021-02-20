@@ -23,10 +23,12 @@ public:
     : m_active(false)
     , m_handle(nullptr)
     , m_stack(s) {}
-  virtual ~CurlGet() noexcept(true);
+  ~CurlGet() override;
+  CurlGet(const CurlGet&) = delete;
+  void operator=(const CurlGet&) = delete;
 
-  void start();
-  void close();
+  void start() override;
+  void close() override;
 
   bool is_using_ipv6() {
     return m_ipv6;
@@ -52,9 +54,6 @@ public:
   }
 
 private:
-  CurlGet(const CurlGet&);
-  void operator=(const CurlGet&);
-
   void receive_timeout();
 
   bool m_active;

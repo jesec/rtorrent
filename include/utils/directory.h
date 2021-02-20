@@ -26,7 +26,7 @@ struct directory_entry {
 
 class Directory : private std::vector<directory_entry> {
 public:
-  typedef std::vector<directory_entry> base_type;
+  using base_type = std::vector<directory_entry>;
 
   using base_type::const_iterator;
   using base_type::const_reverse_iterator;
@@ -49,7 +49,7 @@ public:
   static constexpr int update_sort     = 0x1;
   static constexpr int update_hide_dot = 0x2;
 
-  Directory() {}
+  Directory() = default;
   Directory(const std::string& path)
     : m_path(path) {}
 

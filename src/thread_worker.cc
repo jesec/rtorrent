@@ -16,8 +16,6 @@
 #include "rpc/scgi.h"
 #include "rpc/xmlrpc.h"
 
-ThreadWorker::ThreadWorker() {}
-
 ThreadWorker::~ThreadWorker() {
   if (m_safe.scgi)
     m_safe.scgi->deactivate();

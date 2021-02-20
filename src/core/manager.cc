@@ -53,8 +53,7 @@ Manager::push_log(const char* msg) {
 }
 
 Manager::Manager()
-  : m_hashingView(nullptr)
-  , m_log_important(torrent::log_open_log_buffer("important"))
+  : m_log_important(torrent::log_open_log_buffer("important"))
   , m_log_complete(torrent::log_open_log_buffer("complete")) {
   m_downloadStore   = new DownloadStore();
   m_downloadList    = new DownloadList();
@@ -430,7 +429,7 @@ void
 path_expand(std::vector<std::string>* paths, const std::string& pattern) {
   glob_t glob_result;
 
-  glob(pattern.c_str(), GLOB_TILDE, NULL, &glob_result);
+  glob(pattern.c_str(), GLOB_TILDE, nullptr, &glob_result);
 
   for (unsigned int i = 0; i < glob_result.gl_pathc; i++) {
     std::string     resolved_path;

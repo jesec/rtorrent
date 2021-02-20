@@ -21,8 +21,8 @@
 
 class lt_cacheline_aligned thread_queue_hack {
 public:
-  typedef ThreadBase::thread_base_func  value_type;
-  typedef ThreadBase::thread_base_func* iterator;
+  using value_type = ThreadBase::thread_base_func;
+  using iterator   = ThreadBase::thread_base_func*;
 
   static constexpr unsigned int max_size = 32;
 

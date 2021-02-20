@@ -12,10 +12,9 @@ namespace utils {
 
 class SocketFd {
 public:
-  typedef uint8_t priority_type;
+  using priority_type = uint8_t;
 
-  SocketFd()
-    : m_fd(-1) {}
+  SocketFd() = default;
   explicit SocketFd(int fd)
     : m_fd(fd) {}
 
@@ -66,8 +65,8 @@ public:
 private:
   inline void check_valid() const;
 
-  int  m_fd;
-  bool m_ipv6_socket;
+  int  m_fd{ -1 };
+  bool m_ipv6_socket{ false };
 };
 
 }

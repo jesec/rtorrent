@@ -14,10 +14,10 @@ class CurlGet;
 
 class HttpQueue : private std::list<CurlGet*> {
 public:
-  typedef std::list<CurlGet*>           base_type;
-  typedef std::function<CurlGet*()>     slot_factory;
-  typedef std::function<void(CurlGet*)> slot_curl_get;
-  typedef std::list<slot_curl_get>      signal_curl_get;
+  using base_type       = std::list<CurlGet*>;
+  using slot_factory    = std::function<CurlGet*()>;
+  using slot_curl_get   = std::function<void(CurlGet*)>;
+  using signal_curl_get = std::list<slot_curl_get>;
 
   using base_type::const_iterator;
   using base_type::const_reverse_iterator;
@@ -32,7 +32,6 @@ public:
   using base_type::empty;
   using base_type::size;
 
-  HttpQueue() {}
   ~HttpQueue() {
     clear();
   }

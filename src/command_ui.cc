@@ -832,7 +832,7 @@ apply_arith_other(const char* op, const torrent::Object::list_type& args) {
     throw torrent::input_error("Wrong argument count in apply_arith_other.");
 
   if (strcmp(op, "average") == 0) {
-    return (int64_t)(apply_math_basic(op, std::plus<int64_t>(), args) /
+    return (int64_t)(apply_math_basic(op, std::plus<>(), args) /
                      apply_arith_count(args));
   } else if (strcmp(op, "median") == 0) {
     std::vector<int64_t> result = as_vector(args);
@@ -1011,38 +1011,33 @@ initialize_command_ui() {
   CMD2_ANY_VALUE("convert.throttle",
                  std::bind(&apply_to_throttle, std::placeholders::_2));
 
-  CMD2_ANY_LIST("math.add",
-                std::bind(&apply_math_basic,
-                          "math.add",
-                          std::plus<int64_t>(),
-                          std::placeholders::_2));
-  CMD2_ANY_LIST("math.sub",
-                std::bind(&apply_math_basic,
-                          "math.sub",
-                          std::minus<int64_t>(),
-                          std::placeholders::_2));
+  CMD2_ANY_LIST(
+    "math.add",
+    std::bind(
+      &apply_math_basic, "math.add", std::plus<>(), std::placeholders::_2));
+  CMD2_ANY_LIST(
+    "math.sub",
+    std::bind(
+      &apply_math_basic, "math.sub", std::minus<>(), std::placeholders::_2));
   CMD2_ANY_LIST("math.mul",
                 std::bind(&apply_math_basic,
                           "math.mul",
-                          std::multiplies<int64_t>(),
-                          std::placeholders::_2));
-  CMD2_ANY_LIST("math.div",
-                std::bind(&apply_math_basic,
-                          "math.div",
-                          std::divides<int64_t>(),
-                          std::placeholders::_2));
-  CMD2_ANY_LIST("math.mod",
-                std::bind(&apply_math_basic,
-                          "math.mod",
-                          std::modulus<int64_t>(),
+                          std::multiplies<>(),
                           std::placeholders::_2));
   CMD2_ANY_LIST(
+    "math.div",
+    std::bind(
+      &apply_math_basic, "math.div", std::divides<>(), std::placeholders::_2));
+  CMD2_ANY_LIST(
+    "math.mod",
+    std::bind(
+      &apply_math_basic, "math.mod", std::modulus<>(), std::placeholders::_2));
+  CMD2_ANY_LIST(
     "math.min",
-    std::bind(&apply_arith_basic, std::less<int64_t>(), std::placeholders::_2));
-  CMD2_ANY_LIST("math.max",
-                std::bind(&apply_arith_basic,
-                          std::greater<int64_t>(),
-                          std::placeholders::_2));
+    std::bind(&apply_arith_basic, std::less<>(), std::placeholders::_2));
+  CMD2_ANY_LIST(
+    "math.max",
+    std::bind(&apply_arith_basic, std::greater<>(), std::placeholders::_2));
   CMD2_ANY_LIST("math.cnt",
                 std::bind(&apply_arith_count, std::placeholders::_2));
   CMD2_ANY_LIST(

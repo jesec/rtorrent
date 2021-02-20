@@ -25,17 +25,17 @@ class ElementMenu
   : public ElementBase
   , public std::vector<ElementMenuEntry> {
 public:
-  typedef std::vector<ElementMenuEntry> base_type;
+  using base_type = std::vector<ElementMenuEntry>;
 
-  typedef display::WindowText WindowText;
+  using WindowText = display::WindowText;
 
-  typedef uint32_t size_type;
+  using size_type = uint32_t;
 
-  typedef base_type::value_type       value_type;
-  typedef base_type::reference        reference;
-  typedef base_type::iterator         iterator;
-  typedef base_type::const_iterator   const_iterator;
-  typedef base_type::reverse_iterator reverse_iterator;
+  using value_type       = base_type::value_type;
+  using reference        = base_type::reference;
+  using iterator         = base_type::iterator;
+  using const_iterator   = base_type::const_iterator;
+  using reverse_iterator = base_type::reverse_iterator;
 
   using base_type::empty;
   using base_type::size;
@@ -43,10 +43,10 @@ public:
   static constexpr size_type entry_invalid = ~size_type();
 
   ElementMenu();
-  ~ElementMenu();
+  ~ElementMenu() override;
 
-  void activate(display::Frame* frame, bool focus = false);
-  void disable();
+  void activate(display::Frame* frame, bool focus = false) override;
+  void disable() override;
 
   // Consider returning a pointer that can be used to manipulate
   // entries, f.ex disabling them.
