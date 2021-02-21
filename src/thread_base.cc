@@ -96,7 +96,7 @@ ThreadBase::ThreadBase() {
   m_threadQueue = new thread_queue_hack;
 }
 
-ThreadBase::~ThreadBase() noexcept(true) {
+ThreadBase::~ThreadBase() {
   delete m_threadQueue;
 }
 
