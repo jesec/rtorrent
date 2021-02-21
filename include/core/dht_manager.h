@@ -55,7 +55,7 @@ private:
   torrent::utils::priority_item m_stopTimeout;
   bool                          m_warned{ false };
 
-  int         m_start{ dht_off };
+  int         m_start{ dht_auto };
   std::string m_throttleName;
 };
 
