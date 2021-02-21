@@ -31,15 +31,27 @@ struct lockfile_valid_hostname {
 
 bool
 Lockfile::is_stale() {
-  process_type process = locked_by();
+  const auto [hostname, pid] = locked_by();
 
   char buf[256];
 
-  if (process.second <= 0 || ::gethostname(buf, 255) != 0 ||
-      buf != process.first)
+  if (pid <= 0) {
+    // um... pid is not supposed to be negative
     return false;
+  }
 
-  return ::kill(process.second, 0) != 0 && errno != EPERM;
+  if (::gethostname(buf, 255) != 0 || buf != hostname) {
+    // it is probably locked by another machine
+    // maybe the directory is shared or the hostname has changed
+    return false;
+  }
+
+  if (::getpid() == pid) {
+    // this happens a lot with controlled environments like containers
+    return true;
+  }
+
+  return ::kill(pid, 0) != 0 && errno != EPERM;
 }
 
 bool

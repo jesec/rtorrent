@@ -37,14 +37,23 @@ DownloadStore::enable(bool lock) {
     m_lockfile.set_path(std::string());
 
   if (!m_lockfile.try_lock()) {
-    if (torrent::utils::error_number::current().is_bad_path())
+    if (torrent::utils::error_number::current().is_bad_path()) {
       throw torrent::input_error(
         "Could not lock session directory: \"" + m_path + "\", " +
         torrent::utils::error_number::current().message());
-    else
-      throw torrent::input_error("Could not lock session directory: \"" +
-                                 m_path + "\", held by \"" +
-                                 m_lockfile.locked_by_as_string() + "\".");
+    } else {
+      auto msg = "Could not lock session directory: \"" + m_path +
+                 "\", held by \"" + m_lockfile.locked_by_as_string() + "\".";
+
+      if (::getpid() < 10) {
+        // Hint for container users
+        msg += '\n';
+        msg += "Hint: use a consistent hostname so rTorrent can safely handle "
+               "stale locks.";
+      }
+
+      throw torrent::input_error(msg);
+    }
   }
 }
 
