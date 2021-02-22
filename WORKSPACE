@@ -9,6 +9,10 @@ git_repository(
     remote = "https://github.com/jesec/libtorrent.git",
 )
 
+load("@libtorrent//:libtorrent_repos.bzl", "libtorrent_repos")
+
+libtorrent_repos()
+
 load("@libtorrent//:libtorrent_deps.bzl", "libtorrent_deps")
 
 libtorrent_deps()
@@ -25,17 +29,6 @@ http_archive(
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
-
-http_archive(
-    name = "rules_foreign_cc",
-    sha256 = "bf6e61cd535e453b09d78d34503e88995caef8c096557de122329f888f891edb",
-    strip_prefix = "rules_foreign_cc-75e74567c76fa0dabf4cc5752af3b7cee7689704",
-    url = "https://github.com/bazelbuild/rules_foreign_cc/archive/75e74567c76fa0dabf4cc5752af3b7cee7689704.zip",
-)
-
-load("@rules_foreign_cc//:workspace_definitions.bzl", "rules_foreign_cc_dependencies")
-
-rules_foreign_cc_dependencies()
 
 http_archive(
     name = "rules_pkg",

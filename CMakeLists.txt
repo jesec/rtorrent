@@ -54,7 +54,10 @@ include(GenerateRTorrentBuildinfo)
 # Include directories
 include_directories(${PROJECT_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
 
-if(NOT BUILDINFO_ONLY)
+if(BUILDINFO_ONLY)
+  install(FILES ${CMAKE_BINARY_DIR}/include/buildinfo.h
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+else()
   # Required packages
   find_package(CURL REQUIRED)
   include_directories(${CURL_INCLUDE_DIRS})
