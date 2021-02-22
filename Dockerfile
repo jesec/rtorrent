@@ -6,9 +6,10 @@ WORKDIR /root/rtorrent
 
 # Install build dependencies
 RUN apk --no-cache add \
+    bash \
     build-base \
-    cmake \
     coreutils \
+    gcompat \
     git \
     linux-headers \
     python2 \
