@@ -4,9 +4,10 @@
 #include "buildinfo.h"
 
 #include <sys/stat.h>
+#include <unistd.h>
+
 #include <torrent/connection_manager.h>
 #include <torrent/utils/directory_events.h>
-#include <unistd.h>
 
 #include "core/dht_manager.h"
 #include "core/download_store.h"

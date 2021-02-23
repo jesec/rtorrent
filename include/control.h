@@ -4,7 +4,9 @@
 #ifndef RTORRENT_CONTROL_H
 #define RTORRENT_CONTROL_H
 
+#include <atomic>
 #include <cinttypes>
+
 #include <sys/types.h>
 
 #include <torrent/torrent.h>
@@ -62,12 +64,10 @@ public:
 
   void receive_normal_shutdown() {
     m_shutdownReceived = true;
-    __sync_synchronize();
   }
   void receive_quick_shutdown() {
     m_shutdownReceived = true;
     m_shutdownQuick    = true;
-    __sync_synchronize();
   }
 
   core::Manager* core() {
@@ -120,7 +120,7 @@ private:
   Control(const Control&);
   void operator=(const Control&);
 
-  bool m_shutdownReceived lt_cacheline_aligned{ false };
+  std::atomic<bool> lt_cacheline_aligned m_shutdownReceived{ false };
 
   core::Manager*     m_core;
   core::ViewManager* m_viewManager;
@@ -131,7 +131,7 @@ private:
   input::Manager*    m_input;
   input::InputEvent* m_inputStdin;
 
-  bool m_shutdownQuick lt_cacheline_aligned{ false };
+  std::atomic<bool> lt_cacheline_aligned m_shutdownQuick{ false };
 
   rpc::CommandScheduler*     m_commandScheduler;
   rpc::object_storage*       m_objectStorage;

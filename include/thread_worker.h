@@ -4,6 +4,8 @@
 #ifndef RTORRENT_THREAD_WORKER_H
 #define RTORRENT_THREAD_WORKER_H
 
+#include <atomic>
+
 #include "thread_base.h"
 
 #include <torrent/utils/cacheline.h>
@@ -27,7 +29,7 @@ public:
   void init_thread() override;
 
   rpc::SCgi* scgi() {
-    return m_safe.scgi;
+    return m_scgi;
   }
   bool set_scgi(rpc::SCgi* scgi);
 
@@ -41,11 +43,7 @@ private:
 
   void change_xmlrpc_log();
 
-  struct lt_cacheline_aligned safe_type {
-    rpc::SCgi* scgi{ nullptr };
-  };
-
-  safe_type m_safe;
+  std::atomic<rpc::SCgi*> lt_cacheline_aligned m_scgi{ nullptr };
 
   // The following types shall only be modified while holding the
   // global lock.

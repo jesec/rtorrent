@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
-#include "thread_worker.h"
-#include "control.h"
-#include "globals.h"
-
 #include <cassert>
 #include <fcntl.h>
+#include <unistd.h>
+
 #include <torrent/exceptions.h>
 #include <torrent/utils/path.h>
-#include <unistd.h>
+
+#include "control.h"
+#include "globals.h"
+#include "thread_worker.h"
 
 #include "core/manager.h"
 #include "rpc/parse_commands.h"
@@ -17,8 +18,8 @@
 #include "rpc/xmlrpc.h"
 
 ThreadWorker::~ThreadWorker() {
-  if (m_safe.scgi) {
-    delete m_safe.scgi;
+  if (m_scgi) {
+    delete m_scgi;
   }
 }
 
@@ -30,18 +31,14 @@ ThreadWorker::init_thread() {
 
 bool
 ThreadWorker::set_scgi(rpc::SCgi* scgi) {
-  if (!__sync_bool_compare_and_swap(&m_safe.scgi, nullptr, scgi))
+  if (m_scgi != nullptr) {
     return false;
+  }
+
+  m_scgi = scgi;
 
   change_xmlrpc_log();
 
-  // The xmlrpc process call requires a global lock.
-  //   m_safe.scgi->set_slot_process(utils::mem_fn(&rpc::xmlrpc,
-  //   &rpc::XmlRpc::process));
-
-  // Synchronize in order to ensure the worker thread sees the updated
-  // SCgi object.
-  __sync_synchronize();
   queue_item((thread_base_func)&start_scgi);
   return true;
 }
@@ -57,11 +54,11 @@ void
 ThreadWorker::start_scgi(ThreadBase* baseThread) {
   ThreadWorker* thread = (ThreadWorker*)baseThread;
 
-  if (thread->m_safe.scgi == nullptr)
+  if (thread->scgi() == nullptr)
     throw torrent::internal_error(
       "Tried to start SCGI but object was not present.");
 
-  thread->m_safe.scgi->activate();
+  thread->scgi()->activate();
 }
 
 void

@@ -2,11 +2,12 @@
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
 #include <stdexcept>
+#include <unistd.h>
+
 #include <torrent/exceptions.h>
 #include <torrent/poll_epoll.h>
 #include <torrent/poll_kqueue.h>
 #include <torrent/poll_select.h>
-#include <unistd.h>
 
 #include "control.h"
 #include "core/manager.h"

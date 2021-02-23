@@ -5,9 +5,10 @@
 #include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
+
 #include <torrent/utils/error_number.h>
 #include <torrent/utils/path.h>
-#include <unistd.h>
 
 #include "thread_base.h"
 

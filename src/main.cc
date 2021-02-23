@@ -12,6 +12,8 @@
 #include <random>
 #include <sstream>
 #include <string>
+#include <unistd.h>
+
 #include <torrent/buildinfo.h>
 #include <torrent/data/chunk_utils.h>
 #include <torrent/exceptions.h>
@@ -20,7 +22,6 @@
 #include <torrent/torrent.h>
 #include <torrent/utils/error_number.h>
 #include <torrent/utils/log.h>
-#include <unistd.h>
 
 #ifdef LT_HAVE_BACKTRACE
 #include <execinfo.h>

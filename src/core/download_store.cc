@@ -3,8 +3,10 @@
 
 // DownloadStore handles the saving and listing of session torrents.
 
+#include <cstdio>
 #include <fstream>
-#include <stdio.h>
+#include <unistd.h>
+
 #include <torrent/exceptions.h>
 #include <torrent/object.h>
 #include <torrent/object_stream.h>
@@ -14,7 +16,6 @@
 #include <torrent/utils/path.h>
 #include <torrent/utils/resume.h>
 #include <torrent/utils/string_manip.h>
-#include <unistd.h>
 
 #include "utils/directory.h"
 

@@ -4,7 +4,6 @@
 #ifndef RTORRENT_UTILS_THREAD_BASE_H
 #define RTORRENT_UTILS_THREAD_BASE_H
 
-#include <pthread.h>
 #include <sys/types.h>
 
 #include <torrent/utils/priority_queue_default.h>
