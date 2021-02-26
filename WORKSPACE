@@ -72,6 +72,20 @@ http_archive(
     ],
 )
 
+http_archive(
+    name = "com_google_absl",
+    sha256 = "00c3707bf9cd5eabd1ec6932cc65b97378c043f22573be3adf7d11bb7af17d06",
+    strip_prefix = "abseil-cpp-f3f785ab59478dd0312bf1b5df65d380650bf0dc",
+    urls = ["https://github.com/abseil/abseil-cpp/archive/f3f785ab59478dd0312bf1b5df65d380650bf0dc.zip"],
+)
+
+http_archive(
+    name = "com_google_googletest",
+    sha256 = "3519a051b20f0dd3a58e1dedd391a3cbd27eb70189afb1185dc4eaefe111211f",
+    strip_prefix = "googletest-1de637fbdd4ab0051229707f855eee76f5a3d5da",
+    urls = ["https://github.com/google/googletest/archive/1de637fbdd4ab0051229707f855eee76f5a3d5da.zip"],
+)
+
 # Foreign CC dependencies
 all_content = """filegroup(name = "all", srcs = glob(["**"]), visibility = ["//visibility:public"])"""
 
@@ -82,23 +96,4 @@ http_archive(
     sha256 = "93d81a32f4ecfeb914c05f77476ba0af2e6b93ef6673fafdc12878f71d70a276",
     strip_prefix = "xmlrpc-c-146e9bf7f8933c3baec871dfc2365e471171ddf4/advanced",
     urls = ["https://github.com/mirror/xmlrpc-c/archive/146e9bf7f8933c3baec871dfc2365e471171ddf4.zip"],
-)
-
-# MacOS workarounds
-_MACOS_CPPUNIT = """
-load("@rules_cc//cc:defs.bzl", "cc_library")
-
-cc_library(
-  name = "cppunit",
-  srcs = ["lib/libcppunit.dylib"],
-  hdrs = glob(["include/cppunit/**"]),
-  includes = ["include"],
-  visibility = ["//visibility:public"],
-)
-"""
-
-new_local_repository(
-    name = "cppunit",
-    build_file_content = _MACOS_CPPUNIT,
-    path = "/usr/local/opt/cppunit",
 )

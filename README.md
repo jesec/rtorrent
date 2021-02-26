@@ -86,7 +86,6 @@ Bazel manages most dependencies.
 Unmanaged dependencies:
 
 - GCC/Clang compiler toolchain and C/C++ development files (C++17 support required)
-- libcppunit with development files (optional, for unit tests)
 
 ```sh
 # Install Bazel
@@ -126,7 +125,7 @@ Dependencies:
 - libcurl with development files
 - libncurses/libncursesw with development files (for terminal UI)
 - libxmlrpc-c with development files (optional if USE_XMLRPC=OFF, for XMLRPC support)
-- libcppunit with development files (optional, for unit tests)
+- googletest with development files (optional, for unit tests)
 
 ```sh
 # Compile and install libtorrent (matching version required)
@@ -134,7 +133,7 @@ Dependencies:
 
 # Install dependencies and build tools
 # Use the package manager of your distribution
-sudo apt install build-essential cmake libc6-dev libcurl4-openssl-dev libncursesw5-dev libxmlrpc-c++8-dev libcppunit-dev
+sudo apt install build-essential cmake libc6-dev libcurl4-openssl-dev libncursesw5-dev libxmlrpc-c++8-dev libgtest-dev
 
 # Clone repository
 git clone https://github.com/jesec/rtorrent.git

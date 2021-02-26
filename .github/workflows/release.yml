@@ -19,9 +19,9 @@ jobs:
       - name: Tag release
         run: |
           release=`echo ${{ steps.get_version.outputs.VERSION }} | cut -d'-' -f2`
-          sed s/-jc+master/-jc-$release/ BUILD > BUILD.versioned
+          sed s/-jc+master/-jc-$release/ BUILD.bazel > BUILD.versioned
           cat BUILD.versioned
-          mv BUILD.versioned BUILD
+          mv BUILD.versioned BUILD.bazel
 
       - name: Set up QEMU
         run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes

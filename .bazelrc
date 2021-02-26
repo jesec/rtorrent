@@ -44,4 +44,6 @@ build:gcc --action_env=CXX=g++
 
 # Test
 test -c dbg
+test --cxxopt -std=c++17
+test --define absl=1
 test --test_output=all

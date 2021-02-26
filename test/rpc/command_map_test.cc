@@ -2,8 +2,6 @@
 #include "command_helpers.h"
 #include "rpc/command_map.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION(CommandMapTest);
-
 #undef CMD2_A_FUNCTION
 
 #define CMD2_A_FUNCTION(key, function, slot, parm, doc)                        \
@@ -29,8 +27,7 @@ cmd_test_any_string(rpc::target_type, const std::string&) {
   return (int64_t)3;
 }
 
-void
-CommandMapTest::test_basics() {
+TEST_F(CommandMapTest, test_basics) {
   CMD2_ANY("test_a", &cmd_test_map_a);
   CMD2_ANY("test_b",
            std::bind(&cmd_test_map_b,
@@ -39,7 +36,7 @@ CommandMapTest::test_basics() {
                      (uint64_t)2));
   CMD2_ANY_STRING("any_string", &cmd_test_any_string);
 
-  CPPUNIT_ASSERT(m_map.call_command("test_a", (int64_t)1).as_value() == 1);
-  CPPUNIT_ASSERT(m_map.call_command("test_b", (int64_t)1).as_value() == 2);
-  CPPUNIT_ASSERT(m_map.call_command("any_string", "").as_value() == 3);
+  ASSERT_TRUE(m_map.call_command("test_a", (int64_t)1).as_value() == 1);
+  ASSERT_TRUE(m_map.call_command("test_b", (int64_t)1).as_value() == 2);
+  ASSERT_TRUE(m_map.call_command("any_string", "").as_value() == 3);
 }

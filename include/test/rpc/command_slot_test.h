@@ -1,19 +1,5 @@
-#include <cppunit/extensions/HelperMacros.h>
+#include <gtest/gtest.h>
 
 #include "rpc/command.h"
 
-class CommandSlotTest : public CppUnit::TestFixture {
-  CPPUNIT_TEST_SUITE(CommandSlotTest);
-  CPPUNIT_TEST(test_basics);
-  CPPUNIT_TEST(test_type_validity);
-  CPPUNIT_TEST(test_convert_return);
-  CPPUNIT_TEST_SUITE_END();
-
-public:
-  void setUp() override {}
-  void tearDown() override {}
-
-  void test_basics();
-  void test_type_validity();
-  void test_convert_return();
-};
+class CommandSlotTest : public ::testing::Test {};

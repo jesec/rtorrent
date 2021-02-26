@@ -178,18 +178,11 @@ cc_test(
     ]) + ["//:included_headers"],
     copts = COPTS,
     includes = ["include"],
-    linkopts = LINKOPTS + select({
-        "//:macos": [],
-        "//conditions:default": ["-lcppunit"],
-    }),
+    linkopts = LINKOPTS,
     deps = [
         "//:rtorrent_common",
-    ] + select({
-        "//:macos": [
-            "@cppunit",
-        ],
-        "//conditions:default": [],
-    }),
+        "@com_google_googletest//:gtest",
+    ],
 )
 
 pkg_tar(

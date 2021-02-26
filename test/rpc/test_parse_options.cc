@@ -8,8 +8,6 @@
 #include "test/helpers/assert.h"
 #include "test/rpc/test_parse_options.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION(TestParseOptions);
-
 static constexpr int flag_1 = 1 << 0;
 static constexpr int flag_2 = 1 << 1;
 static constexpr int flag_3 = 1 << 2;
@@ -43,17 +41,17 @@ int_to_flag(int flag) {
 }
 
 #define FLAG_ASSERT(flags, result)                                             \
-  CPPUNIT_ASSERT(rpc::parse_option_flag(                                       \
-                   flags, std::bind(&flag_to_int, std::placeholders::_1)) ==   \
-                 (result))
+  ASSERT_TRUE(rpc::parse_option_flag(                                          \
+                flags, std::bind(&flag_to_int, std::placeholders::_1)) ==      \
+              (result))
 
 #define FLAGS_ASSERT(flags, result)                                            \
-  CPPUNIT_ASSERT(rpc::parse_option_flags(                                      \
-                   flags, std::bind(&flag_to_int, std::placeholders::_1)) ==   \
-                 (result))
+  ASSERT_TRUE(rpc::parse_option_flags(                                         \
+                flags, std::bind(&flag_to_int, std::placeholders::_1)) ==      \
+              (result))
 
 #define FLAGS_ASSERT_VALUE(flags, value, result)                               \
-  CPPUNIT_ASSERT(                                                              \
+  ASSERT_TRUE(                                                                 \
     rpc::parse_option_flags(flags,                                             \
                             std::bind(&flag_to_int, std::placeholders::_1),    \
                             value) == (result))
@@ -76,8 +74,7 @@ int_to_flag(int flag) {
       flags, std::bind(&flag_to_int, std::placeholders::_1), value);           \
   })
 
-void
-TestParseOptions::test_flag_basic() {
+TEST_F(TestParseOptions, test_flag_basic) {
   FLAG_ASSERT("foo", flag_1);
 
   FLAG_ASSERT(" foo ", flag_1);
@@ -88,8 +85,7 @@ TestParseOptions::test_flag_basic() {
   FLAG_ASSERT("a_b_c__e_3_g", flag_6);
 }
 
-void
-TestParseOptions::test_flag_error() {
+TEST_F(TestParseOptions, test_flag_error) {
   FLAG_ASSERT_ERROR("");
   FLAG_ASSERT_ERROR("foo|bar");
   FLAG_ASSERT_ERROR("foo|bar|baz");
@@ -98,8 +94,7 @@ TestParseOptions::test_flag_error() {
   FLAG_ASSERT_ERROR("foo | bar| baz");
 }
 
-void
-TestParseOptions::test_flags_basic() {
+TEST_F(TestParseOptions, test_flags_basic) {
   FLAGS_ASSERT("", 0);
   FLAGS_ASSERT("foo", flag_1);
   FLAGS_ASSERT("foo|bar", flag_1 | flag_2);
@@ -115,8 +110,7 @@ TestParseOptions::test_flags_basic() {
   FLAGS_ASSERT("a_b_c__e_3_g", flag_6);
 }
 
-void
-TestParseOptions::test_flags_error() {
+TEST_F(TestParseOptions, test_flags_error) {
   FLAGS_ASSERT_ERROR("fooa");
   FLAGS_ASSERT_ERROR("afoo");
 
@@ -126,8 +120,7 @@ TestParseOptions::test_flags_error() {
   FLAGS_ASSERT_ERROR(",foo");
 }
 
-void
-TestParseOptions::test_flags_complex() {
+TEST_F(TestParseOptions, test_flags_complex) {
   FLAGS_ASSERT_VALUE("", 0, 0);
   FLAGS_ASSERT_VALUE("", flag_1, flag_1);
   FLAGS_ASSERT_VALUE("bar", flag_1, flag_1 | flag_2);
@@ -140,27 +133,25 @@ TestParseOptions::test_flags_complex() {
 }
 
 #define FLAGS_ASSERT_PRINT(value, result)                                      \
-  CPPUNIT_ASSERT(rpc::parse_option_print_vector(value, flag_list) == (result));
+  ASSERT_TRUE(rpc::parse_option_print_vector(value, flag_list) == (result));
 #define FLAGS_ASSERT_PRINT_FLAGS(value, result)                                \
-  CPPUNIT_ASSERT(rpc::parse_option_print_flags(                                \
-                   value, std::bind(&int_to_flag, std::placeholders::_1)) ==   \
-                 (result));
+  ASSERT_TRUE(rpc::parse_option_print_flags(                                   \
+                value, std::bind(&int_to_flag, std::placeholders::_1)) ==      \
+              (result));
 #define FLAGS_ASSERT_ERROR_PRINT_FLAGS(value)                                  \
   ASSERT_CATCH_INPUT_ERROR({                                                   \
     rpc::parse_option_print_flags(                                             \
       value, std::bind(&int_to_flag, std::placeholders::_1));                  \
   });
 
-void
-TestParseOptions::test_flags_print_vector() {
+TEST_F(TestParseOptions, test_flags_print_vector) {
   FLAGS_ASSERT_PRINT(0, "not_bar|not_a12");
   FLAGS_ASSERT_PRINT(flag_2, "bar|not_a12");
   FLAGS_ASSERT_PRINT(flag_2 | flag_4, "bar|a12");
   FLAGS_ASSERT_PRINT(flag_1, "foo|not_bar|not_a12");
 }
 
-void
-TestParseOptions::test_flags_print_flags() {
+TEST_F(TestParseOptions, test_flags_print_flags) {
   FLAGS_ASSERT_PRINT_FLAGS(0, "");
   FLAGS_ASSERT_PRINT_FLAGS(flag_1, "foo");
   FLAGS_ASSERT_PRINT_FLAGS(flag_1 | flag_2, "foo|bar");
@@ -171,7 +162,7 @@ TestParseOptions::test_flags_print_flags() {
 }
 
 #define FLAG_LT_LOG_ASSERT(flags, result)                                      \
-  CPPUNIT_ASSERT(                                                              \
+  ASSERT_TRUE(                                                                 \
     rpc::parse_option_flag(flags,                                              \
                            std::bind(&torrent::option_find_string_str,         \
                                      torrent::OPTION_LOG_GROUP,                \
@@ -184,15 +175,14 @@ TestParseOptions::test_flags_print_flags() {
                                      torrent::OPTION_LOG_GROUP,                \
                                      std::placeholders::_1)))
 
-void
-TestParseOptions::test_flag_libtorrent() {
+TEST_F(TestParseOptions, test_flag_libtorrent) {
   FLAG_LT_LOG_ASSERT("resume_data", torrent::LOG_RESUME_DATA);
 
   FLAG_LT_LOG_ASSERT_ERROR("resume_data|rpc_dump");
 }
 
 #define FLAGS_LT_ENCRYPTION_ASSERT(flags, result)                              \
-  CPPUNIT_ASSERT(                                                              \
+  ASSERT_TRUE(                                                                 \
     rpc::parse_option_flags(flags,                                             \
                             std::bind(&torrent::option_find_string_str,        \
                                       torrent::OPTION_ENCRYPTION,              \
@@ -205,8 +195,7 @@ TestParseOptions::test_flag_libtorrent() {
                                       torrent::OPTION_ENCRYPTION,              \
                                       std::placeholders::_1)))
 
-void
-TestParseOptions::test_flags_libtorrent() {
+TEST_F(TestParseOptions, test_flags_libtorrent) {
   FLAGS_LT_ENCRYPTION_ASSERT("", torrent::ConnectionManager::encryption_none);
   FLAGS_LT_ENCRYPTION_ASSERT("none",
                              torrent::ConnectionManager::encryption_none);

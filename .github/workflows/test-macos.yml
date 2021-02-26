@@ -19,8 +19,6 @@ jobs:
         with:
           xcode-version: latest
 
-      - run: brew install cppunit
-
       - run: bazel test -s rtorrent_test
 
       - run: bazel build -s rtorrent

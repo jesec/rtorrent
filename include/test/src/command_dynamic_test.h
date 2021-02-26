@@ -1,20 +1,6 @@
-#include <cppunit/extensions/HelperMacros.h>
+#include <gtest/gtest.h>
 
-class CommandDynamicTest : public CppUnit::TestFixture {
-  CPPUNIT_TEST_SUITE(CommandDynamicTest);
-  CPPUNIT_TEST(test_basics);
-  CPPUNIT_TEST(test_get_set);
-  CPPUNIT_TEST(test_old_style);
-  CPPUNIT_TEST_SUITE_END();
-
+class CommandDynamicTest : public ::testing::Test {
 public:
-  void setUp() override;
-  void tearDown() override {}
-
-  void test_basics();
-  void test_get_set();
-
-  void test_old_style();
-
-private:
+  void SetUp() override;
 };

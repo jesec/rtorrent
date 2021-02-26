@@ -4,7 +4,7 @@
 #define ASSERT_CATCH_INPUT_ERROR(some_code)                                    \
   try {                                                                        \
     some_code;                                                                 \
-    CPPUNIT_ASSERT("torrent::input_error not caught" && false);                \
+    ASSERT_TRUE(false) << "torrent::input_error not caught";                   \
   } catch (torrent::input_error & e) {                                         \
   }
 
