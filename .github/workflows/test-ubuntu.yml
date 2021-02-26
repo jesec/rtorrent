@@ -47,7 +47,11 @@ jobs:
       - run: sudo apt install -y build-essential
       - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
       - run: sudo chmod +x /usr/local/bin/bazel
-      - run: bazel test -s rtorrent_test
+
+      - run: bazel coverage -s rtorrent_test
+      - run: cp -L bazel-testlogs/rtorrent_test/coverage.dat .
+
+      - uses: codecov/codecov-action@v1
 
   unit-bazel-clang:
     runs-on: ubuntu-20.04
