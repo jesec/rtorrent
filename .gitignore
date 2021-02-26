@@ -40,6 +40,7 @@ scripts/lt*.m4
 
 # Editor poo #
 ##############
+.cache
 .vscode
 .#*
 \#*#
@@ -79,6 +80,7 @@ test/rtorrentTest.trs
 
 # CMake generated files #
 #########################
+/.build
 /build
 /rtorrent
 /rtorrent_test
