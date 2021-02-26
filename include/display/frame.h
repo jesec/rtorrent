@@ -78,11 +78,11 @@ public:
   }
 
   Frame* frame(size_type idx) {
-    return m_container[idx];
+    return m_container.data[idx];
   }
 
   size_type container_size() const {
-    return m_containerSize;
+    return m_container.size;
   }
   void set_container_size(size_type size);
 
@@ -118,14 +118,12 @@ private:
   uint32_t m_width{ 0 };
   uint32_t m_height{ 0 };
 
-  union {
-    Window* m_window;
+  Window* m_window;
 
-    struct {
-      size_type m_containerSize;
-      Frame*    m_container[max_size];
-    };
-  };
+  struct {
+    size_type size;
+    Frame*    data[max_size];
+  } m_container;
 };
 
 }

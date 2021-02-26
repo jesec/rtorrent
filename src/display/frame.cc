@@ -22,8 +22,8 @@ Frame::is_width_dynamic() const {
 
     case TYPE_ROW:
     case TYPE_COLUMN:
-      for (size_type i = 0; i < m_containerSize; ++i)
-        if (m_container[i]->is_width_dynamic())
+      for (size_type i = 0; i < m_container.size; ++i)
+        if (m_container.data[i]->is_width_dynamic())
           return true;
 
       return false;
@@ -42,8 +42,8 @@ Frame::is_height_dynamic() const {
 
     case TYPE_ROW:
     case TYPE_COLUMN:
-      for (size_type i = 0; i < m_containerSize; ++i)
-        if (m_container[i]->is_height_dynamic())
+      for (size_type i = 0; i < m_container.size; ++i)
+        if (m_container.data[i]->is_height_dynamic())
           return true;
 
       return false;
@@ -62,8 +62,8 @@ Frame::has_left_frame() const {
       return m_window->is_active() && m_window->is_left();
 
     case TYPE_COLUMN:
-      for (size_type i = 0; i < m_containerSize; ++i)
-        if (m_container[i]->has_left_frame())
+      for (size_type i = 0; i < m_container.size; ++i)
+        if (m_container.data[i]->has_left_frame())
           return true;
 
       return false;
@@ -82,8 +82,8 @@ Frame::has_bottom_frame() const {
       return m_window->is_active() && m_window->is_bottom();
 
     case TYPE_ROW:
-      for (size_type i = 0; i < m_containerSize; ++i)
-        if (m_container[i]->has_bottom_frame())
+      for (size_type i = 0; i < m_container.size; ++i)
+        if (m_container.data[i]->has_bottom_frame())
           return true;
 
       return false;
@@ -111,8 +111,8 @@ Frame::preferred_size() const {
     case TYPE_COLUMN: {
       bounds_type accum(0, 0, 0, 0);
 
-      for (size_type i = 0; i < m_containerSize; ++i) {
-        bounds_type p = m_container[i]->preferred_size();
+      for (size_type i = 0; i < m_container.size; ++i) {
+        bounds_type p = m_container.data[i]->preferred_size();
 
         accum.minWidth += p.minWidth;
         accum.minHeight += p.minHeight;
@@ -142,13 +142,13 @@ Frame::set_container_size(size_type size) {
   if ((m_type != TYPE_ROW && m_type != TYPE_COLUMN) || size >= max_size)
     throw torrent::internal_error("Frame::set_container_size(...) Bad state.");
 
-  while (m_containerSize > size) {
-    delete m_container[--m_containerSize];
-    m_container[m_containerSize] = nullptr;
+  while (m_container.size > size) {
+    delete m_container.data[--m_container.size];
+    m_container.data[m_container.size] = nullptr;
   }
 
-  while (m_containerSize < size) {
-    m_container[m_containerSize++] = new Frame();
+  while (m_container.size < size) {
+    m_container.data[m_container.size++] = new Frame();
   }
 }
 
@@ -172,11 +172,11 @@ Frame::initialize_row(size_type size) {
     throw torrent::internal_error(
       "Frame::initialize_container(...) size >= max_size.");
 
-  m_type          = TYPE_ROW;
-  m_containerSize = size;
+  m_type           = TYPE_ROW;
+  m_container.size = size;
 
-  for (size_type i = 0; i < m_containerSize; ++i)
-    m_container[i] = new Frame();
+  for (size_type i = 0; i < m_container.size; ++i)
+    m_container.data[i] = new Frame();
 }
 
 void
@@ -189,11 +189,11 @@ Frame::initialize_column(size_type size) {
     throw torrent::internal_error(
       "Frame::initialize_container(...) size >= max_size.");
 
-  m_type          = TYPE_COLUMN;
-  m_containerSize = size;
+  m_type           = TYPE_COLUMN;
+  m_container.size = size;
 
-  for (size_type i = 0; i < m_containerSize; ++i)
-    m_container[i] = new Frame();
+  for (size_type i = 0; i < m_container.size; ++i)
+    m_container.data[i] = new Frame();
 }
 
 void
@@ -207,9 +207,9 @@ Frame::clear() {
 
     case TYPE_ROW:
     case TYPE_COLUMN:
-      for (size_type i = 0; i < m_containerSize; ++i) {
-        m_container[i]->clear();
-        delete m_container[i];
+      for (size_type i = 0; i < m_container.size; ++i) {
+        m_container.data[i]->clear();
+        delete m_container.data[i];
       }
       break;
 
@@ -234,7 +234,8 @@ Frame::refresh() {
 
     case TYPE_ROW:
     case TYPE_COLUMN:
-      for (Frame **itr = m_container, **last = m_container + m_containerSize;
+      for (Frame **itr  = m_container.data,
+                 **last = m_container.data + m_container.size;
            itr != last;
            ++itr)
         (*itr)->refresh();
@@ -257,7 +258,8 @@ Frame::redraw() {
 
     case TYPE_ROW:
     case TYPE_COLUMN:
-      for (Frame **itr = m_container, **last = m_container + m_containerSize;
+      for (Frame **itr  = m_container.data,
+                 **last = m_container.data + m_container.size;
            itr != last;
            ++itr)
         (*itr)->redraw();
@@ -336,7 +338,8 @@ Frame::balance_row(uint32_t x, uint32_t y, uint32_t, uint32_t height) {
 
   int remaining = height;
 
-  for (Frame **itr = m_container, **last = m_container + m_containerSize;
+  for (Frame **itr  = m_container.data,
+             **last = m_container.data + m_container.size;
        itr != last;
        ++itr) {
     bounds_type bounds = (*itr)->preferred_size();
@@ -393,7 +396,8 @@ Frame::balance_row(uint32_t x, uint32_t y, uint32_t, uint32_t height) {
   // the frame is too small, it will set the remaining windows to zero
   // extent which will flag them as offscreen.
 
-  for (Frame **itr = m_container, **last = m_container + m_containerSize;
+  for (Frame **itr  = m_container.data,
+             **last = m_container.data + m_container.size;
        itr != last;
        ++itr) {
     // If there is any remaining space, check if we want to shift
@@ -421,7 +425,8 @@ Frame::balance_column(uint32_t x, uint32_t y, uint32_t width, uint32_t) {
 
   int remaining = width;
 
-  for (Frame **itr = m_container, **last = m_container + m_containerSize;
+  for (Frame **itr  = m_container.data,
+             **last = m_container.data + m_container.size;
        itr != last;
        ++itr) {
     bounds_type bounds = (*itr)->preferred_size();
@@ -478,7 +483,8 @@ Frame::balance_column(uint32_t x, uint32_t y, uint32_t width, uint32_t) {
   // the frame is too small, it will set the remaining windows to zero
   // extent which will flag them as offscreen.
 
-  for (Frame **itr = m_container, **last = m_container + m_containerSize;
+  for (Frame **itr  = m_container.data,
+             **last = m_container.data + m_container.size;
        itr != last;
        ++itr) {
     // If there is any remaining space, check if we want to shift
