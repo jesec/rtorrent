@@ -3,6 +3,7 @@
 
 #include "buildinfo.h"
 
+#include <iostream>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -143,6 +144,12 @@ Control::handle_shutdown() {
                            rpc::make_target(),
                            "shutdown",
                            "System shutdown event action failed: ");
+
+  if (!display::Canvas::isInitialized() && m_shutdownReceived) {
+    // helpful message for users of daemon mode
+    std::cout << "rTorrent: " << (m_shutdownQuick ? "quickly " : "")
+              << "shutting down..." << std::endl;
+  }
 
   if (!m_shutdownQuick) {
     // Temporary hack:
