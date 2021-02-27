@@ -31,6 +31,28 @@ build:ubsan --copt -fno-omit-frame-pointer
 build:ubsan --linkopt -fsanitize=undefined
 build:ubsan --linkopt -lubsan
 
+# Control Flow Integrity
+build:cfi --action_env=CC=clang
+build:cfi --action_env=CXX=clang++
+build:cfi --copt -fvisibility=hidden
+build:cfi --copt -flto
+build:cfi --copt -fsanitize=cfi
+build:cfi --copt -fsanitize-recover=cfi
+build:cfi --copt -fsanitize-cfi-cross-dso
+build:cfi --copt -fno-sanitize-blacklist
+build:cfi --linkopt -flto
+build:cfi --linkopt -fsanitize=cfi
+build:cfi --linkopt -fsanitize-recover=cfi
+build:cfi --linkopt -fsanitize-cfi-cross-dso
+build:cfi --linkopt -fuse-ld=lld
+
+# Scudo Hardened Allocator
+build:scudo --action_env=CC=clang
+build:scudo --action_env=CXX=clang++
+build:scudo --copt -fsanitize=scudo
+build:scudo --linkopt -fsanitize=scudo
+build:scudo --linkopt -fuse-ld=lld
+
 # Use Clang
 build:clang -c opt
 build:clang --action_env=CC=clang

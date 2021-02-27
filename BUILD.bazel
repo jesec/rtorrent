@@ -106,11 +106,11 @@ configure_make(
     lib_source = "@xmlrpc//:all",
     make_commands = select({
         "//:macos": [
-            "CFLAGS='-D_DARWIN_C_SOURCE' make",
+            "CFLAGS='-fpic -D_DARWIN_C_SOURCE' make",
             "make install",
         ],
         "//conditions:default": [
-            "make",
+            "CFLAGS='-fpic' make",
             "make install",
         ],
     }),
