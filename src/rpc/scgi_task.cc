@@ -120,8 +120,7 @@ SCgiTask::event_read() {
     char* contentPos;
     contentSize = strtol(current + 15, &contentPos, 0);
 
-    if (*contentPos != '\0' || contentSize <= 0 ||
-        contentSize > max_content_size)
+    if (*contentPos != '\0' || contentSize <= 0)
       goto event_read_failed;
 
     m_body     = current + headerSize + 1;
