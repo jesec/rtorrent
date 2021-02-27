@@ -26,12 +26,14 @@ jobs:
       - name: Install libTorrent
         run: |
           cmake -GNinja -S libtorrent -B libtorrent
-          sudo ninja -C libtorrent install
+          cmake --build libtorrent
+          sudo cmake --install libtorrent
           sudo ldconfig
 
-      - run: cmake -DCMAKE_INSTALL_PREFIX=install -GNinja .
-      - run: ninja install
-      - run: ctest --verbose
+      - run: cmake -B build -DCMAKE_INSTALL_PREFIX=install -GNinja .
+      - run: cmake --build build
+      - run: cmake --install build
+      - run: cd build && ctest --verbose
 
       - uses: actions/upload-artifact@v2
         with:
