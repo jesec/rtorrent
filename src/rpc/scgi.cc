@@ -152,10 +152,16 @@ SCgi::receive_call(SCgiTask* task, const char* buffer, uint32_t length) {
   torrent::thread_base::acquire_global_lock();
   torrent::main_thread()->interrupt();
 
-  bool result =
-    xmlrpc.process(buffer, length, [task](const char* buffer, uint32_t length) {
-      return task->receive_write(buffer, length);
-    });
+  bool result = false;
+
+  switch (task->type()) {
+    case SCgiTask::ContentType::XML:
+    default:
+      result = xmlrpc.process(
+        buffer, length, [task](const char* buffer, uint32_t length) {
+          return task->receive_write(buffer, length);
+        });
+  }
 
   torrent::thread_base::release_global_lock();
 

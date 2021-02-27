@@ -19,8 +19,14 @@ public:
   static constexpr unsigned int default_buffer_size = 2047;
   static constexpr int          max_header_size     = 2000;
 
+  enum ContentType { XML, JSON };
+
   SCgiTask() {
     m_fileDesc = -1;
+  }
+
+  ContentType type() const {
+    return m_type;
   }
 
   bool is_open() const {
@@ -47,6 +53,8 @@ private:
   inline void realloc_buffer(uint32_t    size,
                              const char* buffer     = nullptr,
                              uint32_t    bufferSize = 0);
+
+  ContentType m_type{ XML };
 
   SCgi* m_parent;
 

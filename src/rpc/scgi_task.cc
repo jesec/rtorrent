@@ -2,6 +2,7 @@
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
 #include <cstdio>
+#include <string_view>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <torrent/exceptions.h>
@@ -114,14 +115,44 @@ SCgiTask::event_read() {
     if (std::distance(++current, m_position) < headerSize + 1)
       return;
 
-    if (std::memcmp(current, "CONTENT_LENGTH", 15) != 0)
+    const std::string_view header(current, headerSize);
+
+    // RFC 3875, 4.1.2
+    if (header.find("CONTENT_LENGTH") != 0) {
       goto event_read_failed;
+    }
 
     char* contentPos;
     contentSize = strtol(current + 15, &contentPos, 0);
 
     if (*contentPos != '\0' || contentSize <= 0)
       goto event_read_failed;
+
+    // RFC 3875, 4.1.3
+    const auto contentTypePos = header.find("CONTENT_TYPE");
+    if (contentTypePos != std::string_view::npos) {
+      // length of "CONTENT_TYPE" -> 12
+      const auto contentTypeStartPos = contentTypePos + 12 + 1;
+      const auto contentTypeEndPos   = header.find('\0', contentTypeStartPos);
+
+      if (contentTypeEndPos == std::string_view::npos) {
+        goto event_read_failed;
+      }
+
+      const auto contentTypeSize = contentTypeEndPos - contentTypeStartPos;
+      const auto contentType =
+        header.substr(contentTypeStartPos, contentTypeSize);
+
+      if (contentType.find("application/json") != std::string_view::npos) {
+        // RFC 4627, 6
+        m_type = JSON;
+      } else if (contentType.find("text/xml") != std::string_view::npos) {
+        // Winer, D., "XML-RPC Specification", Header requirements
+        m_type = XML;
+      } else {
+        goto event_read_failed;
+      }
+    }
 
     m_body     = current + headerSize + 1;
     headerSize = std::distance(m_buffer, m_body);
