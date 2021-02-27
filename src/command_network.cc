@@ -3,6 +3,10 @@
 
 #include <cstdio>
 #include <functional>
+#include <limits>
+#include <torrent/common.h>
+#include <unistd.h>
+
 #include <torrent/connection_manager.h>
 #include <torrent/data/file_manager.h>
 #include <torrent/download/resource_manager.h>
@@ -14,7 +18,6 @@
 #include <torrent/utils/log.h>
 #include <torrent/utils/option_strings.h>
 #include <torrent/utils/path.h>
-#include <unistd.h>
 
 #include "core/download.h"
 #include "core/manager.h"
@@ -68,7 +71,7 @@ apply_encoding_list(const std::string& arg) {
 }
 
 torrent::File*
-xmlrpc_find_file(core::Download* download, uint32_t index) {
+rpc_find_file(core::Download* download, uint32_t index) {
   if (index >= download->file_list()->size_files())
     return nullptr;
 
@@ -77,7 +80,7 @@ xmlrpc_find_file(core::Download* download, uint32_t index) {
 
 // Ergh... time to update the Tracker API to allow proper ptrs.
 torrent::Tracker*
-xmlrpc_find_tracker(core::Download* download, uint32_t index) {
+rpc_find_tracker(core::Download* download, uint32_t index) {
   if (index >= download->tracker_list()->size())
     return nullptr;
 
@@ -85,7 +88,7 @@ xmlrpc_find_tracker(core::Download* download, uint32_t index) {
 }
 
 torrent::Peer*
-xmlrpc_find_peer(core::Download* download, const torrent::HashString& hash) {
+rpc_find_peer(core::Download* download, const torrent::HashString& hash) {
   torrent::ConnectionList::iterator itr =
     download->connection_list()->find(hash.c_str());
 
@@ -96,18 +99,18 @@ xmlrpc_find_peer(core::Download* download, const torrent::HashString& hash) {
 }
 
 void
-initialize_xmlrpc() {
-  rpc::xmlrpc.initialize();
-  rpc::xmlrpc.slot_find_download() =
-    std::bind(&core::DownloadList::find_hex_ptr,
-              control->core()->download_list(),
-              std::placeholders::_1);
-  rpc::xmlrpc.slot_find_file() =
-    std::bind(&xmlrpc_find_file, std::placeholders::_1, std::placeholders::_2);
-  rpc::xmlrpc.slot_find_tracker() = std::bind(
-    &xmlrpc_find_tracker, std::placeholders::_1, std::placeholders::_2);
-  rpc::xmlrpc.slot_find_peer() =
-    std::bind(&xmlrpc_find_peer, std::placeholders::_1, std::placeholders::_2);
+initialize_rpc() {
+  rpc::rpc.initialize(
+    [](const char* hash) {
+      return control->core()->download_list()->find_hex_ptr(hash);
+    },
+    [](core::Download* d, uint32_t index) { return rpc_find_file(d, index); },
+    [](core::Download* d, uint32_t index) {
+      return rpc_find_tracker(d, index);
+    },
+    [](core::Download* d, const torrent::HashString& hash) {
+      return rpc_find_peer(d, hash);
+    });
 
   unsigned int count = 0;
 
@@ -115,11 +118,10 @@ initialize_xmlrpc() {
                                        last = rpc::commands.end();
        itr != last;
        itr++, count++) {
-    if (!(itr->second.m_flags & rpc::CommandMap::flag_public_xmlrpc))
+    if (!(itr->second.m_flags & rpc::CommandMap::flag_public))
       continue;
 
-    rpc::xmlrpc.insert_command(
-      itr->first, itr->second.m_parm, itr->second.m_doc);
+    rpc::rpc.insert_command(itr->first, itr->second.m_parm, itr->second.m_doc);
   }
 
   lt_log_print(
@@ -131,8 +133,8 @@ apply_scgi(const std::string& arg, int type) {
   if (worker_thread->scgi() != nullptr)
     throw torrent::input_error("SCGI already enabled.");
 
-  if (!rpc::xmlrpc.is_valid())
-    initialize_xmlrpc();
+  if (!rpc::rpc.is_valid())
+    initialize_rpc();
 
   rpc::SCgi* scgi = new rpc::SCgi;
 
@@ -209,23 +211,6 @@ apply_scgi(const std::string& arg, int type) {
   }
 
   worker_thread->set_scgi(scgi);
-  return torrent::Object();
-}
-
-torrent::Object
-apply_xmlrpc_dialect(const std::string& arg) {
-  int value;
-
-  if (arg == "i8")
-    value = rpc::XmlRpc::dialect_i8;
-  else if (arg == "apache")
-    value = rpc::XmlRpc::dialect_apache;
-  else if (arg == "generic")
-    value = rpc::XmlRpc::dialect_generic;
-  else
-    value = -1;
-
-  rpc::xmlrpc.set_dialect(value);
   return torrent::Object();
 }
 
@@ -368,10 +353,9 @@ initialize_command_network() {
                   std::bind(&apply_scgi, std::placeholders::_2, 2));
   CMD2_VAR_BOOL("network.scgi.dont_route", false);
 
-  CMD2_ANY_STRING("network.xmlrpc.dialect.set",
-                  std::bind(&apply_xmlrpc_dialect, std::placeholders::_2));
-  CMD2_ANY("network.xmlrpc.size_limit", std::bind(&rpc::XmlRpc::size_limit));
-  CMD2_ANY_VALUE_V(
-    "network.xmlrpc.size_limit.set",
-    std::bind(&rpc::XmlRpc::set_size_limit, std::placeholders::_2));
+  CMD2_ANY("network.xmlrpc.size_limit",
+           std::bind(&std::numeric_limits<size_t>::max));
+
+  CMD2_REDIRECT_GENERIC("network.xmlrpc.dialect.set", "true");
+  CMD2_REDIRECT_GENERIC("network.xmlrpc.size_limit.set", "true");
 }

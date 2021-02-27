@@ -9,7 +9,7 @@
 
 #include "rpc/command_map.h"
 #include "rpc/exec_file.h"
-#include "rpc/xmlrpc.h"
+#include "rpc/rpc_manager.h"
 
 namespace core {
 class Download;
@@ -19,7 +19,7 @@ namespace rpc {
 
 // Move to another file?
 extern CommandMap commands;
-extern XmlRpc     xmlrpc;
+extern RpcManager rpc;
 extern ExecFile   execFile;
 
 using parse_command_type = std::pair<torrent::Object, const char*>;

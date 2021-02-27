@@ -19,8 +19,6 @@ namespace rpc {
 
 class lt_cacheline_aligned SCgi : public torrent::Event {
 public:
-  using slot_write = std::function<bool(const char*, uint32_t)>;
-
   static constexpr int max_tasks = 100;
 
   // Global lock:

@@ -3,27 +3,31 @@
 
 #include "buildinfo.h"
 
+#include <functional>
+
+#include <cctype>
+#include <limits>
+
 #ifdef HAVE_XMLRPC_C
 #include <stdlib.h>
 #include <xmlrpc-c/server.h>
+#ifndef XMLRPC_HAVE_I8
+static_assert(false, "XMLRPC is too old");
+#endif
 #endif
 
-#include <cctype>
 #include <torrent/exceptions.h>
 #include <torrent/object.h>
 #include <torrent/utils/string_manip.h>
 
 #include "rpc/parse_commands.h"
 
-#include "rpc/xmlrpc.h"
+#include "rpc/command.h"
+#include "rpc/rpc_xml.h"
 
 namespace rpc {
 
 #ifdef HAVE_XMLRPC_C
-
-#ifndef XMLRPC_HAVE_I8
-static_assert(false, "XMLRPC is too old");
-#endif
 
 class xmlrpc_error : public torrent::base_error {
 public:
@@ -157,7 +161,7 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
         throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Unsupported target type found.");
       }
 
-      core::Download* download = xmlrpc.slot_find_download()(str);
+      core::Download* download = rpc.slot_find_download()(str);
 
       if (download == nullptr) {
         ::free((void*)str);
@@ -189,8 +193,8 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
             throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Invalid index.");
           }
 
-          target = rpc::make_target(XmlRpc::call_file,
-                                    xmlrpc.slot_find_file()(download, index));
+          target = rpc::make_target(command_base::target_file,
+                                    rpc.slot_find_file()(download, index));
           break;
 
         case 't':
@@ -201,8 +205,8 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
             throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Invalid index.");
           }
 
-          target = rpc::make_target(
-            XmlRpc::call_tracker, xmlrpc.slot_find_tracker()(download, index));
+          target = rpc::make_target(command_base::target_tracker,
+                                    rpc.slot_find_tracker()(download, index));
           break;
 
         case 'p': {
@@ -215,8 +219,8 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
             throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Not a hash string.");
           }
 
-          target = rpc::make_target(XmlRpc::call_peer,
-                                    xmlrpc.slot_find_peer()(download, hash));
+          target = rpc::make_target(command_base::target_peer,
+                                    rpc.slot_find_peer()(download, hash));
           break;
         }
         default:
@@ -244,11 +248,11 @@ xmlrpc_to_index_type(int index, int callType, core::Download* download) {
   void* result;
 
   switch (callType) {
-    case XmlRpc::call_file:
-      result = xmlrpc.slot_find_file()(download, index);
+    case command_base::target_file:
+      result = rpc.slot_find_file()(download, index);
       break;
-    case XmlRpc::call_tracker:
-      result = xmlrpc.slot_find_tracker()(download, index);
+    case command_base::target_tracker:
+      result = rpc.slot_find_tracker()(download, index);
       break;
     default:
       result = nullptr;
@@ -285,7 +289,7 @@ xmlrpc_to_object(xmlrpc_env*       env,
 
     case XMLRPC_TYPE_STRING:
 
-      if (callType != XmlRpc::call_generic) {
+      if (callType != command_base::target_generic) {
         // When the call type is not supposed to be void, we'll try to
         // convert it to a command target. It's not that important that
         // it is converted to the right type here, as an mismatch will
@@ -341,7 +345,7 @@ xmlrpc_to_object(xmlrpc_env*       env,
       if (env->fault_occurred)
         throw xmlrpc_error(env);
 
-      if (callType != XmlRpc::call_generic && last != 0) {
+      if (callType != command_base::target_generic && last != 0) {
         if (last < 1)
           throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Too few arguments.");
 
@@ -361,9 +365,9 @@ xmlrpc_to_object(xmlrpc_env*       env,
         if (env->fault_occurred)
           throw xmlrpc_error(env);
 
-        if (target->first == XmlRpc::call_download &&
-            (callType == XmlRpc::call_file ||
-             callType == XmlRpc::call_tracker)) {
+        if (target->first == command_base::target_download &&
+            (callType == command_base::target_file ||
+             callType == command_base::target_tracker)) {
           // If we have a download target and the call type requires
           // another contained type, then we try to use the next
           // parameter as the index to support old-style calls.
@@ -409,10 +413,8 @@ xmlrpc_value*
 object_to_xmlrpc(xmlrpc_env* env, const torrent::Object& object) {
   switch (object.type()) {
     case torrent::Object::TYPE_VALUE:
-      if (xmlrpc.dialect() != XmlRpc::dialect_generic)
-        return xmlrpc_i8_new(env, object.as_value());
+      return xmlrpc_i8_new(env, object.as_value());
 
-      [[fallthrough]];
     case torrent::Object::TYPE_STRING: {
       // The versions that support I8 do implicit utf-8 validation.
       xmlrpc_value* result = xmlrpc_string_new(env, object.as_string().c_str());
@@ -520,13 +522,17 @@ xmlrpc_call_command(xmlrpc_env* env, xmlrpc_value* args, void* voidServerInfo) {
     rpc::target_type target = rpc::make_target();
 
     if (itr->second.m_flags & CommandMap::flag_no_target)
-      xmlrpc_to_object(env, args, XmlRpc::call_generic, &target).swap(object);
+      xmlrpc_to_object(env, args, command_base::target_generic, &target)
+        .swap(object);
     else if (itr->second.m_flags & CommandMap::flag_file_target)
-      xmlrpc_to_object(env, args, XmlRpc::call_file, &target).swap(object);
+      xmlrpc_to_object(env, args, command_base::target_file, &target)
+        .swap(object);
     else if (itr->second.m_flags & CommandMap::flag_tracker_target)
-      xmlrpc_to_object(env, args, XmlRpc::call_tracker, &target).swap(object);
+      xmlrpc_to_object(env, args, command_base::target_tracker, &target)
+        .swap(object);
     else
-      xmlrpc_to_object(env, args, XmlRpc::call_any, &target).swap(object);
+      xmlrpc_to_object(env, args, command_base::target_any, &target)
+        .swap(object);
 
     if (env->fault_occurred)
       return nullptr;
@@ -545,25 +551,31 @@ xmlrpc_call_command(xmlrpc_env* env, xmlrpc_value* args, void* voidServerInfo) {
 }
 
 void
-XmlRpc::initialize() {
+RpcXml::initialize() {
   m_env = new xmlrpc_env;
 
   xmlrpc_env_init((xmlrpc_env*)m_env);
   m_registry = xmlrpc_registry_new((xmlrpc_env*)m_env);
+
+  xmlrpc_limit_set(XMLRPC_XML_SIZE_LIMIT_ID,
+                   std::numeric_limits<size_t>::max());
+  xmlrpc_registry_set_dialect(
+    (xmlrpc_env*)m_env, (xmlrpc_registry*)m_registry, xmlrpc_dialect_i8);
 }
 
 void
-XmlRpc::cleanup() {
+RpcXml::cleanup() {
   if (!is_valid())
     return;
 
   xmlrpc_registry_free((xmlrpc_registry*)m_registry);
   xmlrpc_env_clean((xmlrpc_env*)m_env);
+
   delete (xmlrpc_env*)m_env;
 }
 
 bool
-XmlRpc::process(const char* inBuffer, uint32_t length, slot_write slotWrite) {
+RpcXml::process(const char* inBuffer, uint32_t length, res_callback callback) {
   xmlrpc_env localEnv;
   xmlrpc_env_init(&localEnv);
 
@@ -573,8 +585,8 @@ XmlRpc::process(const char* inBuffer, uint32_t length, slot_write slotWrite) {
   if (localEnv.fault_occurred && localEnv.fault_code == XMLRPC_INTERNAL_ERROR)
     throw torrent::internal_error("Internal error in XMLRPC.");
 
-  bool result = slotWrite((const char*)xmlrpc_mem_block_contents(memblock),
-                          xmlrpc_mem_block_size(memblock));
+  bool result = callback((const char*)xmlrpc_mem_block_contents(memblock),
+                         xmlrpc_mem_block_size(memblock));
 
   xmlrpc_mem_block_free(memblock);
   xmlrpc_env_clean(&localEnv);
@@ -582,7 +594,7 @@ XmlRpc::process(const char* inBuffer, uint32_t length, slot_write slotWrite) {
 }
 
 void
-XmlRpc::insert_command(const char* name, const char* parm, const char* doc) {
+RpcXml::insert_command(const char* name, const char* parm, const char* doc) {
   xmlrpc_env localEnv;
   xmlrpc_env_init(&localEnv);
 
@@ -601,81 +613,22 @@ XmlRpc::insert_command(const char* name, const char* parm, const char* doc) {
   xmlrpc_env_clean(&localEnv);
 }
 
-void
-XmlRpc::set_dialect(int dialect) {
-  if (!is_valid())
-    throw torrent::input_error(
-      "Cannot select XMLRPC dialect before it is initialized.");
-
-  xmlrpc_env localEnv;
-  xmlrpc_env_init(&localEnv);
-
-  switch (dialect) {
-    case dialect_generic:
-      break;
-
-    case dialect_i8:
-      xmlrpc_registry_set_dialect(
-        &localEnv, (xmlrpc_registry*)m_registry, xmlrpc_dialect_i8);
-      break;
-
-    case dialect_apache:
-      xmlrpc_registry_set_dialect(
-        &localEnv, (xmlrpc_registry*)m_registry, xmlrpc_dialect_apache);
-      break;
-
-    default:
-      xmlrpc_env_clean(&localEnv);
-      throw torrent::input_error("Unsupported XMLRPC dialect selected.");
-  }
-
-  if (localEnv.fault_occurred) {
-    xmlrpc_env_clean(&localEnv);
-    throw torrent::input_error("Unsupported XMLRPC dialect selected.");
-  }
-
-  xmlrpc_env_clean(&localEnv);
-  m_dialect = dialect;
-}
-
-int64_t
-XmlRpc::size_limit() {
-  return xmlrpc_limit_get(XMLRPC_XML_SIZE_LIMIT_ID);
-}
-
-void
-XmlRpc::set_size_limit(uint64_t size) {
-  if (size >= (64 << 20))
-    throw torrent::input_error("Invalid XMLRPC limit size.");
-
-  xmlrpc_limit_set(XMLRPC_XML_SIZE_LIMIT_ID, size);
-}
-
 #else
 
 void
-XmlRpc::initialize() {
+RpcXml::initialize() {
   throw torrent::resource_error("XMLRPC not supported.");
 }
 void
-XmlRpc::cleanup() {}
+RpcXml::cleanup() {}
 
 void
-XmlRpc::insert_command(const char* name, const char* parm, const char* doc) {}
-void
-XmlRpc::set_dialect(int dialect) {}
+RpcXml::insert_command(const char* name, const char* parm, const char* doc) {}
 
 bool
-XmlRpc::process(const char* inBuffer, uint32_t length, slot_write slotWrite) {
+RpcXml::process(const char* inBuffer, uint32_t length, res_callback callback) {
   return false;
 }
-
-int64_t
-XmlRpc::size_limit() {
-  return 0;
-}
-void
-XmlRpc::set_size_limit(uint64_t size) {}
 
 #endif
 

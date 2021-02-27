@@ -149,7 +149,7 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
   if (!(flags & rpc::object_storage::flag_static))
     cmd_flags |= rpc::CommandMap::flag_modifiable;
   if (!(flags & rpc::object_storage::flag_private))
-    cmd_flags |= rpc::CommandMap::flag_public_xmlrpc;
+    cmd_flags |= rpc::CommandMap::flag_public;
 
   if ((flags & rpc::object_storage::mask_type) ==
       rpc::object_storage::flag_list_type) {
@@ -354,7 +354,7 @@ system_method_redirect(const torrent::Object::list_type& args) {
 
   rpc::commands.create_redirect(create_new_key(new_key),
                                 create_new_key(dest_key),
-                                rpc::CommandMap::flag_public_xmlrpc |
+                                rpc::CommandMap::flag_public |
                                   rpc::CommandMap::flag_delete_key |
                                   rpc::CommandMap::flag_modifiable);
 

@@ -9,7 +9,7 @@
     key,                                                                       \
     slot,                                                                      \
     &rpc::function,                                                            \
-    rpc::CommandMap::flag_dont_delete | rpc::CommandMap::flag_public_xmlrpc,   \
+    rpc::CommandMap::flag_dont_delete | rpc::CommandMap::flag_public,          \
     NULL,                                                                      \
     NULL);
 

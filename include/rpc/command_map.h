@@ -64,7 +64,7 @@ public:
 
   static constexpr int flag_dont_delete   = 0x1;
   static constexpr int flag_delete_key    = 0x2;
-  static constexpr int flag_public_xmlrpc = 0x4;
+  static constexpr int flag_public        = 0x4;
   static constexpr int flag_modifiable    = 0x10;
   static constexpr int flag_is_redirect   = 0x20;
   static constexpr int flag_has_redirects = 0x40;

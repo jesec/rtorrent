@@ -271,7 +271,7 @@ main(int argc, char** argv) {
     if (OptionParser::has_flag('K', argc, argv)) {
       rpc::call_command_set_value("method.use_intermediate.set", 2);
       lt_log_print(torrent::LOG_WARN,
-                   "Allowing intermediate commands without xmlrpc.");
+                   "Allowing intermediate commands local-only.");
     }
 
     rpc::parse_command_multiple(

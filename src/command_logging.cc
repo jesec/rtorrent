@@ -181,8 +181,8 @@ initialize_command_logging() {
                   std::bind(&apply_log, std::placeholders::_2, 0));
   CMD2_ANY_STRING("log.vmmap.dump",
                   std::bind(&log_vmmap_dump, std::placeholders::_2));
-  CMD2_ANY_STRING_V("log.xmlrpc",
-                    std::bind(&ThreadWorker::set_xmlrpc_log,
+  CMD2_ANY_STRING_V("log.rpc",
+                    std::bind(&ThreadWorker::set_rpc_log,
                               worker_thread,
                               std::placeholders::_2));
 }

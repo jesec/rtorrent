@@ -145,10 +145,10 @@ SCgiTask::event_read() {
 
       if (contentType.find("application/json") != std::string_view::npos) {
         // RFC 4627, 6
-        m_type = JSON;
+        m_type = ContentType::JSON;
       } else if (contentType.find("text/xml") != std::string_view::npos) {
         // Winer, D., "XML-RPC Specification", Header requirements
-        m_type = XML;
+        m_type = ContentType::XML;
       } else {
         goto event_read_failed;
       }

@@ -13,7 +13,7 @@
 namespace rpc {
 
 CommandMap commands;
-XmlRpc     xmlrpc;
+RpcManager rpc;
 ExecFile   execFile;
 
 struct command_map_is_space : std::unary_function<char, bool> {
