@@ -3,18 +3,20 @@
 
 #include "buildinfo.h"
 
+#ifdef HAVE_XMLRPC_C
+
 #include <functional>
 
 #include <cctype>
 #include <limits>
 
-#ifdef HAVE_XMLRPC_C
 #include <stdlib.h>
 #include <xmlrpc-c/server.h>
 #ifndef XMLRPC_HAVE_I8
 static_assert(false, "XMLRPC is too old");
 #endif
-#endif
+
+#include "rpc/rpc_xml.h"
 
 #include <torrent/exceptions.h>
 #include <torrent/object.h>
@@ -23,11 +25,8 @@ static_assert(false, "XMLRPC is too old");
 #include "rpc/parse_commands.h"
 
 #include "rpc/command.h"
-#include "rpc/rpc_xml.h"
 
 namespace rpc {
-
-#ifdef HAVE_XMLRPC_C
 
 class xmlrpc_error : public torrent::base_error {
 public:
@@ -613,23 +612,6 @@ RpcXml::insert_command(const char* name, const char* parm, const char* doc) {
   xmlrpc_env_clean(&localEnv);
 }
 
-#else
-
-void
-RpcXml::initialize() {
-  throw torrent::resource_error("XMLRPC not supported.");
-}
-void
-RpcXml::cleanup() {}
-
-void
-RpcXml::insert_command(const char* name, const char* parm, const char* doc) {}
-
-bool
-RpcXml::process(const char* inBuffer, uint32_t length, res_callback callback) {
-  return false;
 }
 
 #endif
-
-}

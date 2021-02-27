@@ -4,6 +4,8 @@
 #ifndef RTORRENT_RPC_RPC_XML_H
 #define RTORRENT_RPC_RPC_XML_H
 
+#include "buildinfo.h"
+
 #include <functional>
 
 #include "rpc/rpc.h"
@@ -11,6 +13,7 @@
 namespace rpc {
 
 class RpcXml final : public IRpc {
+#ifdef HAVE_XMLRPC_C
 public:
   void initialize() override;
 
@@ -31,6 +34,7 @@ public:
 private:
   void* m_env{ nullptr };
   void* m_registry{ nullptr };
+#endif
 };
 
 }

@@ -37,7 +37,7 @@ public:
                   slot_tracker  fun_t,
                   slot_peer     fun_p);
 
-  bool is_valid() const;
+  bool is_initialized() const;
 
   void cleanup();
 
@@ -58,6 +58,8 @@ public:
 
 private:
   std::array<IRpc*, RPC_TYPE_SIZE> m_rpcProcessors{ nullptr };
+
+  bool m_initialized;
 
   slot_download m_slotFindDownload;
   slot_file     m_slotFindFile;

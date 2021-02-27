@@ -243,11 +243,14 @@ SCgiTask::receive_write(const char* buffer, uint32_t length) {
   if (length + 256 > std::max(m_bufferSize, default_buffer_size))
     realloc_buffer(length + 256);
 
+  const auto header = m_type == ContentType::JSON
+                        ? "Status: 200 OK\r\nContent-Type: "
+                          "application/json\r\nContent-Length: %i\r\n\r\n"
+                        : "Status: 200 OK\r\nContent-Type: "
+                          "text/xml\r\nContent-Length: %i\r\n\r\n";
+
   // Who ever bothers to check the return value?
-  int headerSize = sprintf(
-    m_buffer,
-    "Status: 200 OK\r\nContent-Type: text/xml\r\nContent-Length: %i\r\n\r\n",
-    length);
+  int headerSize = sprintf(m_buffer, header, length);
 
   m_position   = m_buffer;
   m_bufferSize = length + headerSize;

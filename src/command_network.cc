@@ -133,7 +133,7 @@ apply_scgi(const std::string& arg, int type) {
   if (worker_thread->scgi() != nullptr)
     throw torrent::input_error("SCGI already enabled.");
 
-  if (!rpc::rpc.is_valid())
+  if (!rpc::rpc.is_initialized())
     initialize_rpc();
 
   rpc::SCgi* scgi = new rpc::SCgi;

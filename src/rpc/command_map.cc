@@ -48,8 +48,8 @@ CommandMap::insert(key_type key, int flags, const char* parm, const char* doc) {
       "CommandMap::insert(...) tried to insert an already existing key.");
 
   // TODO: This is not honoring the public flags!!!
-  if (rpc::rpc.is_valid() && (flags & flag_public))
-    // if (rpc::rpc.is_valid())
+  if (rpc::rpc.is_initialized() && (flags & flag_public))
+    // if (rpc::rpc.is_initialized())
     rpc::rpc.insert_command(key, parm, doc);
 
   return base_type::insert(
@@ -117,7 +117,7 @@ CommandMap::create_redirect(key_type key_new, key_type key_dest, int flags) {
            ~(flag_delete_key | flag_has_redirects | flag_public);
 
   // TODO: This is not honoring the public flags!!!
-  if (rpc::rpc.is_valid() && (flags & flag_public))
+  if (rpc::rpc.is_initialized() && (flags & flag_public))
     rpc::rpc.insert_command(
       key_new, dest_itr->second.m_parm, dest_itr->second.m_doc);
 

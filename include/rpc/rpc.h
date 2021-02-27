@@ -7,6 +7,8 @@
 #include <cstdint>
 #include <functional>
 
+#include <torrent/exceptions.h>
+
 namespace core {
 class Download;
 }
@@ -23,19 +25,19 @@ class IRpc {
 public:
   using res_callback = std::function<bool(const char*, uint32_t)>;
 
-  virtual void initialize() = 0;
+  virtual void initialize() {}
 
-  virtual void cleanup() = 0;
+  virtual void cleanup() {}
 
-  virtual bool is_valid() const = 0;
+  virtual bool is_valid() const {
+    return false;
+  };
 
-  virtual bool process(const char*  inBuffer,
-                       uint32_t     length,
-                       res_callback callback) = 0;
+  virtual bool process(const char*, uint32_t, res_callback) {
+    throw torrent::internal_error("RPC request not dispatched.");
+  }
 
-  virtual void insert_command(const char* name,
-                              const char* parm,
-                              const char* doc) = 0;
+  virtual void insert_command(const char*, const char*, const char*) {}
 };
 
 }

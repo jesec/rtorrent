@@ -12,41 +12,29 @@
 #include <string>
 
 #include "common.h"
-#include "dispatcher.h"
 
 namespace jsonrpccxx {
 class JsonRpcServer {
 public:
-  JsonRpcServer()
-    : dispatcher() {}
-  virtual ~JsonRpcServer()                                      = default;
-  virtual std::string HandleRequest(const std::string& request) = 0;
+  using JsonRpcHandler =
+    std::function<json(const std::string& name, const json& params)>;
 
-  bool Add(const std::string&       name,
-           MethodHandle             callback,
-           const NamedParamMapping& mapping = NAMED_PARAM_MAPPING) {
-    if (name.rfind("rpc.", 0) == 0)
-      return false;
-    return dispatcher.Add(name, callback, mapping);
-  }
-  bool Add(const std::string&       name,
-           NotificationHandle       callback,
-           const NamedParamMapping& mapping = NAMED_PARAM_MAPPING) {
-    if (name.rfind("rpc.", 0) == 0)
-      return false;
-    return dispatcher.Add(name, callback, mapping);
-  }
+  JsonRpcServer(JsonRpcHandler handler)
+    : m_handler(handler) {}
+  virtual ~JsonRpcServer()                                           = default;
+  virtual std::string HandleRequest(const std::string_view& request) = 0;
 
 protected:
-  Dispatcher dispatcher;
+  JsonRpcHandler m_handler;
 };
 
 class JsonRpc2Server : public JsonRpcServer {
 public:
-  JsonRpc2Server()           = default;
+  JsonRpc2Server(JsonRpcHandler handler)
+    : JsonRpcServer(handler) {}
   ~JsonRpc2Server() override = default;
 
-  std::string HandleRequest(const std::string& requestString) override {
+  std::string HandleRequest(const std::string_view& requestString) override {
     try {
       json request = json::parse(requestString);
       if (request.is_array()) {
@@ -127,7 +115,7 @@ private:
       throw JsonRpcException(-32600,
                              "invalid request: method field must be a string");
     }
-    if (has_key(request, "id") && !valid_id(request)) {
+    if (!valid_id(request)) {
       throw JsonRpcException(
         -32600, "invalid request: id field must be a number, string or null");
     }
@@ -142,20 +130,10 @@ private:
         has_key_type(request, "params", json::value_t::null)) {
       request["params"] = json::array();
     }
-    if (!has_key(request, "id")) {
-      try {
-        dispatcher.InvokeNotification(request["method"], request["params"]);
-        return json();
-      } catch (std::exception& e) {
-        return json();
-      }
-    } else {
-      return { { "jsonrpc", "2.0" },
-               { "id", request["id"] },
-               { "result",
-                 dispatcher.InvokeMethod(request["method"],
-                                         request["params"]) } };
-    }
+
+    return { { "jsonrpc", "2.0" },
+             { "id", request["id"] },
+             { "result", m_handler(request["method"], request["params"]) } };
   }
 };
 }
