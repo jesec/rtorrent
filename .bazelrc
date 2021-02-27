@@ -54,13 +54,11 @@ build:scudo --linkopt -fsanitize=scudo
 build:scudo --linkopt -fuse-ld=lld
 
 # Use Clang
-build:clang -c opt
 build:clang --action_env=CC=clang
 build:clang --action_env=CXX=clang++
 build:clang --linkopt -fuse-ld=lld
 
 # Use GCC
-build:gcc -c opt
 build:gcc --action_env=CC=gcc
 build:gcc --action_env=CXX=g++
 
