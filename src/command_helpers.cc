@@ -8,6 +8,8 @@
 #include "globals.h"
 
 void
+initialize_command_logic();
+void
 initialize_command_dynamic();
 void
 initialize_command_download();
@@ -38,6 +40,7 @@ initialize_command_ui();
 
 void
 initialize_commands() {
+  initialize_command_logic();
   initialize_command_dynamic();
   initialize_command_events();
   initialize_command_network();
