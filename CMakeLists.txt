@@ -14,7 +14,7 @@ set(API_VERSION 10)
 # Options
 option(BUILDINFO_ONLY "Generate buildinfo.h only" OFF)
 option(USE_EXTRA_DEBUG "Enable extra debugging checks" OFF)
-option(USE_RUNTIME_CA_DETECTION "Enable runtime detection of path to CA bundle" ON)
+option(USE_RUNTIME_CA_DETECTION "Enable runtime detection of path to CA bundle" OFF)
 option(USE_XMLRPC "Enable XML-RPC interface" ON)
 
 # Include CMake modules

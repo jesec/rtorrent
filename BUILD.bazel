@@ -73,6 +73,7 @@ cmake_external(
     name = "buildinfo",
     cache_entries = {
         "BUILDINFO_ONLY": "ON",
+        "USE_RUNTIME_CA_DETECTION": "ON",
     },
     headers_only = True,
     lib_source = "//:cmake_rules",
