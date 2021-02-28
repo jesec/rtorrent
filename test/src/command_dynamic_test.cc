@@ -7,9 +7,9 @@
 #include "test/src/command_dynamic_test.h"
 
 void
-initialize_command_dynamic();
+initialize_command_logic();
 void
-initialize_command_ui();
+initialize_command_dynamic();
 
 void
 CommandDynamicTest::SetUp() {
@@ -18,8 +18,8 @@ CommandDynamicTest::SetUp() {
     cachedTime = torrent::utils::timer::current();
     control    = new Control;
 
+    initialize_command_logic();
     initialize_command_dynamic();
-    initialize_command_ui();
   }
 }
 
