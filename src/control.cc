@@ -3,6 +3,7 @@
 
 #include "buildinfo.h"
 
+#include <csignal>
 #include <iostream>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -160,20 +161,40 @@ Control::handle_shutdown() {
     m_directory_events->close();
     m_core->shutdown(false);
 
-    if (!m_taskShutdown.is_queued())
-      priority_queue_insert(&taskScheduler,
-                            &m_taskShutdown,
-                            cachedTime +
-                              torrent::utils::timer::from_seconds(5));
-
   } else {
     // Temporary hack:
     if (worker_thread->is_active())
       worker_thread->queue_item(&ThreadBase::stop_thread);
 
     m_core->shutdown(true);
+
+    if (m_shutdownQuick > 18) {
+      if (display::Canvas::isInitialized()) {
+        control->core()->push_log("Urgently shutting down...");
+      } else {
+        std::cout << "rTorrent: urgently shutting down..." << std::endl;
+      }
+      control->core()->download_list()->session_save();
+      control->core()->download_store()->disable();
+      ::raise(SIGKILL);
+    }
   }
 
-  m_shutdownQuick    = true;
+  if (!m_taskShutdown.is_queued()) {
+    priority_queue_insert(&taskScheduler,
+                          &m_taskShutdown,
+                          cachedTime + torrent::utils::timer::from_seconds(5));
+  }
+
+  if (m_shutdownReceived) {
+    // user interaction carry more weight
+    // 3 interactions for urgent shutdown
+    m_shutdownQuick += 6;
+  } else {
+    // systemd sends SIGKILL at the 90 sec
+    // initiate urgent shutdown at the (18-6)/5=60 sec
+    ++m_shutdownQuick;
+  }
+
   m_shutdownReceived = false;
 }

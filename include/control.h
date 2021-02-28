@@ -67,7 +67,7 @@ public:
   }
   void receive_quick_shutdown() {
     m_shutdownReceived = true;
-    m_shutdownQuick    = true;
+    ++m_shutdownQuick;
   }
 
   core::Manager* core() {
@@ -131,7 +131,7 @@ private:
   input::Manager*    m_input;
   input::InputEvent* m_inputStdin;
 
-  std::atomic<bool> lt_cacheline_aligned m_shutdownQuick{ false };
+  std::atomic<uint8_t> lt_cacheline_aligned m_shutdownQuick{ 0 };
 
   rpc::CommandScheduler*     m_commandScheduler;
   rpc::object_storage*       m_objectStorage;
