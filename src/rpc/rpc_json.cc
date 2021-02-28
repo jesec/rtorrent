@@ -1,21 +1,182 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2021, Contributors to the rTorrent project
 
-#include <string_view>
-
 #include "rpc/rpc_json.h"
 
 #ifdef HAVE_JSON
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <iterator>
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include <nlohmann/json.hpp>
 
+#include <torrent/common.h>
+#include <torrent/hash_string.h>
+
+#include "rpc/command.h"
 #include "rpc/command_map.h"
 #include "rpc/parse_commands.h"
+#include "utils/jsonrpc/common.h"
 
 using jsonrpccxx::JsonRpcException;
 using nlohmann::json;
 
 namespace rpc {
+
+void
+string_to_target(const std::string_view& targetString,
+                 int                     requireIndex,
+                 rpc::target_type*       target) {
+  // <hash> or <hash>:f<index> or <hash>:t<index> or ''
+  if (targetString.size() == 0 && !requireIndex) {
+    return;
+  }
+
+  // Length of SHA1 hash is 40
+  if (targetString.size() < 40) {
+    throw JsonRpcException(-32602, "invalid parameters: invalid target");
+  }
+
+  std::string      hash(targetString);
+  char             type = 'd';
+  std::string_view index;
+
+  const auto& delimPos = targetString.find_first_of(':', 41);
+  if (delimPos == std::string_view::npos ||
+      delimPos + 2 >= targetString.size()) {
+    if (requireIndex) {
+      throw JsonRpcException(-32602, "invalid parameters: no index");
+    }
+  } else {
+    hash  = targetString.substr(0, delimPos);
+    type  = targetString[delimPos + 1];
+    index = targetString.substr(delimPos + 2);
+  }
+
+  core::Download* download = rpc.slot_find_download()(hash.c_str());
+
+  if (download == nullptr) {
+    throw JsonRpcException(-32602, "invalid parameters: info-hash not found");
+  }
+
+  try {
+    switch (type) {
+      case 'f':
+        *target = rpc::make_target(
+          command_base::target_file,
+          rpc.slot_find_file()(download, std::stoi(std::string(index))));
+        break;
+      case 't':
+        *target = rpc::make_target(
+          command_base::target_tracker,
+          rpc.slot_find_tracker()(download, std::stoi(std::string(index))));
+        break;
+      case 'p':
+        *target = rpc::make_target(
+          command_base::target_peer,
+          rpc.slot_find_peer()(download, std::string(index).c_str()));
+        break;
+      default:
+        *target = rpc::make_target(download);
+        break;
+    }
+  } catch (const std::logic_error&) {
+    throw JsonRpcException(-32602, "invalid parameters: invalid index");
+  }
+
+  if (target == nullptr || target->second == nullptr) {
+    throw JsonRpcException(
+      -32602, "invalid parameters: unable to find requested target");
+  }
+}
+
+torrent::Object
+json_to_object(const json& value, int callType, rpc::target_type* target) {
+  switch (value.type()) {
+    case json::value_t::number_integer:
+      return torrent::Object(value.get<int64_t>());
+    case json::value_t::boolean:
+      return value.get<bool>() ? torrent::Object(int64_t(1))
+                               : torrent::Object(int64_t(0));
+    case json::value_t::string:
+      return torrent::Object(value.get<std::string>());
+    case json::value_t::array: {
+      const auto& count = value.size();
+
+      uint8_t start = 0;
+
+      if (callType != command_base::target_generic) {
+        if (count < 1) {
+          throw JsonRpcException(-32602, "invalid parameters: too few");
+        }
+
+        if (!value[0].is_string()) {
+          throw JsonRpcException(-32602,
+                                 "invalid parameters: target must be a string");
+        }
+
+        string_to_target(value[0].get<std::string_view>(),
+                         callType != command_base::target_any,
+                         target);
+
+        // start from the second member since the first is the target
+        ++start;
+      }
+
+      if (count == 0) {
+        return torrent::Object();
+      } else if (start == count - 1) {
+        return json_to_object(value[start], callType, target);
+      } else {
+        torrent::Object             result  = torrent::Object::create_list();
+        torrent::Object::list_type& listRef = result.as_list();
+
+        auto current = start;
+        while (current != count) {
+          listRef.push_back(json_to_object(value[current], callType, target));
+          ++current;
+        }
+
+        return result;
+      }
+    }
+    default:
+      break;
+  }
+
+  throw JsonRpcException(-32600, "not implemented");
+}
+
+json
+object_to_json(const torrent::Object& object) {
+  switch (object.type()) {
+    case torrent::Object::TYPE_VALUE:
+      return object.as_value();
+    case torrent::Object::TYPE_STRING:
+      return object.as_string();
+    case torrent::Object::TYPE_LIST: {
+      json result = json::array();
+      std::transform(
+        object.as_list().cbegin(),
+        object.as_list().cend(),
+        std::back_inserter(result),
+        [](const torrent::Object& object) { return object_to_json(object); });
+      return result;
+    }
+    case torrent::Object::TYPE_MAP:
+    case torrent::Object::TYPE_DICT_KEY:
+      break;
+    default:
+      return json{ 0 };
+  }
+
+  throw JsonRpcException(-32600, "not implemented");
+}
 
 json
 jsonrpc_call_command(const std::string& method, const json& params) {
@@ -29,13 +190,46 @@ jsonrpc_call_command(const std::string& method, const json& params) {
     }
   }
 
+  if (std::string_view("system.listMethods") == method) {
+    json methods = json::array();
+    std::transform(
+      commands.cbegin(),
+      commands.cend(),
+      std::back_inserter(methods),
+      [](const std::pair<const char* const, rpc::command_map_data_type>&
+           mapping) { return mapping.first; });
+    return methods;
+  }
+
   CommandMap::iterator itr = commands.find(method.c_str());
 
   if (itr == commands.end()) {
     throw JsonRpcException(-32601, "method not found: " + method);
   }
 
-  throw JsonRpcException(-32600, "not implemented");
+  try {
+    torrent::Object  object;
+    rpc::target_type target = rpc::make_target();
+
+    if (itr->second.m_flags & CommandMap::flag_no_target) {
+      json_to_object(params, command_base::target_generic, &target)
+        .swap(object);
+    } else if (itr->second.m_flags & CommandMap::flag_file_target) {
+      json_to_object(params, command_base::target_file, &target).swap(object);
+    } else if (itr->second.m_flags & CommandMap::flag_tracker_target) {
+      json_to_object(params, command_base::target_tracker, &target)
+        .swap(object);
+    } else {
+      json_to_object(params, command_base::target_any, &target).swap(object);
+    }
+
+    return object_to_json(rpc::commands.call_command(itr, object, target));
+
+  } catch (torrent::input_error& e) {
+    throw JsonRpcException(-32602, e.what());
+  } catch (torrent::local_error& e) {
+    throw JsonRpcException(-32000, e.what());
+  }
 }
 
 void
