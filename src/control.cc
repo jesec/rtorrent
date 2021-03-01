@@ -127,8 +127,20 @@ Control::cleanup_exception() {
 
 bool
 Control::is_shutdown_completed() {
-  if (!m_shutdownQuick || worker_thread->is_active())
+  if (!m_shutdownQuick)
     return false;
+
+  // Urgent shutdown: disregard unfinished requests and save session
+  if (m_shutdownQuick > 18) {
+    if (!display::Canvas::isInitialized()) {
+      std::cout << "rTorrent: urgently shutting down..." << std::endl;
+    }
+    return true;
+  }
+
+  if (worker_thread->is_active()) {
+    return false;
+  }
 
   // Tracker requests can be disowned, so wait for these to
   // finish. The edge case of torrent http downloads may delay
@@ -152,32 +164,17 @@ Control::handle_shutdown() {
               << "shutting down..." << std::endl;
   }
 
-  if (!m_shutdownQuick) {
-    // Temporary hack:
-    if (worker_thread->is_active())
-      worker_thread->queue_item(&ThreadBase::stop_thread);
+  // Temporary hack:
+  if (worker_thread->is_active()) {
+    worker_thread->queue_item(&ThreadBase::stop_thread);
+  }
 
+  if (!m_shutdownQuick) {
     torrent::connection_manager()->listen_close();
     m_directory_events->close();
     m_core->shutdown(false);
-
   } else {
-    // Temporary hack:
-    if (worker_thread->is_active())
-      worker_thread->queue_item(&ThreadBase::stop_thread);
-
     m_core->shutdown(true);
-
-    if (m_shutdownQuick > 18) {
-      if (display::Canvas::isInitialized()) {
-        control->core()->push_log("Urgently shutting down...");
-      } else {
-        std::cout << "rTorrent: urgently shutting down..." << std::endl;
-      }
-      control->core()->download_list()->session_save();
-      control->core()->download_store()->disable();
-      ::raise(SIGKILL);
-    }
   }
 
   if (!m_taskShutdown.is_queued()) {
