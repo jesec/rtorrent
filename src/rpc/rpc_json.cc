@@ -165,12 +165,39 @@ object_to_json(const torrent::Object& object) {
         object.as_list().cbegin(),
         object.as_list().cend(),
         std::back_inserter(result),
-        [](const torrent::Object& object) { return object_to_json(object); });
+        [](const torrent::Object& element) { return object_to_json(element); });
       return result;
     }
-    case torrent::Object::TYPE_MAP:
-    case torrent::Object::TYPE_DICT_KEY:
-      break;
+    case torrent::Object::TYPE_MAP: {
+      json result = json::object();
+      std::for_each(
+        object.as_map().cbegin(),
+        object.as_map().cend(),
+        [&result](
+          const torrent::Object::map_type::const_iterator::value_type& pair) {
+          result.emplace(pair.first, object_to_json(pair.second));
+        });
+      return result;
+    }
+    case torrent::Object::TYPE_DICT_KEY: {
+      json result = json::array();
+
+      result.push_back(object_to_json(object.as_dict_key()));
+
+      const auto& dict_obj = object.as_dict_obj();
+      if (dict_obj.is_list()) {
+        std::transform(dict_obj.as_list().cbegin(),
+                       dict_obj.as_list().cend(),
+                       std::back_inserter(result),
+                       [](const torrent::Object& element) {
+                         return object_to_json(element);
+                       });
+      } else {
+        result.push_back(object_to_json(dict_obj));
+      }
+
+      return result;
+    }
     default:
       return json{ 0 };
   }
