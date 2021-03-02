@@ -132,20 +132,21 @@ load_session_torrents() {
               << " entries from session directory" << std::endl;
   }
 
-  auto print_progress =
-    [count = ulong(0), printed = uint8_t(0), total = entries.size()]() mutable {
-      if (!display::Canvas::isInitialized()) {
-        ++count;
-        if (count < total) {
-          double percentage = static_cast<double>(count) / total;
-          if (percentage >= 0.1 && printed < percentage * 10) {
-            std::cout << "rTorrent: " << count << " torrents ("
-                      << (int)(percentage * 100) << "%) loaded" << std::endl;
-            printed += 2;
-          }
+  auto print_progress = [count   = static_cast<unsigned long>(0),
+                         printed = uint8_t(0),
+                         total   = entries.size()]() mutable {
+    if (!display::Canvas::isInitialized()) {
+      ++count;
+      if (count < total) {
+        double percentage = static_cast<double>(count) / total;
+        if (percentage >= 0.1 && printed < percentage * 10) {
+          std::cout << "rTorrent: " << count << " torrents ("
+                    << (int)(percentage * 100) << "%) loaded" << std::endl;
+          printed += 2;
         }
       }
-    };
+    }
+  };
 
   for (utils::Directory::const_iterator first = entries.begin(),
                                         last  = entries.end();
@@ -621,9 +622,11 @@ main(int argc, char** argv) {
                              "startup_done",
                              "System startup_done event action failed: ");
 
-    std::cout << "rTorrent: started, "
-              << control->core()->download_list()->size() << " torrents loaded"
-              << std::endl;
+    if (!display::Canvas::isInitialized()) {
+      std::cout << "rTorrent: started, "
+                << control->core()->download_list()->size()
+                << " torrents loaded" << std::endl;
+    }
 
     torrent::thread_base::event_loop(torrent::main_thread());
 
