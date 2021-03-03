@@ -27,6 +27,11 @@ if(USE_RUNTIME_CA_DETECTION)
   file(APPEND ${BUILDINFO_H} "#define RT_USE_RUNTIME_CA_DETECTION 1\n\n")
 endif()
 
+if(USE_JSONRPC)
+  file(APPEND ${BUILDINFO_H} "/* Support for JSON-RPC */\n")
+  file(APPEND ${BUILDINFO_H} "#define HAVE_JSON 1\n\n")
+endif()
+
 if(USE_XMLRPC)
   file(APPEND ${BUILDINFO_H} "/* Support for XMLRPC-C */\n")
   file(APPEND ${BUILDINFO_H} "#define HAVE_XMLRPC_C 1\n\n")

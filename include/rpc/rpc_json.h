@@ -4,10 +4,11 @@
 #ifndef RTORRENT_RPC_RPC_JSON_H
 #define RTORRENT_RPC_RPC_JSON_H
 
+#include "buildinfo.h"
+
 #include <functional>
 
-#if __has_include(<nlohmann/json.hpp>)
-#define HAVE_JSON
+#ifdef HAVE_JSON
 #include "utils/jsonrpc/server.h"
 #endif
 

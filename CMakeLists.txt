@@ -15,6 +15,7 @@ set(API_VERSION 10)
 option(BUILDINFO_ONLY "Generate buildinfo.h only" OFF)
 option(USE_EXTRA_DEBUG "Enable extra debugging checks" OFF)
 option(USE_RUNTIME_CA_DETECTION "Enable runtime detection of path to CA bundle" OFF)
+option(USE_JSONRPC "Enable JSON-RPC interface" ON)
 option(USE_XMLRPC "Enable XML-RPC interface" ON)
 
 # Include CMake modules
@@ -69,6 +70,11 @@ else()
     find_package(Curses REQUIRED)
   endif()
   include_directories(${CURSES_INCLUDE_DIRS})
+
+  if(USE_JSONRPC)
+    find_package(JSON REQUIRED)
+    include_directories(${JSON_INCLUDE_DIR})
+  endif()
 
   if(USE_XMLRPC)
     find_package(XMLRPC REQUIRED c++)
