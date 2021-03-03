@@ -46,7 +46,7 @@ string_to_target(const std::string_view& targetString,
   char             type = 'd';
   std::string_view index;
 
-  const auto& delimPos = targetString.find_first_of(':', 41);
+  const auto& delimPos = targetString.find_first_of(':', 40);
   if (delimPos == std::string_view::npos ||
       delimPos + 2 >= targetString.size()) {
     if (requireIndex) {
