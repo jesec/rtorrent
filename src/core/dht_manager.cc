@@ -36,6 +36,17 @@ DhtManager::~DhtManager() {
 }
 
 void
+DhtManager::add_bootstrap(const sockaddr* addr, int port) {
+  for (const auto& [e_addr, e_port] : m_bootstrapNodes) {
+    if (e_addr == addr && e_port == port) {
+      return;
+    }
+  }
+
+  m_bootstrapNodes.emplace_back(addr, port);
+}
+
+void
 DhtManager::load_dht_cache() {
   if (m_start == dht_disable ||
       !control->core()->download_store()->is_enabled()) {
@@ -103,6 +114,12 @@ DhtManager::start_dht() {
   }
 
   torrent::dht_manager()->reset_statistics();
+
+  if (!m_bootstrapNodes.empty()) {
+    for (const auto& [addr, port] : m_bootstrapNodes) {
+      torrent::dht_manager()->add_node(addr, port);
+    }
+  }
 
   m_updateTimeout.slot() = std::bind(&DhtManager::update, this);
   priority_queue_insert(

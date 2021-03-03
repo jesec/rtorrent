@@ -24,26 +24,8 @@ tracker_set_enabled(torrent::Tracker* tracker, bool state) {
     tracker->disable();
 }
 
-struct call_add_node_t {
-  call_add_node_t(int port)
-    : m_port(port) {}
-
-  void operator()(const sockaddr* sa, int) {
-    if (sa == nullptr) {
-      lt_log_print(torrent::LOG_DHT_WARN, "Could not resolve host.");
-    } else {
-      torrent::dht_manager()->add_node(sa, m_port);
-    }
-  }
-
-  int m_port;
-};
-
-torrent::Object
-apply_dht_add_node(const std::string& arg) {
-  if (!torrent::dht_manager()->is_valid())
-    throw torrent::input_error("DHT not enabled.");
-
+std::pair<const std::string&, int>
+parse_host_port(const std::string& arg) {
   int  port, ret;
   char dummy;
   char host[1024];
@@ -58,11 +40,48 @@ apply_dht_add_node(const std::string& arg) {
   if (port < 1 || port > 65535)
     throw torrent::input_error("Invalid port number.");
 
+  return std::make_pair(std::string(host), port);
+}
+
+torrent::Object
+apply_dht_add_node(const std::string& arg) {
+  if (!torrent::dht_manager()->is_valid()) {
+    throw torrent::input_error("DHT not enabled.");
+  }
+
+  const auto& [host, port] = parse_host_port(arg);
+
   torrent::connection_manager()->resolver()(
-    host,
+    host.c_str(),
     (int)torrent::utils::socket_address::pf_inet,
     SOCK_DGRAM,
-    call_add_node_t(port));
+    [port = port](const sockaddr* sa, int) {
+      if (sa == nullptr) {
+        lt_log_print(torrent::LOG_DHT_WARN, "Could not resolve host.");
+      } else {
+        torrent::dht_manager()->add_node(sa, port);
+      }
+    });
+
+  return torrent::Object();
+}
+
+torrent::Object
+apply_dht_add_bootstrap(const std::string& arg) {
+  const auto& [host, port] = parse_host_port(arg);
+
+  torrent::connection_manager()->resolver()(
+    host.c_str(),
+    (int)torrent::utils::socket_address::pf_inet,
+    SOCK_DGRAM,
+    [port = port](const sockaddr* sa, int) {
+      if (sa == nullptr) {
+        lt_log_print(torrent::LOG_DHT_WARN, "Could not resolve host.");
+      } else {
+        control->dht_manager()->add_bootstrap(sa, port);
+      }
+    });
+
   return torrent::Object();
 }
 
@@ -194,6 +213,8 @@ initialize_command_tracker() {
                               control->dht_manager(),
                               std::placeholders::_2));
   CMD2_VAR_VALUE("dht.port", int64_t(6881));
+  CMD2_ANY_STRING("dht.add_bootstrap",
+                  std::bind(&apply_dht_add_bootstrap, std::placeholders::_2));
   CMD2_ANY_STRING("dht.add_node",
                   std::bind(&apply_dht_add_node, std::placeholders::_2));
   CMD2_ANY(

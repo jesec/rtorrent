@@ -14,6 +14,8 @@ public:
   DhtManager() = default;
   ~DhtManager();
 
+  void add_bootstrap(const sockaddr* addr, int port);
+
   void            load_dht_cache();
   void            save_dht_cache();
   torrent::Object dht_statistics();
@@ -57,6 +59,8 @@ private:
 
   int         m_start{ dht_auto };
   std::string m_throttleName;
+
+  std::vector<std::pair<const sockaddr*, int>> m_bootstrapNodes;
 };
 
 }

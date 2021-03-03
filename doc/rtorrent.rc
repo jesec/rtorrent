@@ -46,12 +46,18 @@ schedule2 = watch_start, 10, 10, ((load.start_verbose, (cat, (cfg.watch), "start
 #network.port_range.set = 6881-6999
 #network.port_random.set = yes
 
-# Tracker-less torrent and UDP tracker support
-# Disable if privacy is paramount as DHT and PEX are vulnerable to passive sniffing
+# Distributed Hash Table and Peer EXchange
+# Enable tracker-less torrents but vulnerable to passive sniffing
 # DHT and PEX are always disabled for private torrents
 #dht.mode.set = auto
 #dht.port.set = 6881
 #protocol.pex.set = yes
+
+# DHT nodes for bootstrapping
+dht.add_bootstrap = dht.transmissionbt.com:6881
+dht.add_bootstrap = dht.libtorrent.org:25401
+
+# UDP tracker support
 #trackers.use_udp.set = yes
 
 # Peer settings
