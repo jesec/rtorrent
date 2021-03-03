@@ -85,3 +85,9 @@ jobs:
 
       - name: Merge multi-arch Docker image manifests
         run: docker buildx imagetools create -t jesec/rtorrent:master jesec/rtorrent:master-arm64 jesec/rtorrent:master-amd64
+
+      - name: Remove intermediate tags
+        run: |
+          token=`curl -s -H "Content-Type: application/json" -X POST -d '{"username": "jesec","password":"${{ secrets.DOCKERHUB_PASSWORD }}"}' "https://hub.docker.com/v2/users/login/" | jq -r '.token'`
+          curl "https://hub.docker.com/v2/repositories/jesec/rtorrent/tags/master-arm64/" -X DELETE -H "Authorization: JWT ${token}"
+          curl "https://hub.docker.com/v2/repositories/jesec/rtorrent/tags/master-amd64/" -X DELETE -H "Authorization: JWT ${token}"
