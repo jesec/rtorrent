@@ -2,6 +2,7 @@
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
 #include <cstdio>
+
 #include <torrent/dht_manager.h>
 #include <torrent/tracker.h>
 #include <torrent/utils/address_info.h>
@@ -24,23 +25,32 @@ tracker_set_enabled(torrent::Tracker* tracker, bool state) {
     tracker->disable();
 }
 
-std::pair<const std::string&, int>
+std::pair<char*, int>
 parse_host_port(const std::string& arg) {
-  int  port, ret;
-  char dummy;
-  char host[1024];
+  const auto& delimPos = arg.find_first_of(':');
 
-  ret = std::sscanf(arg.c_str(), "%1023[^:]:%i%c", host, &port, &dummy);
-
-  if (ret == 1)
-    port = 6881;
-  else if (ret != 2)
+  const auto& host = arg.substr(0, delimPos);
+  if (host.size() > 1023) {
     throw torrent::input_error("Could not parse host.");
+  }
 
-  if (port < 1 || port > 65535)
+  int port = 6881;
+  if (delimPos != std::string::npos) {
+    try {
+      port = std::stoi(arg.substr(delimPos + 1));
+    } catch (const std::logic_error&) {
+      throw torrent::input_error("Invalid port number.");
+    }
+  }
+
+  if (port < 1 || port > 65535) {
     throw torrent::input_error("Invalid port number.");
+  }
 
-  return std::make_pair(std::string(host), port);
+  char* host_raw = new char[1024];
+  std::strcpy(host_raw, host.c_str());
+
+  return std::make_pair(host_raw, port);
 }
 
 torrent::Object
@@ -52,15 +62,16 @@ apply_dht_add_node(const std::string& arg) {
   const auto& [host, port] = parse_host_port(arg);
 
   torrent::connection_manager()->resolver()(
-    host.c_str(),
+    host,
     (int)torrent::utils::socket_address::pf_inet,
     SOCK_DGRAM,
-    [port = port](const sockaddr* sa, int) {
+    [&host = host, port = port](const sockaddr* sa, int) {
       if (sa == nullptr) {
         lt_log_print(torrent::LOG_DHT_WARN, "Could not resolve host.");
       } else {
         torrent::dht_manager()->add_node(sa, port);
       }
+      delete[] host;
     });
 
   return torrent::Object();
@@ -71,15 +82,16 @@ apply_dht_add_bootstrap(const std::string& arg) {
   const auto& [host, port] = parse_host_port(arg);
 
   torrent::connection_manager()->resolver()(
-    host.c_str(),
+    host,
     (int)torrent::utils::socket_address::pf_inet,
     SOCK_DGRAM,
-    [port = port](const sockaddr* sa, int) {
+    [&host = host, port = port](const sockaddr* sa, int) {
       if (sa == nullptr) {
         lt_log_print(torrent::LOG_DHT_WARN, "Could not resolve host.");
       } else {
         control->dht_manager()->add_bootstrap(sa, port);
       }
+      delete[] host;
     });
 
   return torrent::Object();
