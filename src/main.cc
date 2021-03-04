@@ -5,6 +5,7 @@
 
 #include "buildinfo.h"
 
+#include <cstdint>
 #include <cstdlib>
 #include <inttypes.h>
 #include <iostream>
@@ -122,10 +123,37 @@ parse_options(int                                              argc,
   }
 }
 
+static unsigned long progress_count   = 0;
+static unsigned long progress_total   = 0;
+static uint8_t       progress_printed = 0;
+
+static void
+print_progress() {
+  if (progress_total != 0) {
+    ++progress_count;
+    if (progress_count < progress_total) {
+      double percentage = static_cast<double>(progress_count) / progress_total;
+      if (percentage >= 0.1 && progress_printed < percentage * 10) {
+        std::cout << "rTorrent: " << progress_count << " torrents ("
+                  << (int)(percentage * 100) << "%) loaded" << std::endl;
+        progress_printed += 2;
+      }
+    }
+  }
+}
+
 void
 load_session_torrents() {
   utils::Directory entries =
     control->core()->download_store()->get_formated_entries();
+
+  if (!display::Canvas::isInitialized() && entries.size()) {
+    std::cout << "rTorrent: loading " << entries.size()
+              << " entries from session directory" << std::endl;
+    progress_count   = 0;
+    progress_total   = entries.size();
+    progress_printed = 0;
+  }
 
   for (utils::Directory::const_iterator first = entries.begin(),
                                         last  = entries.end();
@@ -134,14 +162,19 @@ load_session_torrents() {
     // We don't really support session torrents that are links. These
     // would be overwritten anyway on exit, and thus not really be
     // useful.
-    if (!first->is_file())
+    if (!first->is_file()) {
+      print_progress();
       continue;
+    }
 
     core::DownloadFactory* f = new core::DownloadFactory(control->core());
 
     // Replace with session torrent flag.
     f->set_session(true);
-    f->slot_finished([f]() { delete f; });
+    f->slot_finished([f]() {
+      print_progress();
+      delete f;
+    });
     f->load(entries.path() + first->d_name);
     f->commit();
   }
@@ -595,6 +628,12 @@ main(int argc, char** argv) {
                              rpc::make_target(),
                              "startup_done",
                              "System startup_done event action failed: ");
+
+    if (!display::Canvas::isInitialized()) {
+      std::cout << "rTorrent: started, "
+                << control->core()->download_list()->size()
+                << " torrents loaded" << std::endl;
+    }
 
     torrent::thread_base::event_loop(torrent::main_thread());
 
