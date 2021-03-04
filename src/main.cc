@@ -127,27 +127,6 @@ load_session_torrents() {
   utils::Directory entries =
     control->core()->download_store()->get_formated_entries();
 
-  if (!display::Canvas::isInitialized() && entries.size()) {
-    std::cout << "rTorrent: loading " << entries.size()
-              << " entries from session directory" << std::endl;
-  }
-
-  auto print_progress = [count   = static_cast<unsigned long>(0),
-                         printed = uint8_t(0),
-                         total   = entries.size()]() mutable {
-    if (!display::Canvas::isInitialized()) {
-      ++count;
-      if (count < total) {
-        double percentage = static_cast<double>(count) / total;
-        if (percentage >= 0.1 && printed < percentage * 10) {
-          std::cout << "rTorrent: " << count << " torrents ("
-                    << (int)(percentage * 100) << "%) loaded" << std::endl;
-          printed += 2;
-        }
-      }
-    }
-  };
-
   for (utils::Directory::const_iterator first = entries.begin(),
                                         last  = entries.end();
        first != last;
@@ -155,19 +134,14 @@ load_session_torrents() {
     // We don't really support session torrents that are links. These
     // would be overwritten anyway on exit, and thus not really be
     // useful.
-    if (!first->is_file()) {
-      print_progress();
+    if (!first->is_file())
       continue;
-    }
 
     core::DownloadFactory* f = new core::DownloadFactory(control->core());
 
     // Replace with session torrent flag.
     f->set_session(true);
-    f->slot_finished([f, &print_progress]() {
-      delete f;
-      print_progress();
-    });
+    f->slot_finished([f]() { delete f; });
     f->load(entries.path() + first->d_name);
     f->commit();
   }
@@ -621,12 +595,6 @@ main(int argc, char** argv) {
                              rpc::make_target(),
                              "startup_done",
                              "System startup_done event action failed: ");
-
-    if (!display::Canvas::isInitialized()) {
-      std::cout << "rTorrent: started, "
-                << control->core()->download_list()->size()
-                << " torrents loaded" << std::endl;
-    }
 
     torrent::thread_base::event_loop(torrent::main_thread());
 
