@@ -81,18 +81,9 @@ torrent::Object
 apply_dht_add_bootstrap(const std::string& arg) {
   const auto& [host, port] = parse_host_port(arg);
 
-  torrent::connection_manager()->resolver()(
-    host,
-    (int)torrent::utils::socket_address::pf_inet,
-    SOCK_DGRAM,
-    [&host = host, port = port](const sockaddr* sa, int) {
-      if (sa == nullptr) {
-        lt_log_print(torrent::LOG_DHT_WARN, "Could not resolve host.");
-      } else {
-        control->dht_manager()->add_bootstrap(sa, port);
-      }
-      delete[] host;
-    });
+  control->dht_manager()->add_bootstrap(std::string(host), port);
+
+  free(host);
 
   return torrent::Object();
 }

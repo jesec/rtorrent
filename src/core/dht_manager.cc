@@ -36,14 +36,14 @@ DhtManager::~DhtManager() {
 }
 
 void
-DhtManager::add_bootstrap(const sockaddr* addr, int port) {
-  for (const auto& [e_addr, e_port] : m_bootstrapNodes) {
-    if (e_addr == addr && e_port == port) {
+DhtManager::add_bootstrap(std::string host, int port) {
+  for (const auto& [e_host, e_port] : m_bootstrapNodes) {
+    if (e_host == host && e_port == port) {
       return;
     }
   }
 
-  m_bootstrapNodes.emplace_back(addr, port);
+  m_bootstrapNodes.emplace_back(host, port);
 }
 
 void
@@ -116,8 +116,8 @@ DhtManager::start_dht() {
   torrent::dht_manager()->reset_statistics();
 
   if (!m_bootstrapNodes.empty()) {
-    for (const auto& [addr, port] : m_bootstrapNodes) {
-      torrent::dht_manager()->add_node(addr, port);
+    for (const auto& [host, port] : m_bootstrapNodes) {
+      torrent::dht_manager()->add_node(host, port);
     }
   }
 
