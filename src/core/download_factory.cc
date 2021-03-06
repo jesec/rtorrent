@@ -31,6 +31,17 @@
 namespace core {
 
 bool
+is_data_uri(const std::string& uri) {
+  return std::strncmp(uri.c_str(), "data:", 5) == 0 &&
+         uri.find("base64,", 5) != std::string::npos;
+}
+
+bool
+is_magnet_uri(const std::string& uri) {
+  return std::strncmp(uri.c_str(), "magnet:?", 8) == 0;
+}
+
+bool
 is_network_uri(const std::string& uri) {
   return std::strncmp(uri.c_str(), "http://", 7) == 0 ||
          std::strncmp(uri.c_str(), "https://", 8) == 0 ||
@@ -54,11 +65,6 @@ download_factory_add_stream(torrent::Object* root,
 
   root->insert_key_move(key, obj);
   return true;
-}
-
-bool
-is_magnet_uri(const std::string& uri) {
-  return std::strncmp(uri.c_str(), "magnet:?", 8) == 0;
 }
 
 DownloadFactory::DownloadFactory(Manager* m)

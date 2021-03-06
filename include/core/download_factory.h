@@ -109,9 +109,11 @@ private:
 };
 
 bool
-is_network_uri(const std::string& uri);
+is_data_uri(const std::string& uri);
 bool
 is_magnet_uri(const std::string& uri);
+bool
+is_network_uri(const std::string& uri);
 
 }
 
