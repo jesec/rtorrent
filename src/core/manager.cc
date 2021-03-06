@@ -41,11 +41,6 @@
 
 namespace core {
 
-const int Manager::create_start;
-const int Manager::create_tied;
-const int Manager::create_quiet;
-const int Manager::create_raw_data;
-
 void
 Manager::push_log(const char* msg) {
   m_log_important->lock_and_push_log(msg, strlen(msg), 0);
@@ -370,7 +365,7 @@ Manager::try_create_download(const std::string&       uri,
   // If the path was attempted loaded before, skip it.
   if ((flags & create_tied) && !(flags & create_raw_data) &&
       !is_network_uri(uri) && !is_magnet_uri(uri) &&
-      !file_status_cache()->insert(uri))
+      !file_status_cache()->insert(uri, flags & create_throw))
     return;
 
   // Adding download.
@@ -381,6 +376,7 @@ Manager::try_create_download(const std::string&       uri,
 
   f->set_start(flags & create_start);
   f->set_print_log(!(flags & create_quiet));
+  f->set_immediate(flags & create_throw);
   f->slot_finished([f]() { delete f; });
 
   if (flags & create_raw_data)

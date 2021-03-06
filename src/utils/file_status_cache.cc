@@ -10,14 +10,24 @@
 namespace utils {
 
 bool
-FileStatusCache::insert(const std::string& path) {
+FileStatusCache::insert(const std::string& path, bool shouldThrow) {
   torrent::utils::file_stat fs;
 
   // Should we expand somewhere else? Problem is it adds a lot of junk
   // to the start of the paths added to the cache, causing more work
   // during search, etc.
-  if (!fs.update(torrent::utils::path_expand(path)))
+  if (!fs.update(torrent::utils::path_expand(path))) {
+    if (shouldThrow) {
+      throw torrent::input_error("Failed to open file.");
+    }
     return false;
+  }
+
+  // Don't cache entries if shouldThrow is true. Otherwise, errors can
+  // be suppressed.
+  if (shouldThrow) {
+    return true;
+  }
 
   std::pair<iterator, bool> result =
     base_type::insert(value_type(path, file_status()));

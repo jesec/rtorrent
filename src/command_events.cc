@@ -433,6 +433,11 @@ initialize_command_events() {
               std::placeholders::_2,
               core::Manager::create_quiet | core::Manager::create_tied));
   CMD2_ANY_LIST(
+    "load.throw",
+    std::bind(&apply_load,
+              std::placeholders::_2,
+              core::Manager::create_throw | core::Manager::create_tied));
+  CMD2_ANY_LIST(
     "load.verbose",
     std::bind(&apply_load, std::placeholders::_2, core::Manager::create_tied));
   CMD2_ANY_LIST("load.start",
@@ -441,6 +446,12 @@ initialize_command_events() {
                           core::Manager::create_quiet |
                             core::Manager::create_tied |
                             core::Manager::create_start));
+  CMD2_ANY_LIST("load.start_throw",
+                std::bind(&apply_load,
+                          std::placeholders::_2,
+                          core::Manager::create_start |
+                            core::Manager::create_throw |
+                            core::Manager::create_tied));
   CMD2_ANY_LIST(
     "load.start_verbose",
     std::bind(&apply_load,

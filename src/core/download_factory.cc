@@ -62,17 +62,7 @@ is_magnet_uri(const std::string& uri) {
 }
 
 DownloadFactory::DownloadFactory(Manager* m)
-  : m_manager(m)
-  , m_stream(nullptr)
-  , m_object(nullptr)
-  , m_commited(false)
-  , m_loaded(false)
-  ,
-
-  m_session(false)
-  , m_start(false)
-  , m_printLog(true)
-  , m_isFile(false) {
+  : m_manager(m) {
 
   m_taskLoad.slot()   = std::bind(&DownloadFactory::receive_load, this);
   m_taskCommit.slot() = std::bind(&DownloadFactory::receive_commit, this);
@@ -100,6 +90,10 @@ void
 DownloadFactory::load(const std::string& uri) {
   m_uri = uri;
   priority_queue_insert(&taskScheduler, &m_taskLoad, cachedTime);
+
+  if (m_immediate) {
+    priority_queue_perform(&taskScheduler, cachedTime);
+  }
 }
 
 // This function must be called before DownloadFactory::commit().
@@ -116,6 +110,10 @@ DownloadFactory::load_raw_data(const std::string& input) {
 void
 DownloadFactory::commit() {
   priority_queue_insert(&taskScheduler, &m_taskCommit, cachedTime);
+
+  if (m_immediate) {
+    priority_queue_perform(&taskScheduler, cachedTime);
+  }
 }
 
 void
@@ -175,25 +173,29 @@ void
 DownloadFactory::receive_commit() {
   m_commited = true;
 
-  if (m_loaded)
+  if (m_loaded) {
     receive_success();
+  } else {
+    // drop immediate as this is asynchronous.
+    m_immediate = false;
+  }
 }
 
 void
 DownloadFactory::receive_success() {
-  Download* download =
-    m_stream != nullptr
-      ? m_manager->download_list()->create(m_stream, m_printLog)
-      : m_manager->download_list()->create(m_object, m_printLog);
+  Download* download;
 
-  m_object = nullptr;
-
-  if (download == nullptr) {
-    // core::Manager should already have added the error message to
-    // the log.
-    m_slot_finished();
+  try {
+    download = m_stream != nullptr
+                 ? m_manager->download_list()->create(m_stream)
+                 : m_manager->download_list()->create(m_object);
+  } catch (const torrent::input_error& e) {
+    m_object = nullptr;
+    receive_failed(e.what());
     return;
   }
+
+  m_object = nullptr;
 
   torrent::Object* root = download->bencode();
 
@@ -421,10 +423,15 @@ DownloadFactory::log_created(Download* download, torrent::Object* rtorrent) {
 void
 DownloadFactory::receive_failed(const std::string& msg) {
   // Add message to log.
-  if (m_printLog)
+  if (m_printLog) {
     m_manager->push_log_std(msg + ": \"" + m_uri + "\"");
+  }
 
   m_slot_finished();
+
+  if (m_immediate) {
+    throw torrent::input_error(msg);
+  }
 }
 
 void

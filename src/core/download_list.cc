@@ -103,7 +103,7 @@ DownloadList::find_hex_ptr(const char* hash) {
 }
 
 Download*
-DownloadList::create(torrent::Object* obj, bool printLog) {
+DownloadList::create(torrent::Object* obj) {
   torrent::Download download;
 
   try {
@@ -112,9 +112,8 @@ DownloadList::create(torrent::Object* obj, bool printLog) {
   } catch (torrent::local_error& e) {
     delete obj;
 
-    if (printLog)
-      lt_log_print(
-        torrent::LOG_TORRENT_ERROR, "Could not create download: %s", e.what());
+    throw torrent::input_error(std::string("Could not create download: ") +
+                               e.what());
 
     return nullptr;
   }
@@ -125,22 +124,18 @@ DownloadList::create(torrent::Object* obj, bool printLog) {
 }
 
 Download*
-DownloadList::create(std::istream* str, bool printLog) {
+DownloadList::create(std::istream* str) {
   torrent::Object*  object = new torrent::Object;
   torrent::Download download;
 
   try {
     *str >> *object;
 
-    // Don't throw input_error from here as gcc-3.3.5 produces bad
-    // code.
     if (str->fail()) {
       delete object;
 
-      if (printLog)
-        lt_log_print(
-          torrent::LOG_TORRENT_ERROR,
-          "Could not create download, the input is not a valid torrent.");
+      throw torrent::input_error(
+        "Could not create download, the input is not a valid torrent.");
 
       return nullptr;
     }
@@ -150,9 +145,8 @@ DownloadList::create(std::istream* str, bool printLog) {
   } catch (torrent::local_error& e) {
     delete object;
 
-    if (printLog)
-      lt_log_print(
-        torrent::LOG_TORRENT_ERROR, "Could not create download: %s", e.what());
+    throw torrent::input_error(std::string("Could not create download: ") +
+                               e.what());
 
     return nullptr;
   }

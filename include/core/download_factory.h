@@ -64,6 +64,13 @@ public:
     m_printLog = v;
   }
 
+  bool immediate() const {
+    return m_immediate;
+  }
+  void set_immediate(bool v) {
+    m_immediate = v;
+  }
+
   void slot_finished(slot_void s) {
     m_slot_finished = s;
   }
@@ -80,17 +87,18 @@ private:
   void initialize_rtorrent(Download* download, torrent::Object* rtorrent);
 
   Manager*         m_manager;
-  std::iostream*   m_stream;
-  torrent::Object* m_object;
+  std::iostream*   m_stream{ nullptr };
+  torrent::Object* m_object{ nullptr };
 
-  bool m_commited;
-  bool m_loaded;
+  bool m_commited{ false };
+  bool m_loaded{ false };
 
   std::string m_uri;
-  bool        m_session;
-  bool        m_start;
-  bool        m_printLog;
-  bool        m_isFile;
+  bool        m_session{ false };
+  bool        m_start{ false };
+  bool        m_printLog{ true };
+  bool        m_immediate{ false };
+  bool        m_isFile{ false };
 
   command_list_type         m_commands;
   torrent::Object::map_type m_variables;

@@ -55,8 +55,8 @@ public:
   Download* find_hex_ptr(const char* hash);
 
   // Might move this to DownloadFactory.
-  Download* create(std::istream* str, bool printLog);
-  Download* create(torrent::Object* obj, bool printLog);
+  Download* create(std::istream* str);
+  Download* create(torrent::Object* obj);
 
   iterator insert(Download* d);
 

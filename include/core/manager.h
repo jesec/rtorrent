@@ -116,10 +116,11 @@ public:
                      int                        err,
                      const torrent::HashString* hash);
 
-  static constexpr int create_start    = 0x1;
-  static constexpr int create_tied     = 0x2;
-  static constexpr int create_quiet    = 0x4;
-  static constexpr int create_raw_data = 0x8;
+  static constexpr int create_start    = 0b00001;
+  static constexpr int create_tied     = 0b00010;
+  static constexpr int create_quiet    = 0b00100;
+  static constexpr int create_raw_data = 0b01000;
+  static constexpr int create_throw    = 0b10000;
 
   using command_list_type = std::vector<std::string>;
 

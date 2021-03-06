@@ -38,7 +38,7 @@ public:
 
   // Insert and return true if the entry does not exist or the new
   // file's mtime is more recent.
-  bool insert(const std::string& path);
+  bool insert(const std::string& path, bool shouldThrow = false);
 
   // Add a function for pruning a sorted list of paths.
 
