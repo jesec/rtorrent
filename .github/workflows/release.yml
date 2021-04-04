@@ -79,6 +79,10 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -89,7 +93,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Merge multi-arch Docker image manifests
-        run: docker buildx imagetools create -t jesec/rtorrent:latest jesec/rtorrent:latest-arm64 jesec/rtorrent:latest-amd64
+        run: |
+          docker buildx imagetools create -t jesec/rtorrent:latest jesec/rtorrent:latest-arm64 jesec/rtorrent:latest-amd64
+          docker buildx imagetools create -t jesec/rtorrent:${{ steps.get_version.outputs.VERSION }} jesec/rtorrent:latest-arm64 jesec/rtorrent:latest-amd64
 
       - name: Remove intermediate tags
         run: |
