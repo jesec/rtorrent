@@ -70,6 +70,14 @@ public:
             { "message", std::string("parse error: ") + e.what() } } },
         { "jsonrpc", "2.0" }
       }.dump();
+    } catch (json::exception& e) {
+      return json{
+        { "id", nullptr },
+        { "error",
+          { { "code", -32700 },
+            { "message", std::string("compose error: ") + e.what() } } },
+        { "jsonrpc", "2.0" }
+      }.dump();
     }
   }
 
