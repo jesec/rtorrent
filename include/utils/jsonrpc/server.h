@@ -45,11 +45,11 @@ public:
             result.push_back(std::move(res));
           }
         }
-        return result.dump();
+        return result.dump(-1, ' ', false, json::error_handler_t::replace);
       } else if (request.is_object()) {
         json res = HandleSingleRequest(request);
         if (!res.is_null()) {
-          return res.dump();
+          return res.dump(-1, ' ', false, json::error_handler_t::replace);
         } else {
           return "";
         }
