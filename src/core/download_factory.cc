@@ -428,6 +428,8 @@ DownloadFactory::log_created(Download* download, torrent::Object* rtorrent) {
 
 void
 DownloadFactory::receive_failed(const std::string& msg) {
+  bool shouldThrow = m_immediate;
+
   // Add message to log.
   if (m_printLog) {
     m_manager->push_log_std(msg + ": \"" + m_uri + "\"");
@@ -435,7 +437,7 @@ DownloadFactory::receive_failed(const std::string& msg) {
 
   m_slot_finished();
 
-  if (m_immediate) {
+  if (shouldThrow) {
     throw torrent::input_error(msg);
   }
 }
