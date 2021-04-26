@@ -128,20 +128,18 @@ DownloadList::create(std::istream* str) {
   torrent::Object*  object = new torrent::Object;
   torrent::Download download;
 
+  *str >> *object;
+  if (str->fail()) {
+    delete object;
+
+    throw torrent::input_error(
+      "Could not create download, the input is not a valid torrent.");
+
+    return nullptr;
+  }
+
   try {
-    *str >> *object;
-
-    if (str->fail()) {
-      delete object;
-
-      throw torrent::input_error(
-        "Could not create download, the input is not a valid torrent.");
-
-      return nullptr;
-    }
-
     download = torrent::download_add(object);
-
   } catch (torrent::local_error& e) {
     delete object;
 
@@ -757,8 +755,8 @@ DownloadList::confirm_finished(Download* download) {
   torrent::Object conn_current = rpc::call_command(
     "d.connection_seed", torrent::Object(), rpc::make_target(download));
   torrent::Object choke_up   = rpc::call_command("d.up.choke_heuristics.seed",
-                                               torrent::Object(),
-                                               rpc::make_target(download));
+                                                 torrent::Object(),
+                                                 rpc::make_target(download));
   torrent::Object choke_down = rpc::call_command("d.down.choke_heuristics.seed",
                                                  torrent::Object(),
                                                  rpc::make_target(download));
