@@ -83,7 +83,7 @@ apply_dht_add_bootstrap(const std::string& arg) {
 
   control->dht_manager()->add_bootstrap(std::string(host), port);
 
-  free(host);
+  delete[] host;
 
   return torrent::Object();
 }
