@@ -39,6 +39,9 @@ public:
   command_list_type& commands() {
     return m_commands;
   }
+  torrent::Object::string_type& result() {
+    return m_result;
+  }
   torrent::Object::map_type& variables() {
     return m_variables;
   }
@@ -94,6 +97,7 @@ private:
   bool m_loaded{ false };
 
   std::string m_uri;
+  std::string m_result;
   bool        m_session{ false };
   bool        m_start{ false };
   bool        m_printLog{ true };

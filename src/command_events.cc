@@ -212,9 +212,7 @@ apply_load(const torrent::Object::list_type& args, int flags) {
   while (++argsItr != args.end())
     commands.push_back(argsItr->as_string());
 
-  control->core()->try_create_download_expand(filename, flags, commands);
-
-  return torrent::Object();
+  return control->core()->try_create_download_expand(filename, flags, commands);
 }
 
 void

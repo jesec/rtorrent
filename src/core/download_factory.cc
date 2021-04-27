@@ -15,6 +15,7 @@
 #include <torrent/utils/log.h>
 #include <torrent/utils/path.h>
 #include <torrent/utils/resume.h>
+#include <torrent/utils/string_manip.h>
 
 #include "rpc/parse_commands.h"
 
@@ -380,6 +381,11 @@ DownloadFactory::receive_success() {
       download->set_message(msg);
       //     m_manager->download_list()->erase(m_manager->download_list()->find(infohash.data()));
     }
+  }
+
+  if (m_immediate) {
+    m_result = std::move(
+      torrent::utils::transform_hex_str<torrent::HashString>(infohash));
   }
 
   m_slot_finished();

@@ -412,15 +412,17 @@ Manager::receive_http_failed(std::string msg) {
   push_log_std("Http download error: \"" + msg + "\"");
 }
 
-void
+torrent::Object
 Manager::try_create_download(const std::string&       uri,
                              int                      flags,
                              const command_list_type& commands) {
+  auto result = torrent::Object::create_value();
+
   // If the path was attempted loaded before, skip it.
   if ((flags & create_tied) && !(flags & create_raw_data) &&
       !is_network_uri(uri) && !is_magnet_uri(uri) && !is_data_uri(uri) &&
       !file_status_cache()->insert(uri, flags & create_throw))
-    return;
+    return result;
 
   // Adding download.
   DownloadFactory* f = new DownloadFactory(this);
@@ -430,8 +432,16 @@ Manager::try_create_download(const std::string&       uri,
 
   f->set_start(flags & create_start);
   f->set_print_log(!(flags & create_quiet));
-  f->set_immediate(flags & create_throw);
-  f->slot_finished([f]() { delete f; });
+
+  if (flags & create_throw) {
+    f->set_immediate(true);
+    f->slot_finished([f, &result]() {
+      result = f->result();
+      delete f;
+    });
+  } else {
+    f->slot_finished([f]() { delete f; });
+  }
 
   if (flags & create_raw_data) {
     f->load_raw_data(uri);
@@ -448,6 +458,8 @@ Manager::try_create_download(const std::string&       uri,
   }
 
   f->commit();
+
+  return result;
 }
 
 void
@@ -511,13 +523,16 @@ manager_equal_tied(const std::string& path, Download* download) {
          rpc::call_command_string("d.tied_to_file", rpc::make_target(download));
 }
 
-void
+torrent::Object
 Manager::try_create_download_expand(const std::string& uri,
                                     int                flags,
                                     command_list_type  commands) {
+  torrent::Object             rawResult = torrent::Object::create_list();
+  torrent::Object::list_type& result    = rawResult.as_list();
+
   if (flags & create_raw_data) {
-    try_create_download(uri, flags, commands);
-    return;
+    result.push_back(try_create_download(uri, flags, commands));
+    return rawResult;
   }
 
   std::vector<std::string> paths;
@@ -525,14 +540,15 @@ Manager::try_create_download_expand(const std::string& uri,
 
   path_expand(&paths, uri);
 
-  if (!paths.empty())
-    for (std::vector<std::string>::iterator itr = paths.begin();
-         itr != paths.end();
-         ++itr)
-      try_create_download(*itr, flags, commands);
+  if (!paths.empty()) {
+    for (const auto& path : paths) {
+      result.push_back(try_create_download(path, flags, commands));
+    }
+  } else {
+    result.push_back(try_create_download(uri, flags, commands));
+  }
 
-  else
-    try_create_download(uri, flags, commands);
+  return rawResult;
 }
 
 // DownloadList's hashing related functions don't actually start the

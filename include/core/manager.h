@@ -125,10 +125,10 @@ public:
   using command_list_type = std::vector<std::string>;
 
   // Temporary, find a better place for this.
-  void try_create_download(const std::string&       uri,
-                           int                      flags,
-                           const command_list_type& commands);
-  void try_create_download_expand(
+  torrent::Object try_create_download(const std::string&       uri,
+                                      int                      flags,
+                                      const command_list_type& commands);
+  torrent::Object try_create_download_expand(
     const std::string& uri,
     int                flags,
     command_list_type  commands = command_list_type());
