@@ -384,8 +384,7 @@ DownloadFactory::receive_success() {
   }
 
   if (m_immediate) {
-    m_result = std::move(
-      torrent::utils::transform_hex_str<torrent::HashString>(infohash));
+    m_result = torrent::utils::transform_hex_str<torrent::HashString>(infohash);
   }
 
   m_slot_finished();
