@@ -199,7 +199,7 @@ object_to_json(const torrent::Object& object) {
       return result;
     }
     default:
-      return json{ 0 };
+      return 0;
   }
 
   throw JsonRpcException(-32600, "not implemented");
