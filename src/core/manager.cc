@@ -532,20 +532,23 @@ Manager::try_create_download_expand(const std::string& uri,
 
   if (flags & create_raw_data) {
     result.push_back(try_create_download(uri, flags, commands));
-    return rawResult;
+  } else {
+    std::vector<std::string> paths;
+
+    path_expand(&paths, uri);
+
+    if (!paths.empty()) {
+      for (const auto& path : paths) {
+        result.push_back(try_create_download(path, flags, commands));
+      }
+    } else {
+      result.push_back(try_create_download(uri, flags, commands));
+    }
   }
 
-  std::vector<std::string> paths;
-  paths.reserve(256);
-
-  path_expand(&paths, uri);
-
-  if (!paths.empty()) {
-    for (const auto& path : paths) {
-      result.push_back(try_create_download(path, flags, commands));
-    }
-  } else {
-    result.push_back(try_create_download(uri, flags, commands));
+  if (result.size() == 0 || result[0].type() != torrent::Object::TYPE_STRING) {
+    // return "0" instead of the array if the request is asynchronous
+    return torrent::Object();
   }
 
   return rawResult;
