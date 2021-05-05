@@ -152,6 +152,8 @@ SCgiTask::event_read() {
       } else {
         goto event_read_failed;
       }
+    } else {
+      m_type = ContentType::XML;
     }
 
     m_body     = current + headerSize + 1;
