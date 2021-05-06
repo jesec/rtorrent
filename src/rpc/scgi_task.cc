@@ -118,12 +118,16 @@ SCgiTask::event_read() {
     const std::string_view header(current, headerSize);
 
     // RFC 3875, 4.1.2
-    if (header.find("CONTENT_LENGTH") != 0) {
+    const auto contentLengthPos = header.find("CONTENT_LENGTH");
+    if (contentLengthPos == std::string_view::npos) {
       goto event_read_failed;
     }
 
     char* contentPos;
-    contentSize = strtol(current + 15, &contentPos, 0);
+
+    // length of "CONTENT_LENGTH" -> 14
+    contentSize =
+      strtol(header.data() + contentLengthPos + 14 + 1, &contentPos, 0);
 
     if (*contentPos != '\0' || contentSize <= 0)
       goto event_read_failed;
