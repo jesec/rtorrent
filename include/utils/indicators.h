@@ -3104,4 +3104,4 @@ public:
 
 } // namespace indicators
 
-#endif RTORRENT_UTILS_INDICATORS_H
+#endif
