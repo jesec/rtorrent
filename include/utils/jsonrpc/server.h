@@ -139,9 +139,11 @@ private:
       request["params"] = json::array();
     }
 
+    const auto& result = m_handler(request["method"], request["params"]);
+
     return { { "jsonrpc", "2.0" },
              { "id", request["id"] },
-             { "result", m_handler(request["method"], request["params"]) } };
+             { "result", result } };
   }
 };
 }
