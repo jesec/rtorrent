@@ -1034,6 +1034,7 @@ initialize_command_download() {
 
   CMD2_DL_TIMESTAMP("d.timestamp.started", "rtorrent", "timestamp.started");
   CMD2_DL_TIMESTAMP("d.timestamp.finished", "rtorrent", "timestamp.finished");
+  CMD2_DL_TIMESTAMP("d.timestamp.last_active", "rtorrent", "timestamp.last_active");
 
   CMD2_DL("d.connection_current",
           std::bind(&torrent::option_as_string,

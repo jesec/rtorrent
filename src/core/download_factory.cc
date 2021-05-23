@@ -471,6 +471,7 @@ DownloadFactory::initialize_rtorrent(Download*        download,
 
   rtorrent->insert_preserve_copy("timestamp.started", (int64_t)0);
   rtorrent->insert_preserve_copy("timestamp.finished", (int64_t)0);
+  rtorrent->insert_preserve_copy("timestamp.last_active", (int64_t)0);
 
   rtorrent->insert_preserve_copy("tied_to_file", "");
   rtorrent->insert_key("loaded_file", m_isFile ? m_uri : std::string());

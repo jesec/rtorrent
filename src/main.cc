@@ -328,6 +328,8 @@ main(int argc, char** argv) {
       "method.insert = event.download.hash_final_failed,multi|rlookup|static\n"
       "method.insert = event.download.hash_removed,multi|rlookup|static\n"
       "method.insert = event.download.hash_queued,multi|rlookup|static\n"
+      "method.insert = event.download.active,multi|rlookup|static\n"
+      "method.insert = event.download.inactive,multi|rlookup|static\n"
 
       "method.set_key = event.download.inserted,         1_send_scrape, "
       "((d.tracker.send_scrape,30))\n"
@@ -354,6 +356,8 @@ main(int argc, char** argv) {
       "method.set_key = event.download.hash_done, !_timestamp, "
       "{(branch,((d.complete)),((d.timestamp.finished.set_if_z,(system.time))))"
       "}\n"
+      "method.set_key = event.download.inactive,  !_timestamp, "
+      "((d.timestamp.last_active.set, ((system.time)) ))\n"
 
       "method.insert.c_simple = group.insert_persistent_view,"
       "((view.add,((argument.0)))),((view.persistent,((argument.0)))),((group."

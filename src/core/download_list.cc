@@ -164,10 +164,21 @@ DownloadList::insert(Download* download) {
                     "Inserting download.");
 
   try {
-    (*itr)->data()->slot_initial_hash() =
-      std::bind(&DownloadList::hash_done, this, download);
-    (*itr)->data()->slot_download_done() =
-      std::bind(&DownloadList::received_finished, this, download);
+    (*itr)->data()->slot_initial_hash() = [download, this]() {
+      this->hash_done(download);
+    };
+
+    (*itr)->data()->slot_download_done() = [download, this]() {
+      this->received_finished(download);
+    };
+
+    (*itr)->data()->slot_download_active() = [download, this]() {
+      this->received_active(download);
+    };
+
+    (*itr)->data()->slot_download_inactive() = [download, this]() {
+      this->received_inactive(download);
+    };
 
     // This needs to be separated into two different calls to ensure
     // the download remains in the view.
@@ -840,6 +851,30 @@ DownloadList::confirm_finished(Download* download) {
            torrent::Download::start_no_create |
              torrent::Download::start_skip_tracker |
              torrent::Download::start_keep_baseline);
+}
+
+void
+DownloadList::received_active(Download* download) {
+  check_contains(download);
+
+  lt_log_print_info(torrent::LOG_TORRENT_DEBUG,
+                    download->info(),
+                    "download_list",
+                    "Received active.");
+
+  DL_TRIGGER_EVENT(download, "event.download.active");
+}
+
+void
+DownloadList::received_inactive(Download* download) {
+  check_contains(download);
+
+  lt_log_print_info(torrent::LOG_TORRENT_DEBUG,
+                    download->info(),
+                    "download_list",
+                    "Received inactive.");
+
+  DL_TRIGGER_EVENT(download, "event.download.inactive");
 }
 
 void
