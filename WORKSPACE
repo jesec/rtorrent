@@ -1,12 +1,12 @@
 workspace(name = "rtorrent")
 
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-git_repository(
+http_archive(
     name = "libtorrent",
-    branch = "master",
-    remote = "https://github.com/jesec/libtorrent.git",
+    sha256 = "e67df3f7435319fa8ffa8c6e5acaa6c31748bbb2fb5ca4097132025517642906",
+    strip_prefix = "libtorrent-899c6cbc9e548f58149da2682879479d66337ff6",
+    url = "https://github.com/jesec/libtorrent/archive/899c6cbc9e548f58149da2682879479d66337ff6.zip",
 )
 
 load("@libtorrent//:libtorrent_repos.bzl", "libtorrent_repos")
