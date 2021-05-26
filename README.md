@@ -83,6 +83,8 @@ Bazel 3 or later is required.
 
 Bazel manages most dependencies.
 
+Dependencies are specified by the `WORKSPACE` file. Sometimes you may want to override a specific dependency with a local repository for easier development. To do that, use `override_repository` Bazel command line argument. For example, `--override_repository=libtorrent=/path/to/local/libtorrent`.
+
 Unmanaged dependencies:
 
 - GCC/Clang compiler toolchain and C/C++ development files (C++17 support required)
