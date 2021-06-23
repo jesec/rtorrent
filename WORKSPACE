@@ -56,11 +56,11 @@ http_archive(
 http_archive(
     name = "curl",
     build_file = "@rtorrent//:third_party/curl.BUILD",
-    sha256 = "01ae0c123dee45b01bbaef94c0bc00ed2aec89cb2ee0fd598e0d302a6b5e0a98",
-    strip_prefix = "curl-7.69.1",
+    sha256 = "b0a3428acb60fa59044c4d0baae4e4fc09ae9af1d8a3aa84b2e3fbcd99841f77",
+    strip_prefix = "curl-7.77.0",
     urls = [
-        "https://github.com/curl/curl/releases/download/curl-7_69_1/curl-7.69.1.tar.gz",
-        "https://curl.haxx.se/download/curl-7.69.1.tar.gz",
+        "https://github.com/curl/curl/releases/download/curl-7_77_0/curl-7.77.0.tar.gz",
+        "https://curl.haxx.se/download/curl-7.77.0.tar.gz",
     ],
 )
 
