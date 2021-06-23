@@ -115,6 +115,7 @@ cc_test(
     copts = COPTS,
     includes = ["include"],
     linkopts = LINKOPTS,
+    linkstatic = True,
     deps = [
         "//:rtorrent_common",
         "@com_google_googletest//:gtest",
