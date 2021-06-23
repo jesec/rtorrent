@@ -149,9 +149,6 @@ SCgi::event_error() {
 
 bool
 SCgi::receive_call(SCgiTask* task, const char* buffer, uint32_t length) {
-  torrent::thread_base::acquire_global_lock();
-  torrent::main_thread()->interrupt();
-
   bool       result   = false;
   const auto callback = [task](const char* buffer, uint32_t length) {
     return task->receive_write(buffer, length);
@@ -164,10 +161,11 @@ SCgi::receive_call(SCgiTask* task, const char* buffer, uint32_t length) {
       break;
     case SCgiTask::ContentType::XML:
     default:
+      torrent::thread_base::acquire_global_lock();
+      torrent::main_thread()->interrupt();
       result = rpc.dispatch(RpcManager::RPCType::XML, buffer, length, callback);
+      torrent::thread_base::release_global_lock();
   }
-
-  torrent::thread_base::release_global_lock();
 
   return result;
 }

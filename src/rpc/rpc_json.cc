@@ -17,10 +17,12 @@
 
 #include <torrent/common.h>
 #include <torrent/hash_string.h>
+#include <torrent/torrent.h>
 
 #include "rpc/command.h"
 #include "rpc/command_map.h"
 #include "rpc/parse_commands.h"
+#include "thread_base.h"
 #include "utils/jsonrpc/common.h"
 
 using jsonrpccxx::JsonRpcException;
@@ -238,6 +240,9 @@ jsonrpc_call_command(const std::string& method, const json& params) {
     torrent::Object  object;
     rpc::target_type target = rpc::make_target();
 
+    torrent::thread_base::acquire_global_lock();
+    torrent::main_thread()->interrupt();
+
     if (itr->second.m_flags & CommandMap::flag_no_target) {
       json_to_object(params, command_base::target_generic, &target)
         .swap(object);
@@ -250,8 +255,11 @@ jsonrpc_call_command(const std::string& method, const json& params) {
       json_to_object(params, command_base::target_any, &target).swap(object);
     }
 
-    return object_to_json(rpc::commands.call_command(itr, object, target));
+    const auto& result = rpc::commands.call_command(itr, object, target);
 
+    torrent::thread_base::release_global_lock();
+
+    return object_to_json(result);
   } catch (torrent::input_error& e) {
     throw JsonRpcException(-32602, e.what());
   } catch (torrent::local_error& e) {
