@@ -13,6 +13,7 @@
 #include <queue>
 #include <random>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <unistd.h>
 
@@ -165,6 +166,9 @@ load_session_torrents(indicators::BlockProgressBar*& progress_bar) {
     // Replace with session torrent flag.
     f->set_session(true);
     f->slot_finished([f, &progress_bar, entries_size]() {
+      if (control->is_shutdown_received()) {
+        throw std::runtime_error("shutdown received. aborting...");
+      }
       if (progress_bar != nullptr) {
         progress_bar->tick();
         progress_bar->set_option(indicators::option::PostfixText{
