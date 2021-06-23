@@ -1,124 +1,7 @@
 # Copied from https://github.com/grpc/grpc/tree/master/third_party/cares
 
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
-load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@rules_cc//cc:defs.bzl", "cc_library")
-
-config_setting(
-    name = "macos_x86_64",
-    values = {
-        "apple_platform_type": "macos",
-        "cpu": "darwin",
-    },
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "macos_arm64",
-    values = {
-        "apple_platform_type": "macos",
-        "cpu": "darwin_arm64",
-    },
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "windows",
-    values = {"cpu": "x64_windows"},
-    visibility = ["//visibility:private"],
-)
-
-# Android is not officially supported through C++.
-# This just helps with the build for now.
-config_setting(
-    name = "android",
-    values = {
-        "crosstool_top": "//external:android/crosstool",
-    },
-    visibility = ["//visibility:private"],
-)
-
-# iOS is not officially supported through C++.
-# This just helps with the build for now.
-config_setting(
-    name = "ios_x86_64",
-    values = {"cpu": "ios_x86_64"},
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "ios_armv7",
-    values = {"cpu": "ios_armv7"},
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "ios_armv7s",
-    values = {"cpu": "ios_armv7s"},
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "ios_arm64",
-    values = {"cpu": "ios_arm64"},
-    visibility = ["//visibility:private"],
-)
-
-# The following architectures are found in
-# https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/rules/apple/ApplePlatform.java
-config_setting(
-    name = "tvos_x86_64",
-    values = {"cpu": "tvos_x86_64"},
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "tvos_arm64",
-    values = {"cpu": "tvos_arm64"},
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "watchos_i386",
-    values = {"cpu": "watchos_i386"},
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "watchos_x86_64",
-    values = {"cpu": "watchos_x86_64"},
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "watchos_armv7k",
-    values = {"cpu": "watchos_armv7k"},
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "watchos_arm64_32",
-    values = {"cpu": "watchos_arm64_32"},
-    visibility = ["//visibility:private"],
-)
-
-selects.config_setting_group(
-    name = "darwin",
-    match_any = [
-        ":macos_x86_64",
-        ":macos_arm64",
-        ":ios_x86_64",
-        ":ios_armv7",
-        ":ios_armv7s",
-        ":ios_arm64",
-        ":tvos_x86_64",
-        ":tvos_arm64",
-        ":watchos_i386",
-        ":watchos_x86_64",
-        ":watchos_armv7k",
-        ":watchos_arm64_32",
-    ],
-)
 
 copy_file(
     name = "ares_build_h",
@@ -129,9 +12,8 @@ copy_file(
 copy_file(
     name = "ares_config_h",
     src = select({
-        ":darwin": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
-        ":windows": "@rtorrent//third_party/cares:config_windows/ares_config.h",
-        ":android": "@rtorrent//third_party/cares:config_android/ares_config.h",
+        "@platforms//os:macos": "@rtorrent//third_party/cares:config_darwin/ares_config.h",
+        "@platforms//os:windows": "@rtorrent//third_party/cares:config_windows/ares_config.h",
         "//conditions:default": "@rtorrent//third_party/cares:config_linux/ares_config.h",
     }),
     out = "ares_config.h",
@@ -226,7 +108,7 @@ cc_library(
         "-D_HAS_EXCEPTIONS=0",
         "-DHAVE_CONFIG_H",
     ] + select({
-        ":windows": [
+        "@platforms//os:windows": [
             "-DNOMINMAX",
             "-D_CRT_SECURE_NO_DEPRECATE",
             "-D_CRT_NONSTDC_NO_DEPRECATE",
@@ -237,7 +119,7 @@ cc_library(
     defines = ["CARES_STATICLIB"],
     includes = ["."],
     linkopts = select({
-        ":windows": ["-defaultlib:ws2_32.lib"],
+        "@platforms//os:windows": ["-defaultlib:ws2_32.lib"],
         "//conditions:default": [],
     }),
     linkstatic = 1,

@@ -2,44 +2,11 @@
 # Description:
 #   curl is a tool for talking to web servers.
 
-load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 
 licenses(["notice"])  # MIT/X derivative license
 
 exports_files(["COPYING"])
-
-config_setting(
-    name = "windows",
-    values = {"cpu": "x64_windows"},
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "macos_x86_64",
-    values = {
-        "apple_platform_type": "macos",
-        "cpu": "darwin",
-    },
-    visibility = ["//visibility:private"],
-)
-
-config_setting(
-    name = "macos_arm64",
-    values = {
-        "apple_platform_type": "macos",
-        "cpu": "darwin_arm64",
-    },
-    visibility = ["//visibility:private"],
-)
-
-selects.config_setting_group(
-    name = "macos",
-    match_any = [
-        ":macos_x86_64",
-        ":macos_arm64",
-    ],
-)
 
 CURL_WIN_COPTS = [
     "/Iexternal/curl/lib",
@@ -288,10 +255,10 @@ cc_library(
         "lib/doh.h",
         "lib/doh.c",
     ] + select({
-        "//:macos": [
+        "@platforms//os:macos": [
             "lib/vtls/sectransp.c",
         ],
-        "//:windows": CURL_WIN_SRCS,
+        "@platforms//os:windows": CURL_WIN_SRCS,
         "//conditions:default": [
             "lib/vtls/openssl.c",
         ],
@@ -308,7 +275,7 @@ cc_library(
         "include/curl/urlapi.h",
     ],
     copts = select({
-        "//:windows": CURL_WIN_COPTS,
+        "@platforms//os:windows": CURL_WIN_COPTS,
         "//conditions:default": [
             "-Iexternal/curl/lib",
             "-D_GNU_SOURCE",
@@ -321,10 +288,10 @@ cc_library(
             "-Wno-string-plus-int",
         ],
     }) + select({
-        "//:macos": [
+        "@platforms//os:macos": [
             "-fno-constant-cfstrings",
         ],
-        "//:windows": [
+        "@platforms//os:windows": [
             # See curl.h for discussion of write size and Windows
             "/DCURL_MAX_WRITE_SIZE=16384",
         ],
@@ -335,13 +302,13 @@ cc_library(
     defines = ["CURL_STATICLIB"],
     includes = ["include"],
     linkopts = select({
-        "//:macos": [
+        "@platforms//os:macos": [
             "-Wl,-framework",
             "-Wl,CoreFoundation",
             "-Wl,-framework",
             "-Wl,Security",
         ],
-        "//:windows": [
+        "@platforms//os:windows": [
             "-DEFAULTLIB:ws2_32.lib",
             "-DEFAULTLIB:advapi32.lib",
             "-DEFAULTLIB:crypt32.lib",
@@ -356,7 +323,7 @@ cc_library(
         "@cares//:ares",
         "@zlib",
     ] + select({
-        "//:windows": [],
+        "@platforms//os:windows": [],
         "//conditions:default": [
             "@boringssl//:ssl",
         ],
@@ -458,7 +425,7 @@ cc_binary(
         "src/tool_xattr.h",
     ],
     copts = select({
-        "//:windows": CURL_BIN_WIN_COPTS,
+        "@platforms//os:windows": CURL_BIN_WIN_COPTS,
         "//conditions:default": [
             "-Iexternal/curl/lib",
             "-D_GNU_SOURCE",
