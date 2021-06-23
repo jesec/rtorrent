@@ -99,11 +99,9 @@ http_archive(
 )
 
 # Foreign CC dependencies
-all_content = """filegroup(name = "all", srcs = glob(["**"]), visibility = ["//visibility:public"])"""
-
 http_archive(
     name = "xmlrpc",
-    build_file_content = all_content,
+    build_file = "@rtorrent//:third_party/xmlrpc.BUILD",
     patches = ["@rtorrent//:third_party/xmlrpc.patch"],
     sha256 = "93d81a32f4ecfeb914c05f77476ba0af2e6b93ef6673fafdc12878f71d70a276",
     strip_prefix = "xmlrpc-c-146e9bf7f8933c3baec871dfc2365e471171ddf4/advanced",
