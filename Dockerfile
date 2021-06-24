@@ -15,10 +15,11 @@ RUN apk --no-cache add \
     python2 \
     python3
 
-# Install Bazel 3 from edge testing repository
-RUN apk --no-cache add \
-    bazel3 \
-    --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
+# Install Bazel
+RUN apk --allow-untrusted --no-cache add \
+    bazel \
+    -Xhttps://dl-cdn.alpinelinux.org/alpine/edge/testing \
+    -Xhttps://github.com/jesec/bazel-alpine/raw/repo
 
 # Checkout rTorrent sources from current directory
 COPY . ./
