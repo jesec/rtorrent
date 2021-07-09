@@ -258,11 +258,12 @@ jsonrpc_call_command(const std::string& method, const json& params) {
     const auto& result = rpc::commands.call_command(itr, object, target);
 
     torrent::thread_base::release_global_lock();
-
     return object_to_json(result);
   } catch (torrent::input_error& e) {
+    torrent::thread_base::release_global_lock();
     throw JsonRpcException(-32602, e.what());
   } catch (torrent::local_error& e) {
+    torrent::thread_base::release_global_lock();
     throw JsonRpcException(-32000, e.what());
   }
 }
