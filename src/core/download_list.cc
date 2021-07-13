@@ -290,6 +290,10 @@ DownloadList::close_directly(Download* download) {
                     "Closing download directly.");
 
   if (download->download()->info()->is_active()) {
+    if (!download->connection_list()->empty()) {
+      DL_TRIGGER_EVENT(download, "event.download.inactive");
+    }
+
     download->download()->stop(torrent::Download::stop_skip_tracker);
 
     if (torrent::resume_check_target_files(
@@ -537,6 +541,10 @@ DownloadList::pause(Download* download, int flags) {
 
     if (!download->download()->info()->is_active())
       return;
+
+    if (!download->connection_list()->empty()) {
+      DL_TRIGGER_EVENT(download, "event.download.inactive");
+    }
 
     download->download()->stop(flags);
     torrent::resume_save_progress(
