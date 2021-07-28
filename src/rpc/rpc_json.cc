@@ -41,7 +41,7 @@ string_to_target(const std::string_view& targetString,
 
   // Length of SHA1 hash is 40
   if (targetString.size() < 40) {
-    throw JsonRpcException(-32602, "invalid parameters: invalid target");
+    throw torrent::input_error("invalid parameters: invalid target");
   }
 
   std::string      hash(targetString);
@@ -52,7 +52,7 @@ string_to_target(const std::string_view& targetString,
   if (delimPos == std::string_view::npos ||
       delimPos + 2 >= targetString.size()) {
     if (requireIndex) {
-      throw JsonRpcException(-32602, "invalid parameters: no index");
+      throw torrent::input_error("invalid parameters: no index");
     }
   } else {
     hash  = targetString.substr(0, delimPos);
@@ -63,7 +63,7 @@ string_to_target(const std::string_view& targetString,
   core::Download* download = rpc.slot_find_download()(hash.c_str());
 
   if (download == nullptr) {
-    throw JsonRpcException(-32602, "invalid parameters: info-hash not found");
+    throw torrent::input_error("invalid parameters: info-hash not found");
   }
 
   try {
@@ -88,12 +88,12 @@ string_to_target(const std::string_view& targetString,
         break;
     }
   } catch (const std::logic_error&) {
-    throw JsonRpcException(-32602, "invalid parameters: invalid index");
+    throw torrent::input_error("invalid parameters: invalid index");
   }
 
   if (target == nullptr || target->second == nullptr) {
-    throw JsonRpcException(
-      -32602, "invalid parameters: unable to find requested target");
+    throw torrent::input_error(
+      "invalid parameters: unable to find requested target");
   }
 }
 
@@ -114,12 +114,12 @@ json_to_object(const json& value, int callType, rpc::target_type* target) {
 
       if (callType != command_base::target_generic) {
         if (count < 1) {
-          throw JsonRpcException(-32602, "invalid parameters: too few");
+          throw torrent::input_error("invalid parameters: too few");
         }
 
         if (!value[0].is_string()) {
-          throw JsonRpcException(-32602,
-                                 "invalid parameters: target must be a string");
+          throw torrent::input_error(
+            "invalid parameters: target must be a string");
         }
 
         string_to_target(value[0].get<std::string_view>(),
@@ -151,7 +151,7 @@ json_to_object(const json& value, int callType, rpc::target_type* target) {
       break;
   }
 
-  throw JsonRpcException(-32600, "not implemented");
+  throw torrent::input_error("invalid parameters: unexpected data type");
 }
 
 json
