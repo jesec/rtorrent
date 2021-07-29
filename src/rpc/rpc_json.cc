@@ -155,7 +155,7 @@ json_to_object(const json& value, int callType, rpc::target_type* target) {
 }
 
 json
-object_to_json(const torrent::Object& object) {
+object_to_json(const torrent::Object& object) noexcept {
   switch (object.type()) {
     case torrent::Object::TYPE_VALUE:
       return object.as_value();
@@ -203,8 +203,6 @@ object_to_json(const torrent::Object& object) {
     default:
       return 0;
   }
-
-  throw JsonRpcException(-32600, "not implemented");
 }
 
 json
