@@ -32,9 +32,14 @@ namespace rpc {
 
 void
 string_to_target(const std::string_view& targetString,
-                 int                     requireIndex,
+                 bool                    requireIndex,
                  rpc::target_type*       target) {
-  // <hash> or <hash>:f<index> or <hash>:t<index> or ''
+  // target_any: ''
+  // target_download: <hash>
+  // target_file: <hash>:f<index>
+  // target_peer: <hash>:p<index>
+  // target_tracker: <hash>:t<index>
+
   if (targetString.size() == 0 && !requireIndex) {
     return;
   }
@@ -44,7 +49,7 @@ string_to_target(const std::string_view& targetString,
     throw torrent::input_error("invalid parameters: invalid target");
   }
 
-  std::string      hash(targetString);
+  std::string_view hash;
   char             type = 'd';
   std::string_view index;
 
@@ -54,13 +59,17 @@ string_to_target(const std::string_view& targetString,
     if (requireIndex) {
       throw torrent::input_error("invalid parameters: no index");
     }
+    hash = targetString;
   } else {
     hash  = targetString.substr(0, delimPos);
     type  = targetString[delimPos + 1];
     index = targetString.substr(delimPos + 2);
   }
 
-  core::Download* download = rpc.slot_find_download()(hash.c_str());
+  // many internal functions expect C-style NULL-terminated strings
+
+  core::Download* download =
+    rpc.slot_find_download()(std::string(hash).c_str());
 
   if (download == nullptr) {
     throw torrent::input_error("invalid parameters: info-hash not found");
@@ -68,6 +77,9 @@ string_to_target(const std::string_view& targetString,
 
   try {
     switch (type) {
+      case 'd':
+        *target = rpc::make_target(download);
+        break;
       case 'f':
         *target = rpc::make_target(
           command_base::target_file,
@@ -84,8 +96,8 @@ string_to_target(const std::string_view& targetString,
           rpc.slot_find_peer()(download, std::string(index).c_str()));
         break;
       default:
-        *target = rpc::make_target(download);
-        break;
+        throw torrent::input_error(
+          "invalid parameters: unexpected target type");
     }
   } catch (const std::logic_error&) {
     throw torrent::input_error("invalid parameters: invalid index");
@@ -148,10 +160,8 @@ json_to_object(const json& value, int callType, rpc::target_type* target) {
       }
     }
     default:
-      break;
+      throw torrent::input_error("invalid parameters: unexpected data type");
   }
-
-  throw torrent::input_error("invalid parameters: unexpected data type");
 }
 
 json

@@ -77,7 +77,7 @@ rpc_find_file(core::Download* download, uint32_t index) {
   if (index >= download->file_list()->size_files())
     return nullptr;
 
-  return (*download->file_list())[index];
+  return download->file_list()->at(index);
 }
 
 // Ergh... time to update the Tracker API to allow proper ptrs.
