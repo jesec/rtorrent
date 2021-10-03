@@ -84,7 +84,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Merge multi-arch Docker image manifests
-        run: docker buildx imagetools create -t jesec/rtorrent:master jesec/rtorrent:master-arm64 jesec/rtorrent:master-amd64
+        run: docker buildx imagetools create -t jesec/rtorrent:master -t jesec/rtorrent:latest jesec/rtorrent:master-arm64 jesec/rtorrent:master-amd64
 
       - name: Remove intermediate tags
         run: |
