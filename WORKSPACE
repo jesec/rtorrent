@@ -4,9 +4,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "libtorrent",
-    sha256 = "e67df3f7435319fa8ffa8c6e5acaa6c31748bbb2fb5ca4097132025517642906",
-    strip_prefix = "libtorrent-899c6cbc9e548f58149da2682879479d66337ff6",
-    url = "https://github.com/jesec/libtorrent/archive/899c6cbc9e548f58149da2682879479d66337ff6.zip",
+    sha256 = "2b3e186889335bad1fc1572e50170a22cd481fba5bceb6d599a83cb62e2c3254",
+    strip_prefix = "libtorrent-1ce7a99144dfdc22b86720887540f614baface23",
+    url = "https://github.com/jesec/libtorrent/archive/1ce7a99144dfdc22b86720887540f614baface23.zip",
 )
 
 load("@libtorrent//:libtorrent_repos.bzl", "libtorrent_repos")
@@ -68,10 +68,8 @@ http_archive(
 http_archive(
     name = "json",
     build_file = "@rtorrent//:third_party/json.BUILD",
-    sha256 = "6bea5877b1541d353bd77bdfbdb2696333ae5ed8f9e8cc22df657192218cad91",
-    urls = [
-        "https://github.com/nlohmann/json/releases/download/v3.9.1/include.zip",
-    ],
+    sha256 = "61e605be15e88deeac4582aaf01c09d616f8302edde7adcaba9261ddc3b4ceca",
+    urls = ["https://github.com/nlohmann/json/releases/download/v3.10.2/include.zip"],
 )
 
 http_archive(
@@ -79,10 +77,7 @@ http_archive(
     build_file = "@rtorrent//:third_party/ncurses.BUILD",
     sha256 = "30306e0c76e0f9f1f0de987cf1c82a5c21e1ce6568b9227f7da5b71cbea86c9d",
     strip_prefix = "ncurses-6.2",
-    urls = [
-        "https://ftp.gnu.org/gnu/ncurses/ncurses-6.2.tar.gz",
-        "https://invisible-mirror.net/archives/ncurses/ncurses-6.2.tar.gz",
-    ],
+    urls = ["https://ftp.gnu.org/gnu/ncurses/ncurses-6.2.tar.gz"],
 )
 
 http_archive(
@@ -104,7 +99,7 @@ http_archive(
     name = "xmlrpc",
     build_file = "@rtorrent//:third_party/xmlrpc.BUILD",
     patches = ["@rtorrent//:third_party/xmlrpc.patch"],
-    sha256 = "93d81a32f4ecfeb914c05f77476ba0af2e6b93ef6673fafdc12878f71d70a276",
-    strip_prefix = "xmlrpc-c-146e9bf7f8933c3baec871dfc2365e471171ddf4/advanced",
-    urls = ["https://github.com/mirror/xmlrpc-c/archive/146e9bf7f8933c3baec871dfc2365e471171ddf4.zip"],
+    sha256 = "92f8945d7748c48ddaf2a9eb60fb366c642f32136ce68abedc75244f9a0ea492",
+    strip_prefix = "xmlrpc-c-90978dfa964a57e6a31d76b128d0fa4ee9db574b/trunk",
+    urls = ["https://github.com/mirror/xmlrpc-c/archive/90978dfa964a57e6a31d76b128d0fa4ee9db574b.zip"],
 )
