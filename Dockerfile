@@ -1,12 +1,15 @@
-ARG ALPINE_IMAGE=alpine
+ARG ALPINE_IMAGE=alpine:edge
 
 FROM ${ALPINE_IMAGE} as build
 
 WORKDIR /root/rtorrent
 
+RUN echo https://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+
 # Install build dependencies
 RUN apk --no-cache add \
     bash \
+    bazel \
     build-base \
     coreutils \
     gcompat \
@@ -14,11 +17,6 @@ RUN apk --no-cache add \
     linux-headers \
     python2 \
     python3
-
-# Install Bazel
-RUN apk --no-cache add \
-    -Xhttps://dl-cdn.alpinelinux.org/alpine/edge/testing \
-    bazel
 
 # Checkout rTorrent sources from current directory
 COPY . ./
