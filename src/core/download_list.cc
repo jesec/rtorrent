@@ -264,8 +264,13 @@ DownloadList::open_throw(Download* download) {
 
   int openFlags = download->resume_flags();
 
-  if (rpc::call_command_value("system.file.allocate"))
+  auto fileAllocate = rpc::call_command_value("system.file.allocate");
+
+  if (fileAllocate)
     openFlags |= torrent::Download::open_enable_fallocate;
+
+  if (fileAllocate == 2)
+    openFlags |= torrent::Download::open_enable_fallocate_all;
 
   download->download()->open(openFlags);
   DL_TRIGGER_EVENT(download, "event.download.opened");
