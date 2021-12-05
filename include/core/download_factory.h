@@ -60,7 +60,7 @@ public:
     m_start = v;
   }
   
-  bool get_init_load const {
+  bool get_init_load() const {
     return m_initLoad;
   }
   void set_init_load(bool v) {
