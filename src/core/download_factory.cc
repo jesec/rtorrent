@@ -300,7 +300,8 @@ DownloadFactory::receive_success() {
     download->enable_udp_trackers(false);
     
   // Don't force the trackers to scrape when rTorrent first starts
-  download->set_resume_flags(torrent::Download::start_skip_tracker);
+  if (m_initLoad)
+    download->set_resume_flags(torrent::Download::start_skip_tracker);
 
   // Check first if we already have these values set in the session
   // torrent, so that it is safe to change the values.

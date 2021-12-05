@@ -165,6 +165,7 @@ load_session_torrents(indicators::BlockProgressBar*& progress_bar) {
 
     // Replace with session torrent flag.
     f->set_session(true);
+    f->set_init_load(true);
     f->slot_finished([f, &progress_bar, entries_size]() {
       if (control->is_shutdown_received()) {
         throw std::runtime_error("shutdown received. aborting...");
@@ -191,6 +192,7 @@ load_arg_torrents(char** first, char** last) {
 
     // Replace with session torrent flag.
     f->set_start(true);
+    f->set_init_load(true);
     f->slot_finished([f]() { delete f; });
     f->load(*first);
     f->commit();
