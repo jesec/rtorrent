@@ -68,8 +68,8 @@ http_archive(
 http_archive(
     name = "json",
     build_file = "@rtorrent//:third_party/json.BUILD",
-    sha256 = "61e605be15e88deeac4582aaf01c09d616f8302edde7adcaba9261ddc3b4ceca",
-    urls = ["https://github.com/nlohmann/json/releases/download/v3.10.2/include.zip"],
+    sha256 = "b94997df68856753b72f0d7a3703b7d484d4745c567f3584ef97c96c25a5798e",
+    urls = ["https://github.com/nlohmann/json/releases/download/v3.10.5/include.zip"],
 )
 
 http_archive(
