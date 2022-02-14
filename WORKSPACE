@@ -46,11 +46,11 @@ rules_pkg_dependencies()
 http_archive(
     name = "cares",
     build_file = "@rtorrent//:third_party/cares.BUILD",
-    sha256 = "d73dd0f6de824afd407ce10750ea081af47eba52b8a6cb307d220131ad93fc40",
-    strip_prefix = "c-ares-1.17.1",
+    sha256 = "4803c844ce20ce510ef0eb83f8ea41fa24ecaae9d280c468c582d2bb25b3913d",
+    strip_prefix = "c-ares-1.17.2",
     urls = [
-        "https://github.com/c-ares/c-ares/releases/download/cares-1_17_1/c-ares-1.17.1.tar.gz",
-        "https://c-ares.haxx.se/download/c-ares-1.17.1.tar.gz",
+        "https://github.com/c-ares/c-ares/releases/download/cares-1_17_2/c-ares-1.17.2.tar.gz",
+        "https://c-ares.haxx.se/download/c-ares-1.17.2.tar.gz",
     ],
 )
 
