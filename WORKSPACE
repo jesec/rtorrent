@@ -4,9 +4,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "libtorrent",
-    sha256 = "52252ec56fcf8f8e2cf3024f18ac42059512a49d693127c5c822425213bb4c6f",
-    strip_prefix = "libtorrent-46b32949f35c32c518a1b634d6ec9cab0fe2580d",
-    url = "https://github.com/jesec/libtorrent/archive/46b32949f35c32c518a1b634d6ec9cab0fe2580d.zip",
+    sha256 = "df30bf2564bce20861d61defe0353be2ea70dd80dd03a0a1816edc0f0d786236",
+    strip_prefix = "libtorrent-76a89d105a5c57753efff2307b71b695ae50a187",
+    url = "https://github.com/jesec/libtorrent/archive/76a89d105a5c57753efff2307b71b695ae50a187.zip",
 )
 
 load("@libtorrent//:libtorrent_repos.bzl", "libtorrent_repos")
