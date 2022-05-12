@@ -164,6 +164,7 @@ load_session_torrents() {
 
     // Replace with session torrent flag.
     f->set_session(true);
+    f->set_immediate(true);
     f->slot_finished([f, &progress_bar, entries_size]() {
       if (control->is_shutdown_received()) {
         throw std::runtime_error("shutdown received. aborting...");
@@ -176,11 +177,10 @@ load_session_torrents() {
       }
       delete f;
     });
+
     f->load(entries.path() + entry.d_name);
     f->commit();
   }
-
-  torrent::utils::priority_queue_perform(&taskScheduler, cachedTime);
 
   if (progress_bar != nullptr) {
     progress_bar->mark_as_completed();
