@@ -127,7 +127,9 @@ parse_options(int                                              argc,
 }
 
 void
-load_session_torrents(indicators::BlockProgressBar*& progress_bar) {
+load_session_torrents() {
+  indicators::BlockProgressBar* progress_bar = nullptr;
+
   utils::Directory entries =
     control->core()->download_store()->get_formated_entries();
 
@@ -137,24 +139,21 @@ load_session_torrents(indicators::BlockProgressBar*& progress_bar) {
     std::cout << "rTorrent: loading " << entries_size
               << " entries from session directory" << std::endl;
     if (isatty(fileno(stdin)) && isatty(fileno(stdout))) {
-      using namespace indicators;
-      progress_bar = new BlockProgressBar{
-        option::BarWidth{ 50 },
-        option::ForegroundColor{ Color::white },
-        option::FontStyles{ std::vector<FontStyle>{ FontStyle::bold } },
-        option::MaxProgress{ entries_size }
+      progress_bar = new indicators::BlockProgressBar{
+        indicators::option::BarWidth{ 50 },
+        indicators::option::ForegroundColor{ indicators::Color::white },
+        indicators::option::FontStyles{
+          std::vector<indicators::FontStyle>{ indicators::FontStyle::bold } },
+        indicators::option::MaxProgress{ entries_size }
       };
     }
   }
 
-  for (utils::Directory::const_iterator first = entries.begin(),
-                                        last  = entries.end();
-       first != last;
-       ++first) {
+  for (const auto& entry : entries) {
     // We don't really support session torrents that are links. These
     // would be overwritten anyway on exit, and thus not really be
     // useful.
-    if (!first->is_file()) {
+    if (!entry.is_file()) {
       if (progress_bar != nullptr) {
         progress_bar->tick();
       }
@@ -177,8 +176,15 @@ load_session_torrents(indicators::BlockProgressBar*& progress_bar) {
       }
       delete f;
     });
-    f->load(entries.path() + first->d_name);
+    f->load(entries.path() + entry.d_name);
     f->commit();
+  }
+
+  torrent::utils::priority_queue_perform(&taskScheduler, cachedTime);
+
+  if (progress_bar != nullptr) {
+    progress_bar->mark_as_completed();
+    delete progress_bar;
   }
 }
 
@@ -617,10 +623,8 @@ main(int argc, char** argv) {
     // Load session torrents and perform scheduled tasks to ensure
     // session torrents are loaded before arg torrents.
     control->dht_manager()->load_dht_cache();
-    indicators::BlockProgressBar* progress_bar = nullptr;
-    load_session_torrents(progress_bar);
-    torrent::utils::priority_queue_perform(&taskScheduler, cachedTime);
 
+    load_session_torrents();
     load_arg_torrents(argv + firstArg, argv + argc);
 
     // Make sure we update the display before any scheduled tasks can
@@ -635,11 +639,6 @@ main(int argc, char** argv) {
                              rpc::make_target(),
                              "startup_done",
                              "System startup_done event action failed: ");
-
-    if (progress_bar != nullptr) {
-      progress_bar->mark_as_completed();
-      delete progress_bar;
-    }
 
     if (!display::Canvas::isInitialized()) {
       std::cout << "rTorrent: started, "
