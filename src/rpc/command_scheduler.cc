@@ -14,8 +14,9 @@
 namespace rpc {
 
 CommandScheduler::~CommandScheduler() {
-  std::for_each(
-    begin(), end(), [](CommandSchedulerItem* item) { delete item; });
+  for (const auto& item : *this) {
+    delete item;
+  }
 }
 
 CommandScheduler::iterator

@@ -52,10 +52,13 @@ DownloadList::check_contains(Download*) {}
 
 void
 DownloadList::clear() {
-  std::for_each(
-    begin(), end(), [this](Download* download) { close(download); });
+  for (const auto& download : *this) {
+    close(download);
+  }
 
-  std::for_each(begin(), end(), [](Download* download) { delete download; });
+  for (const auto& download : *this) {
+    delete download;
+  }
 
   base_type::clear();
 }
@@ -182,12 +185,13 @@ DownloadList::insert(Download* download) {
 
     // This needs to be separated into two different calls to ensure
     // the download remains in the view.
-    std::for_each(control->view_manager()->begin(),
-                  control->view_manager()->end(),
-                  [download](View* v) { return v->insert(download); });
-    std::for_each(control->view_manager()->begin(),
-                  control->view_manager()->end(),
-                  [download](View* v) { return v->filter_download(download); });
+    for (const auto& view : *control->view_manager()) {
+      view->insert(download);
+    }
+
+    for (const auto& view : *control->view_manager()) {
+      view->filter_download(download);
+    }
 
     DL_TRIGGER_EVENT(*itr, "event.download.inserted");
 
@@ -225,9 +229,9 @@ DownloadList::erase(iterator itr) {
   control->core()->download_store()->remove(*itr);
 
   DL_TRIGGER_EVENT(*itr, "event.download.erased");
-  std::for_each(control->view_manager()->begin(),
-                control->view_manager()->end(),
-                [&itr](View* v) { return v->erase(*itr); });
+  for (const auto& v : *control->view_manager()) {
+    v->erase(*itr);
+  }
 
   torrent::download_remove(*(*itr)->download());
   delete *itr;
@@ -779,8 +783,8 @@ DownloadList::confirm_finished(Download* download) {
   torrent::Object conn_current = rpc::call_command(
     "d.connection_seed", torrent::Object(), rpc::make_target(download));
   torrent::Object choke_up   = rpc::call_command("d.up.choke_heuristics.seed",
-                                                 torrent::Object(),
-                                                 rpc::make_target(download));
+                                               torrent::Object(),
+                                               rpc::make_target(download));
   torrent::Object choke_down = rpc::call_command("d.down.choke_heuristics.seed",
                                                  torrent::Object(),
                                                  rpc::make_target(download));

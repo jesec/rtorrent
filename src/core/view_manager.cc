@@ -19,7 +19,9 @@ namespace core {
 
 void
 ViewManager::clear() {
-  std::for_each(begin(), end(), [](View* v) { delete v; });
+  for (const auto& view : *this) {
+    delete view;
+  }
 
   base_type::clear();
 }

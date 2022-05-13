@@ -230,18 +230,15 @@ Manager::cleanup() {
 
 void
 Manager::shutdown(bool force) {
-  if (!force)
-    std::for_each(m_downloadList->begin(),
-                  m_downloadList->end(),
-                  [this](Download* download) {
-                    return m_downloadList->pause_default(download);
-                  });
-  else
-    std::for_each(m_downloadList->begin(),
-                  m_downloadList->end(),
-                  [this](Download* download) {
-                    return m_downloadList->close_quick(download);
-                  });
+  if (!force) {
+    for (const auto& download : *m_downloadList) {
+      m_downloadList->pause_default(download);
+    }
+  } else {
+    for (const auto& download : *m_downloadList) {
+      m_downloadList->close_quick(download);
+    }
+  }
 }
 
 void

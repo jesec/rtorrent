@@ -167,9 +167,9 @@ View::initialize(const std::string& name) {
   m_name = name;
 
   // Urgh, wrong. No filtering being done.
-  std::for_each(dlist->begin(), dlist->end(), [this](Download* download) {
-    return push_back(download);
-  });
+  for (const auto& download : *dlist) {
+    push_back(download);
+  }
 
   m_size  = base_type::size();
   m_focus = 0;

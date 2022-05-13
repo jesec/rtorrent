@@ -182,13 +182,11 @@ object_to_json(const torrent::Object& object) noexcept {
     }
     case torrent::Object::TYPE_MAP: {
       json result = json::object();
-      std::for_each(
-        object.as_map().cbegin(),
-        object.as_map().cend(),
-        [&result](
-          const torrent::Object::map_type::const_iterator::value_type& pair) {
-          result.emplace(pair.first, object_to_json(pair.second));
-        });
+
+      for (const auto& [k, v] : object.as_map()) {
+        result.emplace(k, object_to_json(v));
+      }
+
       return result;
     }
     case torrent::Object::TYPE_DICT_KEY: {

@@ -90,17 +90,20 @@ apply_dht_add_bootstrap(const std::string& arg) {
 
 torrent::Object
 apply_enable_trackers(int64_t arg) {
-  for (core::Manager::DListItr itr  = control->core()->download_list()->begin(),
-                               last = control->core()->download_list()->end();
-       itr != last;
-       ++itr) {
-    std::for_each((*itr)->tracker_list()->begin(),
-                  (*itr)->tracker_list()->end(),
-                  arg ? std::mem_fn(&torrent::Tracker::enable)
-                      : std::mem_fn(&torrent::Tracker::disable));
+  for (const auto& download : *control->core()->download_list()) {
+    if (arg) {
+      for (const auto& tracker : *download->tracker_list()) {
+        tracker->enable();
+      }
+    } else {
+      for (const auto& tracker : *download->tracker_list()) {
+        tracker->disable();
+      }
+    }
 
-    if (arg && !rpc::call_command_value("trackers.use_udp"))
-      (*itr)->enable_udp_trackers(false);
+    if (arg && !rpc::call_command_value("trackers.use_udp")) {
+      download->enable_udp_trackers(false);
+    }
   }
 
   return torrent::Object();

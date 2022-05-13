@@ -17,7 +17,10 @@ WindowText::WindowText(rpc::target_type target, extent_type margin)
 
 void
 WindowText::clear() {
-  std::for_each(begin(), end(), [](TextElement* element) { delete element; });
+  for (const auto& element : *this) {
+    delete element;
+  }
+
   base_type::clear();
 
   delete m_errorHandler;

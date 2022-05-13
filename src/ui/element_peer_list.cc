@@ -26,9 +26,9 @@ ElementPeerList::ElementPeerList(core::Download* d)
 
   m_listItr = m_list.end();
 
-  std::for_each(m_download->download()->connection_list()->begin(),
-                m_download->download()->connection_list()->end(),
-                [this](torrent::Peer* peer) { return m_list.push_back(peer); });
+  for (const auto& peer : *m_download->download()->connection_list()) {
+    m_list.push_back(peer);
+  }
 
   torrent::ConnectionList* connection_list =
     m_download->download()->connection_list();

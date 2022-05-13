@@ -10,7 +10,10 @@ namespace display {
 
 void
 TextElementList::clear() {
-  std::for_each(begin(), end(), [](TextElement* element) { delete element; });
+  for (const auto& element : *this) {
+    delete element;
+  }
+
   base_type::clear();
 }
 
