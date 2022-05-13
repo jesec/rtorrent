@@ -244,6 +244,10 @@ View::prev_focus() {
 
 void
 View::sort() {
+  if (m_sortCurrent.is_empty()) {
+    return;
+  }
+
   Download* curFocus = focus() != end_visible() ? *focus() : nullptr;
 
   // Don't go randomly switching around equivalent elements.
@@ -371,7 +375,10 @@ View::clear_filter_on() {
 inline void
 View::insert_visible(Download* d) {
   iterator itr =
-    std::find_if(begin_visible(), end_visible(), [d, this](Download* download) {
+    m_sortNew.is_empty()
+      ? end_visible()
+      : std::find_if(
+          begin_visible(), end_visible(), [d, this](Download* download) {
       return view_downloads_compare(m_sortNew)(d, download);
     });
 
