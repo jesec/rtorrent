@@ -393,8 +393,6 @@ main(int argc, char** argv) {
       "view.add = default\n"
 
       "view.add = name\n"
-      "view.sort_new     = name,((less,((d.name))))\n"
-      "view.sort_current = name,((less,((d.name))))\n"
 
       "view.add = active\n"
       "view.filter = active,((false))\n"
@@ -444,9 +442,6 @@ main(int argc, char** argv) {
       "view.filter_on = "
       "leeching,event.download.resumed,event.download.paused,event.download."
       "finished\n"
-
-      "schedule2 = view.main,10,10,((view.sort,main,20))\n"
-      "schedule2 = view.name,10,10,((view.sort,name,20))\n"
 
       "schedule2 = session_save,1200,1200,((session.save))\n"
       "schedule2 = low_diskspace,5,60,((close_low_diskspace,500M))\n"
@@ -612,6 +607,19 @@ main(int argc, char** argv) {
       const auto pair = cmd2.front();
       rpc::call_command_set_std_string(pair.first, pair.second);
       cmd2.pop();
+    }
+
+    // Sorting is O(n*log(n)) and very expensive
+    // RPC user does not rely on rTorrent for sorted list
+    // Only set view sorting and periodic resorting when not in daemon mode
+    if (!rpc::call_command_value("system.daemon")) {
+      rpc::parse_command_multiple(
+        rpc::make_target(),
+        "view.sort_new     = name,((less,((d.name))))\n"
+        "view.sort_current = name,((less,((d.name))))\n"
+
+        "schedule2 = view.main,10,10,((view.sort,main,20))\n"
+        "schedule2 = view.name,10,10,((view.sort,name,20))\n");
     }
 
     LT_LOG(
