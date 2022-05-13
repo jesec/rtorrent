@@ -737,24 +737,6 @@ handle_sigbus(int signum, siginfo_t* sa, void*) {
          << std::endl;
   output << "Fault address: " << sa->si_addr << std::endl;
 
-  // New code for finding the location of the SIGBUS signal, and using
-  // that to figure out how to recover.
-  torrent::chunk_info_result result =
-    torrent::chunk_list_address_info(sa->si_addr);
-
-  if (!result.download.is_valid()) {
-    output << "The fault address is not part of any chunk." << std::endl;
-    goto handle_sigbus_exit;
-  }
-
-  output << "Torrent name: " << result.download.info()->name().c_str()
-         << std::endl;
-  output << "File name:    " << result.file_path << std::endl;
-  output << "File offset:  " << result.file_offset << std::endl;
-  output << "Chunk index:  " << result.chunk_index << std::endl;
-  output << "Chunk offset: " << result.chunk_offset << std::endl;
-
-handle_sigbus_exit:
   std::cout << output.rdbuf();
 
   if (lt_log_is_valid(torrent::LOG_CRITICAL)) {
