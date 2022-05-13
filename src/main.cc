@@ -35,6 +35,7 @@
 #include "core/download_factory.h"
 #include "core/download_store.h"
 #include "core/manager.h"
+#include "core/view_manager.h"
 #include "display/canvas.h"
 #include "display/manager.h"
 #include "display/window.h"
@@ -144,7 +145,7 @@ load_session_torrents() {
         indicators::option::ForegroundColor{ indicators::Color::white },
         indicators::option::FontStyles{
           std::vector<indicators::FontStyle>{ indicators::FontStyle::bold } },
-        indicators::option::MaxProgress{ entries_size }
+        indicators::option::MaxProgress{ entries_size + 1 }
       };
     }
   }
@@ -170,10 +171,10 @@ load_session_torrents() {
         throw std::runtime_error("shutdown received. aborting...");
       }
       if (progress_bar != nullptr) {
-        progress_bar->tick();
         progress_bar->set_option(indicators::option::PostfixText{
           std::to_string(progress_bar->current()) + "/" +
           std::to_string(entries_size) });
+        progress_bar->tick();
       }
       delete f;
     });
@@ -182,7 +183,20 @@ load_session_torrents() {
     f->commit();
   }
 
+  // Hash torrents
   if (progress_bar != nullptr) {
+    progress_bar->set_option(indicators::option::PostfixText{ "Checking" });
+    progress_bar->tick();
+  }
+
+  const auto& hashing_view = *control->view_manager()->find_throw("hashing");
+  control->core()->set_hashing_view(hashing_view);
+  hashing_view->set_focus(hashing_view->focus());
+
+  priority_queue_perform(&taskScheduler, cachedTime);
+
+  if (progress_bar != nullptr) {
+    progress_bar->set_option(indicators::option::PostfixText{ "" });
     progress_bar->mark_as_completed();
     delete progress_bar;
   }
