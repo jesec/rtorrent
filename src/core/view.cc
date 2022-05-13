@@ -326,11 +326,16 @@ View::filter_by(const torrent::Object& condition, View::base_type& result) {
 
 void
 View::filter_download(core::Download* download) {
-  iterator itr = std::find(base_type::begin(), base_type::end(), download);
+  iterator itr = std::find(base_type::end() - 1, base_type::end(), download);
 
-  if (itr == base_type::end())
+  if (itr == base_type::end()) {
+    itr = std::find(base_type::begin(), base_type::end() - 1, download);
+  }
+
+  if (itr == base_type::end()) {
     throw torrent::internal_error(
       "View::filter_download(...) could not find download.");
+  }
 
   if (view_downloads_filter(m_filter, m_temp_filter)(download)) {
     if (itr >= end_visible()) {
@@ -379,8 +384,8 @@ View::insert_visible(Download* d) {
       ? end_visible()
       : std::find_if(
           begin_visible(), end_visible(), [d, this](Download* download) {
-      return view_downloads_compare(m_sortNew)(d, download);
-    });
+            return view_downloads_compare(m_sortNew)(d, download);
+          });
 
   m_size++;
   m_focus += (m_focus >= position(itr));
