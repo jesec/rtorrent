@@ -97,6 +97,10 @@ pieces.memory.max.set = 1800M
 #   0 = disabled
 #   1 = enabled, allocate when a file is opened for write
 #   2 = enabled, allocate the space for the whole torrent at once
+#
+# If you choose 2, as new torrents are guaranteed the space required,
+# average CPU usage can be further reduced by disabling periodic low
+# disk space check: "schedule_remove2 = low_diskspace"
 #system.file.allocate.set = 0
 
 # Basic operational settings
