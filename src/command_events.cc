@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
+#include <algorithm>
 #include <cstdio>
 #include <functional>
 #include <torrent/hash_string.h>
@@ -314,19 +315,22 @@ d_multicall(const torrent::Object::list_type& args) {
   torrent::Object             resultRaw = torrent::Object::create_list();
   torrent::Object::list_type& result    = resultRaw.as_list();
 
-  for (core::Download** vItr = dlist; vItr != dlist + dlist_size; vItr++) {
-    torrent::Object::list_type& row =
-      result.insert(result.end(), torrent::Object::create_list())->as_list();
+  result.resize(dlist_size, torrent::Object::create_list());
 
-    for (torrent::Object::list_const_iterator cItr = ++args.begin();
-         cItr != args.end();
-         cItr++) {
-      const std::string& cmd = cItr->as_string();
-      row.push_back(rpc::parse_command(rpc::make_target(*vItr),
-                                       cmd.c_str(),
-                                       cmd.c_str() + cmd.size())
-                      .first);
-    }
+  for (size_t i = 0; i < dlist_size; ++i) {
+    torrent::Object::list_type& row = result[i].as_list();
+
+    row.reserve(args.size() - 1);
+
+    std::for_each(args.begin() + 1,
+                  args.end(),
+                  [&row, download = dlist[i]](const auto& arg) {
+                    const std::string& cmd = arg.as_string();
+                    row.push_back(rpc::parse_command(rpc::make_target(download),
+                                                     cmd.c_str(),
+                                                     cmd.c_str() + cmd.size())
+                                    .first);
+                  });
   }
 
   free(dlist);
