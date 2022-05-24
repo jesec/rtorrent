@@ -64,7 +64,7 @@ WindowText::redraw() {
 
   unsigned int position = 0;
 
-  if (m_errorHandler != nullptr && m_target.second == nullptr) {
+  if (m_errorHandler != nullptr && std::get<1>(m_target) == nullptr) {
     char* buffer = static_cast<char*>(calloc(width + 1, sizeof(char)));
 
     Canvas::attributes_list attributes;

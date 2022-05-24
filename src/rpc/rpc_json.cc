@@ -103,7 +103,7 @@ string_to_target(const std::string_view& targetString,
     throw torrent::input_error("invalid parameters: invalid index");
   }
 
-  if (target == nullptr || target->second == nullptr) {
+  if (target == nullptr || std::get<1>(*target) == nullptr) {
     throw torrent::input_error(
       "invalid parameters: unable to find requested target");
   }

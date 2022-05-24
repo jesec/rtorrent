@@ -37,7 +37,7 @@ TextElementValueBase::print(char*                    first,
   push_attribute(attributes,
                  Attributes(first, m_attributes, Attributes::color_invalid));
 
-  int64_t val = value(target.second);
+  int64_t val = value(std::get<1>(target));
 
   // Transform the value if needed.
   if (m_flags & flag_elapsed)

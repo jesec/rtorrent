@@ -272,7 +272,7 @@ apply_compare(rpc::target_type target, const torrent::Object::list_type& args) {
   }
 
   // if all else is equal, ensure stable sort order based on memory location
-  return (int64_t)(target.second < target.third);
+  return (int64_t)(std::get<1>(target) < std::get<2>(target));
 }
 
 // Regexp based 'match' function.

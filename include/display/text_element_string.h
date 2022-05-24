@@ -119,10 +119,11 @@ public:
 
 private:
   char* copy_string(char* first, char* last, rpc::target_type target) override {
-    if (target.second == nullptr)
+    if (std::get<1>(target) == nullptr)
       return first;
 
-    result_type result = m_slot(reinterpret_cast<arg1_type>(target.second));
+    result_type result =
+      m_slot(reinterpret_cast<arg1_type>(std::get<1>(target)));
     extent_type length =
       std::min<extent_type>(result_length(&result), last - first);
 

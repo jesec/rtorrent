@@ -123,62 +123,68 @@ public:
     key_type           key,
     const mapped_type& arg,
     target_type        target = target_type((int)command_base::target_generic,
-                                     nullptr));
+                                            nullptr,
+                                            nullptr));
   const mapped_type call_command(
     iterator           itr,
     const mapped_type& arg,
     target_type        target = target_type((int)command_base::target_generic,
-                                     nullptr));
+                                            nullptr,
+                                            nullptr));
 
   const mapped_type call_command_d(key_type           key,
                                    core::Download*    download,
                                    const mapped_type& arg) {
     return call_command(
-      key, arg, target_type((int)command_base::target_download, download));
+      key,
+      arg,
+      target_type((int)command_base::target_download, download, nullptr));
   }
   const mapped_type call_command_p(key_type           key,
                                    torrent::Peer*     peer,
                                    const mapped_type& arg) {
     return call_command(
-      key, arg, target_type((int)command_base::target_peer, peer));
+      key, arg, target_type((int)command_base::target_peer, peer, nullptr));
   }
   const mapped_type call_command_t(key_type           key,
                                    torrent::Tracker*  tracker,
                                    const mapped_type& arg) {
     return call_command(
-      key, arg, target_type((int)command_base::target_tracker, tracker));
+      key,
+      arg,
+      target_type((int)command_base::target_tracker, tracker, nullptr));
   }
   const mapped_type call_command_f(key_type           key,
                                    torrent::File*     file,
                                    const mapped_type& arg) {
     return call_command(
-      key, arg, target_type((int)command_base::target_file, file));
+      key, arg, target_type((int)command_base::target_file, file, nullptr));
   }
 };
 
 inline target_type
 make_target() {
-  return target_type((int)command_base::target_generic, nullptr);
+  return { (int)command_base::target_generic, nullptr, nullptr };
 }
 inline target_type
 make_target(int type, void* target) {
-  return target_type(type, target);
+  return { type, target, nullptr };
 }
 inline target_type
 make_target(int type, void* target1, void* target2) {
-  return target_type(type, target1, target2);
+  return { type, target1, target2 };
 }
 
 template<typename T>
 inline target_type
 make_target(T target) {
-  return target_type((int)target_type_id<T>::value, target);
+  return { (int)target_type_id<T>::value, target, nullptr };
 }
 
 template<typename T>
 inline target_type
 make_target_pair(T target1, T target2) {
-  return target_type((int)target_type_id<T, T>::value, target1, target2);
+  return { (int)target_type_id<T, T>::value, target1, target2 };
 }
 
 // TODO: Helper-functions that really should be in the

@@ -90,7 +90,7 @@ is_target_compatible<target_type>(const target_type&) {
 template<>
 inline bool
 is_target_compatible<torrent::File*>(const target_type& target) {
-  return target.first == command_base::target_file ||
+  return std::get<0>(target) == command_base::target_file ||
          command_base::target_file_itr;
 }
 
@@ -103,10 +103,10 @@ get_target_cast<target_type>(target_type target, int) {
 template<>
 inline torrent::File*
 get_target_cast<torrent::File*>(target_type target, int) {
-  if (target.first == command_base::target_file_itr)
-    return static_cast<torrent::FileListIterator*>(target.second)->file();
+  if (std::get<0>(target) == command_base::target_file_itr)
+    return static_cast<torrent::FileListIterator*>(std::get<1>(target))->file();
   else
-    return static_cast<torrent::File*>(target.second);
+    return static_cast<torrent::File*>(std::get<1>(target));
 }
 
 inline torrent::Object*

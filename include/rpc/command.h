@@ -6,6 +6,7 @@
 
 #include <functional>
 #include <limits>
+#include <tuple>
 
 #include <torrent/data/file_list_iterator.h>
 #include <torrent/object.h>
@@ -38,40 +39,10 @@ struct target_wrapper<void> {
   using cleaned_type = no_type*;
 };
 
-// Since c++0x isn't out yet...
-template<typename T1, typename T2, typename T3>
-struct rt_triple : private std::pair<T1, T2> {
-  using base_type  = std::pair<T1, T2>;
-  using third_type = T3;
-
-  using base_type::first;
-  using base_type::second;
-  using typename base_type::first_type;
-  using typename base_type::second_type;
-
-  T3 third;
-
-  rt_triple()
-    : base_type()
-    , third() {}
-
-  rt_triple(const T1& a, const T2& b)
-    : base_type(a, b)
-    , third() {}
-
-  rt_triple(const T1& a, const T2& b, const T3& c)
-    : base_type(a, b)
-    , third(c) {}
-
-  rt_triple(const base_type& b)
-    : base_type(b)
-    , third() {}
-};
-
 // Since it gets used so many places we might as well put it in the
 // rpc namespace.
 // typedef std::pair<int, void*> target_type;
-using target_type = rt_triple<int, void*, void*>;
+using target_type = std::tuple<int, void*, void*>;
 
 class command_base;
 
@@ -251,28 +222,28 @@ struct target_type_id {
 template<typename T>
 inline bool
 is_target_compatible(const target_type& target) {
-  return target.first == target_type_id<T>::value;
+  return std::get<0>(target) == target_type_id<T>::value;
 }
 
 // Splitting pairs into separate targets.
 inline bool
 is_target_pair(const target_type& target) {
-  return target.first >= command_base::target_download_pair;
+  return std::get<0>(target) >= command_base::target_download_pair;
 }
 
 template<typename T>
 inline T
 get_target_cast(target_type target, int = target_type_id<T>::value) {
-  return (T)target.second;
+  return (T)std::get<1>(target);
 }
 
 inline target_type
 get_target_left(const target_type& target) {
-  return target_type(target.first - 5, target.second);
+  return { std::get<0>(target) - 5, std::get<1>(target), nullptr };
 }
 inline target_type
 get_target_right(const target_type& target) {
-  return target_type(target.first - 5, target.third);
+  return { std::get<0>(target) - 5, std::get<2>(target), nullptr };
 }
 
 }

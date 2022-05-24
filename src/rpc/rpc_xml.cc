@@ -231,7 +231,7 @@ xmlrpc_to_target(xmlrpc_env* env, xmlrpc_value* value) {
       ::free((void*)str);
 
       // Check if the target pointer is NULL.
-      if (target.second == nullptr)
+      if (std::get<1>(target) == nullptr)
         throw xmlrpc_error(XMLRPC_TYPE_ERROR, "Invalid index.");
 
       return target;
@@ -364,7 +364,7 @@ xmlrpc_to_object(xmlrpc_env*       env,
         if (env->fault_occurred)
           throw xmlrpc_error(env);
 
-        if (target->first == command_base::target_download &&
+        if (std::get<0>(*target) == command_base::target_download &&
             (callType == command_base::target_file ||
              callType == command_base::target_tracker)) {
           // If we have a download target and the call type requires
@@ -378,7 +378,7 @@ xmlrpc_to_object(xmlrpc_env*       env,
           *target = xmlrpc_to_index_type(
             xmlrpc_list_entry_to_value(env, value, current++),
             callType,
-            (core::Download*)target->second);
+            (core::Download*)std::get<1>(*target));
         }
       }
 
