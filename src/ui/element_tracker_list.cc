@@ -19,16 +19,14 @@ ElementTrackerList::ElementTrackerList(core::Download* d)
   , m_window(nullptr)
   , m_focus(0) {
 
-  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
-    std::bind(&slot_type::operator(), &m_slot_exit);
+  m_bindings[KEY_LEFT] =
+    m_bindings['B' - '@'] = [m_slot_exit = &m_slot_exit] { (*m_slot_exit)(); };
 
-  m_bindings[' '] = std::bind(&ElementTrackerList::receive_cycle_group, this);
-  m_bindings['*'] = std::bind(&ElementTrackerList::receive_disable, this);
+  m_bindings[' '] = [this] { receive_cycle_group(); };
+  m_bindings['*'] = [this] { receive_disable(); };
 
-  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] =
-    std::bind(&ElementTrackerList::receive_next, this);
-  m_bindings[KEY_UP] = m_bindings['P' - '@'] =
-    std::bind(&ElementTrackerList::receive_prev, this);
+  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] = [this] { receive_next(); };
+  m_bindings[KEY_UP] = m_bindings['P' - '@'] = [this] { receive_prev(); };
 }
 
 void

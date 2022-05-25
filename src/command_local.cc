@@ -208,8 +208,9 @@ initialize_command_local() {
   torrent::ChunkManager* chunkManager = torrent::chunk_manager();
   torrent::FileManager*  fileManager  = torrent::file_manager();
 
-  CMD2_ANY("system.hostname", std::bind(&system_hostname));
-  CMD2_ANY("system.pid", std::bind(&getpid));
+  CMD2_ANY("system.hostname",
+           [](const auto&, const auto&) { return system_hostname(); });
+  CMD2_ANY("system.pid", [](const auto&, const auto&) { return getpid(); });
 
   CMD2_VAR_C_STRING("system.api_version", (int64_t)RT_API_VERSION);
   CMD2_VAR_C_STRING("system.client_version", RT_VERSION);
@@ -219,106 +220,145 @@ initialize_command_local() {
   CMD2_VAR_VALUE("system.file.split_size", -1);
   CMD2_VAR_STRING("system.file.split_suffix", ".part");
 
-  CMD2_ANY("system.file_status_cache.size",
-           std::bind(&utils::FileStatusCache::size,
-                     (utils::FileStatusCache::base_type*)control->core()
-                       ->file_status_cache()));
-  CMD2_ANY_V("system.file_status_cache.prune",
-             std::bind(&utils::FileStatusCache::prune,
-                       control->core()->file_status_cache()));
+  CMD2_ANY("system.file_status_cache.size", [](const auto&, const auto&) {
+    return control->core()->file_status_cache()->size();
+  });
+  CMD2_ANY_V("system.file_status_cache.prune", [](const auto&, const auto&) {
+    return control->core()->file_status_cache()->prune();
+  });
 
   CMD2_VAR_BOOL("file.prioritize_toc", 0);
   CMD2_VAR_LIST("file.prioritize_toc.first");
   CMD2_VAR_LIST("file.prioritize_toc.last");
 
   CMD2_ANY("system.files.opened_counter",
-           std::bind(&FM_t::files_opened_counter, fileManager));
+           [fileManager](const auto&, const auto&) {
+             return fileManager->files_opened_counter();
+           });
   CMD2_ANY("system.files.closed_counter",
-           std::bind(&FM_t::files_closed_counter, fileManager));
+           [fileManager](const auto&, const auto&) {
+             return fileManager->files_closed_counter();
+           });
   CMD2_ANY("system.files.failed_counter",
-           std::bind(&FM_t::files_failed_counter, fileManager));
+           [fileManager](const auto&, const auto&) {
+             return fileManager->files_failed_counter();
+           });
 
-  CMD2_ANY_STRING("system.env", std::bind(&system_env, std::placeholders::_2));
+  CMD2_ANY_STRING("system.env",
+                  [](const auto&, const auto& arg) { return system_env(arg); });
 
   CMD2_ANY("system.time",
-           std::bind(&torrent::utils::timer::seconds, &cachedTime));
-  CMD2_ANY("system.time_seconds",
-           std::bind(&torrent::utils::timer::current_seconds));
-  CMD2_ANY("system.time_usec", std::bind(&torrent::utils::timer::current_usec));
+           [](const auto&, const auto&) { return cachedTime.seconds(); });
+  CMD2_ANY("system.time_seconds", [](const auto&, const auto&) {
+    return torrent::utils::timer::current_seconds();
+  });
+  CMD2_ANY("system.time_usec", [](const auto&, const auto&) {
+    return torrent::utils::timer::current_usec();
+  });
 
   CMD2_ANY_VALUE_V("system.umask.set",
-                   std::bind(&umask, std::placeholders::_2));
+                   [](const auto&, const auto& mode) { return umask(mode); });
 
   CMD2_VAR_BOOL("system.daemon", false);
 
-  CMD2_ANY_V("system.shutdown.normal",
-             std::bind(&Control::receive_normal_shutdown, control));
-  CMD2_ANY_V("system.shutdown.quick",
-             std::bind(&Control::receive_quick_shutdown, control));
+  CMD2_ANY_V("system.shutdown.normal", [](const auto&, const auto&) {
+    return control->receive_normal_shutdown();
+  });
+  CMD2_ANY_V("system.shutdown.quick", [](const auto&, const auto&) {
+    return control->receive_quick_shutdown();
+  });
   CMD2_REDIRECT_GENERIC_NO_EXPORT("system.shutdown", "system.shutdown.normal");
 
-  CMD2_ANY("system.cwd", std::bind(&system_get_cwd));
-  CMD2_ANY_STRING("system.cwd.set",
-                  std::bind(&system_set_cwd, std::placeholders::_2));
+  CMD2_ANY("system.cwd",
+           [](const auto&, const auto&) { return system_get_cwd(); });
+  CMD2_ANY_STRING("system.cwd.set", [](const auto&, const auto& rawArgs) {
+    return system_set_cwd(rawArgs);
+  });
 
-  CMD2_ANY("pieces.sync.always_safe",
-           std::bind(&CM_t::safe_sync, chunkManager));
-  CMD2_ANY_VALUE_V(
-    "pieces.sync.always_safe.set",
-    std::bind(&CM_t::set_safe_sync, chunkManager, std::placeholders::_2));
+  CMD2_ANY("pieces.sync.always_safe", [chunkManager](const auto&, const auto&) {
+    return chunkManager->safe_sync();
+  });
+  CMD2_ANY_VALUE_V("pieces.sync.always_safe.set",
+                   [chunkManager](const auto&, const auto& state) {
+                     return chunkManager->set_safe_sync(state);
+                   });
   CMD2_ANY("pieces.sync.safe_free_diskspace",
-           std::bind(&CM_t::safe_free_diskspace, chunkManager));
-  CMD2_ANY("pieces.sync.timeout", std::bind(&CM_t::timeout_sync, chunkManager));
-  CMD2_ANY_VALUE_V(
-    "pieces.sync.timeout.set",
-    std::bind(&CM_t::set_timeout_sync, chunkManager, std::placeholders::_2));
+           [chunkManager](const auto&, const auto&) {
+             return chunkManager->safe_free_diskspace();
+           });
+  CMD2_ANY("pieces.sync.timeout", [chunkManager](const auto&, const auto&) {
+    return chunkManager->timeout_sync();
+  });
+  CMD2_ANY_VALUE_V("pieces.sync.timeout.set",
+                   [chunkManager](const auto&, const auto& seconds) {
+                     return chunkManager->set_timeout_sync(seconds);
+                   });
   CMD2_ANY("pieces.sync.timeout_safe",
-           std::bind(&CM_t::timeout_safe_sync, chunkManager));
+           [chunkManager](const auto&, const auto&) {
+             return chunkManager->timeout_safe_sync();
+           });
   CMD2_ANY_VALUE_V("pieces.sync.timeout_safe.set",
-                   std::bind(&CM_t::set_timeout_safe_sync,
-                             chunkManager,
-                             std::placeholders::_2));
-  CMD2_ANY("pieces.sync.queue_size",
-           std::bind(&CM_t::sync_queue_size, chunkManager));
+                   [chunkManager](const auto&, const auto& seconds) {
+                     return chunkManager->set_timeout_safe_sync(seconds);
+                   });
+  CMD2_ANY("pieces.sync.queue_size", [chunkManager](const auto&, const auto&) {
+    return chunkManager->sync_queue_size();
+  });
 
-  CMD2_ANY("pieces.preload.type", std::bind(&CM_t::preload_type, chunkManager));
-  CMD2_ANY_VALUE_V(
-    "pieces.preload.type.set",
-    std::bind(&CM_t::set_preload_type, chunkManager, std::placeholders::_2));
-  CMD2_ANY("pieces.preload.min_size",
-           std::bind(&CM_t::preload_min_size, chunkManager));
+  CMD2_ANY("pieces.preload.type", [chunkManager](const auto&, const auto&) {
+    return chunkManager->preload_type();
+  });
+  CMD2_ANY_VALUE_V("pieces.preload.type.set",
+                   [chunkManager](const auto&, const auto& t) {
+                     return chunkManager->set_preload_type(t);
+                   });
+  CMD2_ANY("pieces.preload.min_size", [chunkManager](const auto&, const auto&) {
+    return chunkManager->preload_min_size();
+  });
   CMD2_ANY_VALUE_V("pieces.preload.min_size.set",
-                   std::bind(&CM_t::set_preload_min_size,
-                             chunkManager,
-                             std::placeholders::_2));
-  CMD2_ANY("pieces.preload.min_rate",
-           std::bind(&CM_t::preload_required_rate, chunkManager));
+                   [chunkManager](const auto&, const auto& bytes) {
+                     return chunkManager->set_preload_min_size(bytes);
+                   });
+  CMD2_ANY("pieces.preload.min_rate", [chunkManager](const auto&, const auto&) {
+    return chunkManager->preload_required_rate();
+  });
   CMD2_ANY_VALUE_V("pieces.preload.min_rate.set",
-                   std::bind(&CM_t::set_preload_required_rate,
-                             chunkManager,
-                             std::placeholders::_2));
+                   [chunkManager](const auto&, const auto& bytes) {
+                     return chunkManager->set_preload_required_rate(bytes);
+                   });
 
-  CMD2_ANY("pieces.memory.current",
-           std::bind(&CM_t::memory_usage, chunkManager));
+  CMD2_ANY("pieces.memory.current", [chunkManager](const auto&, const auto&) {
+    return chunkManager->memory_usage();
+  });
   CMD2_ANY("pieces.memory.sync_queue",
-           std::bind(&CM_t::sync_queue_memory_usage, chunkManager));
+           [chunkManager](const auto&, const auto&) {
+             return chunkManager->sync_queue_memory_usage();
+           });
   CMD2_ANY("pieces.memory.block_count",
-           std::bind(&CM_t::memory_block_count, chunkManager));
-  CMD2_ANY("pieces.memory.max",
-           std::bind(&CM_t::max_memory_usage, chunkManager));
+           [chunkManager](const auto&, const auto&) {
+             return chunkManager->memory_block_count();
+           });
+  CMD2_ANY("pieces.memory.max", [chunkManager](const auto&, const auto&) {
+    return chunkManager->max_memory_usage();
+  });
   CMD2_ANY_VALUE_V("pieces.memory.max.set",
-                   std::bind(&CM_t::set_max_memory_usage,
-                             chunkManager,
-                             std::placeholders::_2));
-  CMD2_ANY("pieces.stats_preloaded",
-           std::bind(&CM_t::stats_preloaded, chunkManager));
+                   [chunkManager](const auto&, const auto& bytes) {
+                     return chunkManager->set_max_memory_usage(bytes);
+                   });
+  CMD2_ANY("pieces.stats_preloaded", [chunkManager](const auto&, const auto&) {
+    return chunkManager->stats_preloaded();
+  });
   CMD2_ANY("pieces.stats_not_preloaded",
-           std::bind(&CM_t::stats_not_preloaded, chunkManager));
+           [chunkManager](const auto&, const auto&) {
+             return chunkManager->stats_not_preloaded();
+           });
 
-  CMD2_ANY("pieces.stats.total_size",
-           std::bind(&apply_pieces_stats_total_size));
+  CMD2_ANY("pieces.stats.total_size", [](const auto&, const auto&) {
+    return apply_pieces_stats_total_size();
+  });
 
-  CMD2_ANY("pieces.hash.queue_size", std::bind(&torrent::hash_queue_size));
+  CMD2_ANY("pieces.hash.queue_size",
+           [](const auto&, const auto&) { return torrent::hash_queue_size(); });
   CMD2_VAR_BOOL("pieces.hash.on_completion", false);
 
   CMD2_VAR_STRING("directory.default", "./");
@@ -327,20 +367,20 @@ initialize_command_local() {
   CMD2_VAR_BOOL("session.use_lock", true);
   CMD2_VAR_BOOL("session.on_completion", true);
 
-  CMD2_ANY("session.path", std::bind(&core::DownloadStore::path, dStore));
+  CMD2_ANY("session.path",
+           [dStore](const auto&, const auto&) { return dStore->path(); });
   CMD2_ANY_STRING_V(
     "session.path.set",
-    std::bind(&core::DownloadStore::set_path, dStore, std::placeholders::_2));
+    [dStore](const auto&, const auto& path) { return dStore->set_path(path); });
 
-  CMD2_ANY_V("session.save",
-             std::bind(&core::DownloadList::session_save, dList));
+  CMD2_ANY_V("session.save", [dList](const auto&, const auto&) {
+    return dList->session_save();
+  });
 
 #define CMD2_EXECUTE(key, flags)                                               \
-  CMD2_ANY(key,                                                                \
-           std::bind(&rpc::ExecFile::execute_object,                           \
-                     &rpc::execFile,                                           \
-                     std::placeholders::_2,                                    \
-                     flags));
+  CMD2_ANY(key, [](const auto&, const auto& rawArgs) {                         \
+    return rpc::execFile.execute_object(rawArgs, flags);                       \
+  });
 
   CMD2_EXECUTE("execute2",
                rpc::ExecFile::flag_expand_tilde | rpc::ExecFile::flag_throw);
@@ -364,19 +404,29 @@ initialize_command_local() {
   CMD2_EXECUTE("execute.capture_nothrow",
                rpc::ExecFile::flag_expand_tilde | rpc::ExecFile::flag_capture);
 
-  CMD2_ANY_LIST("file.append",
-                std::bind(&cmd_file_append, std::placeholders::_2));
+  CMD2_ANY_LIST("file.append", [](const auto&, const auto& args) {
+    return cmd_file_append(args);
+  });
 
   // TODO: Convert to new command types:
   *rpc::command_base::argument(0) = "placeholder.0";
   *rpc::command_base::argument(1) = "placeholder.1";
   *rpc::command_base::argument(2) = "placeholder.2";
   *rpc::command_base::argument(3) = "placeholder.3";
-  CMD2_ANY_P("argument.0", std::bind(&rpc::command_base::argument_ref, 0));
-  CMD2_ANY_P("argument.1", std::bind(&rpc::command_base::argument_ref, 1));
-  CMD2_ANY_P("argument.2", std::bind(&rpc::command_base::argument_ref, 2));
-  CMD2_ANY_P("argument.3", std::bind(&rpc::command_base::argument_ref, 3));
+  CMD2_ANY_P("argument.0", [](const auto&, const auto&) {
+    return rpc::command_base::argument_ref(0);
+  });
+  CMD2_ANY_P("argument.1", [](const auto&, const auto&) {
+    return rpc::command_base::argument_ref(1);
+  });
+  CMD2_ANY_P("argument.2", [](const auto&, const auto&) {
+    return rpc::command_base::argument_ref(2);
+  });
+  CMD2_ANY_P("argument.3", [](const auto&, const auto&) {
+    return rpc::command_base::argument_ref(3);
+  });
 
-  CMD2_ANY_LIST("group.insert",
-                std::bind(&group_insert, std::placeholders::_2));
+  CMD2_ANY_LIST("group.insert", [](const auto&, const auto& args) {
+    return group_insert(args);
+  });
 }

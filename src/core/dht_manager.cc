@@ -121,7 +121,7 @@ DhtManager::start_dht() {
     }
   }
 
-  m_updateTimeout.slot() = std::bind(&DhtManager::update, this);
+  m_updateTimeout.slot() = [this] { update(); };
   priority_queue_insert(
     &taskScheduler,
     &m_updateTimeout,
@@ -211,7 +211,7 @@ DhtManager::update() {
         break;
 
     if (itr == end) {
-      m_stopTimeout.slot() = std::bind(&DhtManager::stop_dht, this);
+      m_stopTimeout.slot() = [this] { stop_dht(); };
       priority_queue_insert(
         &taskScheduler,
         &m_stopTimeout,

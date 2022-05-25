@@ -19,10 +19,10 @@ WindowHttpQueue::WindowHttpQueue(core::HttpQueue* q)
   set_active(false);
   m_connInsert = m_queue->signal_insert().insert(
     m_queue->signal_insert().end(),
-    std::bind(&WindowHttpQueue::receive_insert, this, std::placeholders::_1));
+    [this](const auto& h) { return receive_insert(h); });
   m_connErase = m_queue->signal_erase().insert(
     m_queue->signal_insert().end(),
-    std::bind(&WindowHttpQueue::receive_erase, this, std::placeholders::_1));
+    [this](const auto& h) { return receive_erase(h); });
 }
 
 void

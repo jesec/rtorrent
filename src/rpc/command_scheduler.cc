@@ -38,7 +38,7 @@ CommandScheduler::insert(const std::string& key) {
     delete *itr;
 
   *itr           = new CommandSchedulerItem(key);
-  (*itr)->slot() = std::bind(&CommandScheduler::call_item, this, *itr);
+  (*itr)->slot() = [this, item = *itr] { return call_item(item); };
 
   return itr;
 }

@@ -46,9 +46,9 @@ Control::Control()
   m_dhtManager  = new core::DhtManager();
 
   m_inputStdin->slot_pressed(
-    std::bind(&input::Manager::pressed, m_input, std::placeholders::_1));
+    [this](const auto& key) { m_input->pressed(key); });
 
-  m_taskShutdown.slot() = std::bind(&Control::handle_shutdown, this);
+  m_taskShutdown.slot() = [this] { handle_shutdown(); };
 
   m_commandScheduler->set_slot_error_message(
     [this](const std::string& msg) { m_core->push_log_std(msg); });

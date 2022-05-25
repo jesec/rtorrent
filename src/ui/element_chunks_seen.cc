@@ -17,15 +17,13 @@ ElementChunksSeen::ElementChunksSeen(core::Download* d)
   , m_window(nullptr)
   , m_focus(0) {
 
-  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
-    std::bind(&slot_type::operator(), &m_slot_exit);
+  m_bindings[KEY_LEFT] =
+    m_bindings['B' - '@'] = [m_slot_exit = &m_slot_exit] { (*m_slot_exit)(); };
 
-  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] =
-    std::bind(&ElementChunksSeen::receive_next, this);
-  m_bindings[KEY_UP] = m_bindings['P' - '@'] =
-    std::bind(&ElementChunksSeen::receive_prev, this);
-  m_bindings[KEY_NPAGE] = std::bind(&ElementChunksSeen::receive_pagenext, this);
-  m_bindings[KEY_PPAGE] = std::bind(&ElementChunksSeen::receive_pageprev, this);
+  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] = [this] { receive_next(); };
+  m_bindings[KEY_UP] = m_bindings['P' - '@'] = [this] { receive_prev(); };
+  m_bindings[KEY_NPAGE]                      = [this] { receive_pagenext(); };
+  m_bindings[KEY_PPAGE]                      = [this] { receive_pageprev(); };
 }
 
 void

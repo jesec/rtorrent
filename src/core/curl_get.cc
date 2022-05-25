@@ -52,7 +52,7 @@ CurlGet::start() {
 
     // Normally libcurl should handle the timeout. But sometimes that doesn't
     // work right so we do a fallback timeout that just aborts the transfer.
-    m_taskTimeout.slot() = std::bind(&CurlGet::receive_timeout, this);
+    m_taskTimeout.slot() = [this] { receive_timeout(); };
     priority_queue_erase(&taskScheduler, &m_taskTimeout);
     priority_queue_insert(&taskScheduler,
                           &m_taskTimeout,

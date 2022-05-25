@@ -44,15 +44,21 @@ mkdir(const torrent::Object::string_type& path, bool recursive, bool nothrow) {
 
 void
 initialize_command_fs() {
-  CMD2_ANY("fs.homedir", std::bind(&homedir, false));
-  CMD2_ANY("fs.homedir.nothrow", std::bind(&homedir, true));
+  CMD2_ANY("fs.homedir",
+           [](const auto&, const auto&) { return homedir(false); });
+  CMD2_ANY("fs.homedir.nothrow",
+           [](const auto&, const auto&) { return homedir(true); });
 
-  CMD2_ANY_STRING("fs.mkdir",
-                  std::bind(&mkdir, std::placeholders::_2, false, false));
-  CMD2_ANY_STRING("fs.mkdir.nothrow",
-                  std::bind(&mkdir, std::placeholders::_2, true, true));
-  CMD2_ANY_STRING("fs.mkdir.recursive",
-                  std::bind(&mkdir, std::placeholders::_2, true, false));
-  CMD2_ANY_STRING("fs.mkdir.recursive.nothrow",
-                  std::bind(&mkdir, std::placeholders::_2, true, true));
+  CMD2_ANY_STRING("fs.mkdir", [](const auto&, const auto& path) {
+    return mkdir(path, false, false);
+  });
+  CMD2_ANY_STRING("fs.mkdir.nothrow", [](const auto&, const auto& path) {
+    return mkdir(path, true, true);
+  });
+  CMD2_ANY_STRING("fs.mkdir.recursive", [](const auto&, const auto& path) {
+    return mkdir(path, true, false);
+  });
+  CMD2_ANY_STRING(
+    "fs.mkdir.recursive.nothrow",
+    [](const auto&, const auto& path) { return mkdir(path, true, true); });
 }

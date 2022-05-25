@@ -175,7 +175,7 @@ View::initialize(const std::string& name) {
   m_focus = 0;
 
   set_last_changed(torrent::utils::timer());
-  m_delayChanged.slot() = std::bind(&View::emit_changed_now, this);
+  m_delayChanged.slot() = [this] { emit_changed_now(); };
 }
 
 void
@@ -295,19 +295,17 @@ View::filter() {
   // done by using a base_type* member variable, and making sure we
   // set the elements to NULL as we trigger commands on them. Or
   // perhaps always clear them, thus not throwing anything.
-  if (!m_event_removed.is_empty())
-    std::for_each(changed.begin(),
-                  splitChanged,
-                  std::bind(&rpc::call_object_d_nothrow,
-                            m_event_removed,
-                            std::placeholders::_1));
+  if (!m_event_removed.is_empty()) {
+    std::for_each(changed.begin(), splitChanged, [this](const auto& download) {
+      return rpc::call_object_d_nothrow(m_event_removed, download);
+    });
+  }
 
-  if (!m_event_added.is_empty())
-    std::for_each(changed.begin(),
-                  splitChanged,
-                  std::bind(&rpc::call_object_d_nothrow,
-                            m_event_added,
-                            std::placeholders::_1));
+  if (!m_event_added.is_empty()) {
+    std::for_each(changed.begin(), splitChanged, [this](const auto& download) {
+      return rpc::call_object_d_nothrow(m_event_added, download);
+    });
+  }
 
   emit_changed();
 }

@@ -13,7 +13,7 @@
 namespace display {
 
 Manager::Manager() {
-  m_taskUpdate.slot() = std::bind(&Manager::receive_update, this);
+  m_taskUpdate.slot() = [this] { receive_update(); };
 }
 
 Manager::~Manager() {

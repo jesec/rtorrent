@@ -151,38 +151,40 @@ log_vmmap_dump(const std::string& str) {
 
 void
 initialize_command_logging() {
-  CMD2_ANY_LIST("log.open_file",
-                std::bind(&apply_log_open, 0, std::placeholders::_2));
-  CMD2_ANY_LIST(
-    "log.open_gz_file",
-    std::bind(&apply_log_open, log_flag_use_gz, std::placeholders::_2));
-  CMD2_ANY_LIST(
-    "log.open_file_pid",
-    std::bind(&apply_log_open, log_flag_append_pid, std::placeholders::_2));
-  CMD2_ANY_LIST("log.open_gz_file_pid",
-                std::bind(&apply_log_open,
-                          log_flag_append_pid | log_flag_use_gz,
-                          std::placeholders::_2));
-  CMD2_ANY_LIST(
-    "log.append_file",
-    std::bind(&apply_log_open, log_flag_append_file, std::placeholders::_2));
-  CMD2_ANY_LIST(
-    "log.append_gz_file",
-    std::bind(&apply_log_open, log_flag_append_file, std::placeholders::_2));
+  CMD2_ANY_LIST("log.open_file", [](const auto&, const auto& args) {
+    return apply_log_open(0, args);
+  });
+  CMD2_ANY_LIST("log.open_gz_file", [](const auto&, const auto& args) {
+    return apply_log_open(log_flag_use_gz, args);
+  });
+  CMD2_ANY_LIST("log.open_file_pid", [](const auto&, const auto& args) {
+    return apply_log_open(log_flag_append_pid, args);
+  });
+  CMD2_ANY_LIST("log.open_gz_file_pid", [](const auto&, const auto& args) {
+    return apply_log_open(log_flag_append_pid | log_flag_use_gz, args);
+  });
+  CMD2_ANY_LIST("log.append_file", [](const auto&, const auto& args) {
+    return apply_log_open(log_flag_append_file, args);
+  });
+  CMD2_ANY_LIST("log.append_gz_file", [](const auto&, const auto& args) {
+    return apply_log_open(log_flag_append_file, args);
+  });
 
-  CMD2_ANY_STRING_V(
-    "log.close",
-    std::bind(&torrent::log_close_output_str, std::placeholders::_2));
+  CMD2_ANY_STRING_V("log.close", [](const auto&, const auto& name) {
+    return torrent::log_close_output_str(name);
+  });
 
-  CMD2_ANY_LIST("log.add_output",
-                std::bind(&apply_log_add_output, std::placeholders::_2));
+  CMD2_ANY_LIST("log.add_output", [](const auto&, const auto& args) {
+    return apply_log_add_output(args);
+  });
 
-  CMD2_ANY_STRING("log.execute",
-                  std::bind(&apply_log, std::placeholders::_2, 0));
-  CMD2_ANY_STRING("log.vmmap.dump",
-                  std::bind(&log_vmmap_dump, std::placeholders::_2));
-  CMD2_ANY_STRING_V("log.rpc",
-                    std::bind(&ThreadWorker::set_rpc_log,
-                              worker_thread,
-                              std::placeholders::_2));
+  CMD2_ANY_STRING("log.execute", [](const auto&, const auto& arg) {
+    return apply_log(arg, 0);
+  });
+  CMD2_ANY_STRING("log.vmmap.dump", [](const auto&, const auto& str) {
+    return log_vmmap_dump(str);
+  });
+  CMD2_ANY_STRING_V("log.rpc", [](const auto&, const auto& filename) {
+    return worker_thread->set_rpc_log(filename);
+  });
 }

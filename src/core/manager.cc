@@ -134,7 +134,7 @@ Manager::set_hashing_view(View* v) {
 
   m_hashingView = v;
   m_hashingView->signal_changed().push_back(
-    std::bind(&Manager::receive_hashing_changed, this));
+    [this] { receive_hashing_changed(); });
 }
 
 torrent::ThrottlePair
@@ -158,10 +158,9 @@ Manager::set_address_throttle(uint32_t              begin,
                               uint32_t              end,
                               torrent::ThrottlePair throttles) {
   m_addressThrottles.set_merge(begin, end, throttles);
-  torrent::connection_manager()->address_throttle() =
-    std::bind(&core::Manager::get_address_throttle,
-              control->core(),
-              std::placeholders::_1);
+  torrent::connection_manager()->address_throttle() = [](const auto& addr) {
+    return control->core()->get_address_throttle(addr);
+  };
 }
 
 torrent::ThrottlePair
@@ -205,9 +204,8 @@ Manager::retrieve_throttle_value(const torrent::Object::string_type& name,
 // Most of this should be possible to move out.
 void
 Manager::initialize_second() {
-  torrent::Http::slot_factory() =
-    std::bind(&CurlStack::new_object, m_httpStack);
-  m_httpQueue->set_slot_factory(std::bind(&CurlStack::new_object, m_httpStack));
+  torrent::Http::slot_factory() = [this] { return m_httpStack->new_object(); };
+  m_httpQueue->set_slot_factory([this] { return m_httpStack->new_object(); });
 
   CurlStack::global_init();
 }

@@ -71,8 +71,8 @@ download_factory_add_stream(torrent::Object* root,
 DownloadFactory::DownloadFactory(Manager* m)
   : m_manager(m) {
 
-  m_taskLoad.slot()   = std::bind(&DownloadFactory::receive_load, this);
-  m_taskCommit.slot() = std::bind(&DownloadFactory::receive_commit, this);
+  m_taskLoad.slot()   = [this] { receive_load(); };
+  m_taskCommit.slot() = [this] { receive_commit(); };
 
   // m_variables["connection_leech"] =
   // rpc::call_command("protocol.connection.leech");
@@ -134,10 +134,9 @@ DownloadFactory::receive_load() {
     m_stream                = new std::stringstream;
     HttpQueue::iterator itr = m_manager->http_queue()->insert(m_uri, m_stream);
 
-    (*itr)->signal_done().push_front(
-      std::bind(&DownloadFactory::receive_loaded, this));
+    (*itr)->signal_done().push_front([this] { receive_loaded(); });
     (*itr)->signal_failed().push_front(
-      std::bind(&DownloadFactory::receive_failed, this, std::placeholders::_1));
+      [this](const auto& msg) { receive_failed(msg); });
 
     m_variables["tied_to_file"] = (int64_t) false;
 

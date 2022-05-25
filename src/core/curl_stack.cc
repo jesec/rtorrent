@@ -14,7 +14,7 @@ namespace core {
 
 CurlStack::CurlStack()
   : m_handle((void*)curl_multi_init()) {
-  m_taskTimeout.slot() = std::bind(&CurlStack::receive_timeout, this);
+  m_taskTimeout.slot() = [this] { receive_timeout(); };
 
   curl_multi_setopt((CURLM*)m_handle, CURLMOPT_TIMERDATA, this);
   curl_multi_setopt(

@@ -21,8 +21,9 @@ HttpQueue::insert(const std::string& url, std::iostream* s) {
 
   iterator signal_itr = base_type::insert(end(), h.get());
 
-  h->signal_done().push_back(std::bind(&HttpQueue::erase, this, signal_itr));
-  h->signal_failed().push_back(std::bind(&HttpQueue::erase, this, signal_itr));
+  h->signal_done().push_back([this, signal_itr] { erase(signal_itr); });
+  h->signal_failed().push_back(
+    [this, signal_itr](const auto&) { erase(signal_itr); });
 
   (*signal_itr)->start();
 

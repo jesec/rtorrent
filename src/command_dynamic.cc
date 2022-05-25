@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2005-2011, Jari Sundell <jaris@ifi.uio.no>
 
-#include <algorithm>
+#include <vector>
+
 #include <torrent/utils/log.h>
 #include <torrent/utils/option_strings.h>
 
@@ -11,7 +12,7 @@
 #include "rpc/parse.h"
 #include "rpc/parse_options.h"
 
-static std::vector<std::pair<const char*, int>> object_storage_flags = {
+static const std::vector<std::pair<const char*, int>> object_storage_flags = {
   { "multi", rpc::object_storage::flag_multi_type },
   { "simple", rpc::object_storage::flag_function_type },
   { "value", rpc::object_storage::flag_value_type },
@@ -137,7 +138,6 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
       system_method_generate_command2(&value, itrArgs, args.end());
       break;
     case rpc::object_storage::flag_list_type:
-      break;
     case rpc::object_storage::flag_multi_type:
       break;
     default:
@@ -172,11 +172,10 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
     rpc::commands.insert_slot<rpc::command_base_is_type<
       rpc::command_base_call<rpc::target_type>>::type>(
       create_new_key(rawKey),
-      std::bind(&rpc::object_storage::call_function_str,
-                control->object_storage(),
-                rawKey,
-                std::placeholders::_1,
-                std::placeholders::_2),
+      [rawKey](const auto& target, const auto& object) {
+        return control->object_storage()->call_function_str(
+          rawKey, target, object);
+      },
       &rpc::command_base_call<rpc::target_type>,
       cmd_flags,
       nullptr,
@@ -186,24 +185,14 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
     rpc::commands.insert_slot<rpc::command_base_is_type<
       rpc::command_base_call<rpc::target_type>>::type>(
       create_new_key(rawKey),
-      std::bind(
-        &rpc::object_storage::get_str, control->object_storage(), rawKey),
+      [rawKey](const auto&, const auto&) {
+        return control->object_storage()->get_str(rawKey);
+      },
       &rpc::command_base_call<rpc::target_type>,
       cmd_flags,
       nullptr,
       nullptr);
   }
-
-  // Not the right argument.
-  // if (flags & rpc::object_storage::flag_rlookup) {
-  //   rpc::commands.insert_slot<rpc::command_base_is_type<rpc::command_base_call_string<rpc::target_type>
-  //   >::type>
-  //     (create_new_key<9>(rawKey, ".rlookup"),
-  //      std::bind(&rpc::object_storage::rlookup_obj_list,
-  //      control->object_storage(), rawKey),
-  //      &rpc::command_base_call_string<rpc::target_type>,
-  //      cmd_flags, NULL, NULL);
-  // }
 
   // TODO: Next... Make test class for this.
 
@@ -215,10 +204,9 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
         rpc::commands.insert_slot<rpc::command_base_is_type<
           rpc::command_base_call_value<rpc::target_type>>::type>(
           create_new_key<5>(rawKey, ".set"),
-          std::bind(&rpc::object_storage::set_str_bool,
-                    control->object_storage(),
-                    rawKey,
-                    std::placeholders::_2),
+          [rawKey](const auto&, const auto& object) {
+            return control->object_storage()->set_str_bool(rawKey, object);
+          },
           &rpc::command_base_call_value<rpc::target_type>,
           cmd_flags,
           nullptr,
@@ -228,10 +216,9 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
         rpc::commands.insert_slot<rpc::command_base_is_type<
           rpc::command_base_call_value<rpc::target_type>>::type>(
           create_new_key<5>(rawKey, ".set"),
-          std::bind(&rpc::object_storage::set_str_value,
-                    control->object_storage(),
-                    rawKey,
-                    std::placeholders::_2),
+          [rawKey](const auto&, const auto& object) {
+            return control->object_storage()->set_str_value(rawKey, object);
+          },
           &rpc::command_base_call_value<rpc::target_type>,
           cmd_flags,
           nullptr,
@@ -241,10 +228,9 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
         rpc::commands.insert_slot<rpc::command_base_is_type<
           rpc::command_base_call_string<rpc::target_type>>::type>(
           create_new_key<5>(rawKey, ".set"),
-          std::bind(&rpc::object_storage::set_str_string,
-                    control->object_storage(),
-                    rawKey,
-                    std::placeholders::_2),
+          [rawKey](const auto&, const auto& object) {
+            return control->object_storage()->set_str_string(rawKey, object);
+          },
           &rpc::command_base_call_string<rpc::target_type>,
           cmd_flags,
           nullptr,
@@ -254,10 +240,9 @@ system_method_insert_object(const torrent::Object::list_type& args, int flags) {
         rpc::commands.insert_slot<rpc::command_base_is_type<
           rpc::command_base_call_list<rpc::target_type>>::type>(
           create_new_key<5>(rawKey, ".set"),
-          std::bind(&rpc::object_storage::set_str_list,
-                    control->object_storage(),
-                    rawKey,
-                    std::placeholders::_2),
+          [rawKey](const auto&, const auto& object) {
+            return control->object_storage()->set_str_list(rawKey, object);
+          },
           &rpc::command_base_call_list<rpc::target_type>,
           cmd_flags,
           nullptr,
@@ -299,9 +284,10 @@ system_method_insert(const torrent::Object::list_type& args) {
   if (rawKey.empty() || rpc::commands.has(rawKey))
     throw torrent::input_error("Invalid key.");
 
-  int new_flags = rpc::parse_option_flags(
-    itrArgs->as_string(),
-    std::bind(&object_storage_parse_flag, std::placeholders::_1));
+  int new_flags =
+    rpc::parse_option_flags(itrArgs->as_string(), [](const auto& flag) {
+      return object_storage_parse_flag(flag);
+    });
 
   torrent::Object::list_type new_args;
   new_args.push_back(rawKey);
@@ -443,33 +429,34 @@ cmd_catch(rpc::target_type target, const torrent::Object& args) {
 }
 
 #define CMD2_METHOD_INSERT(key, flags)                                         \
-  CMD2_ANY_LIST(                                                               \
-    key,                                                                       \
-    std::bind(&system_method_insert_object, std::placeholders::_2, flags));
+  CMD2_ANY_LIST(key, [](const auto&, const auto& args) {                       \
+    return system_method_insert_object(args, flags);                           \
+  });
 
 void
 initialize_command_dynamic() {
   CMD2_VAR_BOOL("method.use_deprecated", true);
   CMD2_VAR_VALUE("method.use_intermediate", 1);
 
-  CMD2_ANY_LIST("method.insert",
-                std::bind(&system_method_insert, std::placeholders::_2));
-  CMD2_ANY_LIST("method.insert.value",
-                std::bind(&system_method_insert_object,
-                          std::placeholders::_2,
-                          rpc::object_storage::flag_value_type));
-  CMD2_ANY_LIST("method.insert.bool",
-                std::bind(&system_method_insert_object,
-                          std::placeholders::_2,
-                          rpc::object_storage::flag_bool_type));
-  CMD2_ANY_LIST("method.insert.string",
-                std::bind(&system_method_insert_object,
-                          std::placeholders::_2,
-                          rpc::object_storage::flag_string_type));
-  CMD2_ANY_LIST("method.insert.list",
-                std::bind(&system_method_insert_object,
-                          std::placeholders::_2,
-                          rpc::object_storage::flag_list_type));
+  CMD2_ANY_LIST("method.insert", [](const auto&, const auto& args) {
+    return system_method_insert(args);
+  });
+  CMD2_ANY_LIST("method.insert.value", [](const auto&, const auto& args) {
+    return system_method_insert_object(args,
+                                       rpc::object_storage::flag_value_type);
+  });
+  CMD2_ANY_LIST("method.insert.bool", [](const auto&, const auto& args) {
+    return system_method_insert_object(args,
+                                       rpc::object_storage::flag_bool_type);
+  });
+  CMD2_ANY_LIST("method.insert.string", [](const auto&, const auto& args) {
+    return system_method_insert_object(args,
+                                       rpc::object_storage::flag_string_type);
+  });
+  CMD2_ANY_LIST("method.insert.list", [](const auto&, const auto& args) {
+    return system_method_insert_object(args,
+                                       rpc::object_storage::flag_list_type);
+  });
 
   CMD2_METHOD_INSERT("method.insert.simple",
                      rpc::object_storage::flag_function_type);
@@ -481,72 +468,80 @@ initialize_command_dynamic() {
                        rpc::object_storage::flag_constant |
                        rpc::object_storage::flag_function_type);
 
-  CMD2_ANY_STRING("method.erase",
-                  std::bind(&system_method_erase, std::placeholders::_2));
-  CMD2_ANY_LIST("method.redirect",
-                std::bind(&system_method_redirect, std::placeholders::_2));
-  CMD2_ANY_STRING("method.get",
-                  std::bind(&rpc::object_storage::get_str,
-                            control->object_storage(),
-                            std::placeholders::_2));
-  CMD2_ANY_LIST("method.set",
-                std::bind(&system_method_set_function, std::placeholders::_2));
+  CMD2_ANY_STRING("method.erase", [](const auto&, const auto& args) {
+    return system_method_erase(args);
+  });
+  CMD2_ANY_LIST("method.redirect", [](const auto&, const auto& args) {
+    return system_method_redirect(args);
+  });
+  CMD2_ANY_STRING("method.get", [](const auto&, const auto& str) {
+    return control->object_storage()->get_str(str);
+  });
+  CMD2_ANY_LIST("method.set", [](const auto&, const auto& args) {
+    return system_method_set_function(args);
+  });
 
-  CMD2_ANY_STRING("method.const",
-                  std::bind(&rpc::object_storage::has_flag_str,
-                            control->object_storage(),
-                            std::placeholders::_2,
-                            rpc::object_storage::flag_constant));
-  CMD2_ANY_STRING_V("method.const.enable",
-                    std::bind(&rpc::object_storage::enable_flag_str,
-                              control->object_storage(),
-                              std::placeholders::_2,
-                              rpc::object_storage::flag_constant));
+  CMD2_ANY_STRING("method.const", [](const auto&, const auto& key) {
+    return control->object_storage()->has_flag_str(
+      key, rpc::object_storage::flag_constant);
+  });
+  CMD2_ANY_STRING_V("method.const.enable", [](const auto&, const auto& key) {
+    return control->object_storage()->enable_flag_str(
+      key, rpc::object_storage::flag_constant);
+  });
 
-  CMD2_ANY_LIST("method.has_key",
-                std::bind(&system_method_has_key, std::placeholders::_2));
-  CMD2_ANY_LIST("method.set_key",
-                std::bind(&system_method_set_key, std::placeholders::_2));
-  CMD2_ANY_STRING("method.list_keys",
-                  std::bind(&system_method_list_keys, std::placeholders::_2));
+  CMD2_ANY_LIST("method.has_key", [](const auto&, const auto& args) {
+    return system_method_has_key(args);
+  });
+  CMD2_ANY_LIST("method.set_key", [](const auto&, const auto& args) {
+    return system_method_set_key(args);
+  });
+  CMD2_ANY_STRING("method.list_keys", [](const auto&, const auto& args) {
+    return system_method_list_keys(args);
+  });
 
-  CMD2_ANY_STRING("method.rlookup",
-                  std::bind(&rpc::object_storage::rlookup_obj_list,
-                            control->object_storage(),
-                            std::placeholders::_2));
+  CMD2_ANY_STRING("method.rlookup", [](const auto&, const auto& cmd_key) {
+    return control->object_storage()->rlookup_obj_list(cmd_key);
+  });
   CMD2_ANY_STRING_V("method.rlookup.clear",
-                    std::bind(&rpc::object_storage::rlookup_clear,
-                              control->object_storage(),
-                              std::placeholders::_2));
+                    [](const auto&, const auto& cmd_key) {
+                      return control->object_storage()->rlookup_clear(cmd_key);
+                    });
 
-  CMD2_ANY("catch",
-           std::bind(&cmd_catch, std::placeholders::_1, std::placeholders::_2));
+  CMD2_ANY("catch", [](const auto& target, const auto& args) {
+    return cmd_catch(target, args);
+  });
 
-  CMD2_ANY(
-    "strings.choke_heuristics",
-    std::bind(&torrent::option_list_strings, torrent::OPTION_CHOKE_HEURISTICS));
-  CMD2_ANY("strings.choke_heuristics.upload",
-           std::bind(&torrent::option_list_strings,
-                     torrent::OPTION_CHOKE_HEURISTICS_UPLOAD));
-  CMD2_ANY("strings.choke_heuristics.download",
-           std::bind(&torrent::option_list_strings,
-                     torrent::OPTION_CHOKE_HEURISTICS_DOWNLOAD));
-  CMD2_ANY(
-    "strings.connection_type",
-    std::bind(&torrent::option_list_strings, torrent::OPTION_CONNECTION_TYPE));
-  CMD2_ANY(
-    "strings.encryption",
-    std::bind(&torrent::option_list_strings, torrent::OPTION_ENCRYPTION));
-  CMD2_ANY("strings.ip_filter",
-           std::bind(&torrent::option_list_strings, torrent::OPTION_IP_FILTER));
-  CMD2_ANY("strings.ip_tos",
-           std::bind(&torrent::option_list_strings, torrent::OPTION_IP_TOS));
-  CMD2_ANY("strings.log_group",
-           std::bind(&torrent::option_list_strings, torrent::OPTION_LOG_GROUP));
-  CMD2_ANY(
-    "strings.tracker_event",
-    std::bind(&torrent::option_list_strings, torrent::OPTION_TRACKER_EVENT));
-  CMD2_ANY(
-    "strings.tracker_mode",
-    std::bind(&torrent::option_list_strings, torrent::OPTION_TRACKER_MODE));
+  CMD2_ANY("strings.choke_heuristics", [](const auto&, const auto&) {
+    return torrent::option_list_strings(torrent::OPTION_CHOKE_HEURISTICS);
+  });
+  CMD2_ANY("strings.choke_heuristics.upload", [](const auto&, const auto&) {
+    return torrent::option_list_strings(
+      torrent::OPTION_CHOKE_HEURISTICS_UPLOAD);
+  });
+  CMD2_ANY("strings.choke_heuristics.download", [](const auto&, const auto&) {
+    return torrent::option_list_strings(
+      torrent::OPTION_CHOKE_HEURISTICS_DOWNLOAD);
+  });
+  CMD2_ANY("strings.connection_type", [](const auto&, const auto&) {
+    return torrent::option_list_strings(torrent::OPTION_CONNECTION_TYPE);
+  });
+  CMD2_ANY("strings.encryption", [](const auto&, const auto&) {
+    return torrent::option_list_strings(torrent::OPTION_ENCRYPTION);
+  });
+  CMD2_ANY("strings.ip_filter", [](const auto&, const auto&) {
+    return torrent::option_list_strings(torrent::OPTION_IP_FILTER);
+  });
+  CMD2_ANY("strings.ip_tos", [](const auto&, const auto&) {
+    return torrent::option_list_strings(torrent::OPTION_IP_TOS);
+  });
+  CMD2_ANY("strings.log_group", [](const auto&, const auto&) {
+    return torrent::option_list_strings(torrent::OPTION_LOG_GROUP);
+  });
+  CMD2_ANY("strings.tracker_event", [](const auto&, const auto&) {
+    return torrent::option_list_strings(torrent::OPTION_TRACKER_EVENT);
+  });
+  CMD2_ANY("strings.tracker_mode", [](const auto&, const auto&) {
+    return torrent::option_list_strings(torrent::OPTION_TRACKER_MODE);
+  });
 }

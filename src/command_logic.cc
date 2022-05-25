@@ -675,9 +675,9 @@ initialize_command_logic() {
   CMD2_ANY("cat", &apply_cat);
   CMD2_ANY_LIST("value", &apply_value);
   CMD2_ANY("try", &apply_try);
-  CMD2_ANY(
-    "if",
-    std::bind(&apply_if, std::placeholders::_1, std::placeholders::_2, 0));
+  CMD2_ANY("if", [](const auto& target, const auto& rawArgs) {
+    return apply_if(target, rawArgs, 0);
+  });
   CMD2_ANY("not", &apply_not);
   CMD2_ANY("true", &apply_true);
   CMD2_ANY("false", &apply_false);
@@ -686,9 +686,9 @@ initialize_command_logic() {
 
   // A temporary command for handling stuff until we get proper
   // support for seperation of commands and literals.
-  CMD2_ANY(
-    "branch",
-    std::bind(&apply_if, std::placeholders::_1, std::placeholders::_2, 1));
+  CMD2_ANY("branch", [](const auto& target, const auto& rawArgs) {
+    return apply_if(target, rawArgs, 1);
+  });
 
   CMD2_ANY_LIST("less", &apply_less);
   CMD2_ANY_LIST("greater", &apply_greater);
@@ -696,59 +696,69 @@ initialize_command_logic() {
   CMD2_ANY_LIST("compare", &apply_compare);
   CMD2_ANY_LIST("match", &apply_match);
 
-  CMD2_ANY_VALUE("convert.gm_time",
-                 std::bind(&apply_to_time, std::placeholders::_2, 0));
-  CMD2_ANY_VALUE("convert.gm_date",
-                 std::bind(&apply_to_time, std::placeholders::_2, 0x2));
-  CMD2_ANY_VALUE("convert.time",
-                 std::bind(&apply_to_time, std::placeholders::_2, 0x1));
-  CMD2_ANY_VALUE("convert.date",
-                 std::bind(&apply_to_time, std::placeholders::_2, 0x1 | 0x2));
-  CMD2_ANY_VALUE("convert.elapsed_time",
-                 std::bind(&apply_to_elapsed_time, std::placeholders::_2));
-  CMD2_ANY_VALUE("convert.kb", std::bind(&apply_to_kb, std::placeholders::_2));
-  CMD2_ANY_VALUE("convert.mb", std::bind(&apply_to_mb, std::placeholders::_2));
-  CMD2_ANY_VALUE("convert.xb", std::bind(&apply_to_xb, std::placeholders::_2));
-  CMD2_ANY_VALUE("convert.throttle",
-                 std::bind(&apply_to_throttle, std::placeholders::_2));
+  CMD2_ANY_VALUE("convert.gm_time", [](const auto&, const auto& rawArgs) {
+    return apply_to_time(rawArgs, 0);
+  });
+  CMD2_ANY_VALUE("convert.gm_date", [](const auto&, const auto& rawArgs) {
+    return apply_to_time(rawArgs, 0x2);
+  });
+  CMD2_ANY_VALUE("convert.time", [](const auto&, const auto& rawArgs) {
+    return apply_to_time(rawArgs, 0x1);
+  });
+  CMD2_ANY_VALUE("convert.date", [](const auto&, const auto& rawArgs) {
+    return apply_to_time(rawArgs, 0x1 | 0x2);
+  });
+  CMD2_ANY_VALUE("convert.elapsed_time", [](const auto&, const auto& rawArgs) {
+    return apply_to_elapsed_time(rawArgs);
+  });
+  CMD2_ANY_VALUE("convert.kb", [](const auto&, const auto& rawArgs) {
+    return apply_to_kb(rawArgs);
+  });
+  CMD2_ANY_VALUE("convert.mb", [](const auto&, const auto& rawArgs) {
+    return apply_to_mb(rawArgs);
+  });
+  CMD2_ANY_VALUE("convert.xb", [](const auto&, const auto& rawArgs) {
+    return apply_to_xb(rawArgs);
+  });
+  CMD2_ANY_VALUE("convert.throttle", [](const auto&, const auto& rawArgs) {
+    return apply_to_throttle(rawArgs);
+  });
 
-  CMD2_ANY_LIST(
-    "math.add",
-    std::bind(
-      &apply_math_basic, "math.add", std::plus<>(), std::placeholders::_2));
-  CMD2_ANY_LIST(
-    "math.sub",
-    std::bind(
-      &apply_math_basic, "math.sub", std::minus<>(), std::placeholders::_2));
-  CMD2_ANY_LIST("math.mul",
-                std::bind(&apply_math_basic,
-                          "math.mul",
-                          std::multiplies<>(),
-                          std::placeholders::_2));
-  CMD2_ANY_LIST(
-    "math.div",
-    std::bind(
-      &apply_math_basic, "math.div", std::divides<>(), std::placeholders::_2));
-  CMD2_ANY_LIST(
-    "math.mod",
-    std::bind(
-      &apply_math_basic, "math.mod", std::modulus<>(), std::placeholders::_2));
-  CMD2_ANY_LIST(
-    "math.min",
-    std::bind(&apply_arith_basic, std::less<>(), std::placeholders::_2));
-  CMD2_ANY_LIST(
-    "math.max",
-    std::bind(&apply_arith_basic, std::greater<>(), std::placeholders::_2));
-  CMD2_ANY_LIST("math.cnt",
-                std::bind(&apply_arith_count, std::placeholders::_2));
-  CMD2_ANY_LIST(
-    "math.avg",
-    std::bind(&apply_arith_other, "average", std::placeholders::_2));
-  CMD2_ANY_LIST("math.med",
-                std::bind(&apply_arith_other, "median", std::placeholders::_2));
+  CMD2_ANY_LIST("math.add", [](const auto&, const auto& args) {
+    return apply_math_basic("math.add", std::plus<>(), args);
+  });
+  CMD2_ANY_LIST("math.sub", [](const auto&, const auto& args) {
+    return apply_math_basic("math.sub", std::minus<>(), args);
+  });
+  CMD2_ANY_LIST("math.mul", [](const auto&, const auto& args) {
+    return apply_math_basic("math.mul", std::multiplies<>(), args);
+  });
+  CMD2_ANY_LIST("math.div", [](const auto&, const auto& args) {
+    return apply_math_basic("math.div", std::divides<>(), args);
+  });
+  CMD2_ANY_LIST("math.mod", [](const auto&, const auto& args) {
+    return apply_math_basic("math.mod", std::modulus<>(), args);
+  });
+  CMD2_ANY_LIST("math.min", [](const auto&, const auto& args) {
+    return apply_arith_basic(std::less<>(), args);
+  });
+  CMD2_ANY_LIST("math.max", [](const auto&, const auto& args) {
+    return apply_arith_basic(std::greater<>(), args);
+  });
+  CMD2_ANY_LIST("math.cnt", [](const auto&, const auto& args) {
+    return apply_arith_count(args);
+  });
+  CMD2_ANY_LIST("math.avg", [](const auto&, const auto& args) {
+    return apply_arith_other("average", args);
+  });
+  CMD2_ANY_LIST("math.med", [](const auto&, const auto& args) {
+    return apply_arith_other("median", args);
+  });
 
-  CMD2_ANY_LIST("elapsed.less",
-                std::bind(&apply_elapsed_less, std::placeholders::_2));
-  CMD2_ANY_LIST("elapsed.greater",
-                std::bind(&apply_elapsed_greater, std::placeholders::_2));
+  CMD2_ANY_LIST("elapsed.less", [](const auto&, const auto& args) {
+    return apply_elapsed_less(args);
+  });
+  CMD2_ANY_LIST("elapsed.greater", [](const auto&, const auto& args) {
+    return apply_elapsed_greater(args);
+  });
 }

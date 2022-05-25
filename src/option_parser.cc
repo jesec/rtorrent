@@ -8,32 +8,35 @@
 #include <getopt.h>
 #include <stdexcept>
 #include <unistd.h>
+#include <utility>
 
 #include "option_parser.h"
 
 void
 OptionParser::insert_flag(char c, slot_string s) {
-  m_container[c].m_slot      = s;
+  m_container[c].m_slot      = std::move(s);
   m_container[c].m_useOption = false;
 }
 
 void
 OptionParser::insert_option(char c, slot_string s) {
-  m_container[c].m_slot      = s;
+  m_container[c].m_slot      = std::move(s);
   m_container[c].m_useOption = true;
 }
 
 void
 OptionParser::insert_option_list(char c, slot_string_pair s) {
-  m_container[c].m_slot =
-    std::bind(&OptionParser::call_option_list, s, std::placeholders::_1);
+  m_container[c].m_slot = [s = move(s)](const auto& arg) {
+    return OptionParser::call_option_list(s, arg);
+  };
   m_container[c].m_useOption = true;
 }
 
 void
 OptionParser::insert_int_pair(char c, slot_int_pair s) {
-  m_container[c].m_slot =
-    std::bind(&OptionParser::call_int_pair, s, std::placeholders::_1);
+  m_container[c].m_slot = [s = move(s)](const auto& arg) {
+    return OptionParser::call_int_pair(s, arg);
+  };
   m_container[c].m_useOption = true;
 }
 

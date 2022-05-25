@@ -35,32 +35,26 @@ ElementPeerList::ElementPeerList(core::Download* d)
 
   m_peer_connected = connection_list->signal_connected().insert(
     connection_list->signal_connected().end(),
-    std::bind(
-      &ElementPeerList::receive_peer_connected, this, std::placeholders::_1));
+    [this](const auto& peer) { receive_peer_connected(peer); });
   m_peer_disconnected = connection_list->signal_disconnected().insert(
     connection_list->signal_disconnected().end(),
-    std::bind(&ElementPeerList::receive_peer_disconnected,
-              this,
-              std::placeholders::_1));
+    [this](const auto& peer) { receive_peer_disconnected(peer); });
 
   m_windowList  = new display::WindowPeerList(m_download, &m_list, &m_listItr);
   m_elementInfo = create_info();
 
-  m_elementInfo->slot_exit(
-    std::bind(&ElementPeerList::activate_display, this, DISPLAY_LIST));
+  m_elementInfo->slot_exit([this] { activate_display(DISPLAY_LIST); });
 
-  m_bindings['k'] = std::bind(&ElementPeerList::receive_disconnect_peer, this);
-  m_bindings['*'] = std::bind(&ElementPeerList::receive_snub_peer, this);
-  m_bindings['B'] = std::bind(&ElementPeerList::receive_ban_peer, this);
-  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
-    std::bind(&slot_type::operator(), &m_slot_exit);
-  m_bindings[KEY_RIGHT] = m_bindings['F' - '@'] =
-    std::bind(&ElementPeerList::activate_display, this, DISPLAY_INFO);
+  m_bindings['k'] = [this] { receive_disconnect_peer(); };
+  m_bindings['*'] = [this] { receive_snub_peer(); };
+  m_bindings['B'] = [this] { receive_ban_peer(); };
+  m_bindings[KEY_LEFT] =
+    m_bindings['B' - '@'] = [m_slot_exit = &m_slot_exit] { (*m_slot_exit)(); };
+  m_bindings[KEY_RIGHT] =
+    m_bindings['F' - '@'] = [this] { activate_display(DISPLAY_INFO); };
 
-  m_bindings[KEY_UP] = m_bindings['P' - '@'] =
-    std::bind(&ElementPeerList::receive_prev, this);
-  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] =
-    std::bind(&ElementPeerList::receive_next, this);
+  m_bindings[KEY_UP] = m_bindings['P' - '@'] = [this] { receive_prev(); };
+  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] = [this] { receive_next(); };
 }
 
 ElementPeerList::~ElementPeerList() {

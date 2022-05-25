@@ -161,18 +161,18 @@ throttle_update(const char* variable, int64_t value) {
 
 void
 initialize_command_throttle() {
-  CMD2_ANY("throttle.unchoked_uploads",
-           std::bind(&torrent::ResourceManager::currently_upload_unchoked,
-                     torrent::resource_manager()));
-  CMD2_ANY("throttle.max_unchoked_uploads",
-           std::bind(&torrent::ResourceManager::max_upload_unchoked,
-                     torrent::resource_manager()));
-  CMD2_ANY("throttle.unchoked_downloads",
-           std::bind(&torrent::ResourceManager::currently_download_unchoked,
-                     torrent::resource_manager()));
-  CMD2_ANY("throttle.max_unchoked_downloads",
-           std::bind(&torrent::ResourceManager::max_download_unchoked,
-                     torrent::resource_manager()));
+  CMD2_ANY("throttle.unchoked_uploads", [](const auto&, const auto&) {
+    return torrent::resource_manager()->currently_upload_unchoked();
+  });
+  CMD2_ANY("throttle.max_unchoked_uploads", [](const auto&, const auto&) {
+    return torrent::resource_manager()->max_upload_unchoked();
+  });
+  CMD2_ANY("throttle.unchoked_downloads", [](const auto&, const auto&) {
+    return torrent::resource_manager()->currently_download_unchoked();
+  });
+  CMD2_ANY("throttle.max_unchoked_downloads", [](const auto&, const auto&) {
+    return torrent::resource_manager()->max_download_unchoked();
+  });
 
   CMD2_VAR_VALUE("throttle.min_peers.normal", 100);
   CMD2_VAR_VALUE("throttle.max_peers.normal", 200);
@@ -198,78 +198,83 @@ initialize_command_throttle() {
   CMD2_REDIRECT_GENERIC("throttle.max_downloads.global",
                         "throttle.max_downloads.global._val");
 
-  CMD2_ANY_VALUE("throttle.max_uploads.div.set",
-                 std::bind(&throttle_update,
-                           "throttle.max_uploads.div._val.set",
-                           std::placeholders::_2));
-  CMD2_ANY_VALUE("throttle.max_uploads.global.set",
-                 std::bind(&throttle_update,
-                           "throttle.max_uploads.global._val.set",
-                           std::placeholders::_2));
-  CMD2_ANY_VALUE("throttle.max_downloads.div.set",
-                 std::bind(&throttle_update,
-                           "throttle.max_downloads.div._val.set",
-                           std::placeholders::_2));
-  CMD2_ANY_VALUE("throttle.max_downloads.global.set",
-                 std::bind(&throttle_update,
-                           "throttle.max_downloads.global._val.set",
-                           std::placeholders::_2));
+  CMD2_ANY_VALUE(
+    "throttle.max_uploads.div.set", [](const auto&, const auto& value) {
+      return throttle_update("throttle.max_uploads.div._val.set", value);
+    });
+  CMD2_ANY_VALUE(
+    "throttle.max_uploads.global.set", [](const auto&, const auto& value) {
+      return throttle_update("throttle.max_uploads.global._val.set", value);
+    });
+  CMD2_ANY_VALUE(
+    "throttle.max_downloads.div.set", [](const auto&, const auto& value) {
+      return throttle_update("throttle.max_downloads.div._val.set", value);
+    });
+  CMD2_ANY_VALUE(
+    "throttle.max_downloads.global.set", [](const auto&, const auto& value) {
+      return throttle_update("throttle.max_downloads.global._val.set", value);
+    });
 
   // TODO: Move the logic into some libtorrent function.
   CMD2_ANY("throttle.global_up.rate",
-           std::bind(&torrent::Rate::rate, torrent::up_rate()));
-  CMD2_ANY("throttle.global_up.total",
-           std::bind(&torrent::Rate::total, torrent::up_rate()));
-  CMD2_ANY(
-    "throttle.global_up.max_rate",
-    std::bind(&torrent::Throttle::max_rate, torrent::up_throttle_global()));
+           [](const auto&, const auto&) { return torrent::up_rate()->rate(); });
+  CMD2_ANY("throttle.global_up.total", [](const auto&, const auto&) {
+    return torrent::up_rate()->total();
+  });
+  CMD2_ANY("throttle.global_up.max_rate", [](const auto&, const auto&) {
+    return torrent::up_throttle_global()->max_rate();
+  });
   CMD2_ANY_VALUE_V("throttle.global_up.max_rate.set",
-                   std::bind(&ui::Root::set_up_throttle_i64,
-                             control->ui(),
-                             std::placeholders::_2));
+                   [](const auto&, const auto& throttle) {
+                     return control->ui()->set_up_throttle_i64(throttle);
+                   });
   CMD2_ANY_VALUE_KB("throttle.global_up.max_rate.set_kb",
-                    std::bind(&ui::Root::set_up_throttle_i64,
-                              control->ui(),
-                              std::placeholders::_2));
-  CMD2_ANY("throttle.global_down.rate",
-           std::bind(&torrent::Rate::rate, torrent::down_rate()));
-  CMD2_ANY("throttle.global_down.total",
-           std::bind(&torrent::Rate::total, torrent::down_rate()));
-  CMD2_ANY(
-    "throttle.global_down.max_rate",
-    std::bind(&torrent::Throttle::max_rate, torrent::down_throttle_global()));
+                    [](const auto&, const auto& throttle) {
+                      return control->ui()->set_up_throttle_i64(throttle);
+                    });
+  CMD2_ANY("throttle.global_down.rate", [](const auto&, const auto&) {
+    return torrent::down_rate()->rate();
+  });
+  CMD2_ANY("throttle.global_down.total", [](const auto&, const auto&) {
+    return torrent::down_rate()->total();
+  });
+  CMD2_ANY("throttle.global_down.max_rate",
+           [down_throttle_global =
+              torrent::down_throttle_global()](const auto&, const auto&) {
+             return down_throttle_global->max_rate();
+           });
   CMD2_ANY_VALUE_V("throttle.global_down.max_rate.set",
-                   std::bind(&ui::Root::set_down_throttle_i64,
-                             control->ui(),
-                             std::placeholders::_2));
+                   [](const auto&, const auto& throttle) {
+                     return control->ui()->set_down_throttle_i64(throttle);
+                   });
   CMD2_ANY_VALUE_KB("throttle.global_down.max_rate.set_kb",
-                    std::bind(&ui::Root::set_down_throttle_i64,
-                              control->ui(),
-                              std::placeholders::_2));
+                    [](const auto&, const auto& throttle) {
+                      return control->ui()->set_down_throttle_i64(throttle);
+                    });
 
   // Temporary names, need to change this to accept real rates rather
   // than kB.
-  CMD2_ANY_LIST("throttle.up",
-                std::bind(&apply_throttle, std::placeholders::_2, true));
-  CMD2_ANY_LIST("throttle.down",
-                std::bind(&apply_throttle, std::placeholders::_2, false));
-  CMD2_ANY_LIST("throttle.ip",
-                std::bind(&apply_address_throttle, std::placeholders::_2));
+  CMD2_ANY_LIST("throttle.up", [](const auto&, const auto& args) {
+    return apply_throttle(args, true);
+  });
+  CMD2_ANY_LIST("throttle.down", [](const auto&, const auto& args) {
+    return apply_throttle(args, false);
+  });
+  CMD2_ANY_LIST("throttle.ip", [](const auto&, const auto& args) {
+    return apply_address_throttle(args);
+  });
 
-  CMD2_ANY_STRING("throttle.up.max",
-                  std::bind(&retrieve_throttle_info,
-                            std::placeholders::_2,
-                            throttle_info_up | throttle_info_max));
-  CMD2_ANY_STRING("throttle.up.rate",
-                  std::bind(&retrieve_throttle_info,
-                            std::placeholders::_2,
-                            throttle_info_up | throttle_info_rate));
-  CMD2_ANY_STRING("throttle.down.max",
-                  std::bind(&retrieve_throttle_info,
-                            std::placeholders::_2,
-                            throttle_info_down | throttle_info_max));
-  CMD2_ANY_STRING("throttle.down.rate",
-                  std::bind(&retrieve_throttle_info,
-                            std::placeholders::_2,
-                            throttle_info_down | throttle_info_rate));
+  CMD2_ANY_STRING("throttle.up.max", [](const auto&, const auto& name) {
+    return retrieve_throttle_info(name, throttle_info_up | throttle_info_max);
+  });
+  CMD2_ANY_STRING("throttle.up.rate", [](const auto&, const auto& name) {
+    return retrieve_throttle_info(name, throttle_info_up | throttle_info_rate);
+  });
+  CMD2_ANY_STRING("throttle.down.max", [](const auto&, const auto& name) {
+    return retrieve_throttle_info(name, throttle_info_down | throttle_info_max);
+  });
+  CMD2_ANY_STRING("throttle.down.rate", [](const auto&, const auto& name) {
+    return retrieve_throttle_info(name,
+                                  throttle_info_down | throttle_info_rate);
+  });
 }

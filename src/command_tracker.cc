@@ -111,125 +111,138 @@ apply_enable_trackers(int64_t arg) {
 
 void
 initialize_command_tracker() {
-  CMD2_TRACKER("t.is_open",
-               std::bind(&torrent::Tracker::is_busy, std::placeholders::_1));
-  CMD2_TRACKER("t.is_enabled",
-               std::bind(&torrent::Tracker::is_enabled, std::placeholders::_1));
-  CMD2_TRACKER("t.is_usable",
-               std::bind(&torrent::Tracker::is_usable, std::placeholders::_1));
-  CMD2_TRACKER("t.is_busy",
-               std::bind(&torrent::Tracker::is_busy, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.is_extra_tracker",
-    std::bind(&torrent::Tracker::is_extra_tracker, std::placeholders::_1));
-  CMD2_TRACKER("t.can_scrape",
-               std::bind(&torrent::Tracker::can_scrape, std::placeholders::_1));
+  CMD2_TRACKER("t.is_open", [](const auto& tracker, const auto&) {
+    return tracker->is_busy();
+  });
+  CMD2_TRACKER("t.is_enabled", [](const auto& tracker, const auto&) {
+    return tracker->is_enabled();
+  });
+  CMD2_TRACKER("t.is_usable", [](const auto& tracker, const auto&) {
+    return tracker->is_usable();
+  });
+  CMD2_TRACKER("t.is_busy", [](const auto& tracker, const auto&) {
+    return tracker->is_busy();
+  });
+  CMD2_TRACKER("t.is_extra_tracker", [](const auto& tracker, const auto&) {
+    return tracker->is_extra_tracker();
+  });
+  CMD2_TRACKER("t.can_scrape", [](const auto& tracker, const auto&) {
+    return tracker->can_scrape();
+  });
 
-  CMD2_TRACKER_V("t.enable",
-                 std::bind(&torrent::Tracker::enable, std::placeholders::_1));
-  CMD2_TRACKER_V("t.disable",
-                 std::bind(&torrent::Tracker::disable, std::placeholders::_1));
+  CMD2_TRACKER_V("t.enable", [](const auto& tracker, const auto&) {
+    return tracker->enable();
+  });
+  CMD2_TRACKER_V("t.disable", [](const auto& tracker, const auto&) {
+    return tracker->disable();
+  });
 
   CMD2_TRACKER_VALUE_V("t.is_enabled.set",
-                       std::bind(&tracker_set_enabled,
-                                 std::placeholders::_1,
-                                 std::placeholders::_2));
+                       [](const auto& tracker, const auto& state) {
+                         return tracker_set_enabled(tracker, state);
+                       });
 
   CMD2_TRACKER("t.url",
-               std::bind(&torrent::Tracker::url, std::placeholders::_1));
-  CMD2_TRACKER("t.group",
-               std::bind(&torrent::Tracker::group, std::placeholders::_1));
-  CMD2_TRACKER("t.type",
-               std::bind(&torrent::Tracker::type, std::placeholders::_1));
-  CMD2_TRACKER("t.id",
-               std::bind(&torrent::Tracker::tracker_id, std::placeholders::_1));
+               [](const auto& tracker, const auto&) { return tracker->url(); });
+  CMD2_TRACKER("t.group", [](const auto& tracker, const auto&) {
+    return tracker->group();
+  });
+  CMD2_TRACKER(
+    "t.type", [](const auto& tracker, const auto&) { return tracker->type(); });
+  CMD2_TRACKER("t.id", [](const auto& tracker, const auto&) {
+    return tracker->tracker_id();
+  });
 
-  CMD2_TRACKER(
-    "t.latest_event",
-    std::bind(&torrent::Tracker::latest_event, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.latest_new_peers",
-    std::bind(&torrent::Tracker::latest_new_peers, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.latest_sum_peers",
-    std::bind(&torrent::Tracker::latest_sum_peers, std::placeholders::_1));
+  CMD2_TRACKER("t.latest_event", [](const auto& tracker, const auto&) {
+    return tracker->latest_event();
+  });
+  CMD2_TRACKER("t.latest_new_peers", [](const auto& tracker, const auto&) {
+    return tracker->latest_new_peers();
+  });
+  CMD2_TRACKER("t.latest_sum_peers", [](const auto& tracker, const auto&) {
+    return tracker->latest_sum_peers();
+  });
 
   // Time since last connection, connection attempt.
 
-  CMD2_TRACKER(
-    "t.normal_interval",
-    std::bind(&torrent::Tracker::normal_interval, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.min_interval",
-    std::bind(&torrent::Tracker::min_interval, std::placeholders::_1));
+  CMD2_TRACKER("t.normal_interval", [](const auto& tracker, const auto&) {
+    return tracker->normal_interval();
+  });
+  CMD2_TRACKER("t.min_interval", [](const auto& tracker, const auto&) {
+    return tracker->min_interval();
+  });
 
-  CMD2_TRACKER(
-    "t.activity_time_next",
-    std::bind(&torrent::Tracker::activity_time_next, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.activity_time_last",
-    std::bind(&torrent::Tracker::activity_time_last, std::placeholders::_1));
+  CMD2_TRACKER("t.activity_time_next", [](const auto& tracker, const auto&) {
+    return tracker->activity_time_next();
+  });
+  CMD2_TRACKER("t.activity_time_last", [](const auto& tracker, const auto&) {
+    return tracker->activity_time_last();
+  });
 
-  CMD2_TRACKER(
-    "t.success_time_next",
-    std::bind(&torrent::Tracker::success_time_next, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.success_time_last",
-    std::bind(&torrent::Tracker::success_time_last, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.success_counter",
-    std::bind(&torrent::Tracker::success_counter, std::placeholders::_1));
+  CMD2_TRACKER("t.success_time_next", [](const auto& tracker, const auto&) {
+    return tracker->success_time_next();
+  });
+  CMD2_TRACKER("t.success_time_last", [](const auto& tracker, const auto&) {
+    return tracker->success_time_last();
+  });
+  CMD2_TRACKER("t.success_counter", [](const auto& tracker, const auto&) {
+    return tracker->success_counter();
+  });
 
-  CMD2_TRACKER(
-    "t.failed_time_next",
-    std::bind(&torrent::Tracker::failed_time_next, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.failed_time_last",
-    std::bind(&torrent::Tracker::failed_time_last, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.failed_counter",
-    std::bind(&torrent::Tracker::failed_counter, std::placeholders::_1));
+  CMD2_TRACKER("t.failed_time_next", [](const auto& tracker, const auto&) {
+    return tracker->failed_time_next();
+  });
+  CMD2_TRACKER("t.failed_time_last", [](const auto& tracker, const auto&) {
+    return tracker->failed_time_last();
+  });
+  CMD2_TRACKER("t.failed_counter", [](const auto& tracker, const auto&) {
+    return tracker->failed_counter();
+  });
 
-  CMD2_TRACKER(
-    "t.scrape_time_last",
-    std::bind(&torrent::Tracker::scrape_time_last, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.scrape_counter",
-    std::bind(&torrent::Tracker::scrape_counter, std::placeholders::_1));
+  CMD2_TRACKER("t.scrape_time_last", [](const auto& tracker, const auto&) {
+    return tracker->scrape_time_last();
+  });
+  CMD2_TRACKER("t.scrape_counter", [](const auto& tracker, const auto&) {
+    return tracker->scrape_counter();
+  });
 
-  CMD2_TRACKER(
-    "t.scrape_complete",
-    std::bind(&torrent::Tracker::scrape_complete, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.scrape_incomplete",
-    std::bind(&torrent::Tracker::scrape_incomplete, std::placeholders::_1));
-  CMD2_TRACKER(
-    "t.scrape_downloaded",
-    std::bind(&torrent::Tracker::scrape_downloaded, std::placeholders::_1));
+  CMD2_TRACKER("t.scrape_complete", [](const auto& tracker, const auto&) {
+    return tracker->scrape_complete();
+  });
+  CMD2_TRACKER("t.scrape_incomplete", [](const auto& tracker, const auto&) {
+    return tracker->scrape_incomplete();
+  });
+  CMD2_TRACKER("t.scrape_downloaded", [](const auto& tracker, const auto&) {
+    return tracker->scrape_downloaded();
+  });
 
-  CMD2_ANY_VALUE("trackers.enable",
-                 std::bind(&apply_enable_trackers, int64_t(1)));
-  CMD2_ANY_VALUE("trackers.disable",
-                 std::bind(&apply_enable_trackers, int64_t(0)));
+  CMD2_ANY_VALUE("trackers.enable", [](const auto&, const auto&) {
+    return apply_enable_trackers(int64_t(1));
+  });
+  CMD2_ANY_VALUE("trackers.disable", [](const auto&, const auto&) {
+    return apply_enable_trackers(int64_t(0));
+  });
   CMD2_VAR_VALUE("trackers.numwant", -1);
   CMD2_VAR_BOOL("trackers.use_udp", true);
 
-  CMD2_ANY_STRING_V("dht.mode.set",
-                    std::bind(&core::DhtManager::set_mode,
-                              control->dht_manager(),
-                              std::placeholders::_2));
+  CMD2_ANY_STRING_V("dht.mode.set", [](const auto&, const auto& arg) {
+    return control->dht_manager()->set_mode(arg);
+  });
   CMD2_VAR_VALUE("dht.port", int64_t(6881));
-  CMD2_ANY_STRING("dht.add_bootstrap",
-                  std::bind(&apply_dht_add_bootstrap, std::placeholders::_2));
-  CMD2_ANY_STRING("dht.add_node",
-                  std::bind(&apply_dht_add_node, std::placeholders::_2));
-  CMD2_ANY(
-    "dht.statistics",
-    std::bind(&core::DhtManager::dht_statistics, control->dht_manager()));
-  CMD2_ANY("dht.throttle.name",
-           std::bind(&core::DhtManager::throttle_name, control->dht_manager()));
-  CMD2_ANY_STRING_V("dht.throttle.name.set",
-                    std::bind(&core::DhtManager::set_throttle_name,
-                              control->dht_manager(),
-                              std::placeholders::_2));
+  CMD2_ANY_STRING("dht.add_bootstrap", [](const auto&, const auto& arg) {
+    return apply_dht_add_bootstrap(arg);
+  });
+  CMD2_ANY_STRING("dht.add_node", [](const auto&, const auto& arg) {
+    return apply_dht_add_node(arg);
+  });
+  CMD2_ANY("dht.statistics", [](const auto&, const auto&) {
+    return control->dht_manager()->dht_statistics();
+  });
+  CMD2_ANY("dht.throttle.name", [](const auto&, const auto&) {
+    return control->dht_manager()->throttle_name();
+  });
+  CMD2_ANY_STRING_V(
+    "dht.throttle.name.set", [](const auto&, const auto& throttleName) {
+      return control->dht_manager()->set_throttle_name(throttleName);
+    });
 }

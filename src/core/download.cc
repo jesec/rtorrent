@@ -28,9 +28,9 @@ Download::Download(download_type d)
   , m_group(0) {
 
   m_download.info()->signal_tracker_success().push_back(
-    std::bind(&Download::receive_tracker_msg, this, ""));
+    [this] { receive_tracker_msg(""); });
   m_download.info()->signal_tracker_failed().push_back(
-    std::bind(&Download::receive_tracker_msg, this, std::placeholders::_1));
+    [this](const auto& msg) { receive_tracker_msg(msg); });
 }
 
 Download::~Download() {

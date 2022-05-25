@@ -227,12 +227,9 @@ jsonrpc_call_command(const std::string& method, const json& params) {
 
   if (std::string_view("system.listMethods") == method) {
     json methods = json::array();
-    std::transform(
-      commands.cbegin(),
-      commands.cend(),
-      std::back_inserter(methods),
-      [](const std::pair<const char* const, rpc::command_map_data_type>&
-           mapping) { return mapping.first; });
+    for (const auto& [k, v] : commands) {
+      methods.push_back(k);
+    }
     return methods;
   }
 

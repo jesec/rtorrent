@@ -90,10 +90,13 @@ void
 initialize_command_scheduler() {
   CMD2_VAR_VALUE("scheduler.max_active", int64_t(-1));
 
-  CMD2_DL("scheduler.simple.added",
-          std::bind(&cmd_scheduler_simple_added, std::placeholders::_1));
-  CMD2_DL("scheduler.simple.removed",
-          std::bind(&cmd_scheduler_simple_removed, std::placeholders::_1));
-  CMD2_DL("scheduler.simple.update",
-          std::bind(&cmd_scheduler_simple_update, std::placeholders::_1));
+  CMD2_DL("scheduler.simple.added", [](const auto& download, const auto&) {
+    return cmd_scheduler_simple_added(download);
+  });
+  CMD2_DL("scheduler.simple.removed", [](const auto& download, const auto&) {
+    return cmd_scheduler_simple_removed(download);
+  });
+  CMD2_DL("scheduler.simple.update", [](const auto& download, const auto&) {
+    return cmd_scheduler_simple_update(download);
+  });
 }

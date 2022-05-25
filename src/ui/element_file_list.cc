@@ -31,21 +31,18 @@ ElementFileList::ElementFileList(core::Download* d)
   m_selected(iterator(d->download()->file_list()->begin()))
   , m_collapsed(false) {
 
-  m_bindings[KEY_LEFT] = m_bindings['B' - '@'] =
-    std::bind(&slot_type::operator(), &m_slot_exit);
-  m_bindings[KEY_RIGHT] = m_bindings['F' - '@'] =
-    std::bind(&ElementFileList::receive_select, this);
+  m_bindings[KEY_LEFT] =
+    m_bindings['B' - '@'] = [m_slot_exit = &m_slot_exit] { (*m_slot_exit)(); };
+  m_bindings[KEY_RIGHT] = m_bindings['F' - '@'] = [this] { receive_select(); };
 
-  m_bindings[' ']       = std::bind(&ElementFileList::receive_priority, this);
-  m_bindings['*']       = std::bind(&ElementFileList::receive_change_all, this);
-  m_bindings['/']       = std::bind(&ElementFileList::receive_collapse, this);
-  m_bindings[KEY_NPAGE] = std::bind(&ElementFileList::receive_pagenext, this);
-  m_bindings[KEY_PPAGE] = std::bind(&ElementFileList::receive_pageprev, this);
+  m_bindings[' ']       = [this] { receive_priority(); };
+  m_bindings['*']       = [this] { receive_change_all(); };
+  m_bindings['/']       = [this] { receive_collapse(); };
+  m_bindings[KEY_NPAGE] = [this] { receive_pagenext(); };
+  m_bindings[KEY_PPAGE] = [this] { receive_pageprev(); };
 
-  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] =
-    std::bind(&ElementFileList::receive_next, this);
-  m_bindings[KEY_UP] = m_bindings['P' - '@'] =
-    std::bind(&ElementFileList::receive_prev, this);
+  m_bindings[KEY_DOWN] = m_bindings['N' - '@'] = [this] { receive_next(); };
+  m_bindings[KEY_UP] = m_bindings['P' - '@'] = [this] { receive_prev(); };
 }
 
 inline ElementText*
@@ -97,8 +94,7 @@ ElementFileList::activate(display::Frame* frame, bool focus) {
   m_window->set_focused(focus);
 
   m_elementInfo = element_file_list_create_info();
-  m_elementInfo->slot_exit(
-    std::bind(&ElementFileList::activate_display, this, DISPLAY_LIST));
+  m_elementInfo->slot_exit([this] { activate_display(DISPLAY_LIST); });
   m_elementInfo->set_target(rpc::make_target(&m_selected));
 
   m_frame = frame;

@@ -72,97 +72,94 @@ apply_fi_filename_last(torrent::FileListIterator* itr) {
 void
 initialize_command_file() {
   CMD2_FILE("f.is_created",
-            std::bind(&torrent::File::is_created, std::placeholders::_1));
+            [](const auto& file, const auto&) { return file->is_created(); });
   CMD2_FILE("f.is_open",
-            std::bind(&torrent::File::is_open, std::placeholders::_1));
+            [](const auto& file, const auto&) { return file->is_open(); });
 
-  CMD2_FILE("f.is_create_queued",
-            std::bind(&torrent::File::is_create_queued, std::placeholders::_1));
-  CMD2_FILE("f.is_resize_queued",
-            std::bind(&torrent::File::is_resize_queued, std::placeholders::_1));
+  CMD2_FILE("f.is_create_queued", [](const auto& file, const auto&) {
+    return file->is_create_queued();
+  });
+  CMD2_FILE("f.is_resize_queued", [](const auto& file, const auto&) {
+    return file->is_resize_queued();
+  });
 
-  CMD2_FILE_VALUE_V("f.set_create_queued",
-                    std::bind(&torrent::File::set_flags,
-                              std::placeholders::_1,
-                              torrent::File::flag_create_queued));
-  CMD2_FILE_VALUE_V("f.set_resize_queued",
-                    std::bind(&torrent::File::set_flags,
-                              std::placeholders::_1,
-                              torrent::File::flag_resize_queued));
-  CMD2_FILE_VALUE_V("f.unset_create_queued",
-                    std::bind(&torrent::File::unset_flags,
-                              std::placeholders::_1,
-                              torrent::File::flag_create_queued));
-  CMD2_FILE_VALUE_V("f.unset_resize_queued",
-                    std::bind(&torrent::File::unset_flags,
-                              std::placeholders::_1,
-                              torrent::File::flag_resize_queued));
+  CMD2_FILE_VALUE_V("f.set_create_queued", [](const auto& file, const auto&) {
+    return file->set_flags(torrent::File::flag_create_queued);
+  });
+  CMD2_FILE_VALUE_V("f.set_resize_queued", [](const auto& file, const auto&) {
+    return file->set_flags(torrent::File::flag_resize_queued);
+  });
+  CMD2_FILE_VALUE_V("f.unset_create_queued", [](const auto& file, const auto&) {
+    return file->unset_flags(torrent::File::flag_create_queued);
+  });
+  CMD2_FILE_VALUE_V("f.unset_resize_queued", [](const auto& file, const auto&) {
+    return file->unset_flags(torrent::File::flag_resize_queued);
+  });
 
-  CMD2_FILE("f.prioritize_first",
-            std::bind(&torrent::File::has_flags,
-                      std::placeholders::_1,
-                      torrent::File::flag_prioritize_first));
-  CMD2_FILE_V("f.prioritize_first.enable",
-              std::bind(&torrent::File::set_flags,
-                        std::placeholders::_1,
-                        torrent::File::flag_prioritize_first));
-  CMD2_FILE_V("f.prioritize_first.disable",
-              std::bind(&torrent::File::unset_flags,
-                        std::placeholders::_1,
-                        torrent::File::flag_prioritize_first));
-  CMD2_FILE("f.prioritize_last",
-            std::bind(&torrent::File::has_flags,
-                      std::placeholders::_1,
-                      torrent::File::flag_prioritize_last));
-  CMD2_FILE_V("f.prioritize_last.enable",
-              std::bind(&torrent::File::set_flags,
-                        std::placeholders::_1,
-                        torrent::File::flag_prioritize_last));
-  CMD2_FILE_V("f.prioritize_last.disable",
-              std::bind(&torrent::File::unset_flags,
-                        std::placeholders::_1,
-                        torrent::File::flag_prioritize_last));
+  CMD2_FILE("f.prioritize_first", [](const auto& file, const auto&) {
+    return file->has_flags(torrent::File::flag_prioritize_first);
+  });
+  CMD2_FILE_V("f.prioritize_first.enable", [](const auto& file, const auto&) {
+    return file->set_flags(torrent::File::flag_prioritize_first);
+  });
+  CMD2_FILE_V("f.prioritize_first.disable", [](const auto& file, const auto&) {
+    return file->unset_flags(torrent::File::flag_prioritize_first);
+  });
+  CMD2_FILE("f.prioritize_last", [](const auto& file, const auto&) {
+    return file->has_flags(torrent::File::flag_prioritize_last);
+  });
+  CMD2_FILE_V("f.prioritize_last.enable", [](const auto& file, const auto&) {
+    return file->set_flags(torrent::File::flag_prioritize_last);
+  });
+  CMD2_FILE_V("f.prioritize_last.disable", [](const auto& file, const auto&) {
+    return file->unset_flags(torrent::File::flag_prioritize_last);
+  });
 
   CMD2_FILE("f.size_bytes",
-            std::bind(&torrent::File::size_bytes, std::placeholders::_1));
+            [](const auto& file, const auto&) { return file->size_bytes(); });
   CMD2_FILE("f.size_chunks",
-            std::bind(&torrent::File::size_chunks, std::placeholders::_1));
-  CMD2_FILE("f.completed_chunks",
-            std::bind(&torrent::File::completed_chunks, std::placeholders::_1));
+            [](const auto& file, const auto&) { return file->size_chunks(); });
+  CMD2_FILE("f.completed_chunks", [](const auto& file, const auto&) {
+    return file->completed_chunks();
+  });
 
   CMD2_FILE("f.offset",
-            std::bind(&torrent::File::offset, std::placeholders::_1));
+            [](const auto& file, const auto&) { return file->offset(); });
   CMD2_FILE("f.range_first",
-            std::bind(&torrent::File::range_first, std::placeholders::_1));
+            [](const auto& file, const auto&) { return file->range_first(); });
   CMD2_FILE("f.range_second",
-            std::bind(&torrent::File::range_second, std::placeholders::_1));
+            [](const auto& file, const auto&) { return file->range_second(); });
 
   CMD2_FILE("f.priority",
-            std::bind(&torrent::File::priority, std::placeholders::_1));
-  CMD2_FILE_VALUE_V("f.priority.set",
-                    std::bind(&apply_f_set_priority,
-                              std::placeholders::_1,
-                              std::placeholders::_2));
+            [](const auto& file, const auto&) { return file->priority(); });
+  CMD2_FILE_VALUE_V("f.priority.set", [](const auto& file, const auto& v) {
+    return apply_f_set_priority(file, v);
+  });
 
-  CMD2_FILE("f.path", std::bind(&apply_f_path, std::placeholders::_1));
-  CMD2_FILE("f.path_components",
-            std::bind(&apply_f_path_components, std::placeholders::_1));
-  CMD2_FILE("f.path_depth",
-            std::bind(&apply_f_path_depth, std::placeholders::_1));
+  CMD2_FILE("f.path",
+            [](const auto& file, const auto&) { return apply_f_path(file); });
+  CMD2_FILE("f.path_components", [](const auto& file, const auto&) {
+    return apply_f_path_components(file);
+  });
+  CMD2_FILE("f.path_depth", [](const auto& file, const auto&) {
+    return apply_f_path_depth(file);
+  });
   CMD2_FILE("f.frozen_path",
-            std::bind(&torrent::File::frozen_path, std::placeholders::_1));
+            [](const auto& file, const auto&) { return file->frozen_path(); });
 
-  CMD2_FILE("f.match_depth_prev",
-            std::bind(&torrent::File::match_depth_prev, std::placeholders::_1));
-  CMD2_FILE("f.match_depth_next",
-            std::bind(&torrent::File::match_depth_next, std::placeholders::_1));
+  CMD2_FILE("f.match_depth_prev", [](const auto& file, const auto&) {
+    return file->match_depth_prev();
+  });
+  CMD2_FILE("f.match_depth_next", [](const auto& file, const auto&) {
+    return file->match_depth_next();
+  });
 
   CMD2_FILE("f.last_touched",
-            std::bind(&torrent::File::last_touched, std::placeholders::_1));
+            [](const auto& file, const auto&) { return file->last_touched(); });
 
-  CMD2_FILEITR("fi.filename_last",
-               std::bind(&apply_fi_filename_last, std::placeholders::_1));
-  CMD2_FILEITR(
-    "fi.is_file",
-    std::bind(&torrent::FileListIterator::is_file, std::placeholders::_1));
+  CMD2_FILEITR("fi.filename_last", [](const auto& file, const auto&) {
+    return apply_fi_filename_last(file);
+  });
+  CMD2_FILEITR("fi.is_file",
+               [](const auto& file, const auto&) { return file->is_file(); });
 }

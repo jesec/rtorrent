@@ -31,7 +31,7 @@ Window::Window(Canvas*     canvas,
   m_maxWidth(maxWidth)
   , m_maxHeight(maxHeight) {
 
-  m_taskUpdate.slot() = std::bind(&Window::redraw, this);
+  m_taskUpdate.slot() = [this] { redraw(); };
 }
 
 Window::~Window() {
