@@ -97,6 +97,7 @@ cc_binary(
     srcs = [
         "src/main.cc",
         "//:included_headers",
+        "@mimalloc",
     ],
     copts = COPTS,
     includes = ["include"],
@@ -111,7 +112,10 @@ cc_test(
     name = "rtorrent_test",
     srcs = glob([
         "test/**/*.cc",
-    ]) + ["//:included_headers"],
+    ]) + [
+        "@mimalloc",
+        "//:included_headers",
+    ],
     copts = COPTS,
     includes = ["include"],
     linkopts = LINKOPTS,
