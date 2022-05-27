@@ -9,6 +9,7 @@ Type=simple
 KillMode=process
 KillSignal=SIGHUP
 ExecStart=/usr/bin/env rtorrent -o system.daemon.set=true
+LimitNOFILE=infinity
 Restart=on-failure
 RestartSec=3
 
