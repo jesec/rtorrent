@@ -24,8 +24,18 @@ extern ExecFile   execFile;
 
 using parse_command_type = std::pair<torrent::Object, const char*>;
 
+bool
+parse_line(char             key[],
+           torrent::Object& args,
+           const char*&     first,
+           const char*      last);
+
 // The generic parse command function, used by the rest. At some point
 // the 'download' parameter should be replaced by a more generic one.
+torrent::Object
+parse_command_(target_type            target,
+               CommandMap::iterator   cmd,
+               const torrent::Object& args);
 parse_command_type
 parse_command(target_type target, const char* first, const char* last);
 torrent::Object

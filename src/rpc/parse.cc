@@ -179,8 +179,9 @@ parse_object(const char*      first,
       throw torrent::input_error("Could not find closing '}'.");
 
     return ++first;
+  }
 
-  } else if (*first == '(') {
+  if (*first == '(') {
     int32_t depth = 1;
 
     while (first + 1 != last && *(first + 1) == '(') {
@@ -218,12 +219,15 @@ parse_object(const char*      first,
       throw torrent::input_error("Parantheses mismatch.");
 
     return first;
+  }
 
-  } else {
+  if (first != last) {
     *dest = std::string();
 
     return parse_string(first, last, &dest->as_string(), delim);
   }
+
+  return first;
 }
 
 const char*

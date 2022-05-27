@@ -304,33 +304,50 @@ d_multicall(const torrent::Object::list_type& args) {
   if (viewItr == viewManager->end())
     throw torrent::input_error("Could not find view.");
 
-  // Add some pre-parsing of the commands, so we don't spend time
-  // parsing and searching command map for every single call.
+  // [(cmd, cmd_args)]
+  std::vector<std::pair<rpc::CommandMap::iterator, torrent::Object>> parsed;
+  parsed.reserve(args.size() - 1);
+
+  for (size_t i = 1; i < args.size(); ++i) {
+    const auto& arg = args[i].as_string();
+
+    char key[128];
+    auto cmd_args = torrent::Object();
+    auto start    = arg.c_str();
+
+    if (!rpc::parse_line(key, cmd_args, start, start + arg.size())) {
+      throw torrent::input_error("Failed to parse command.");
+    }
+
+    auto cmd = rpc::commands.find(key);
+    if (cmd == rpc::commands.end()) {
+      throw torrent::input_error("Command \"" + std::string(key) +
+                                 "\" does not exist.");
+    }
+
+    parsed.emplace_back(cmd, cmd_args);
+  }
+
   unsigned int     dlist_size = (*viewItr)->size_visible();
   core::Download** dlist =
     static_cast<core::Download**>(malloc(sizeof(core::Download*) * dlist_size));
 
   std::copy((*viewItr)->begin_visible(), (*viewItr)->end_visible(), dlist);
 
-  torrent::Object             resultRaw = torrent::Object::create_list();
-  torrent::Object::list_type& result    = resultRaw.as_list();
+  auto  resultRaw = torrent::Object::create_list();
+  auto& result    = resultRaw.as_list();
 
   result.resize(dlist_size, torrent::Object::create_list());
 
   for (size_t i = 0; i < dlist_size; ++i) {
     torrent::Object::list_type& row = result[i].as_list();
 
-    row.reserve(args.size() - 1);
+    row.reserve(parsed.size());
 
-    std::for_each(args.begin() + 1,
-                  args.end(),
-                  [&row, download = dlist[i]](const auto& arg) {
-                    const std::string& cmd = arg.as_string();
-                    row.push_back(rpc::parse_command(rpc::make_target(download),
-                                                     cmd.c_str(),
-                                                     cmd.c_str() + cmd.size())
-                                    .first);
-                  });
+    for (const auto& [cmd, cmd_args] : parsed) {
+      row.push_back(
+        rpc::parse_command_(rpc::make_target(dlist[i]), cmd, cmd_args));
+    }
   }
 
   free(dlist);

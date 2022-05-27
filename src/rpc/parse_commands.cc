@@ -101,16 +101,15 @@ parse_command_name(const char* first,
   return first;
 }
 
-// Set 'download' to NULL to call the generic functions, thus reusing
-// the code below for both cases.
-parse_command_type
-parse_command(target_type target, const char* first, const char* last) {
+inline bool
+parse_line(char             key[],
+           torrent::Object& args,
+           const char*&     first,
+           const char*      last) {
   first = std::find_if(first, last, std::not_fn(command_map_is_space()));
 
   if (first == last || *first == '#')
-    return std::make_pair(torrent::Object(), first);
-
-  char key[128];
+    return false;
 
   first = parse_command_name(first, last, key, key + 128);
   first = std::find_if(first, last, std::not_fn(command_map_is_space()));
@@ -119,7 +118,6 @@ parse_command(target_type target, const char* first, const char* last) {
     throw torrent::input_error("Could not find '=' in command '" +
                                std::string(key) + "'.");
 
-  torrent::Object args;
   first = parse_whole_list(first + 1, last, &args, &parse_is_delim_command);
 
   // Find the last character that is part of this command, skipping
@@ -132,6 +130,37 @@ parse_command(target_type target, const char* first, const char* last) {
       throw torrent::input_error("Junk at end of input.");
 
     first++;
+  }
+
+  return true;
+}
+
+// Set 'download' to NULL to call the generic functions, thus reusing
+// the code below for both cases.
+torrent::Object
+parse_command_(target_type            target,
+               CommandMap::iterator   cmd,
+               const torrent::Object& args) {
+  if (args.is_empty()) {
+    return commands.call_command(cmd, args, target);
+  }
+
+  auto args_substituted = args;
+
+  // Replace any strings starting with '$' with the result of the
+  // following command.
+  parse_command_execute(target, &args_substituted);
+
+  return commands.call_command(cmd, args_substituted, target);
+}
+
+parse_command_type
+parse_command(target_type target, const char* first, const char* last) {
+  char            key[128];
+  torrent::Object args;
+
+  if (!parse_line(key, args, first, last)) {
+    return std::make_pair(torrent::Object(), first);
   }
 
   // Replace any strings starting with '$' with the result of the
