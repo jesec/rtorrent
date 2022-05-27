@@ -24,7 +24,7 @@ jobs:
 
       - name: Tag rolling release
         run: |
-          cat BUILD.bazel | sed s/-jc+master/-jc+`date +%s`-`git rev-parse --short HEAD`/ | sed s/jc+master/jc+`date +%s`.`git rev-parse --short HEAD`/ > BUILD.versioned
+          cat BUILD.bazel | sed s/-jc+master/-jc+`date +%s`-`git rev-parse --short HEAD`/ | sed s/100master/`date +%s`.`git rev-parse --short HEAD`/ > BUILD.versioned
           cat BUILD.versioned
           mv BUILD.versioned BUILD.bazel
 

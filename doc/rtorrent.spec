@@ -1,7 +1,7 @@
 Name:          rtorrent
 License:       GPLv2+ with exceptions
 Version:       0.9.8
-Release:       jc+master
+Release:       100master.jc
 Summary:       a stable and high-performance BitTorrent client
 URL:           https://github.com/jesec/rtorrent
 

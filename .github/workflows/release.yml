@@ -29,7 +29,7 @@ jobs:
       - name: Tag release
         run: |
           release=`echo ${{ steps.get_version.outputs.VERSION }} | cut -d'-' -f2`
-          cat BUILD.bazel | sed s/-jc+master/-jc-$release/ | sed s/jc+master/jc.$release/ > BUILD.versioned
+          cat BUILD.bazel | sed s/-jc+master/-jc-$release/ | sed s/100master/${release:1}/ > BUILD.versioned
           cat BUILD.versioned
           mv BUILD.versioned BUILD.bazel
 

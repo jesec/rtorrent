@@ -180,7 +180,7 @@ pkg_rpm(
     name = "rtorrent-rpm",
     architecture = "all",
     data = [":rtorrent-pkg-data"],
-    release = "jc+master",
+    release = "100master.jc",
     spec_file = "doc/rtorrent.spec",
     version = "0.9.8",
 )
