@@ -1,4 +1,4 @@
-load("@rules_foreign_cc//tools/build_defs:configure.bzl", "configure_make")
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
 
 filegroup(
     name = "all",
@@ -7,12 +7,6 @@ filegroup(
 
 configure_make(
     name = "xmlrpc",
-    configure_env_vars = select({
-        "@platforms//os:macos": {
-            "AR": "",
-        },
-        "//conditions:default": {},
-    }),
     configure_in_place = True,
     configure_options = [
         "--disable-wininet-client",
@@ -22,23 +16,23 @@ configure_make(
         "--disable-cgi-server",
         "--disable-cplusplus",
     ],
-    lib_source = ":all",
-    make_commands = select({
-        "@platforms//os:macos": [
-            "CFLAGS='-fpic -D_DARWIN_C_SOURCE' make",
-            "make install",
-        ],
-        "//conditions:default": [
-            "CFLAGS='-fpic' make",
-            "make install",
-        ],
+    env = select({
+        "@platforms//os:macos": {
+            "AR": "",
+        },
+        "//conditions:default": {},
     }),
-    static_libraries = [
+    lib_source = ":all",
+    out_static_libs = [
         "libxmlrpc_server.a",
         "libxmlrpc.a",
         "libxmlrpc_xmlparse.a",
         "libxmlrpc_xmltok.a",
         "libxmlrpc_util.a",
     ],
+    tool_prefix = select({
+        "@platforms//os:macos": "CFLAGS='-fpic -D_DARWIN_C_SOURCE'",
+        "//conditions:default": "CFLAGS='-fpic'",
+    }),
     visibility = ["//visibility:public"],
 )

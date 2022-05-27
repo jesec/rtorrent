@@ -1,5 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
-load("@rules_foreign_cc//tools/build_defs:cmake.bzl", "cmake_external")
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 load("@rules_pkg//:pkg.bzl", "pkg_deb", "pkg_tar")
 
 config_setting(
@@ -41,14 +41,14 @@ filegroup(
     ]),
 )
 
-cmake_external(
+cmake(
     name = "buildinfo",
     cache_entries = {
         "BUILDINFO_ONLY": "ON",
         "USE_RUNTIME_CA_DETECTION": "ON",
     },
-    headers_only = True,
     lib_source = "//:cmake_rules",
+    out_headers_only = True,
 )
 
 filegroup(

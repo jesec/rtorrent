@@ -1,13 +1,12 @@
-load("@rules_foreign_cc//tools/build_defs:cmake.bzl", "cmake_external")
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 
 filegroup(
     name = "all",
     srcs = glob(["**"]),
 )
 
-cmake_external(
+cmake(
     name = "_mimalloc",
-    binaries = ["mimalloc.o"],
     cache_entries = {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_INSTALL_LIBDIR": "lib",
@@ -21,6 +20,7 @@ cmake_external(
     },
     lib_source = "//:all",
     out_bin_dir = "lib",
+    out_binaries = ["mimalloc.o"],
 )
 
 filegroup(
