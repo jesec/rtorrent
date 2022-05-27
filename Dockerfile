@@ -16,7 +16,10 @@ RUN apk --no-cache add \
     git \
     linux-headers \
     python2 \
-    python3
+    python3 \
+    rpm
+
+RUN rpm --initdb
 
 # Checkout rTorrent sources from current directory
 COPY . ./
@@ -24,7 +27,7 @@ COPY . ./
 # # Checkout rTorrent sources from Github repository
 # RUN git clone https://github.com/jesec/rtorrent .
 
-# Set architecture for .deb package
+# Set architecture for packages
 RUN if [[ `uname -m` == "aarch64" ]]; \
     then sed -i 's/architecture = \"all\"/architecture = \"arm64\"/' BUILD.bazel; \
     elif [[ `uname -m` == "x86_64" ]]; \
@@ -32,12 +35,13 @@ RUN if [[ `uname -m` == "aarch64" ]]; \
     fi
 
 # Build rTorrent packages
-RUN bazel build rtorrent-deb --features=fully_static_link --verbose_failures
+RUN bazel build rtorrent-deb rtorrent-rpm --features=fully_static_link --verbose_failures
 
 # Copy outputs
 RUN mkdir dist
 RUN cp -L bazel-bin/rtorrent dist/
 RUN cp -L bazel-bin/rtorrent-deb.deb dist/
+RUN cp -L bazel-bin/rtorrent-rpm.rpm dist/
 
 # Now get the clean image
 FROM ${ALPINE_IMAGE} as build-sysroot

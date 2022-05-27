@@ -29,7 +29,7 @@ jobs:
       - name: Tag release
         run: |
           release=`echo ${{ steps.get_version.outputs.VERSION }} | cut -d'-' -f2`
-          sed s/-jc+master/-jc-$release/ BUILD.bazel > BUILD.versioned
+          cat BUILD.bazel | sed s/-jc+master/-jc-$release/ | sed s/jc+master/jc.$release/ > BUILD.versioned
           cat BUILD.versioned
           mv BUILD.versioned BUILD.bazel
 
@@ -73,6 +73,11 @@ jobs:
         with:
           name: rtorrent-deb-${{ matrix.arch }}
           path: root/rtorrent/dist/rtorrent-deb.deb
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: rtorrent-rpm-${{ matrix.arch }}
+          path: root/rtorrent/dist/rtorrent-rpm.rpm
 
   docker-manifest:
     needs: docker
@@ -122,6 +127,8 @@ jobs:
           cp artifacts/rtorrent-linux-arm64/rtorrent rtorrent-linux-arm64
           cp artifacts/rtorrent-deb-amd64/rtorrent-deb.deb rtorrent-linux-amd64.deb
           cp artifacts/rtorrent-deb-arm64/rtorrent-deb.deb rtorrent-linux-arm64.deb
+          cp artifacts/rtorrent-rpm-amd64/rtorrent-rpm.rpm rtorrent-linux-amd64.rpm
+          cp artifacts/rtorrent-rpm-arm64/rtorrent-rpm.rpm rtorrent-linux-arm64.rpm
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -132,7 +139,9 @@ jobs:
           files: |
             rtorrent-linux-amd64
             rtorrent-linux-amd64.deb
+            rtorrent-linux-amd64.rpm
             rtorrent-linux-arm64
             rtorrent-linux-arm64.deb
+            rtorrent-linux-arm64.rpm
             rtorrent.rc
             rtorrent@.service

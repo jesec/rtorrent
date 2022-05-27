@@ -1,6 +1,7 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 load("@rules_pkg//:pkg.bzl", "pkg_deb", "pkg_tar")
+load("@rules_pkg//:rpm.bzl", "pkg_rpm")
 
 config_setting(
     name = "opt",
@@ -151,7 +152,7 @@ pkg_tar(
 )
 
 pkg_tar(
-    name = "rtorrent-deb-data",
+    name = "rtorrent-pkg-data",
     extension = "tar.gz",
     deps = [
         ":rtorrent-bin",
@@ -167,10 +168,19 @@ pkg_deb(
         "/etc/rtorrent/rtorrent.rc",
         "/etc/systemd/system/rtorrent@.service",
     ],
-    data = ":rtorrent-deb-data",
+    data = ":rtorrent-pkg-data",
     description = "a stable and high-performance BitTorrent client",
     homepage = "https://github.com/jesec/rtorrent",
     maintainer = "Jesse Chan <jc@linux.com>",
     package = "rtorrent",
     version = "0.9.8-jc+master",
+)
+
+pkg_rpm(
+    name = "rtorrent-rpm",
+    architecture = "all",
+    data = [":rtorrent-pkg-data"],
+    release = "jc+master",
+    spec_file = "doc/rtorrent.spec",
+    version = "0.9.8",
 )
