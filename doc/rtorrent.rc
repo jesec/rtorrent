@@ -77,10 +77,8 @@ trackers.numwant.set = 80
 network.max_open_files.set = 600
 network.max_open_sockets.set = 300
 
-# Memory resource usage (increase if you have a large number of items loaded,
-# and/or the available resources to spend)
-pieces.memory.max.set = 1800M
-#network.xmlrpc.size_limit.set = 16M
+# Memory usage limit (default: 2/5 of RAM available)
+##pieces.memory.max.set = 1800M
 
 # Preallocate disk space for contents of a torrent
 #
