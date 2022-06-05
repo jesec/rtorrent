@@ -31,6 +31,7 @@
 #include "command_helpers.h"
 #include "control.h"
 #include "globals.h"
+#include "buildinfo.h"
 
 torrent::Object
 apply_encryption(const torrent::Object::list_type& args) {
@@ -133,10 +134,15 @@ initialize_rpc() {
 torrent::Object
 apply_protocol(const std::string& arg, int type) {
   if (worker_thread->protocol() != nullptr)
-    throw torrent::input_error("SCGI already enabled.");
+    throw torrent::input_error("RPC thread already enabled.");
 
   if (!rpc::rpc.is_initialized())
     initialize_rpc();
+
+#ifdef HAVE_WEBSOCKETS
+  auto listen_info = new std::pair<std::string, int>(arg, type);
+  worker_thread->set_protocol(listen_info);
+#else
 
   rpc::SCgi* scgi = new rpc::SCgi;
 
@@ -230,6 +236,8 @@ apply_protocol(const std::string& arg, int type) {
   }
 
   worker_thread->set_protocol(scgi);
+
+#endif
   return torrent::Object();
 }
 

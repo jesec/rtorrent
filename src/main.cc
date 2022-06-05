@@ -55,6 +55,7 @@
 #include "signal_handler.h"
 
 #include "thread_worker.h"
+#include "websockets_thread.h"
 
 #define LT_LOG(log_fmt, ...)                                                   \
   lt_log_print(torrent::LOG_SYSTEM, "system: " log_fmt, __VA_ARGS__);
@@ -295,7 +296,11 @@ main(int argc, char** argv) {
       return client_next_timeout();
     };
 
+#ifdef HAVE_WEBSOCKETS
+    worker_thread = new WebsocketsThread();
+#else
     worker_thread = new ThreadWorker();
+#endif
     worker_thread->init_thread();
 
     // Initialize option handlers after libtorrent to ensure

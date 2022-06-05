@@ -37,4 +37,9 @@ if(USE_XMLRPC)
   file(APPEND ${BUILDINFO_H} "#define HAVE_XMLRPC_C 1\n\n")
 endif()
 
+if(USE_WEBSOCKETS)
+  file(APPEND ${BUILDINFO_H} "/* Support for websockets */\n")
+  file(APPEND ${BUILDINFO_H} "#define HAVE_WEBSOCKETS 1\n\n")
+endif()
+
 file(APPEND ${BUILDINFO_H} "#endif\n")
