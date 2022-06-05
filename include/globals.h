@@ -21,6 +21,6 @@ extern torrent::utils::priority_queue_default taskScheduler;
 extern torrent::utils::timer                  cachedTime;
 
 extern Control*      control;
-extern ThreadWorker* worker_thread;
+extern ProtocolThread* worker_thread;
 
 #endif

@@ -164,7 +164,7 @@ Control::handle_shutdown() {
 
   // Temporary hack:
   if (worker_thread->is_active()) {
-    worker_thread->queue_item(&ThreadBase::stop_thread);
+    worker_thread->queue_item((void*)ThreadBase::stop_thread);
   }
 
   if (!m_shutdownQuick) {

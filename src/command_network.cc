@@ -131,8 +131,8 @@ initialize_rpc() {
 }
 
 torrent::Object
-apply_scgi(const std::string& arg, int type) {
-  if (worker_thread->scgi() != nullptr)
+apply_protocol(const std::string& arg, int type) {
+  if (worker_thread->protocol() != nullptr)
     throw torrent::input_error("SCGI already enabled.");
 
   if (!rpc::rpc.is_initialized())
@@ -229,7 +229,7 @@ apply_scgi(const std::string& arg, int type) {
     throw torrent::input_error(e.what());
   }
 
-  worker_thread->set_scgi(scgi);
+  worker_thread->set_protocol(scgi);
   return torrent::Object();
 }
 
@@ -383,10 +383,10 @@ initialize_command_network() {
     [cm](const auto&, const auto& v) { return cm->set_max_size(v); });
 
   CMD2_ANY_STRING("network.scgi.open_port", [](const auto&, const auto& arg) {
-    return apply_scgi(arg, 1);
+    return apply_protocol(arg, 1);
   });
   CMD2_ANY_STRING("network.scgi.open_local", [](const auto&, const auto& arg) {
-    return apply_scgi(arg, 2);
+    return apply_protocol(arg, 2);
   });
   CMD2_VAR_BOOL("network.scgi.dont_route", false);
 
