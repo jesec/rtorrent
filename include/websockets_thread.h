@@ -60,6 +60,8 @@ private:
 
   std::pair<std::string, int>* listen_info = nullptr;
 
+  std::vector<uWS::WebSocket<false, true, ConnectionData>*> all_connection;
+
   void handle_request(const std::string_view&);
 };
 

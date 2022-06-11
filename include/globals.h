@@ -9,6 +9,7 @@
 
 #include "thread_base.h"
 #include "thread_worker.h"
+#include "rpc/rpc_thread_manager.h"
 
 class Control;
 
@@ -21,6 +22,6 @@ extern torrent::utils::priority_queue_default taskScheduler;
 extern torrent::utils::timer                  cachedTime;
 
 extern Control*      control;
-extern ProtocolThread* worker_thread;
+extern RpcThreadManager* worker_thread;
 
 #endif

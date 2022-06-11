@@ -17,7 +17,6 @@ option(USE_EXTRA_DEBUG "Enable extra debugging checks" OFF)
 option(USE_RUNTIME_CA_DETECTION "Enable runtime detection of path to CA bundle" OFF)
 option(USE_JSONRPC "Enable JSON-RPC interface" ON)
 option(USE_XMLRPC "Enable XML-RPC interface" ON)
-option(USE_WEBSOCKETS "Enable Websockets" ON)
 
 # Include CMake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -82,11 +81,6 @@ else()
     include_directories(${XMLRPC_INCLUDE_DIRS})
   endif()
 
-  if(USE_WEBSOCKETS)
-    find_package(uWebSockets REQUIRED)
-    include_directories(${WEBSOCKETS_INCLUDE_DIR})
-  endif()
-
   file(GLOB_RECURSE RTORRENT_COMMON_SRCS "${PROJECT_SOURCE_DIR}/src/*.cc")
   list(REMOVE_ITEM RTORRENT_COMMON_SRCS "${PROJECT_SOURCE_DIR}/src/main.cc")
 
@@ -102,12 +96,8 @@ else()
 
   # rtorrent
   add_executable(rtorrent "${PROJECT_SOURCE_DIR}/src/main.cc")
-  target_link_libraries(rtorrent rtorrent_common)
+  target_link_libraries(rtorrent rtorrent_common uSockets z Threads::Threads)
   install(TARGETS rtorrent RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-  if(USE_WEBSOCKETS)
-    target_link_libraries(rtorrent uSockets z Threads::Threads)
-  endif()
 
   # tests
   set(CMAKE_THREAD_PREFER_PTHREAD TRUE)

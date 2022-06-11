@@ -296,11 +296,8 @@ main(int argc, char** argv) {
       return client_next_timeout();
     };
 
-#ifdef HAVE_WEBSOCKETS
-    worker_thread = new WebsocketsThread();
-#else
-    worker_thread = new ThreadWorker();
-#endif
+    worker_thread = new RpcThreadManager();
+
     worker_thread->init_thread();
 
     // Initialize option handlers after libtorrent to ensure

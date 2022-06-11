@@ -11,6 +11,13 @@ using namespace uWS;
 
 WebsocketsThread::~WebsocketsThread() {
 
+  // close all websocket connection and then close the listen socket,
+  // then 'm_websockets_app->run()' will return, join the thread next.
+  std::for_each(all_connection.begin(), all_connection.end(), [](auto connection) {
+      connection->close();
+  });
+  us_listen_socket_close(0, m_listen_socket);
+
   delete listen_info;
   delete m_websockets_app;
 
@@ -51,10 +58,7 @@ WebsocketsThread::set_rpc_log(const std::string &filename) {
 
 void
 WebsocketsThread::queue_item(void*) {
-  // The follow statement will not create a new thread as it doesn't init and start.
-  // it just uses to exit the process gracefully (according to src/control.cc Control::handle_shutdown())
-  worker_thread = new ThreadWorker;
-  worker_thread->queue_item((void*)ThreadBase::stop_thread);
+
 }
 
 void
@@ -64,6 +68,7 @@ WebsocketsThread::start_thread() {
 
     App::WebSocketBehavior<ConnectionData> behavior;
     behavior.open = [&](WebSocket<false, true, ConnectionData>* ws) {
+      all_connection.emplace_back(ws);
       ws->getUserData()->address = ws->getRemoteAddressAsText();
     };
     behavior.message = [&](WebSocket<false, true, ConnectionData>* ws, std::string_view request, OpCode) {
@@ -75,11 +80,11 @@ WebsocketsThread::start_thread() {
 
     if (listen_info->second == 1) {
       auto ip_port = listen_info->first;
-      const auto& delim_pos = ip_port.find_first_of(':');
-      auto ip = ip_port.substr(0, delim_pos);
-      auto port = std::stoi(ip_port.substr(delim_pos + 1));
+      const auto& delimiter_pos = ip_port.find_first_of(':');
+      auto ip = ip_port.substr(0, delimiter_pos);
+      auto port = std::stoi(ip_port.substr(delimiter_pos + 1));
       m_websockets_app->listen(ip, port, [&](us_listen_socket_t* listen_socket) {
-        m_listen_socket = listen_socket;
+          m_listen_socket = listen_socket;
       });
     }
     else {
