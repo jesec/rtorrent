@@ -7,4 +7,4 @@ torrent::utils::priority_queue_default taskScheduler;
 torrent::utils::timer                  cachedTime;
 
 Control*      control       = nullptr;
-ThreadWorker* worker_thread = nullptr;
+RpcThreadManager* worker_thread = nullptr;

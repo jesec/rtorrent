@@ -136,7 +136,7 @@ Control::is_shutdown_completed() {
     return true;
   }
 
-  if (worker_thread->is_active()) {
+  if (worker_thread->is_active().first && worker_thread->is_active().second) {
     return false;
   }
 
@@ -163,8 +163,8 @@ Control::handle_shutdown() {
   }
 
   // Temporary hack:
-  if (worker_thread->is_active()) {
-    worker_thread->queue_item(&ThreadBase::stop_thread);
+  if (worker_thread->is_active().first && worker_thread->is_active().second) {
+    worker_thread->queue_item((void*)ThreadBase::stop_thread);
   }
 
   if (!m_shutdownQuick) {

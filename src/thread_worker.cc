@@ -27,16 +27,16 @@ ThreadWorker::init_thread() {
 }
 
 bool
-ThreadWorker::set_scgi(rpc::SCgi* scgi) {
+ThreadWorker::set_protocol(void* scgi) {
   if (m_scgi != nullptr) {
     return false;
   }
 
-  m_scgi = scgi;
+  m_scgi = static_cast<rpc::SCgi*>(scgi);
 
   change_rpc_log();
 
-  queue_item((thread_base_func)&start_scgi);
+  ::ThreadBase::queue_item((thread_base_func)start_protocol);
   return true;
 }
 
@@ -44,18 +44,18 @@ void
 ThreadWorker::set_rpc_log(const std::string& filename) {
   m_rpcLog = filename;
 
-  queue_item((thread_base_func)&msg_change_rpc_log);
+  ::ThreadBase::queue_item((thread_base_func)msg_change_rpc_log);
 }
 
 void
-ThreadWorker::start_scgi(ThreadBase* baseThread) {
+ThreadWorker::start_protocol(ThreadBase* baseThread) {
   ThreadWorker* thread = (ThreadWorker*)baseThread;
 
-  if (thread->scgi() == nullptr)
+  if (thread->protocol() == nullptr)
     throw torrent::internal_error(
       "Tried to start SCGI but object was not present.");
 
-  thread->scgi()->activate();
+  ((rpc::SCgi*)(thread->protocol()))->activate();
 }
 
 void
@@ -69,23 +69,24 @@ ThreadWorker::msg_change_rpc_log(ThreadBase* baseThread) {
 
 void
 ThreadWorker::change_rpc_log() {
-  if (scgi() == nullptr)
+  auto work_protocol = static_cast<rpc::SCgi*>(protocol());
+  if (work_protocol == nullptr)
     return;
 
-  if (scgi()->log_fd() != -1) {
-    ::close(scgi()->log_fd());
-    scgi()->set_log_fd(-1);
+  if (work_protocol->log_fd() != -1) {
+    ::close(work_protocol->log_fd());
+    work_protocol->set_log_fd(-1);
     control->core()->push_log("Closed RPC log.");
   }
 
   if (m_rpcLog.empty())
     return;
 
-  scgi()->set_log_fd(open(torrent::utils::path_expand(m_rpcLog).c_str(),
-                          O_WRONLY | O_APPEND | O_CREAT,
-                          0644));
+  work_protocol->set_log_fd(open(torrent::utils::path_expand(m_rpcLog).c_str(),
+                                 O_WRONLY | O_APPEND | O_CREAT,
+                                 0644));
 
-  if (scgi()->log_fd() == -1) {
+  if (work_protocol->log_fd() == -1) {
     control->core()->push_log_std("Could not open RPC log file '" + m_rpcLog +
                                   "'.");
     return;

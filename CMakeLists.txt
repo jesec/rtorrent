@@ -96,7 +96,7 @@ else()
 
   # rtorrent
   add_executable(rtorrent "${PROJECT_SOURCE_DIR}/src/main.cc")
-  target_link_libraries(rtorrent rtorrent_common)
+  target_link_libraries(rtorrent rtorrent_common uSockets z Threads::Threads)
   install(TARGETS rtorrent RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   # tests

@@ -147,8 +147,13 @@ network.http.dns_cache_timeout.set = 25
 # Run the rTorrent process as a daemon in the background
 #system.daemon.set = false
 
-# XML-RPC interface
-network.scgi.open_local = (cat,(cfg.basedir),rtorrent.sock)
+# scgi listen way
+# network.scgi.open_local = (cat,(cfg.basedir),rtorrent_scgi.sock)
+network.scgi.open_port = 127.0.0.1:1256
+
+# websockets listen way
+# network.websockets.open_local = (cat,(cfg.basedir),rtorrent_websockets.sock)
+network.websockets.open_port = 127.0.0.1:1258
 
 # Logging:
 #   Levels = critical error warn notice info debug
