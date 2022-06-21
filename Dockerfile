@@ -15,7 +15,7 @@ RUN apk --no-cache add \
     gcompat \
     git \
     linux-headers \
-    python2 \
+    pythonispython3 \
     python3 \
     rpm
 
