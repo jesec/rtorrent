@@ -97,7 +97,6 @@ cc_binary(
     name = "rtorrent",
     srcs = [
         "src/main.cc",
-        "//:included_headers",
         "@mimalloc",
     ],
     copts = COPTS,
@@ -109,23 +108,32 @@ cc_binary(
     ],
 )
 
-cc_test(
-    name = "rtorrent_test",
-    srcs = glob([
-        "test/**/*.cc",
-    ]) + [
-        "@mimalloc",
-        "//:included_headers",
-    ],
+cc_library(
+    name = "test_common",
+    srcs = ["test/main.cc"],
     copts = COPTS,
     includes = ["include"],
     linkopts = LINKOPTS,
-    linkstatic = True,
     deps = [
         "//:rtorrent_common",
         "@com_google_googletest//:gtest",
     ],
 )
+
+[cc_test(
+    name = t.split("/")[-1][:-3],
+    srcs = [
+        t,
+        "@mimalloc",
+    ],
+    copts = COPTS,
+    includes = ["include"],
+    linkopts = LINKOPTS,
+    tags = ["rtorrent_test"],
+    deps = ["//:test_common"],
+) for t in glob([
+    "test/**/test_*.cc",
+])]
 
 pkg_tar(
     name = "rtorrent-bin",
