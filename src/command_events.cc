@@ -31,9 +31,9 @@ torrent::Object
 apply_on_ratio(const torrent::Object& rawArgs) {
   const std::string& groupName = rawArgs.as_string();
 
-  char* buffer =
-    static_cast<char*>(calloc(32 + groupName.size(), sizeof(char)));
-  sprintf(buffer, "group2.%s.view", groupName.c_str());
+  const auto& buffer_size = 32 + groupName.size();
+  auto        buffer = static_cast<char*>(calloc(buffer_size, sizeof(char)));
+  snprintf(buffer, buffer_size, "group2.%s.view", groupName.c_str());
 
   core::ViewManager::iterator viewItr = control->view_manager()->find(
     rpc::commands.call(buffer, rpc::make_target()).as_string());
@@ -42,7 +42,8 @@ apply_on_ratio(const torrent::Object& rawArgs) {
     throw torrent::input_error("Could not find view.");
 
   char* bufferStart =
-    buffer + sprintf(buffer, "group2.%s.ratio.", groupName.c_str());
+    buffer +
+    snprintf(buffer, buffer_size, "group2.%s.ratio.", groupName.c_str());
 
   // first argument:  minimum ratio to reach
   // second argument: minimum upload amount to reach [optional]
@@ -79,7 +80,7 @@ apply_on_ratio(const torrent::Object& rawArgs) {
     downloads.push_back(*itr);
   }
 
-  sprintf(buffer, "group.%s.ratio.command", groupName.c_str());
+  snprintf(buffer, buffer_size, "group.%s.ratio.command", groupName.c_str());
 
   for (std::vector<core::Download*>::iterator itr  = downloads.begin(),
                                               last = downloads.end();

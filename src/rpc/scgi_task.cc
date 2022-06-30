@@ -246,8 +246,12 @@ SCgiTask::receive_write(const char* buffer, uint32_t length) {
     throw torrent::internal_error(
       "SCgiTask::receive_write(...) received bad input.");
 
-  if (length + 256 > std::max(m_bufferSize, default_buffer_size))
-    realloc_buffer(length + 256);
+  auto buffer_size = std::max(m_bufferSize, default_buffer_size);
+
+  if (length + 256 > buffer_size) {
+    buffer_size = length + 256;
+    realloc_buffer(buffer_size);
+  }
 
   const auto header = m_type == ContentType::JSON
                         ? "Status: 200 OK\r\nContent-Type: "
@@ -256,7 +260,7 @@ SCgiTask::receive_write(const char* buffer, uint32_t length) {
                           "text/xml\r\nContent-Length: %i\r\n\r\n";
 
   // Who ever bothers to check the return value?
-  int headerSize = sprintf(m_buffer, header, length);
+  int headerSize = snprintf(m_buffer, buffer_size, header, length);
 
   m_position   = m_buffer;
   m_bufferSize = length + headerSize;
