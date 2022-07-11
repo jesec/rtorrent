@@ -22,9 +22,9 @@ jobs:
       - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-darwin-amd64 -O /usr/local/bin/bazel
       - run: sudo chmod +x /usr/local/bin/bazel
 
-      - run: bazel test -s rtorrent_test
+      - run: bazel test -s //...
 
-      - run: bazel build -s rtorrent
+      - run: bazel build -s //...
       - run: cp bazel-bin/rtorrent rtorrent
 
       - uses: actions/upload-artifact@v2

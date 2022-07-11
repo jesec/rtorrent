@@ -52,10 +52,11 @@ jobs:
       - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
       - run: sudo chmod +x /usr/local/bin/bazel
 
-      - run: bazel coverage -s rtorrent_test
-      - run: cp -L bazel-testlogs/rtorrent_test/coverage.dat .
+      - run: bazel coverage --instrument_test_targets --collect_code_coverage --combined_report=lcov --test_output=all //...
 
       - uses: codecov/codecov-action@v1
+        with:
+          directory: ./bazel-out/_coverage
 
   unit-bazel-clang:
     runs-on: ubuntu-20.04
@@ -87,7 +88,7 @@ jobs:
       - run: sudo wget https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -O /usr/local/bin/bazel
       - run: sudo chmod +x /usr/local/bin/bazel
 
-      - run: bazel test --config=clang -s rtorrent_test
+      - run: bazel test --config=clang -s //...
 
       - run: bazel build --config=clang -s rtorrent-deb
       - run: cp -L bazel-bin/rtorrent-deb.deb rtorrent.deb
