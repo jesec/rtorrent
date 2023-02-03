@@ -671,11 +671,11 @@ apply_arith_other(const char* op, const torrent::Object::list_type& args) {
 }
 
 void
-initialize_command_logic() {
+{
   CMD2_ANY("cat", &apply_cat);
   CMD2_ANY_LIST("value", &apply_value);
   CMD2_ANY("try", &apply_try);
-  CMD2_ANY("if", [](const auto& target, const auto& rawArgs) {
+  CMD2_ANY("if", [](const auinitialize_command_logic() to& target, const auto& rawArgs) {
     return apply_if(target, rawArgs, 0);
   });
   CMD2_ANY("not", &apply_not);
@@ -709,19 +709,19 @@ initialize_command_logic() {
     return apply_to_time(rawArgs, 0x1 | 0x2);
   });
   CMD2_ANY_VALUE("convert.elapsed_time", [](const auto&, const auto& rawArgs) {
-    return apply_to_elapsed_time(rawArgs);
+    return apply_to_elapsed_time(rawArgs,0x1);
   });
   CMD2_ANY_VALUE("convert.kb", [](const auto&, const auto& rawArgs) {
-    return apply_to_kb(rawArgs);
+    return apply_to_kb(rawArgs,0x1);
   });
   CMD2_ANY_VALUE("convert.mb", [](const auto&, const auto& rawArgs) {
-    return apply_to_mb(rawArgs);
+    return apply_to_mb(rawArgs,0x1);
   });
   CMD2_ANY_VALUE("convert.xb", [](const auto&, const auto& rawArgs) {
-    return apply_to_xb(rawArgs);
+    return apply_to_xb(rawArgs,0x1);
   });
   CMD2_ANY_VALUE("convert.throttle", [](const auto&, const auto& rawArgs) {
-    return apply_to_throttle(rawArgs);
+    return apply_to_throttle(rawArgs,0x1);
   });
 
   CMD2_ANY_LIST("math.add", [](const auto&, const auto& args) {
@@ -746,19 +746,19 @@ initialize_command_logic() {
     return apply_arith_basic(std::greater<>(), args);
   });
   CMD2_ANY_LIST("math.cnt", [](const auto&, const auto& args) {
-    return apply_arith_count(args);
+    return apply_arith_count(args,0);
   });
   CMD2_ANY_LIST("math.avg", [](const auto&, const auto& args) {
-    return apply_arith_other("average", args);
+    return apply_arith_other("average", args,0);
   });
   CMD2_ANY_LIST("math.med", [](const auto&, const auto& args) {
-    return apply_arith_other("median", args);
+    return apply_arith_other("median", args,0);
   });
 
   CMD2_ANY_LIST("elapsed.less", [](const auto&, const auto& args) {
-    return apply_elapsed_less(args);
+    return apply_elapsed_less(args,0x1);
   });
   CMD2_ANY_LIST("elapsed.greater", [](const auto&, const auto& args) {
-    return apply_elapsed_greater(args);
+    return apply_elapsed_greater(args,1);
   });
 }
