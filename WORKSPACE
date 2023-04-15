@@ -70,6 +70,16 @@ http_archive(
 )
 
 http_archive(
+    name = "nghttp2",
+    build_file = "@rtorrent//:third_party/nghttp2.BUILD",
+    strip_prefix = "nghttp2-1.52.0",
+    sha256 = "9877caa62bd72dde1331da38ce039dadb049817a01c3bdee809da15b754771b8",
+    urls = [
+        "https://github.com/nghttp2/nghttp2/releases/download/v1.52.0/nghttp2-1.52.0.tar.gz",
+    ],
+)
+
+http_archive(
     name = "json",
     build_file = "@rtorrent//:third_party/json.BUILD",
     sha256 = "b94997df68856753b72f0d7a3703b7d484d4745c567f3584ef97c96c25a5798e",

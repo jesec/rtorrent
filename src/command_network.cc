@@ -323,6 +323,22 @@ initialize_command_network() {
                    [httpStack](const auto&, const auto& v) {
                      return httpStack->set_ssl_verify_peer(v);
                    });
+  CMD2_ANY("network.http.pipewait",
+           [httpStack](const auto&, const auto&) {
+             return httpStack->http_pipewait();
+           });
+  CMD2_ANY_VALUE_V("network.http.pipewait.set",
+                   [httpStack](const auto&, const auto& v) {
+                     return httpStack->set_http_pipewait(v);
+                   });
+  CMD2_ANY("network.http.tcp.keepalive",
+           [httpStack](const auto&, const auto&) {
+             return httpStack->http_tcp_keepalive();
+           });
+  CMD2_ANY_VALUE_V("network.http.tcp.keepalive.set",
+                   [httpStack](const auto&, const auto& v) {
+                     return httpStack->set_http_tcp_keepalive(v);
+                   });
 
   CMD2_ANY("network.send_buffer.size",
            [cm](const auto&, const auto&) { return cm->send_buffer_size(); });
