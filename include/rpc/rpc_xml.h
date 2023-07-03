@@ -9,32 +9,31 @@
 #include <functional>
 
 #include "rpc/rpc.h"
+#include "rpc/rpc_json.h"
 
 namespace rpc {
 
 class RpcXml final : public IRpc {
-#ifdef HAVE_XMLRPC_C
 public:
-  void initialize() override;
+  RpcXml(RpcJson* rpcjson)
+    : m_rpcjson(rpcjson) {}
 
-  void cleanup() override;
+  void initialize() {}
+
+  void cleanup() {}
 
   bool is_valid() const override {
-    return m_env != nullptr;
+    return m_rpcjson != nullptr && m_rpcjson->is_valid();
   }
 
   bool process(const char*  inBuffer,
                uint32_t     length,
                res_callback callback) override;
 
-  void insert_command(const char* name,
-                      const char* parm,
-                      const char* doc) override;
+  void insert_command(const char* name, const char* parm, const char* doc) {}
 
 private:
-  void* m_env{ nullptr };
-  void* m_registry{ nullptr };
-#endif
+  RpcJson* m_rpcjson;
 };
 
 }

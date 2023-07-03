@@ -126,8 +126,7 @@ Dependencies:
 - [libtorrent](https://github.com/jesec/libtorrent) with development files (core dependency, matching version required)
 - libcurl with development files
 - libncurses/libncursesw with development files (for terminal UI)
-- libxmlrpc-c with development files (optional if USE_XMLRPC=OFF, for XML-RPC support)
-- nlohmann/json with development files (optional if USE_JSONRPC=OFF, for JSON-RPC support)
+- nlohmann/json with development files (optional if USE_JSONRPC=OFF, for RPC support)
 - googletest with development files (optional, for unit tests)
 
 ```sh
