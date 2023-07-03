@@ -4,6 +4,7 @@
 // DownloadStore handles the saving and listing of session torrents.
 
 #include <cstdio>
+#include <fcntl.h>
 #include <fstream>
 #include <unistd.h>
 
@@ -84,6 +85,7 @@ DownloadStore::write_bencode(const std::string&     filename,
                              uint32_t               skip_mask) {
   torrent::Object tmp;
   std::fstream    output(filename.c_str(), std::ios::out | std::ios::trunc);
+  int fd = -1;
 
   if (!output.is_open())
     goto download_store_save_error;
@@ -103,6 +105,15 @@ DownloadStore::write_bencode(const std::string&     filename,
     goto download_store_save_error;
 
   output.close();
+
+  // Ensure that the new file is actually written to the disk
+  fd = ::open(filename.c_str(), O_WRONLY);
+  if (fd < 0)
+    goto download_store_save_error;
+
+  fsync(fd);
+  ::close(fd);
+
   return true;
 
 download_store_save_error:
