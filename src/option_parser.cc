@@ -26,7 +26,7 @@ OptionParser::insert_option(char c, slot_string s) {
 
 void
 OptionParser::insert_option_list(char c, slot_string_pair s) {
-  m_container[c].m_slot = [s = move(s)](const auto& arg) {
+  m_container[c].m_slot = [s = std::move(s)](const auto& arg) {
     return OptionParser::call_option_list(s, arg);
   };
   m_container[c].m_useOption = true;
@@ -34,7 +34,7 @@ OptionParser::insert_option_list(char c, slot_string_pair s) {
 
 void
 OptionParser::insert_int_pair(char c, slot_int_pair s) {
-  m_container[c].m_slot = [s = move(s)](const auto& arg) {
+  m_container[c].m_slot = [s = std::move(s)](const auto& arg) {
     return OptionParser::call_int_pair(s, arg);
   };
   m_container[c].m_useOption = true;
