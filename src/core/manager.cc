@@ -438,18 +438,17 @@ Manager::try_create_download(const std::string&       uri,
     f->slot_finished([f]() { delete f; });
   }
 
-  if (flags & create_raw_data) {
-    if (is_data_uri(uri)) {
-      const unsigned long start = uri.find("base64,", 5) + 7;
-      if (start >= uri.size()) {
-        throw torrent::input_error("Empty base64.");
-      }
-
-      f->load_raw_data(base64Decode(std::string_view(uri.c_str() + start)));
-      f->variables()["tied_to_file"] = (int64_t)0;
-    } else {
-      f->load_raw_data(uri);
+  // Handle base64 data regardless of whether the flag is set for raw,
+  // for backwards compatibility
+  if (is_data_uri(uri)) {
+    const unsigned long start = uri.find("base64,", 5) + 7;
+    if (start >= uri.size()) {
+      throw torrent::input_error("Empty base64.");
     }
+    f->load_raw_data(base64Decode(std::string_view(uri.c_str() + start)));
+    f->variables()["tied_to_file"] = (int64_t)0;
+  } else if (flags & create_raw_data) {
+    f->load_raw_data(uri);
   } else {
     f->load(uri);
   }
