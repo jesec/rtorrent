@@ -14,8 +14,7 @@
 
 namespace rpc {
 
-struct command_map_comp
-  : public std::binary_function<const char*, const char*, bool> {
+struct command_map_comp {
   bool operator()(const char* arg1, const char* arg2) const {
     return std::strcmp(arg1, arg2) < 0;
   }
