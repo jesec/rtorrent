@@ -13,8 +13,6 @@
 #include <string_view>
 #include <vector>
 
-#include <nlohmann/json.hpp>
-
 #include <torrent/common.h>
 #include <torrent/hash_string.h>
 #include <torrent/torrent.h>
@@ -23,10 +21,6 @@
 #include "rpc/command_map.h"
 #include "rpc/parse_commands.h"
 #include "thread_base.h"
-#include "utils/jsonrpc/common.h"
-
-using jsonrpccxx::JsonRpcException;
-using nlohmann::json;
 
 namespace rpc {
 
@@ -126,7 +120,7 @@ json_to_object(const json& value, int callType, rpc::target_type* target) {
 
       if (callType != command_base::target_generic) {
         if (count < 1) {
-          throw torrent::input_error("invalid parameters: too few");
+          return torrent::Object();
         }
 
         if (!value[0].is_string()) {
@@ -271,9 +265,14 @@ jsonrpc_call_command(const std::string& method, const json& params) {
   }
 }
 
+json
+RpcJson::jsonrpc_call_command(const std::string& method, const json& params) {
+  return rpc::jsonrpc_call_command(method, params);
+}
+
 void
 RpcJson::initialize() {
-  m_jsonrpc = new jsonrpccxx::JsonRpc2Server(&jsonrpc_call_command);
+  m_jsonrpc = new jsonrpccxx::JsonRpc2Server(&rpc::jsonrpc_call_command);
 }
 
 void

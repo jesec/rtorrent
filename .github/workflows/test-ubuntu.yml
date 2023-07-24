@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - run: sudo apt update
-      - run: sudo apt install -y build-essential ninja-build libgtest-dev libcurl4-openssl-dev libncursesw5-dev libssl-dev libxmlrpc-c++8-dev nlohmann-json3-dev zlib1g-dev
+      - run: sudo apt install -y build-essential ninja-build libgtest-dev libcurl4-openssl-dev libncursesw5-dev libssl-dev nlohmann-json3-dev zlib1g-dev
 
       - name: Checkout libTorrent
         uses: actions/checkout@v2

@@ -9,7 +9,12 @@
 #include <functional>
 
 #ifdef HAVE_JSON
+#include "utils/jsonrpc/common.h"
 #include "utils/jsonrpc/server.h"
+#include <nlohmann/json.hpp>
+
+using jsonrpccxx::JsonRpcException;
+using nlohmann::json;
 #endif
 
 #include "rpc/rpc.h"
@@ -30,6 +35,8 @@ public:
                res_callback callback) override;
 
   void insert_command(const char*, const char*, const char*) override {}
+
+  json jsonrpc_call_command(const std::string& method, const json& params);
 
 private:
   jsonrpccxx::JsonRpc2Server* m_jsonrpc;

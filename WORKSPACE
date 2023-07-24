@@ -100,15 +100,6 @@ http_archive(
 
 # Foreign CC dependencies
 http_archive(
-    name = "xmlrpc",
-    build_file = "@rtorrent//:third_party/xmlrpc.BUILD",
-    patches = ["@rtorrent//:third_party/xmlrpc.patch"],
-    sha256 = "92f8945d7748c48ddaf2a9eb60fb366c642f32136ce68abedc75244f9a0ea492",
-    strip_prefix = "xmlrpc-c-90978dfa964a57e6a31d76b128d0fa4ee9db574b/trunk",
-    urls = ["https://github.com/mirror/xmlrpc-c/archive/90978dfa964a57e6a31d76b128d0fa4ee9db574b.zip"],
-)
-
-http_archive(
     name = "mimalloc",
     build_file = "@rtorrent//:third_party/mimalloc.BUILD",
     sha256 = "23e7443d0b4d7aa945779ea8a806e4e109c0ed62d740953d3656cddea7e04cf8",

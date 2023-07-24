@@ -55,7 +55,7 @@ cmake(
 filegroup(
     name = "included_headers",
     srcs = glob(
-        ["include/**/*.h"],
+        ["include/**/*.h", "include/**/*.hpp"],
         exclude = ["include/buildinfo.h"],
     ),
 )
@@ -83,7 +83,6 @@ cc_library(
         "//:buildinfo",
         "@curl",
         "@json",
-        "@xmlrpc",
         "@libtorrent//:torrent",
     ] + select({
         "@platforms//os:macos": [],

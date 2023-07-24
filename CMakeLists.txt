@@ -76,11 +76,6 @@ else()
     include_directories(${JSON_INCLUDE_DIR})
   endif()
 
-  if(USE_XMLRPC)
-    find_package(XMLRPC REQUIRED c++)
-    include_directories(${XMLRPC_INCLUDE_DIRS})
-  endif()
-
   file(GLOB_RECURSE RTORRENT_COMMON_SRCS "${PROJECT_SOURCE_DIR}/src/*.cc")
   list(REMOVE_ITEM RTORRENT_COMMON_SRCS "${PROJECT_SOURCE_DIR}/src/main.cc")
 
@@ -90,9 +85,6 @@ else()
   add_library(rtorrent_common OBJECT ${RTORRENT_COMMON_SRCS})
   target_link_libraries(rtorrent_common ${TORRENT_LIBRARY} ${CURL_LIBRARIES}
                         ${CURSES_LIBRARIES})
-  if(USE_XMLRPC)
-    target_link_libraries(rtorrent_common ${XMLRPC_LIBRARIES})
-  endif()
 
   # rtorrent
   add_executable(rtorrent "${PROJECT_SOURCE_DIR}/src/main.cc")

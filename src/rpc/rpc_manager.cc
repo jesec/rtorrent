@@ -14,8 +14,10 @@
 namespace rpc {
 
 RpcManager::RpcManager() {
-  m_rpcProcessors[RPCType::XML]  = new RpcXml();
-  m_rpcProcessors[RPCType::JSON] = new RpcJson();
+  auto rpcjson = new RpcJson();
+
+  m_rpcProcessors[RPCType::JSON] = rpcjson;
+  m_rpcProcessors[RPCType::XML]  = new RpcXml(rpcjson);
 }
 
 RpcManager::~RpcManager() {

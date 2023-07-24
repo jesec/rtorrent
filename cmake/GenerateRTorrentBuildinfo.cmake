@@ -32,9 +32,4 @@ if(USE_JSONRPC)
   file(APPEND ${BUILDINFO_H} "#define HAVE_JSON 1\n\n")
 endif()
 
-if(USE_XMLRPC)
-  file(APPEND ${BUILDINFO_H} "/* Support for XMLRPC-C */\n")
-  file(APPEND ${BUILDINFO_H} "#define HAVE_XMLRPC_C 1\n\n")
-endif()
-
 file(APPEND ${BUILDINFO_H} "#endif\n")
