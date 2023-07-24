@@ -670,6 +670,42 @@ apply_arith_other(const char* op, const torrent::Object::list_type& args) {
   }
 }
 
+torrent::Object::value_type
+apply_string_contains(bool                              ignore_case,
+                      const torrent::Object::list_type& args) {
+  if (args.size() < 2) {
+    throw torrent::input_error(
+      "string.contains[_i] takes at least two arguments!");
+  }
+
+  torrent::Object::list_const_iterator itr  = args.begin();
+  std::string                          text = itr->as_string();
+  if (ignore_case)
+    std::transform(text.begin(), text.end(), text.begin(), ::tolower);
+
+  for (++itr; itr != args.end(); ++itr) {
+    std::string substr = itr->as_string();
+    if (ignore_case)
+      std::transform(substr.begin(), substr.end(), substr.begin(), ::tolower);
+    if (substr.empty() || text.find(substr) != std::string::npos)
+      return 1;
+  }
+
+  return 0;
+}
+
+torrent::Object
+cmd_string_contains(rpc::target_type, const torrent::Object::list_type& args) {
+  return apply_string_contains(false, args);
+}
+
+// XXX: Will NOT work correctly for non-ASCII strings!
+torrent::Object
+cmd_string_contains_i(rpc::target_type,
+                      const torrent::Object::list_type& args) {
+  return apply_string_contains(true, args);
+}
+
 void
 initialize_command_logic() {
   CMD2_ANY("cat", &apply_cat);
@@ -761,4 +797,7 @@ initialize_command_logic() {
   CMD2_ANY_LIST("elapsed.greater", [](const auto&, const auto& args) {
     return apply_elapsed_greater(args);
   });
+
+  CMD2_ANY_LIST("string.contains", &cmd_string_contains);
+  CMD2_ANY_LIST("string.contains_i", &cmd_string_contains_i);
 }
