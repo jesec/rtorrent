@@ -22,6 +22,7 @@ CurlStack::CurlStack()
   curl_multi_setopt((CURLM*)m_handle, CURLMOPT_SOCKETDATA, this);
   curl_multi_setopt(
     (CURLM*)m_handle, CURLMOPT_SOCKETFUNCTION, &CurlSocket::receive_socket);
+  curl_multi_setopt((CURLM*)m_handle, CURLMOPT_MAX_CONCURRENT_STREAMS, 20000L);
 }
 
 CurlStack::~CurlStack() {
@@ -167,6 +168,10 @@ CurlStack::add_get(CurlGet* get) {
   curl_easy_setopt(
     get->handle(), CURLOPT_SSL_VERIFYPEER, (long)(m_ssl_verify_peer ? 1 : 0));
   curl_easy_setopt(get->handle(), CURLOPT_DNS_CACHE_TIMEOUT, m_dns_timeout);
+  curl_easy_setopt(get->handle(), CURLOPT_PIPEWAIT, (long)(m_httpPipewait ? 1 : 0));
+  curl_easy_setopt(get->handle(), CURLOPT_TCP_KEEPALIVE, (long)(m_httpTcpKeepalive ? 1 : 0));
+  curl_easy_setopt(get->handle(), CURLOPT_TCP_KEEPINTVL, 5L);
+  curl_easy_setopt(get->handle(), CURLOPT_TCP_KEEPIDLE, 120L);
 
   base_type::push_back(get);
 

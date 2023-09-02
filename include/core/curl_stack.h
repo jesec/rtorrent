@@ -101,11 +101,23 @@ public:
   bool ssl_verify_peer() const {
     return m_ssl_verify_peer;
   }
+  bool http_pipewait() const {
+    return m_httpPipewait;
+  }
+  bool http_tcp_keepalive() const {
+    return m_httpTcpKeepalive;
+  }
   void set_ssl_verify_host(bool s) {
     m_ssl_verify_host = s;
   }
   void set_ssl_verify_peer(bool s) {
     m_ssl_verify_peer = s;
+  }
+  void set_http_pipewait(bool s) {
+    m_httpPipewait = s;
+  }
+  void set_http_tcp_keepalive(bool s) {
+    m_httpTcpKeepalive = s;
   }
 
   long dns_timeout() const {
@@ -148,6 +160,8 @@ private:
 
   bool m_ssl_verify_host{ true };
   bool m_ssl_verify_peer{ true };
+  bool m_httpPipewait{ false };
+  bool m_httpTcpKeepalive{ false };
   long m_dns_timeout{ 60 };
 };
 

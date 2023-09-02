@@ -401,6 +401,7 @@ cc_library(
     deps = [
         "@cares//:ares",
         "@zlib",
+        "@nghttp2",
     ] + select({
         "@platforms//os:windows": [],
         "//conditions:default": [
@@ -467,6 +468,8 @@ genrule(
         "#  define HAVE_LIBSSL 1",
         "#  define HAVE_MALLOC_H 1",
         "#  define HAVE_MSG_NOSIGNAL 1",
+        "#  define HAVE_NGHTTP2_NGHTTP2_H 1",
+        "#  define USE_NGHTTP2 1",
         "#  define HAVE_OPENSSL_CRYPTO_H 1",
         "#  define HAVE_OPENSSL_ERR_H 1",
         "#  define HAVE_OPENSSL_PEM_H 1",
